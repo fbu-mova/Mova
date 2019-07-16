@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mova.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,9 +40,10 @@ public class JournalFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @BindView(R.id.tvTitle)   protected TextView tvTitle;
-    @BindView(R.id.rvDates)   protected RecyclerView rvDates;
-    @BindView(R.id.rvEntries) protected RecyclerView rvEntries;
+    @BindView(R.id.tvTitle)    protected TextView tvTitle;
+    @BindView(R.id.rvDates)    protected RecyclerView rvDates;
+    @BindView(R.id.rvEntries)  protected RecyclerView rvEntries;
+    @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
 
     public JournalFragment() {
         // Required empty public constructor
