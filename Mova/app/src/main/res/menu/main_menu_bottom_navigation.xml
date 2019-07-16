@@ -4,10 +4,12 @@
 
     <item
         android:id="@+id/action_personal"
+        android:icon="@drawable/personal"
         android:title="Personal"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_social"
+        android:icon="@drawable/social"
         android:title="Social"
         app:showAsAction="always" />
 </menu>
