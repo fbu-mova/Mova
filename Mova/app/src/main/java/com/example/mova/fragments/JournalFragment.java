@@ -88,6 +88,7 @@ public class JournalFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -1,8 +1,10 @@
-package com.example.mova;
+package com.example.mova.activities;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mova.R;
 
 public class MainActivity extends AppCompatActivity {
 
