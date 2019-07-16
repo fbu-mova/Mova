@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,10 +25,12 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.Vi
 
     private Activity activity;
     private List<Date> dates;
+    private OnItemClickListener clickListener;
 
-    public DatePickerAdapter(Activity activity, List<Date> dates) {
+    public DatePickerAdapter(Activity activity, List<Date> dates, OnItemClickListener clickListener) {
         this.activity = activity;
         this.dates = dates;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -49,8 +53,12 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.Vi
 
         holder.tvMonth.setText(month);
         holder.tvDay.setText(day);
-
-        // TODO: Add onClick or onScroll functionality.
+        holder.llDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onClick(v, date, position);
+            }
+        });
     }
 
     @Override
@@ -60,12 +68,17 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tvMonth) protected TextView tvMonth;
-        @BindView(R.id.tvDay)   protected TextView tvDay;
+        @BindView(R.id.tvMonth)      protected TextView tvMonth;
+        @BindView(R.id.tvDay)        protected TextView tvDay;
+        @BindView(R.id.llDateButton) protected LinearLayout llDateButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public abstract class OnItemClickListener {
+        abstract void onClick(View v, Date date, int position);
     }
 }
