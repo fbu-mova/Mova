@@ -8,7 +8,9 @@ public class Tag extends ParseObject {
 
     public static final String KEY_NAME = "name";
 
-    Tag(String name){
+    public Tag(){}
+
+    public Tag(String name){
         this.setName(name);
     }
 
