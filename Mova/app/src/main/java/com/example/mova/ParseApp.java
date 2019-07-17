@@ -10,8 +10,10 @@ import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.Tag;
+import com.example.mova.model.User;
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class ParseApp extends Application {
 
@@ -20,6 +22,7 @@ public class ParseApp extends Application {
         super.onCreate();
 
         //Registering all the subclasses
+        ParseUser.registerSubclass(User.class);
         ParseObject.registerSubclass(Action.class);
         ParseObject.registerSubclass(Comment.class);
         ParseObject.registerSubclass(Event.class);

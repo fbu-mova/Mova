@@ -3,7 +3,6 @@ package com.example.mova.model;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import java.util.Date;
 
@@ -25,8 +24,9 @@ public class Comment extends ParseObject {
         return getString(KEY_BODY);
     }
 
-    public void setBody(String body){
+    public Comment setBody(String body){
         put(KEY_BODY, body);
+        return this;
     }
 
     //Image
@@ -34,8 +34,9 @@ public class Comment extends ParseObject {
         return getParseFile(KEY_IMAGE);
     }
 
-    public void setImage(ParseFile file){
+    public Comment setImage(ParseFile file){
         put(KEY_IMAGE, file);
+        return this;
     }
 
     //ParentPost
@@ -43,18 +44,20 @@ public class Comment extends ParseObject {
         return (Post) getParseObject(KEY_PARENT_POST);
     }
 
-    public void setParentPost(Post post){
+    public Comment setParentPost(Post post){
         put(KEY_PARENT_POST, post);
         post.addComment(this);
         post.saveInBackground();
+        return this;
     }
 
     //Commenter
-    public ParseUser getCommenter(){
-        return getParseUser(KEY_COMMENTER);
+    public User getCommenter(){
+        return (User) getParseUser(KEY_COMMENTER);
     }
 
-    public void setCommenter(ParseUser user){
+    public Comment setCommenter(User user){
         put(KEY_COMMENTER, user);
+        return this;
     }
 }

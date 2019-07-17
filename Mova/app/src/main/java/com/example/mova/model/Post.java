@@ -1,19 +1,14 @@
 package com.example.mova.model;
 
 
-import android.util.Log;
-
-import com.parse.FindCallback;
+import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
-import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +23,7 @@ public class Post extends ParseObject{
     public static final String KEY_BODY = "body";
     public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_TAGS = "tags";
+    RelationFrame relationFrame = new RelationFrame();
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);
@@ -38,11 +34,11 @@ public class Post extends ParseObject{
         return this;
     }
 
-    public ParseUser getAuthor(){
-        return getParseUser(KEY_AUTHOR);
+    public User getAuthor(){
+        return (User) getParseUser(KEY_AUTHOR);
     }
 
-    public Post setAuthor(ParseUser user){
+    public Post setAuthor(User user){
         put(KEY_AUTHOR, user);
         return this;
     }
@@ -82,8 +78,9 @@ public class Post extends ParseObject{
         return getParseFile(KEY_IMAGE);
     }
 
-    public void setImage(ParseFile file){
+    public Post setImage(ParseFile file){
         put(KEY_IMAGE, file);
+        return this;
     }
 
     //Comments
@@ -94,36 +91,19 @@ public class Post extends ParseObject{
 
     public ParseQuery<Comment> getQueryComments(){
         //Get the parsequery for comments
-        return (ParseQuery<Comment>) (Object) getRelation(KEY_COMMENTS).getQuery();
+        return relationFrame.getQuery(KEY_COMMENTS);
     }
 
     public List<Comment> getListComments(){
-        ParseQuery<Comment> commentsR = getQueryComments();
-        List<Comment> commentList = new ArrayList<Comment>();
-        commentsR.findInBackground(new FindCallback<Comment>() {
-            @Override
-            public void done(List<Comment> objects, ParseException e) {
-                if(e != null){
-                    Log.e("Post","error retriving post list");
-                }
-                commentList.addAll(objects);
-            }
-        });
-        return commentList;
+        return relationFrame.getList(KEY_COMMENTS);
     }
 
-    public void addComment(Comment comment){
-        ParseRelation<Comment> comments = getRelationComments();
-        comments.add(comment);
-        this.put(KEY_COMMENTS, comments);
-        this.saveInBackground();
+    public Post addComment(Comment comment){
+        return (Post) relationFrame.add(KEY_COMMENTS, comment);
     }
 
-    public void removeComment(Comment comment){
-        ParseRelation<Comment> comments = getRelationComments();
-        comments.remove(comment);
-        this.put(KEY_COMMENTS, comments);
-        this.saveInBackground();
+    public Post removeComment(Comment comment){
+        return (Post) relationFrame.remove(KEY_COMMENTS,comment);
     }
 
     //Tags
@@ -134,36 +114,19 @@ public class Post extends ParseObject{
 
     public ParseQuery<Tag> getQueryTags(){
         //Get the parsequery for tags
-        return (ParseQuery<Tag>) (Object) getRelation(KEY_TAGS).getQuery();
+        return relationFrame.getQuery(KEY_TAGS);
     }
 
     public List<Tag> getListTags(){
-        ParseQuery<Tag> tagR = getQueryTags();
-        List<Tag> tagList = new ArrayList<Tag>();
-        tagR.findInBackground(new FindCallback<Tag>() {
-            @Override
-            public void done(List<Tag> objects, ParseException e) {
-                if(e != null){
-                    Log.e("Post","error retriving post list");
-                }
-                tagList.addAll(objects);
-            }
-        });
-        return tagList;
+        return relationFrame.getList(KEY_TAGS);
     }
 
-    public void addTag(Tag tag){
-        ParseRelation<Tag> tags = getRelationTags();
-        tags.add(tag);
-        this.put(KEY_TAGS, tags);
-        this.saveInBackground();
+    public Post addTag(Tag tag){
+        return (Post) relationFrame.add(KEY_TAGS, tag);
     }
 
-    public void removeTag(Tag tag){
-        ParseRelation<Tag> tags = getRelationTags();
-        tags.remove(tag);
-        this.put(KEY_TAGS, tags);
-        this.saveInBackground();
+    public Post removeTag(Tag tag){
+        return (Post) relationFrame.remove(KEY_TAGS,tag);
     }
 
 }

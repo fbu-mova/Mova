@@ -1,15 +1,11 @@
 package com.example.mova.model;
 
-import android.util.Log;
-
-import com.parse.FindCallback;
+import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +19,8 @@ public class Group extends ParseObject {
     public static final String KEY_EVENTS = "events";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_ADMIN = "admin";
+    public static final String KEY_TAGS = "tags";
+    RelationFrame relationFrame = new RelationFrame();
 
     //CreatedAt
     public Date getCreatedAt() {
@@ -34,8 +32,9 @@ public class Group extends ParseObject {
         return getString(KEY_NAME);
     }
 
-    public void setName(String name){
+    public Group setName(String name){
         put(KEY_NAME, name);
+        return this;
     }
 
     //Description
@@ -43,11 +42,13 @@ public class Group extends ParseObject {
         return getString(KEY_DESCRIPTION);
     }
 
-    public void setDescription(String description){
+    public Group setDescription(String description){
         put(KEY_DESCRIPTION,description);
+        return this;
     }
 
     //Goals
+
     public ParseRelation<Goal> getRelationGoals(){
         //Get the relation of comments
         return getRelation(KEY_GOALS);
@@ -55,36 +56,131 @@ public class Group extends ParseObject {
 
     public ParseQuery<Goal> getQueryGoals(){
         //Get the parsequery for comments
-        return (ParseQuery<Goal>) (Object) getRelation(KEY_GOALS).getQuery();
+        return relationFrame.getQuery(KEY_GOALS);
     }
 
     public List<Goal> getListGoals(){
-        ParseQuery<Goal> commentsR = getQueryGoals();
-        List<Goal> goalList = new ArrayList<Goal>();
-        commentsR.findInBackground(new FindCallback<Goal>() {
-            @Override
-            public void done(List<Goal> objects, ParseException e) {
-                if(e != null){
-                    Log.e("Post","error retriving post list");
-                }
-                goalList.addAll(objects);
-            }
-        });
-        return goalList;
+        return relationFrame.getList(KEY_GOALS);
     }
 
-    public void addGoal(Goal goal){
-        ParseRelation<Goal> goals = getRelationGoals();
-        goals.add(goal);
-        this.put(KEY_GOALS, goals);
-        this.saveInBackground();
+    public Group addGoal(Goal goal){
+        return (Group) relationFrame.add(KEY_GOALS,goal);
     }
 
-    public void removeGoal(Goal goal){
-        ParseRelation<Goal> goals = getRelationGoals();
-        goals.remove(goal);
-        this.put(KEY_GOALS, goals);
-        this.saveInBackground();
+    public Group removeGoal(Goal goal){
+        return (Group) relationFrame.remove(KEY_GOALS, goal);
     }
 
+    //Users
+
+    public ParseRelation<User> getRelationUser(){
+        return getRelation(KEY_USERS);
+    }
+
+    public ParseQuery<User> getQueryUser(){
+        return relationFrame.getQuery(KEY_USERS);
+    }
+
+    public List<User> getListUsers(){
+        return relationFrame.getList(KEY_USERS);
+    }
+
+    public Group addUser(User user){
+        return (Group) relationFrame.add(KEY_USERS, user);
+    }
+
+    public Group removeUser(User user){
+        return (Group) relationFrame.remove(KEY_USERS, user);
+    }
+
+    //Posts
+
+    public ParseRelation<Post> getRelationPost(){
+        return getRelation(KEY_POSTS);
+    }
+
+    public ParseQuery<Post> getQueryPost(){
+        return relationFrame.getQuery(KEY_POSTS);
+    }
+
+    public List<Post> getListPosts(){
+        return relationFrame.getList(KEY_POSTS);
+    }
+
+
+    public Group addPost(Post post){
+        return (Group) relationFrame.add(KEY_POSTS, post);
+    }
+
+    public Group removePost(Post post){
+        return (Group) relationFrame.remove(KEY_POSTS, post);
+    }
+
+    //Events
+
+    public ParseRelation<Event> getRelationEvent(){
+        return getRelation(KEY_EVENTS);
+    }
+
+    public ParseQuery<Event> getQueryEvent(){
+        return relationFrame.getQuery(KEY_EVENTS);
+    }
+
+    public List<Event> getListEvent(){
+        return relationFrame.getList(KEY_EVENTS);
+    }
+
+    public Group addEvents(Event event){
+        return (Group) relationFrame.add(KEY_EVENTS,event);
+    }
+
+    public Group removeEvents(Event event){
+        return (Group) relationFrame.remove(KEY_EVENTS,event);
+    }
+
+    //Admins
+
+    public ParseRelation<User> getRelationAdmin(){
+        return getRelation(KEY_ADMIN);
+    }
+
+    public ParseQuery<User> getQueryAdmin(){
+        return relationFrame.getQuery(KEY_ADMIN);
+    }
+
+    public List<User> getListAdmin(){
+        return relationFrame.getList(KEY_ADMIN);
+    }
+
+    public Group addAdmin(User admin){
+        return (Group) relationFrame.add(KEY_ADMIN, admin);
+    }
+
+    public Group removeAdmin(User admin){
+        return (Group) relationFrame.remove(KEY_ADMIN, admin);
+    }
+
+    //Tags
+
+    public ParseRelation<Tag> getRelationTags(){
+        //Get the relation of tags
+        return getRelation(KEY_TAGS);
+    }
+
+    public ParseQuery<Tag> getQueryTags(){
+        //Get the parsequery for tags
+        return relationFrame.getQuery(KEY_TAGS);
+    }
+
+    public List<Tag> getListTags(){
+        return relationFrame.getList(KEY_TAGS);
+    }
+
+    public Group addTag(Tag tag){
+        return (Group) relationFrame.add(KEY_TAGS, tag);
+    }
+
+    public Group removeTag(Tag tag){
+        return (Group) relationFrame.remove(KEY_TAGS,tag);
+    }
 }
