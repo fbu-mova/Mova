@@ -1,10 +1,5 @@
 package com.example.mova.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,11 +8,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.mova.R;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,6 +32,18 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        //Keep user logged in
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser != null) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        //Fill feild
+        Intent intent = getIntent();
+        etUsername.setText(intent.getStringExtra("username"));
 
         // Set OnClickListeners
 
@@ -52,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Launch an intent to go to SignupActivity
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                intent.putExtra("username", etUsername.getText().toString());
+                intent.putExtra("password", etPassword.getText().toString());
                 startActivity(intent);
             }
         });

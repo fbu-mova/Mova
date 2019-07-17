@@ -17,6 +17,7 @@ public class Goal extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_ACTIONS = "actions";
     public static final String KEY_TAGS = "tags";
+    public static final String KEY_COLOR = "color";
     RelationFrame relationFrame = new RelationFrame();
 
     //Author
@@ -27,6 +28,16 @@ public class Goal extends ParseObject {
 
     public Goal setAuthor(User user){
         put(KEY_AUTHOR, user);
+        return this;
+    }
+
+    //Color
+    public String getColor(){
+        return getString(KEY_COLOR);
+    }
+
+    public Goal setColor(String color){
+        put(KEY_COLOR, color);
         return this;
     }
 

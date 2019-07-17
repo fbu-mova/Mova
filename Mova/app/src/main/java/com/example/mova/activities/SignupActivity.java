@@ -1,7 +1,5 @@
 package com.example.mova.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mova.R;
 import com.parse.ParseException;
@@ -32,6 +32,10 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
+
+        Intent intent = getIntent();
+        etUsername.setText(intent.getStringExtra("username"));
+        etPassword.setText(intent.getStringExtra("password"));
 
         // Set OnClickListener
         btSignUp.setOnClickListener(new View.OnClickListener() {

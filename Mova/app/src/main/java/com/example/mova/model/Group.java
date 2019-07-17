@@ -2,6 +2,7 @@ package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
@@ -20,7 +21,18 @@ public class Group extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_ADMIN = "admin";
     public static final String KEY_TAGS = "tags";
+    public static final String KEY_GROUP_PIC = "groupPic";
     RelationFrame relationFrame = new RelationFrame();
+
+    //Group Pic
+    public ParseFile getGroupPic(){
+        return getParseFile(KEY_GROUP_PIC);
+    }
+
+    public Group setGroupPic(ParseFile file){
+        put(KEY_GROUP_PIC, file);
+        return this;
+    }
 
     //CreatedAt
     public Date getCreatedAt() {
