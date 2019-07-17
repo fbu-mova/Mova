@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.adapters.DatePickerAdapter;
 import com.example.mova.adapters.JournalEntryAdapter;
@@ -51,6 +52,7 @@ public class JournalFragment extends Fragment {
 
     private List<Date> dates;
     private HashMap<Date, List<Post>> entries;
+    private Date currDate;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
     @BindView(R.id.rvDates)    protected RecyclerView rvDates;
@@ -98,6 +100,7 @@ public class JournalFragment extends Fragment {
 
         dates = new ArrayList<>();
         entries = new HashMap<>();
+        currDate = TimeUtils.getToday();
 
         // On date click, display only the entries for that date
         dateAdapter = new DatePickerAdapter(getActivity(), dates, new DatePickerAdapter.OnItemClickListener() {
@@ -148,14 +151,26 @@ public class JournalFragment extends Fragment {
                 @Override
                 public void done(ParseException e) {
                     Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
+                    Date today = TimeUtils.getToday();
+                    List<Post> todayEntries = getEntries(today);
+                    todayEntries.add(journalEntry);
+                    if (currDate == today) {
+                        entryAdapter.notifyItemInserted(todayEntries.size() - 1);
+                    }
                 }
             });
         }
     }
 
-    private void displayEntries(Date date) {
+    private List<Post> getEntries(Date date) {
         List<Post> entriesFromDate = entries.get(date);
         if (entriesFromDate == null) entriesFromDate = new ArrayList<Post>();
+        entries.put(date, entriesFromDate);
+        return entriesFromDate;
+    }
+
+    private void displayEntries(Date date) {
+        List<Post> entriesFromDate = getEntries(date);
         entryAdapter.changeSource(entriesFromDate);
     }
 
