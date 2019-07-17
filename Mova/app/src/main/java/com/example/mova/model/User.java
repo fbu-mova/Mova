@@ -2,6 +2,7 @@ package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
@@ -16,6 +17,7 @@ public class User extends ParseUser {
     public static final String KEY_JOURNAL = "journal";
     public static final String KEY_GROUPS_IN = "groupsIn";
     public static final String KEY_SCARPBOOK = "scrapbook";
+    public static final String KEY_PROFILE_PIC = "profilePic";
     RelationFrame relationFrame = new RelationFrame();
 
     //Email verification
@@ -28,6 +30,17 @@ public class User extends ParseUser {
         put(KEY_EMAIL_VERIFIED, bool);
         return this;
     }
+
+    //Profile Picture
+    public ParseFile getProfilePic(){
+        return getParseFile(KEY_PROFILE_PIC);
+    }
+
+    public User setProfilePic(ParseFile file){
+        put(KEY_PROFILE_PIC, file);
+        return this;
+    }
+
 
     //Friends
 

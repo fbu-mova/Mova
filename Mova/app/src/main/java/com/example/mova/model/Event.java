@@ -2,6 +2,7 @@ package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -18,6 +19,7 @@ public class Event extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_TITLE = "title";
     public static final String KEY_TAGS = "tags";
+    public static final String KEY_EVENT_PIC = "eventPic";
     RelationFrame relationFrame = new RelationFrame();
     //Date
 
@@ -27,6 +29,17 @@ public class Event extends ParseObject {
 
     public Event setDate(Date date){
         put(KEY_DATE,date);
+        return this;
+    }
+
+    //Event Pic
+
+    public ParseFile getEventPic(){
+        return getParseFile(KEY_EVENT_PIC);
+    }
+
+    public Event setEventPic(ParseFile file){
+        put(KEY_EVENT_PIC,file);
         return this;
     }
 
