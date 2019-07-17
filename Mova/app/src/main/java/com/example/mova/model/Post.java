@@ -6,6 +6,7 @@ import android.util.Log;
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -25,6 +26,8 @@ public class Post extends ParseObject{
     public static final String KEY_COMMENTS = "comments";
     public static final String KEY_LOCATION = "location";
     public static final String KEY_BODY = "body";
+    public static final String KEY_IMAGE = "embeddedImage";
+    public static final String KEY_TAGS = "tags";
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);
@@ -75,6 +78,15 @@ public class Post extends ParseObject{
         return this;
     }
 
+    public ParseFile getImage(){
+        return getParseFile(KEY_IMAGE);
+    }
+
+    public void setImage(ParseFile file){
+        put(KEY_IMAGE, file);
+    }
+
+    //Comments
     public ParseRelation<Comment> getRelationComments(){
         //Get the relation of comments
         return getRelation(KEY_COMMENTS);
@@ -111,6 +123,46 @@ public class Post extends ParseObject{
         ParseRelation<Comment> comments = getRelationComments();
         comments.remove(comment);
         this.put(KEY_COMMENTS, comments);
+        this.saveInBackground();
+    }
+
+    //Tags
+    public ParseRelation<Tag> getRelationTags(){
+        //Get the relation of tags
+        return getRelation(KEY_TAGS);
+    }
+
+    public ParseQuery<Tag> getQueryTags(){
+        //Get the parsequery for tags
+        return (ParseQuery<Tag>) (Object) getRelation(KEY_TAGS).getQuery();
+    }
+
+    public List<Tag> getListTags(){
+        ParseQuery<Tag> tagR = getQueryTags();
+        List<Tag> tagList = new ArrayList<Tag>();
+        tagR.findInBackground(new FindCallback<Tag>() {
+            @Override
+            public void done(List<Tag> objects, ParseException e) {
+                if(e != null){
+                    Log.e("Post","error retriving post list");
+                }
+                tagList.addAll(objects);
+            }
+        });
+        return tagList;
+    }
+
+    public void addTag(Tag tag){
+        ParseRelation<Tag> tags = getRelationTags();
+        tags.add(tag);
+        this.put(KEY_TAGS, tags);
+        this.saveInBackground();
+    }
+
+    public void removeTag(Tag tag){
+        ParseRelation<Tag> tags = getRelationTags();
+        tags.remove(tag);
+        this.put(KEY_TAGS, tags);
         this.saveInBackground();
     }
 
