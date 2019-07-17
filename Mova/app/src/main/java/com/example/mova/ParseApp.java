@@ -17,6 +17,7 @@ public class ParseApp extends Application {
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(Group.class);
         ParseObject.registerSubclass(Comment.class);
+        // TODO: Potentially move these to a secrets file
         final Parse.Configuration configuration = new Parse.Configuration.Builder(this)
                 .applicationId("fbu_mova")
                 .clientKey("very_secret")

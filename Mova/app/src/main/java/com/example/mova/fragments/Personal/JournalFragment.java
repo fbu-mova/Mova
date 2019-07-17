@@ -15,10 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mova.R;
 import com.example.mova.activities.JournalComposeActivity;
+import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,8 +46,6 @@ public class JournalFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-    public static final int COMPOSE_REQUEST_CODE = 30;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
     @BindView(R.id.rvDates)    protected RecyclerView rvDates;
@@ -97,8 +99,8 @@ public class JournalFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
-                startActivityForResult(intent, COMPOSE_REQUEST_CODE);
-                // FIXME: Should this activity be started on the fragment, or on the activity?
+                startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
+                // FIXME: Should/will this activity be started on the fragment, or on the activity?
             }
         });
     }
@@ -131,8 +133,15 @@ public class JournalFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == COMPOSE_REQUEST_CODE) {
-            // TODO: Get journal entry from intent, publish journal entry, add to journal timeline
+        if (resultCode == Activity.RESULT_OK && requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE) {
+            Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
+            Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
+            journalEntry.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
