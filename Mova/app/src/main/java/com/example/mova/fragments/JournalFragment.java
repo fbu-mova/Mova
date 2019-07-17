@@ -1,6 +1,8 @@
 package com.example.mova.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mova.R;
+import com.example.mova.activities.JournalComposeActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import butterknife.BindView;
@@ -39,6 +42,8 @@ public class JournalFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    public static final int COMPOSE_REQUEST_CODE = 30;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
     @BindView(R.id.rvDates)    protected RecyclerView rvDates;
@@ -88,7 +93,14 @@ public class JournalFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-
+        fabCompose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
+                startActivityForResult(intent, COMPOSE_REQUEST_CODE);
+                // FIXME: Should this activity be started on the fragment, or on the activity?
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -114,6 +126,14 @@ public class JournalFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == COMPOSE_REQUEST_CODE) {
+            // TODO: Get journal entry from intent, publish journal entry, add to journal timeline
+        }
     }
 
     /**

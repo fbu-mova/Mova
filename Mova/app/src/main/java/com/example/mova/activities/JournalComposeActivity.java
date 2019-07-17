@@ -43,103 +43,12 @@ import butterknife.ButterKnife;
 
 public class JournalComposeActivity extends AppCompatActivity {
 
+    public static final String KEY_COMPOSED_POST = "post";
+
     @BindView(R.id.tvTime)      protected TextView tvTime;
     @BindView(R.id.tvLocation)  protected TextView tvLocation;
     @BindView(R.id.etBody)      protected EditText etBody;
     @BindView(R.id.bSave)       protected Button bSave;
-
-    private GoogleApiClient googleApiClient = new GoogleApiClient() {
-        @Override
-        public boolean hasConnectedApi(@NonNull Api<?> api) {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public ConnectionResult getConnectionResult(@NonNull Api<?> api) {
-            return null;
-        }
-
-        @Override
-        public void connect() {
-
-        }
-
-        @Override
-        public ConnectionResult blockingConnect() {
-            return null;
-        }
-
-        @Override
-        public ConnectionResult blockingConnect(long l, @NonNull TimeUnit timeUnit) {
-            return null;
-        }
-
-        @Override
-        public void disconnect() {
-
-        }
-
-        @Override
-        public void reconnect() {
-
-        }
-
-        @Override
-        public PendingResult<Status> clearDefaultAccountAndReconnect() {
-            return null;
-        }
-
-        @Override
-        public void stopAutoManage(@NonNull FragmentActivity fragmentActivity) {
-
-        }
-
-        @Override
-        public boolean isConnected() {
-            return false;
-        }
-
-        @Override
-        public boolean isConnecting() {
-            return false;
-        }
-
-        @Override
-        public void registerConnectionCallbacks(@NonNull ConnectionCallbacks connectionCallbacks) {
-
-        }
-
-        @Override
-        public boolean isConnectionCallbacksRegistered(@NonNull ConnectionCallbacks connectionCallbacks) {
-            return false;
-        }
-
-        @Override
-        public void unregisterConnectionCallbacks(@NonNull ConnectionCallbacks connectionCallbacks) {
-
-        }
-
-        @Override
-        public void registerConnectionFailedListener(@NonNull OnConnectionFailedListener onConnectionFailedListener) {
-
-        }
-
-        @Override
-        public boolean isConnectionFailedListenerRegistered(@NonNull OnConnectionFailedListener onConnectionFailedListener) {
-            return false;
-        }
-
-        @Override
-        public void unregisterConnectionFailedListener(@NonNull OnConnectionFailedListener onConnectionFailedListener) {
-
-        }
-
-        @Override
-        public void dump(String s, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strings) {
-
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +76,7 @@ public class JournalComposeActivity extends AppCompatActivity {
                 location.setLatitude(lat);
                 location.setLongitude(lon);
 
-                // TODO: Create journal post
+                // TODO: Create journal post, add to intent
             }
         });
     }

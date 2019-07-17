@@ -18,12 +18,12 @@ import butterknife.ButterKnife;
 
 public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> {
 
-    private List<Post> entries;
+//    private List<Post> entries;
     private Activity activity;
 
-    public JournalEntryAdapter(Activity activity, List<Post> entries) {
+    public JournalEntryAdapter(Activity activity/*, List<Post> entries*/) {
         this.activity = activity;
-        this.entries = entries;
+//        this.entries = entries;
     }
 
     @NonNull
@@ -36,12 +36,12 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Post entry = entries.get(position);
+//        Post entry = entries.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return entries.size();
+        return 0; // entries.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
