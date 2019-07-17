@@ -1,12 +1,18 @@
 package com.example.mova.model;
 
 
+import android.util.Log;
+
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -69,26 +75,43 @@ public class Post extends ParseObject{
         return this;
     }
 
-    public List<Comment> getComments(){
-        return (List<Comment>) (Object) getList(KEY_COMMENTS);
+    public ParseRelation<Comment> getRelationComments(){
+        //Get the relation of comments
+        return getRelation(KEY_COMMENTS);
+    }
+
+    public ParseQuery<Comment> getQueryComments(){
+        //Get the parsequery for comments
+        return (ParseQuery<Comment>) (Object) getRelation(KEY_COMMENTS).getQuery();
+    }
+
+    public List<Comment> getListComments(){
+        ParseQuery<Comment> commentsR = getQueryComments();
+        List<Comment> commentList = new ArrayList<Comment>();
+        commentsR.findInBackground(new FindCallback<Comment>() {
+            @Override
+            public void done(List<Comment> objects, ParseException e) {
+                if(e != null){
+                    Log.e("Post","error retriving post list");
+                }
+                commentList.addAll(objects);
+            }
+        });
+        return commentList;
     }
 
     public void addComment(Comment comment){
-        List<Comment> comments = getComments();
+        ParseRelation<Comment> comments = getRelationComments();
         comments.add(comment);
         this.put(KEY_COMMENTS, comments);
+        this.saveInBackground();
     }
 
     public void removeComment(Comment comment){
-        int position = 0;
-        List<Comment> comments = getComments();
-        for(int i = 0; i < getComments().size(); i++){
-            if(comment.getObjectId().equals(comments.get(i).getObjectId())){
-                position = i;
-            }
-        }
-        comments.remove(position);
+        ParseRelation<Comment> comments = getRelationComments();
+        comments.remove(comment);
         this.put(KEY_COMMENTS, comments);
+        this.saveInBackground();
     }
 
 }
