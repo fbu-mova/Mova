@@ -22,7 +22,7 @@ public class Group extends ParseObject {
     public static final String KEY_ADMIN = "admin";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_GROUP_PIC = "groupPic";
-    RelationFrame relationFrame = new RelationFrame();
+    RelationFrame relationFrame = new RelationFrame(this);
 
     //Group Pic
     public ParseFile getGroupPic(){

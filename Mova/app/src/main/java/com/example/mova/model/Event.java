@@ -20,7 +20,7 @@ public class Event extends ParseObject {
     public static final String KEY_TITLE = "title";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_EVENT_PIC = "eventPic";
-    RelationFrame relationFrame = new RelationFrame();
+    RelationFrame relationFrame = new RelationFrame(this);
     //Date
 
     public Date getDate(){

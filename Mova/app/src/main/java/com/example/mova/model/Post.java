@@ -25,7 +25,7 @@ public class Post extends ParseObject{
     public static final String KEY_MOOD = "mood";
     public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_TAGS = "tags";
-    RelationFrame relationFrame = new RelationFrame();
+    RelationFrame relationFrame = new RelationFrame(this);
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);

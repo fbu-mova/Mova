@@ -9,16 +9,16 @@ import com.parse.ParseUser;
 
 import java.util.List;
 
-@ParseClassName("User")
+@ParseClassName("_User")
 public class User extends ParseUser {
 
     public static final String KEY_EMAIL_VERIFIED = "emailVerified";
     public static final String KEY_FRIENDS = "friends";
     public static final String KEY_JOURNAL = "journal";
     public static final String KEY_GROUPS_IN = "groupsIn";
-    public static final String KEY_SCARPBOOK = "scrapbook";
+    public static final String KEY_SCRAPBOOK = "scrapbook";
     public static final String KEY_PROFILE_PIC = "profilePic";
-    RelationFrame relationFrame = new RelationFrame();
+    RelationFrame relationFrame = new RelationFrame(this);
 
     //Email verification
 
@@ -112,23 +112,23 @@ public class User extends ParseUser {
     //Scrapbook
 
     public ParseRelation<Post> getRelationScrapbook(){
-        return getRelation(KEY_SCARPBOOK);
+        return getRelation(KEY_SCRAPBOOK);
     }
 
     public ParseQuery<Post> getQueryScrapbook(){
-        return relationFrame.getQuery(KEY_SCARPBOOK);
+        return relationFrame.getQuery(KEY_SCRAPBOOK);
     }
 
     public List<Post> getListScrapbook(){
-        return relationFrame.getList(KEY_SCARPBOOK);
+        return relationFrame.getList(KEY_SCRAPBOOK);
     }
 
 
     public User addScrapbookPost(Post scrapbookPost){
-        return (User) relationFrame.add(KEY_SCARPBOOK, scrapbookPost);
+        return (User) relationFrame.add(KEY_SCRAPBOOK, scrapbookPost);
     }
 
     public User removeScrapbookPost(Post scrapbookPost){
-        return (User) relationFrame.remove(KEY_SCARPBOOK, scrapbookPost);
+        return (User) relationFrame.remove(KEY_SCRAPBOOK, scrapbookPost);
     }
 }

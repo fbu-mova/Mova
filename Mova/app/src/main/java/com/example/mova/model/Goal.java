@@ -18,7 +18,7 @@ public class Goal extends ParseObject {
     public static final String KEY_ACTIONS = "actions";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_COLOR = "color";
-    RelationFrame relationFrame = new RelationFrame();
+    RelationFrame relationFrame = new RelationFrame(this);
 
     //Author
 

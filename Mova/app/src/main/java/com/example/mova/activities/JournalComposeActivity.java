@@ -13,6 +13,7 @@ import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.TimeUtils;
 import com.example.mova.model.Post;
+import com.example.mova.model.User;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
@@ -74,7 +75,7 @@ public class JournalComposeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String body = etBody.getText().toString();
-                ParseUser user = ParseUser.getCurrentUser();
+                User user = (User) ParseUser.getCurrentUser();
                 Date endDate = new Date();
                 ParseGeoPoint location = new ParseGeoPoint();
                 location.setLatitude(lat);

@@ -15,7 +15,7 @@ public class SharedAction extends ParseObject {
     public static final String KEY_GOAL = "goal";
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_USERS_DONE = "usersDone";
-    RelationFrame relationFrame = new RelationFrame();
+    RelationFrame relationFrame = new RelationFrame(this);
 
     //Task
     public String getTask(){
