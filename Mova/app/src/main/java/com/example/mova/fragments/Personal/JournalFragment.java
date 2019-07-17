@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -110,6 +111,14 @@ public class JournalFragment extends Fragment {
             }
         });
 
+        entryAdapter = new JournalEntryAdapter(getActivity(), getEntries(currDate));
+
+        rvDates.setAdapter(dateAdapter);
+        rvDates.setLayoutManager(new LinearLayoutManager(getActivity())); // TODO: Make horizontal
+
+        rvEntries.setAdapter(entryAdapter);
+        rvEntries.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         // On fab click, open compose activity
         fabCompose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +163,7 @@ public class JournalFragment extends Fragment {
                     Date today = TimeUtils.getToday();
                     List<Post> todayEntries = getEntries(today);
                     todayEntries.add(journalEntry);
-                    if (currDate == today) {
+                    if (currDate.equals(today)) {
                         entryAdapter.notifyItemInserted(todayEntries.size() - 1);
                     }
                 }
@@ -166,6 +175,7 @@ public class JournalFragment extends Fragment {
         List<Post> entriesFromDate = entries.get(date);
         if (entriesFromDate == null) entriesFromDate = new ArrayList<Post>();
         entries.put(date, entriesFromDate);
+        // TODO: Add to date list at correct index
         return entriesFromDate;
     }
 
