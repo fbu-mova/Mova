@@ -1,43 +1,23 @@
 package com.example.mova.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.TimeUtils;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationServices;
+import com.example.mova.model.Post;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,11 +25,21 @@ import butterknife.ButterKnife;
 public class JournalComposeActivity extends AppCompatActivity {
 
     public static final String KEY_COMPOSED_POST = "post";
+    public static final int COMPOSE_REQUEST_CODE = 30;
 
-    @BindView(R.id.tvTime)      protected TextView tvTime;
-    @BindView(R.id.tvLocation)  protected TextView tvLocation;
-    @BindView(R.id.etBody)      protected EditText etBody;
-    @BindView(R.id.bSave)       protected Button bSave;
+    // TODO: Perhaps change this to List<Tag>?
+    ArrayList<String> tags;
+
+    @BindView(R.id.tvTime)       protected TextView tvTime;
+    @BindView(R.id.tvLocation)   protected TextView tvLocation;
+    @BindView(R.id.etBody)       protected EditText etBody;
+    @BindView(R.id.bSave)        protected Button bSave;
+
+    @BindView(R.id.etTag)        protected EditText etTag;
+    @BindView(R.id.tvTags)       protected TextView tvTags;
+    @BindView(R.id.bAddTag)      protected Button bAddTag;
+
+    @BindView(R.id.moodSelector) protected Mood.SelectorLayout moodSelector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,26 +47,77 @@ public class JournalComposeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_journal_compose);
         ButterKnife.bind(this);
 
+        tags = new ArrayList<>();
+
         Date startDate = new Date();
         final double lat = 0, lon = 0; // TODO: Get location
 
-        tvTime.setText(TimeUtils.getTime(startDate));
+        tvTime.setText(TimeUtils.toTimeString(startDate));
         tvLocation.setText("Seattle, WA, USA"); // TODO: Get location
         // TODO: Build and handle mood selection
+        // TODO: Build tag removal
+
+        bAddTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String tagName = etTag.getText().toString();
+                if (tagName.equals("")) {
+                    Toast.makeText(JournalComposeActivity.this, "Write a tag first!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateTags(tagName, true);
+                    etTag.setText("");
+                }
+            }
+        });
 
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String body = etBody.getText().toString();
-//                Media media = null; // TODO: Get embedded media
                 ParseUser user = ParseUser.getCurrentUser();
                 Date endDate = new Date();
                 ParseGeoPoint location = new ParseGeoPoint();
                 location.setLatitude(lat);
                 location.setLongitude(lon);
+                Mood.Status mood = moodSelector.getSelectedItem();
+                // TODO: Handle media
+                // TODO: Handle tags
 
-                // TODO: Create journal post, add to intent
+                if (body.equals("")) {
+                    // TODO: Move all strings to a strings.xml file for cleaner code
+                    Toast.makeText(JournalComposeActivity.this, "Write an entry first!", Toast.LENGTH_LONG).show();
+                } else {
+                    Post post = new Post()
+                            .setIsPersonal(true)
+                            .setAuthor(user)
+                            .setBody(body)
+//                            .setGroup(null) // FIXME: How to explicitly set this to none without crashing?
+                            .setLocation(location)
+                            .setMood(mood);
+
+                    getIntent().putExtra(KEY_COMPOSED_POST, post);
+                    setResult(RESULT_OK, getIntent());
+                    finish();
+                }
             }
         });
+    }
+
+    private void updateTags(String tag, boolean shouldKeep) {
+        if (shouldKeep && !tags.contains(tag)) {
+            tags.add(tag);
+        } else {
+            tags.remove(tag);
+        }
+        writeTags();
+    }
+
+    private void writeTags() {
+        StringBuilder tagsBuilder = new StringBuilder();
+        for (int i = 0; i < tags.size(); i++) {
+            tagsBuilder.append(tags.get(i));
+            if (i < tags.size() - 1) tagsBuilder.append(", ");
+        }
+        tvTags.setText(tagsBuilder.toString());
     }
 }

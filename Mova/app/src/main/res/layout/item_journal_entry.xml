@@ -43,6 +43,14 @@
             android:layout_marginLeft="6dp"
             android:layout_weight="0"
             app:srcCompat="@android:color/black" />
+
+        <TextView
+            android:id="@+id/tvMood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="0"
+            android:text="Mood" />
     </LinearLayout>
 
     <FrameLayout

@@ -21,7 +21,7 @@ public class LocationUtils {
             String stateName = address.getAddressLine(1);
             String countryName = address.getAddressLine(2);
             return cityName + ", " + stateName + ", " + countryName;
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e("LocationUtils", "Bad Geocoder conversion from location");
             e.printStackTrace();
             return "";
