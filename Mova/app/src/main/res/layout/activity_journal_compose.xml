@@ -45,13 +45,6 @@
             android:layout_weight="0"
             android:text="Place, State, Country" />
 
-        <ImageView
-            android:id="@+id/ivMood"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="6dp"
-            android:layout_weight="0"
-            app:srcCompat="@android:color/black" />
     </LinearLayout>
 
     <LinearLayout
