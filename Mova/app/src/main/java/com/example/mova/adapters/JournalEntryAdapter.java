@@ -42,7 +42,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post entry = entries.get(position);
-        holder.tvTime.setText(TimeUtils.getTime(entry.getCreatedAt()));
+        holder.tvTime.setText(TimeUtils.toTimeString(entry.getCreatedAt()));
         holder.tvBody.setText(entry.getBody());
         holder.tvLocation.setText(LocationUtils.makeLocationText(activity, entry.getLocation()));
     }

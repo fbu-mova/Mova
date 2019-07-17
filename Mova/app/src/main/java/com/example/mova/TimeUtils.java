@@ -6,10 +6,19 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TimeUtils {
-    public static String getTime(Date date) {
+    // -- STRINGIFICATION -- //
+
+    public static String toTimeString(Date date) {
         SimpleDateFormat timeFmt = new SimpleDateFormat("h:mm aa", Locale.US);
         return timeFmt.format(date);
     }
+
+    public static String toDateString(Date date) {
+        SimpleDateFormat dateFmt = new SimpleDateFormat("MMMM dd, yyyy", Locale.US);
+        return dateFmt.format(date);
+    }
+
+    // -- DATE NORMALIZATION, COMPARISON, AND KEYING -- //
 
     /**
      * Gets the current date regardless of time.

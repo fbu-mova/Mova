@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.R;
 
@@ -24,10 +25,10 @@ import butterknife.ButterKnife;
 public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.ViewHolder> {
 
     private Activity activity;
-    private List<Date> dates;
+    private SortedList<Date> dates;
     private OnItemClickListener clickListener;
 
-    public DatePickerAdapter(Activity activity, List<Date> dates, OnItemClickListener clickListener) {
+    public DatePickerAdapter(Activity activity, SortedList<Date> dates, OnItemClickListener clickListener) {
         this.activity = activity;
         this.dates = dates;
         this.clickListener = clickListener;

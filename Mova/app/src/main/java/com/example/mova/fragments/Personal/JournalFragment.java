@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +30,14 @@ import com.parse.ParseException;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,11 +57,12 @@ public class JournalFragment extends Fragment {
     private DatePickerAdapter dateAdapter;
     private JournalEntryAdapter entryAdapter;
 
-    private List<Date> dates;
+    private SortedList<Date> dates;
     private HashMap<Date, List<Post>> entries;
     private Date currDate;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
+    @BindView(R.id.tvDate)     protected TextView tvDate;
     @BindView(R.id.rvDates)    protected RecyclerView rvDates;
     @BindView(R.id.rvEntries)  protected RecyclerView rvEntries;
     @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
@@ -99,9 +106,45 @@ public class JournalFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        dates = new ArrayList<>();
-        entries = new HashMap<>();
         currDate = TimeUtils.getToday();
+
+        dates = new SortedList<>(Date.class, new SortedList.Callback<Date>() {
+            @Override
+            public int compare(Date o1, Date o2) {
+                return o1.compareTo(o2);
+            }
+
+            @Override
+            public void onChanged(int position, int count) {
+                dateAdapter.notifyItemRangeChanged(position, count);
+            }
+
+            @Override
+            public boolean areContentsTheSame(Date oldItem, Date newItem) {
+                return oldItem.equals(newItem);
+            }
+
+            @Override
+            public boolean areItemsTheSame(Date item1, Date item2) {
+                return item1.equals(item2);
+            }
+
+            @Override
+            public void onInserted(int position, int count) {
+                dateAdapter.notifyItemRangeInserted(position, count);
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+                dateAdapter.notifyItemRangeRemoved(position, count);
+            }
+
+            @Override
+            public void onMoved(int fromPosition, int toPosition) {
+                dateAdapter.notifyItemMoved(fromPosition, toPosition);
+            }
+        });
+        entries = new HashMap<>();
 
         // On date click, display only the entries for that date
         dateAdapter = new DatePickerAdapter(getActivity(), dates, new DatePickerAdapter.OnItemClickListener() {
@@ -114,7 +157,7 @@ public class JournalFragment extends Fragment {
         entryAdapter = new JournalEntryAdapter(getActivity(), getEntries(currDate));
 
         rvDates.setAdapter(dateAdapter);
-        rvDates.setLayoutManager(new LinearLayoutManager(getActivity())); // TODO: Make horizontal
+        rvDates.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
 
         rvEntries.setAdapter(entryAdapter);
         rvEntries.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -128,6 +171,7 @@ public class JournalFragment extends Fragment {
             }
         });
 
+        displayEntries(currDate);
         loadEntries();
     }
 
@@ -175,11 +219,12 @@ public class JournalFragment extends Fragment {
         List<Post> entriesFromDate = entries.get(date);
         if (entriesFromDate == null) entriesFromDate = new ArrayList<Post>();
         entries.put(date, entriesFromDate);
-        // TODO: Add to date list at correct index
+        if (dates.indexOf(date) < 0) dates.add(date);
         return entriesFromDate;
     }
 
     private void displayEntries(Date date) {
+        tvDate.setText(TimeUtils.toDateString(date));
         List<Post> entriesFromDate = getEntries(date);
         entryAdapter.changeSource(entriesFromDate);
     }

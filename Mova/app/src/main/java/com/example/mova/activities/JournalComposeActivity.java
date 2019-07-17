@@ -49,7 +49,7 @@ public class JournalComposeActivity extends AppCompatActivity {
         Date startDate = new Date();
         final double lat = 0, lon = 0; // TODO: Get location
 
-        tvTime.setText(TimeUtils.getTime(startDate));
+        tvTime.setText(TimeUtils.toTimeString(startDate));
         tvLocation.setText("Seattle, WA, USA"); // TODO: Get location
         // TODO: Build and handle mood selection
         // TODO: Build tag removal
