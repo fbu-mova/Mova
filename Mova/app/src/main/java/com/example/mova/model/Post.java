@@ -2,6 +2,7 @@ package com.example.mova.model;
 
 
 import com.example.mova.RelationFrame;
+import com.example.mova.Mood;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -21,6 +22,7 @@ public class Post extends ParseObject{
     public static final String KEY_COMMENTS = "comments";
     public static final String KEY_LOCATION = "location";
     public static final String KEY_BODY = "body";
+    public static final String KEY_MOOD = "mood";
     public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_TAGS = "tags";
     RelationFrame relationFrame = new RelationFrame();
@@ -61,8 +63,14 @@ public class Post extends ParseObject{
         return this;
     }
 
-    public Date getCreatedAt() {
-        return getDate(KEY_CREATED_AT);
+    public Mood.Status getMood() {
+        String moodValue = getString(KEY_MOOD);
+        return Mood.Status.valueOf(moodValue);
+    }
+
+    public Post setMood(Mood.Status mood) {
+        put(KEY_MOOD, mood.toString());
+        return this;
     }
 
     public String getBody() {
