@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mova.R;
+import com.example.mova.TimeUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -59,9 +60,7 @@ public class JournalComposeActivity extends AppCompatActivity {
         Date startDate = new Date();
         final double lat = 0, lon = 0; // TODO: Get location
 
-        SimpleDateFormat timeFmt = new SimpleDateFormat("h:mm aa", Locale.US);
-
-        tvTime.setText(timeFmt.format(startDate));
+        tvTime.setText(TimeUtils.getTime(startDate));
         tvLocation.setText("Seattle, WA, USA"); // TODO: Get location
         // TODO: Build and handle mood selection
 

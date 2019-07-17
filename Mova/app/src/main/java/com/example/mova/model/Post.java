@@ -7,6 +7,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 
+import java.util.Date;
 import java.util.List;
 
 @ParseClassName("Post")
@@ -17,6 +18,7 @@ public class Post extends ParseObject{
     public static final String KEY_IS_PERSONAL = "isPersonal";
     public static final String KEY_COMMENTS = "comments";
     public static final String KEY_LOCATION = "location";
+    public static final String KEY_BODY = "body";
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);
@@ -48,6 +50,22 @@ public class Post extends ParseObject{
 
     public void setLocation(ParseGeoPoint geoPoint){
         put(KEY_LOCATION, geoPoint);
+    }
+
+    public Date getCreatedAt() {
+        return getDate(KEY_CREATED_AT);
+    }
+
+    public void setCreatedAt(Date date) {
+        put(KEY_CREATED_AT, date);
+    }
+
+    public String getBody() {
+        return getString(KEY_BODY);
+    }
+
+    public void setBody(String body) {
+        put(KEY_BODY, body);
     }
 
     public List<Comment> getComments(){

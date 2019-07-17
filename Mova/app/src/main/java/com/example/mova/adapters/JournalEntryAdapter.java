@@ -11,19 +11,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.LocationUtils;
 import com.example.mova.R;
+import com.example.mova.TimeUtils;
+import com.example.mova.model.Post;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> {
 
-//    private List<Post> entries;
+    private List<Post> entries;
     private Activity activity;
 
-    public JournalEntryAdapter(Activity activity/*, List<Post> entries*/) {
+    public JournalEntryAdapter(Activity activity, List<Post> entries) {
         this.activity = activity;
-//        this.entries = entries;
+        this.entries = entries;
     }
 
     @NonNull
@@ -36,21 +41,24 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        Post entry = entries.get(position);
+        Post entry = entries.get(position);
+        holder.tvTime.setText(TimeUtils.getTime(entry.getCreatedAt()));
+        holder.tvBody.setText(entry.getBody());
+        holder.tvLocation.setText(LocationUtils.makeLocationText(activity, entry.getLocation()));
     }
 
     @Override
     public int getItemCount() {
-        return 0; // entries.size();
+        return entries.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tvTime)     protected TextView tvTime;
-        @BindView(R.id.tvLocation) protected TextView tvLocation;
-        @BindView(R.id.ivMood)     protected ImageView ivMood;
-        @BindView(R.id.tvBody)     protected TextView tvBody;
-        @BindView(R.id.flMedia)    protected FrameLayout flMedia;
+        @BindView(R.id.tvTime)     public TextView tvTime;
+        @BindView(R.id.tvLocation) public TextView tvLocation;
+        @BindView(R.id.ivMood)     public ImageView ivMood;
+        @BindView(R.id.tvBody)     public TextView tvBody;
+        @BindView(R.id.flMedia)    public FrameLayout flMedia;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

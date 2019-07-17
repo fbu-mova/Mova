@@ -1,15 +1,27 @@
 package com.example.mova.fragments.Personal;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.fragment.app.Fragment;
+import android.widget.TextView;
 
 import com.example.mova.R;
+import com.example.mova.activities.JournalComposeActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +42,13 @@ public class JournalFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    public static final int COMPOSE_REQUEST_CODE = 30;
+
+    @BindView(R.id.tvTitle)    protected TextView tvTitle;
+    @BindView(R.id.rvDates)    protected RecyclerView rvDates;
+    @BindView(R.id.rvEntries)  protected RecyclerView rvEntries;
+    @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
 
     public JournalFragment() {
         // Required empty public constructor
@@ -69,6 +88,21 @@ public class JournalFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_journal, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+        fabCompose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
+                startActivityForResult(intent, COMPOSE_REQUEST_CODE);
+                // FIXME: Should this activity be started on the fragment, or on the activity?
+            }
+        });
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -79,6 +113,7 @@ public class JournalFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        // TODO: Potentially uncomment and/or use onAttach
 //        if (context instanceof OnFragmentInteractionListener) {
 //            mListener = (OnFragmentInteractionListener) context;
 //        } else {
@@ -91,6 +126,14 @@ public class JournalFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == COMPOSE_REQUEST_CODE) {
+            // TODO: Get journal entry from intent, publish journal entry, add to journal timeline
+        }
     }
 
     /**
