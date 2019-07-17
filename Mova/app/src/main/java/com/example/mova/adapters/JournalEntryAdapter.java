@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.LocationUtils;
+import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.TimeUtils;
 import com.example.mova.model.Post;
@@ -45,6 +46,8 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         holder.tvTime.setText(TimeUtils.toTimeString(entry.getCreatedAt()));
         holder.tvBody.setText(entry.getBody());
         holder.tvLocation.setText(LocationUtils.makeLocationText(activity, entry.getLocation()));
+        Mood.Status mood = entry.getMood();
+        holder.tvMood.setText((mood == null) ? "" : mood.toString()); // TODO: Hide mood image, etc.
     }
 
     @Override
@@ -62,6 +65,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         @BindView(R.id.tvTime)     public TextView tvTime;
         @BindView(R.id.tvLocation) public TextView tvLocation;
         @BindView(R.id.ivMood)     public ImageView ivMood;
+        @BindView(R.id.tvMood)     public TextView tvMood;
         @BindView(R.id.tvBody)     public TextView tvBody;
         @BindView(R.id.flMedia)    public FrameLayout flMedia;
 

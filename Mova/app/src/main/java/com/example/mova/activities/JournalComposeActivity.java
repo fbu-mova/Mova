@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.TimeUtils;
 import com.example.mova.model.Post;
@@ -29,14 +30,16 @@ public class JournalComposeActivity extends AppCompatActivity {
     // TODO: Perhaps change this to List<Tag>?
     ArrayList<String> tags;
 
-    @BindView(R.id.tvTime)      protected TextView tvTime;
-    @BindView(R.id.tvLocation)  protected TextView tvLocation;
-    @BindView(R.id.etBody)      protected EditText etBody;
-    @BindView(R.id.bSave)       protected Button bSave;
+    @BindView(R.id.tvTime)       protected TextView tvTime;
+    @BindView(R.id.tvLocation)   protected TextView tvLocation;
+    @BindView(R.id.etBody)       protected EditText etBody;
+    @BindView(R.id.bSave)        protected Button bSave;
 
-    @BindView(R.id.etTag)       protected EditText etTag;
-    @BindView(R.id.tvTags)      protected TextView tvTags;
-    @BindView(R.id.bAddTag)     protected Button bAddTag;
+    @BindView(R.id.etTag)        protected EditText etTag;
+    @BindView(R.id.tvTags)       protected TextView tvTags;
+    @BindView(R.id.bAddTag)      protected Button bAddTag;
+
+    @BindView(R.id.moodSelector) protected Mood.SelectorLayout moodSelector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,7 @@ public class JournalComposeActivity extends AppCompatActivity {
                 ParseGeoPoint location = new ParseGeoPoint();
                 location.setLatitude(lat);
                 location.setLongitude(lon);
+                Mood.Status mood = moodSelector.getSelectedItem();
                 // TODO: Handle media
                 // TODO: Handle tags
 
@@ -88,7 +92,8 @@ public class JournalComposeActivity extends AppCompatActivity {
                             .setAuthor(user)
                             .setBody(body)
 //                            .setGroup(null) // FIXME: How to explicitly set this to none without crashing?
-                            .setLocation(location);
+                            .setLocation(location)
+                            .setMood(mood);
 
                     getIntent().putExtra(KEY_COMPOSED_POST, post);
                     setResult(RESULT_OK, getIntent());

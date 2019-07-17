@@ -1,6 +1,7 @@
 package com.example.mova.model;
 
 
+import com.example.mova.Mood;
 import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -19,6 +20,7 @@ public class Post extends ParseObject{
     public static final String KEY_COMMENTS = "comments";
     public static final String KEY_LOCATION = "location";
     public static final String KEY_BODY = "body";
+    public static final String KEY_MOOD = "mood";
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);
@@ -56,9 +58,15 @@ public class Post extends ParseObject{
         return this;
     }
 
-//    public Date getCreatedAt() {
-//        return getDate(KEY_CREATED_AT);
-//    }
+    public Mood.Status getMood() {
+        String moodValue = getString(KEY_MOOD);
+        return Mood.Status.valueOf(moodValue);
+    }
+
+    public Post setMood(Mood.Status mood) {
+        put(KEY_MOOD, mood.toString());
+        return this;
+    }
 
     public String getBody() {
         return getString(KEY_BODY);
