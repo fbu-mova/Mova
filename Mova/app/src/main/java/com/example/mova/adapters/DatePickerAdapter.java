@@ -78,7 +78,7 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.Vi
         }
     }
 
-    public abstract class OnItemClickListener {
-        abstract void onClick(View v, Date date, int position);
+    public static abstract class OnItemClickListener {
+        public abstract void onClick(View v, Date date, int position);
     }
 }

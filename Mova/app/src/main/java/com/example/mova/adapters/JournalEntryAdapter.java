@@ -52,6 +52,11 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         return entries.size();
     }
 
+    public void changeSource(List<Post> newEntriesSource) {
+        this.entries = newEntriesSource;
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.tvTime)     public TextView tvTime;

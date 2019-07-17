@@ -19,10 +19,17 @@ import android.widget.Toast;
 
 import com.example.mova.R;
 import com.example.mova.activities.JournalComposeActivity;
+import com.example.mova.adapters.DatePickerAdapter;
+import com.example.mova.adapters.JournalEntryAdapter;
 import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,16 +43,14 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class JournalFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private DatePickerAdapter dateAdapter;
+    private JournalEntryAdapter entryAdapter;
+
+    private List<Date> dates;
+    private HashMap<Date, List<Post>> entries;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
     @BindView(R.id.rvDates)    protected RecyclerView rvDates;
@@ -60,16 +65,13 @@ public class JournalFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment JournalFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static JournalFragment newInstance(String param1, String param2) {
+    public static JournalFragment newInstance() {
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        // TODO: Add any arguments if found to be necessary
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,8 +80,7 @@ public class JournalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            // TODO: Set any arguments chosen
         }
     }
 
@@ -95,21 +96,27 @@ public class JournalFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        dates = new ArrayList<>();
+        entries = new HashMap<>();
+
+        // On date click, display only the entries for that date
+        dateAdapter = new DatePickerAdapter(getActivity(), dates, new DatePickerAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(View v, Date date, int position) {
+                displayEntries(date);
+            }
+        });
+
+        // On fab click, open compose activity
         fabCompose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
                 startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
-                // FIXME: Should/will this activity be started on the fragment, or on the activity?
             }
         });
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        loadEntries();
     }
 
     @Override
@@ -133,7 +140,8 @@ public class JournalFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE) {
+        if (requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE
+                && resultCode == Activity.RESULT_OK) {
             Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
             Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
             journalEntry.saveInBackground(new SaveCallback() {
@@ -143,6 +151,26 @@ public class JournalFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void displayEntries(Date date) {
+        List<Post> entriesFromDate = entries.get(date);
+        if (entriesFromDate == null) entriesFromDate = new ArrayList<Post>();
+        entryAdapter.changeSource(entriesFromDate);
+    }
+
+    private void loadEntries() {
+        /* TODO:
+         * - Fetch all entries
+         * - For each entry...
+         *   - Try adding it to the list for its date in the hashmap
+         *   - If no list exists yet, create one first
+         * - Display all dates
+         *   - If there are no dates yet, display today unconditionally
+         *     - Likely add this into the data structures, too, so that today simply exists
+         * - Display all entries for the today
+         *   - If there are no entries for a given day, display an empty indicator
+         */
     }
 
     /**
