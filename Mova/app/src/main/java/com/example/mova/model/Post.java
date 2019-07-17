@@ -1,11 +1,13 @@
 package com.example.mova.model;
 
 
+import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
-
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 
 import java.util.Date;
 import java.util.List;
@@ -19,6 +21,9 @@ public class Post extends ParseObject{
     public static final String KEY_COMMENTS = "comments";
     public static final String KEY_LOCATION = "location";
     public static final String KEY_BODY = "body";
+    public static final String KEY_IMAGE = "embeddedImage";
+    public static final String KEY_TAGS = "tags";
+    RelationFrame relationFrame = new RelationFrame();
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);
@@ -29,11 +34,11 @@ public class Post extends ParseObject{
         return this;
     }
 
-    public ParseUser getAuthor(){
-        return getParseUser(KEY_AUTHOR);
+    public User getAuthor(){
+        return (User) getParseUser(KEY_AUTHOR);
     }
 
-    public Post setAuthor(ParseUser user){
+    public Post setAuthor(User user){
         put(KEY_AUTHOR, user);
         return this;
     }
@@ -69,26 +74,59 @@ public class Post extends ParseObject{
         return this;
     }
 
-    public List<Comment> getComments(){
-        return (List<Comment>) (Object) getList(KEY_COMMENTS);
+    public ParseFile getImage(){
+        return getParseFile(KEY_IMAGE);
     }
 
-    public void addComment(Comment comment){
-        List<Comment> comments = getComments();
-        comments.add(comment);
-        this.put(KEY_COMMENTS, comments);
+    public Post setImage(ParseFile file){
+        put(KEY_IMAGE, file);
+        return this;
     }
 
-    public void removeComment(Comment comment){
-        int position = 0;
-        List<Comment> comments = getComments();
-        for(int i = 0; i < getComments().size(); i++){
-            if(comment.getObjectId().equals(comments.get(i).getObjectId())){
-                position = i;
-            }
-        }
-        comments.remove(position);
-        this.put(KEY_COMMENTS, comments);
+    //Comments
+    public ParseRelation<Comment> getRelationComments(){
+        //Get the relation of comments
+        return getRelation(KEY_COMMENTS);
+    }
+
+    public ParseQuery<Comment> getQueryComments(){
+        //Get the parsequery for comments
+        return relationFrame.getQuery(KEY_COMMENTS);
+    }
+
+    public List<Comment> getListComments(){
+        return relationFrame.getList(KEY_COMMENTS);
+    }
+
+    public Post addComment(Comment comment){
+        return (Post) relationFrame.add(KEY_COMMENTS, comment);
+    }
+
+    public Post removeComment(Comment comment){
+        return (Post) relationFrame.remove(KEY_COMMENTS,comment);
+    }
+
+    //Tags
+    public ParseRelation<Tag> getRelationTags(){
+        //Get the relation of tags
+        return getRelation(KEY_TAGS);
+    }
+
+    public ParseQuery<Tag> getQueryTags(){
+        //Get the parsequery for tags
+        return relationFrame.getQuery(KEY_TAGS);
+    }
+
+    public List<Tag> getListTags(){
+        return relationFrame.getList(KEY_TAGS);
+    }
+
+    public Post addTag(Tag tag){
+        return (Post) relationFrame.add(KEY_TAGS, tag);
+    }
+
+    public Post removeTag(Tag tag){
+        return (Post) relationFrame.remove(KEY_TAGS,tag);
     }
 
 }
