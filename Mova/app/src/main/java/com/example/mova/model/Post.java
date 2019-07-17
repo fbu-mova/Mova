@@ -24,48 +24,49 @@ public class Post extends ParseObject{
         return getBoolean(KEY_IS_PERSONAL);
     }
 
-    public void setIsPersonal(Boolean bool){
-        put(KEY_IS_PERSONAL,bool);
+    public Post setIsPersonal(Boolean bool){
+        put(KEY_IS_PERSONAL, bool);
+        return this;
     }
 
     public ParseUser getAuthor(){
         return getParseUser(KEY_AUTHOR);
     }
 
-    public void setAuthor(ParseUser user){
+    public Post setAuthor(ParseUser user){
         put(KEY_AUTHOR, user);
+        return this;
     }
 
     public Group getGroup(){
         return (Group) getParseObject(KEY_GROUP);
     }
 
-    public void setGroup(Group group){
+    public Post setGroup(Group group){
         put(KEY_GROUP, group);
+        return this;
     }
 
     public ParseGeoPoint getLocation(){
         return getParseGeoPoint(KEY_LOCATION);
     }
 
-    public void setLocation(ParseGeoPoint geoPoint){
+    public Post setLocation(ParseGeoPoint geoPoint){
         put(KEY_LOCATION, geoPoint);
+        return this;
     }
 
     public Date getCreatedAt() {
         return getDate(KEY_CREATED_AT);
     }
 
-    public void setCreatedAt(Date date) {
-        put(KEY_CREATED_AT, date);
-    }
-
     public String getBody() {
         return getString(KEY_BODY);
     }
 
-    public void setBody(String body) {
+    public Post setBody(String body) {
         put(KEY_BODY, body);
+        return this;
     }
 
     public List<Comment> getComments(){
