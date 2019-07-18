@@ -1,6 +1,7 @@
 package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -18,7 +19,10 @@ public class User extends ParseUser {
     public static final String KEY_GROUPS_IN = "groupsIn";
     public static final String KEY_SCRAPBOOK = "scrapbook";
     public static final String KEY_PROFILE_PIC = "profilePic";
-    RelationFrame relationFrame = new RelationFrame(this);
+    protected RelationFrame<User> relFriend = new RelationFrame<>(this);
+    protected RelationFrame<Post> relJournal = new RelationFrame<>(this);
+    protected RelationFrame<Group> relGroups = new RelationFrame<>(this);
+    protected RelationFrame<Post> relScrapbook = new RelationFrame<>(this);
 
     //Email verification
 
@@ -49,19 +53,19 @@ public class User extends ParseUser {
     }
 
     public ParseQuery<User> getQueryFriend(){
-        return relationFrame.getQuery(KEY_FRIENDS);
+        return relFriend.getQuery(KEY_FRIENDS);
     }
 
-    public List<User> getListFriends(){
-        return relationFrame.getList(KEY_FRIENDS);
+    public void getListFriends(AsyncUtils.ListCallback<User> callback) {
+        relFriend.getList(KEY_FRIENDS, callback);
     }
 
-    public User addFriend(User friend){
-        return (User) relationFrame.add(KEY_FRIENDS, friend);
+    public void addFriend(User friend, AsyncUtils.ItemCallback<User> callback) {
+        relFriend.add(KEY_FRIENDS, friend, callback);
     }
 
-    public User removeFriend(User friend){
-        return (User) relationFrame.remove(KEY_FRIENDS, friend);
+    public User removeFriend(User friend, AsyncUtils.EmptyCallback callback) {
+        return relFriend.remove(KEY_FRIENDS, friend, callback);
     }
 
     //Journal
@@ -71,20 +75,19 @@ public class User extends ParseUser {
     }
 
     public ParseQuery<Post> getQueryJournal(){
-        return relationFrame.getQuery(KEY_JOURNAL);
+        return relJournal.getQuery(KEY_JOURNAL);
     }
 
-    public List<Post> getListJournal(){
-        return relationFrame.getList(KEY_JOURNAL);
+    public void getListJournal(AsyncUtils.ListCallback<Post> callback) {
+        relJournal.getList(KEY_JOURNAL, callback);
     }
 
-
-    public User addJournalPost(Post journalPost){
-        return (User) relationFrame.add(KEY_JOURNAL, journalPost);
+    public void addJournalPost(Post journalPost, AsyncUtils.ItemCallback<Post> callback) {
+        relJournal.add(KEY_JOURNAL, journalPost, callback);
     }
 
-    public User removeJournalPost(Post journalPost){
-        return (User) relationFrame.remove(KEY_JOURNAL, journalPost);
+    public Post removeJournalPost(Post journalPost, AsyncUtils.EmptyCallback callback) {
+        return relJournal.remove(KEY_JOURNAL, journalPost, callback);
     }
 
     //groups in
@@ -94,19 +97,19 @@ public class User extends ParseUser {
     }
 
     public ParseQuery<Group> getQueryGroupsIn(){
-        return relationFrame.getQuery(KEY_GROUPS_IN);
+        return relGroups.getQuery(KEY_GROUPS_IN);
     }
 
-    public List<Group> getListGroupsIn(){
-        return relationFrame.getList(KEY_GROUPS_IN);
+    public void getListGroupsIn(AsyncUtils.ListCallback<Group> callback) {
+        relGroups.getList(KEY_GROUPS_IN, callback);
     }
 
-    public User joinGroup(Group group){
-        return (User) relationFrame.add(KEY_GROUPS_IN,group);
+    public void joinGroup(Group group, AsyncUtils.ItemCallback<Group> callback) {
+        relGroups.add(KEY_GROUPS_IN,group, callback);
     }
 
-    public User leaveGroup(Group group){
-        return (User) relationFrame.remove(KEY_GROUPS_IN,group);
+    public Group leaveGroup(Group group, AsyncUtils.EmptyCallback callback) {
+        return relGroups.remove(KEY_GROUPS_IN, group, callback);
     }
 
     //Scrapbook
@@ -116,19 +119,18 @@ public class User extends ParseUser {
     }
 
     public ParseQuery<Post> getQueryScrapbook(){
-        return relationFrame.getQuery(KEY_SCRAPBOOK);
+        return relScrapbook.getQuery(KEY_SCRAPBOOK);
     }
 
-    public List<Post> getListScrapbook(){
-        return relationFrame.getList(KEY_SCRAPBOOK);
+    public void getListScrapbook(AsyncUtils.ListCallback<Post> callback) {
+        relScrapbook.getList(KEY_SCRAPBOOK, callback);
     }
 
-
-    public User addScrapbookPost(Post scrapbookPost){
-        return (User) relationFrame.add(KEY_SCRAPBOOK, scrapbookPost);
+    public void addScrapbookPost(Post scrapbookPost, AsyncUtils.ItemCallback<Post> callback) {
+        relScrapbook.add(KEY_SCRAPBOOK, scrapbookPost, callback);
     }
 
-    public User removeScrapbookPost(Post scrapbookPost){
-        return (User) relationFrame.remove(KEY_SCRAPBOOK, scrapbookPost);
+    public Post removeScrapbookPost(Post scrapbookPost, AsyncUtils.EmptyCallback callback) {
+        return relScrapbook.remove(KEY_SCRAPBOOK, scrapbookPost, callback);
     }
 }

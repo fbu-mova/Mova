@@ -1,6 +1,7 @@
 package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -20,7 +21,7 @@ public class Event extends ParseObject {
     public static final String KEY_TITLE = "title";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_EVENT_PIC = "eventPic";
-    RelationFrame relationFrame = new RelationFrame(this);
+    RelationFrame<Tag> relTags = new RelationFrame<>(this);
     //Date
 
     public Date getDate(){
@@ -85,18 +86,18 @@ public class Event extends ParseObject {
 
     public ParseQuery<Tag> getQueryTags(){
         //Get the parsequery for tags
-        return relationFrame.getQuery(KEY_TAGS);
+        return relTags.getQuery(KEY_TAGS);
     }
 
-    public List<Tag> getListTags(){
-        return relationFrame.getList(KEY_TAGS);
+    public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
+        relTags.getList(KEY_TAGS, callback);
     }
 
-    public Event addTag(Tag tag){
-        return (Event) relationFrame.add(KEY_TAGS, tag);
+    public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
+        relTags.add(KEY_TAGS, tag, callback);
     }
 
-    public Event removeTag(Tag tag){
-        return (Event) relationFrame.remove(KEY_TAGS,tag);
+    public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
+        return relTags.remove(KEY_TAGS,tag, callback);
     }
 }

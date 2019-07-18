@@ -1,5 +1,6 @@
 package com.example.mova.model;
 
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -46,7 +47,7 @@ public class Comment extends ParseObject {
 
     public Comment setParentPost(Post post){
         put(KEY_PARENT_POST, post);
-        post.addComment(this);
+        post.addComment(this, (comment) -> {});
         post.saveInBackground();
         return this;
     }

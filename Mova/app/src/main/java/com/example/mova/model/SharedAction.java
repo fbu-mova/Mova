@@ -1,6 +1,7 @@
 package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -15,7 +16,7 @@ public class SharedAction extends ParseObject {
     public static final String KEY_GOAL = "goal";
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_USERS_DONE = "usersDone";
-    RelationFrame relationFrame = new RelationFrame(this);
+    RelationFrame<User> relUsersInvolved = new RelationFrame<>(this);
 
     //Task
     public String getTask(){
@@ -37,26 +38,26 @@ public class SharedAction extends ParseObject {
         return this;
     }
 
-    //Users Invovled
+    //Users Involved
 
     public ParseRelation<User> getRelationUsersInvovled(){
         return getRelation(KEY_USERS_INVOLVED);
     }
 
     public ParseQuery<User> getQueryUsersInvovled(){
-        return relationFrame.getQuery(KEY_USERS_INVOLVED);
+        return relUsersInvolved.getQuery(KEY_USERS_INVOLVED);
     }
 
-    public List<User> getListUsersInvovled(){
-        return relationFrame.getList(KEY_USERS_INVOLVED);
+    public void getListUsersInvolved(AsyncUtils.ListCallback<User> callback) {
+        relUsersInvolved.getList(KEY_USERS_INVOLVED, callback);
     }
 
-    public SharedAction addUserInvovled(User user){
-        return (SharedAction) relationFrame.add(KEY_USERS_INVOLVED, user);
+    public void addUserInvolved(User user, AsyncUtils.ItemCallback<User> callback) {
+        relUsersInvolved.add(KEY_USERS_INVOLVED, user, callback);
     }
 
-    public SharedAction removeUserInvovled(User user){
-        return (SharedAction) relationFrame.remove(KEY_USERS_INVOLVED, user);
+    public User removeUserInvolved(User user, AsyncUtils.EmptyCallback callback) {
+        return relUsersInvolved.remove(KEY_USERS_INVOLVED, user, callback);
     }
 
     //Users done

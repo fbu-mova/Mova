@@ -1,6 +1,7 @@
 package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -22,7 +23,12 @@ public class Group extends ParseObject {
     public static final String KEY_ADMIN = "admin";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_GROUP_PIC = "groupPic";
-    RelationFrame relationFrame = new RelationFrame(this);
+    RelationFrame<Goal> relGoals = new RelationFrame<>(this);
+    RelationFrame<User> relUsers = new RelationFrame<>(this);
+    RelationFrame<Post> relPosts = new RelationFrame<>(this);
+    RelationFrame<Event> relEvents = new RelationFrame<>(this);
+    RelationFrame<User> relAdmins = new RelationFrame<>(this);
+    RelationFrame<Tag> relTags = new RelationFrame<>(this);
 
     //Group Pic
     public ParseFile getGroupPic(){
@@ -68,19 +74,19 @@ public class Group extends ParseObject {
 
     public ParseQuery<Goal> getQueryGoals(){
         //Get the parsequery for comments
-        return relationFrame.getQuery(KEY_GOALS);
+        return relGoals.getQuery(KEY_GOALS);
     }
 
-    public List<Goal> getListGoals(){
-        return relationFrame.getList(KEY_GOALS);
+    public void getListGoals(AsyncUtils.ListCallback<Goal> callback) {
+        relGoals.getList(KEY_GOALS, callback);
     }
 
-    public Group addGoal(Goal goal){
-        return (Group) relationFrame.add(KEY_GOALS,goal);
+    public void addGoal(Goal goal, AsyncUtils.ItemCallback<Goal> callback) {
+        relGoals.add(KEY_GOALS,goal, callback);
     }
 
-    public Group removeGoal(Goal goal){
-        return (Group) relationFrame.remove(KEY_GOALS, goal);
+    public Goal removeGoal(Goal goal, AsyncUtils.EmptyCallback callback) {
+        return relGoals.remove(KEY_GOALS, goal, callback);
     }
 
     //Users
@@ -90,19 +96,19 @@ public class Group extends ParseObject {
     }
 
     public ParseQuery<User> getQueryUser(){
-        return relationFrame.getQuery(KEY_USERS);
+        return relUsers.getQuery(KEY_USERS);
     }
 
-    public List<User> getListUsers(){
-        return relationFrame.getList(KEY_USERS);
+    public void getListUsers(AsyncUtils.ListCallback<User> callback) {
+        relUsers.getList(KEY_USERS, callback);
     }
 
-    public Group addUser(User user){
-        return (Group) relationFrame.add(KEY_USERS, user);
+    public void addUser(User user, AsyncUtils.ItemCallback<User> callback) {
+        relUsers.add(KEY_USERS, user, callback);
     }
 
-    public Group removeUser(User user){
-        return (Group) relationFrame.remove(KEY_USERS, user);
+    public User removeUser(User user, AsyncUtils.EmptyCallback callback) {
+        return relUsers.remove(KEY_USERS, user, callback);
     }
 
     //Posts
@@ -112,20 +118,19 @@ public class Group extends ParseObject {
     }
 
     public ParseQuery<Post> getQueryPost(){
-        return relationFrame.getQuery(KEY_POSTS);
+        return relPosts.getQuery(KEY_POSTS);
     }
 
-    public List<Post> getListPosts(){
-        return relationFrame.getList(KEY_POSTS);
+    public void getListPost(AsyncUtils.ListCallback<Post> callback) {
+        relPosts.getList(KEY_POSTS, callback);
     }
 
-
-    public Group addPost(Post post){
-        return (Group) relationFrame.add(KEY_POSTS, post);
+    public void addPost(Post post, AsyncUtils.ItemCallback<Post> callback) {
+        relPosts.add(KEY_POSTS, post, callback);
     }
 
-    public Group removePost(Post post){
-        return (Group) relationFrame.remove(KEY_POSTS, post);
+    public Post removePost(Post post, AsyncUtils.EmptyCallback callback) {
+        return relPosts.remove(KEY_POSTS, post, callback);
     }
 
     //Events
@@ -135,19 +140,19 @@ public class Group extends ParseObject {
     }
 
     public ParseQuery<Event> getQueryEvent(){
-        return relationFrame.getQuery(KEY_EVENTS);
+        return relEvents.getQuery(KEY_EVENTS);
     }
 
-    public List<Event> getListEvent(){
-        return relationFrame.getList(KEY_EVENTS);
+    public void getListEvents(AsyncUtils.ListCallback<Event> callback) {
+        relEvents.getList(KEY_EVENTS, callback);
     }
 
-    public Group addEvents(Event event){
-        return (Group) relationFrame.add(KEY_EVENTS,event);
+    public void addEvent(Event event, AsyncUtils.ItemCallback<Event> callback) {
+        relEvents.add(KEY_EVENTS,event, callback);
     }
 
-    public Group removeEvents(Event event){
-        return (Group) relationFrame.remove(KEY_EVENTS,event);
+    public Event removeEvent(Event event, AsyncUtils.EmptyCallback callback) {
+        return relEvents.remove(KEY_EVENTS,event, callback);
     }
 
     //Admins
@@ -157,19 +162,19 @@ public class Group extends ParseObject {
     }
 
     public ParseQuery<User> getQueryAdmin(){
-        return relationFrame.getQuery(KEY_ADMIN);
+        return relAdmins.getQuery(KEY_ADMIN);
     }
 
-    public List<User> getListAdmin(){
-        return relationFrame.getList(KEY_ADMIN);
+    public void getListAdmins(AsyncUtils.ListCallback<User> callback) {
+        relAdmins.getList(KEY_ADMIN, callback);
     }
 
-    public Group addAdmin(User admin){
-        return (Group) relationFrame.add(KEY_ADMIN, admin);
+    public void addAdmin(User admin, AsyncUtils.ItemCallback<User> callback) {
+        relAdmins.add(KEY_ADMIN, admin, callback);
     }
 
-    public Group removeAdmin(User admin){
-        return (Group) relationFrame.remove(KEY_ADMIN, admin);
+    public User removeAdmin(User admin, AsyncUtils.EmptyCallback callback) {
+        return relAdmins.remove(KEY_ADMIN, admin, callback);
     }
 
     //Tags
@@ -181,18 +186,18 @@ public class Group extends ParseObject {
 
     public ParseQuery<Tag> getQueryTags(){
         //Get the parsequery for tags
-        return relationFrame.getQuery(KEY_TAGS);
+        return relTags.getQuery(KEY_TAGS);
     }
 
-    public List<Tag> getListTags(){
-        return relationFrame.getList(KEY_TAGS);
+    public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
+        relTags.getList(KEY_TAGS, callback);
     }
 
-    public Group addTag(Tag tag){
-        return (Group) relationFrame.add(KEY_TAGS, tag);
+    public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
+        relTags.add(KEY_TAGS, tag, callback);
     }
 
-    public Group removeTag(Tag tag){
-        return (Group) relationFrame.remove(KEY_TAGS,tag);
+    public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
+        return relTags.remove(KEY_TAGS,tag, callback);
     }
 }

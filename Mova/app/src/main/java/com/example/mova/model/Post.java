@@ -3,6 +3,7 @@ package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
 import com.example.mova.Mood;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -25,7 +26,8 @@ public class Post extends ParseObject{
     public static final String KEY_MOOD = "mood";
     public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_TAGS = "tags";
-    RelationFrame relationFrame = new RelationFrame(this);
+    RelationFrame<Comment> relComments = new RelationFrame<>(this);
+    RelationFrame<Tag> relTags = new RelationFrame<>(this);
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);
@@ -99,19 +101,19 @@ public class Post extends ParseObject{
 
     public ParseQuery<Comment> getQueryComments(){
         //Get the parsequery for comments
-        return relationFrame.getQuery(KEY_COMMENTS);
+        return relComments.getQuery(KEY_COMMENTS);
     }
 
-    public List<Comment> getListComments(){
-        return relationFrame.getList(KEY_COMMENTS);
+    public void getListComments(AsyncUtils.ListCallback<Comment> callback) {
+        relComments.getList(KEY_COMMENTS, callback);
     }
 
-    public Post addComment(Comment comment){
-        return (Post) relationFrame.add(KEY_COMMENTS, comment);
+    public void addComment(Comment comment, AsyncUtils.ItemCallback<Comment> callback) {
+        relComments.add(KEY_COMMENTS, comment, callback);
     }
 
-    public Post removeComment(Comment comment){
-        return (Post) relationFrame.remove(KEY_COMMENTS,comment);
+    public Comment removeComment(Comment comment, AsyncUtils.EmptyCallback callback) {
+        return relComments.remove(KEY_COMMENTS,comment, callback);
     }
 
     //Tags
@@ -122,19 +124,19 @@ public class Post extends ParseObject{
 
     public ParseQuery<Tag> getQueryTags(){
         //Get the parsequery for tags
-        return relationFrame.getQuery(KEY_TAGS);
+        return relTags.getQuery(KEY_TAGS);
     }
 
-    public List<Tag> getListTags(){
-        return relationFrame.getList(KEY_TAGS);
+    public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
+        relTags.getList(KEY_TAGS, callback);
     }
 
-    public Post addTag(Tag tag){
-        return (Post) relationFrame.add(KEY_TAGS, tag);
+    public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
+        relTags.add(KEY_TAGS, tag, callback);
     }
 
-    public Post removeTag(Tag tag){
-        return (Post) relationFrame.remove(KEY_TAGS,tag);
+    public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
+        return relTags.remove(KEY_TAGS,tag, callback);
     }
 
 }
