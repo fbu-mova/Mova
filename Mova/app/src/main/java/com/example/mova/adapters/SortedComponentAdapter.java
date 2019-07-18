@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.SortedList;
 import com.example.mova.components.Component;
 
 import java.util.HashMap;
-import java.util.List;
 
+/**
+ * Adapts items to a sorted list of components, which are then displayed.
+ * @param <T> The type of item to use for each component.
+ */
 public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Component<T>.ViewHolder> {
     private Activity activity;
     private SortedList<T> items;
@@ -22,6 +25,11 @@ public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Com
         this.items = items;
     }
 
+    /**
+     * Serves as a factory for the type of component that should be used.
+     * @param item The item to use as data for the component.
+     * @return The component to display.
+     */
     public abstract Component<T> makeComponent(T item);
 
     @Override

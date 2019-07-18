@@ -11,6 +11,10 @@ import com.example.mova.components.Component;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Adapts items to a list of components, which are then displayed.
+ * @param <T> The type of item to use for each component.
+ */
 public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component<T>.ViewHolder> {
     private Activity activity;
     private List<T> items;
