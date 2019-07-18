@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.model.User;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.adapters.DatePickerAdapter;
 import com.example.mova.adapters.JournalEntryAdapter;
 import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -195,21 +201,32 @@ public class JournalFragment extends Fragment {
                 && resultCode == Activity.RESULT_OK) {
             Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
             Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
-            journalEntry.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
-                    Date today = TimeUtils.getToday();
-                    List<Post> todayEntries = getEntries(today);
-                    todayEntries.add(journalEntry);
-                    if (currDate.equals(today)) {
-                        entryAdapter.notifyItemInserted(todayEntries.size() - 1);
-                    }
+            journalEntry.saveInBackground((e) -> {
+                if (e != null) {
+                    Log.e("JournalFragment", "Failed to save entry", e);
+                    Toast.makeText(getActivity(), "Failed to save entry", Toast.LENGTH_LONG).show();
+                } else {
+                    ((User) ParseUser.getCurrentUser()).addJournalPost(journalEntry, (entry) -> {
+                        Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
+                        Date today = TimeUtils.getToday();
+                        List<Post> todayEntries = getEntries(today);
+                        todayEntries.add(journalEntry);
+                        if (currDate.equals(today)) {
+                            entryAdapter.notifyItemInserted(todayEntries.size() - 1);
+                        }
+                    });
                 }
             });
         }
     }
 
+    /**
+     * Gets the list of entries for a specific date from the hashmap.
+     * If no list has been defined for that date, creates and puts an empty list at that date.
+     * If no date has been stored that matches that date, creates and adds that date to the list of dates.
+     * @param date
+     * @return
+     */
     private List<Post> getEntries(Date date) {
         List<Post> entriesFromDate = entries.get(date);
         if (entriesFromDate == null) entriesFromDate = new ArrayList<Post>();
@@ -218,24 +235,34 @@ public class JournalFragment extends Fragment {
         return entriesFromDate;
     }
 
+    /**
+     * Adds an entry to the list for a specific date.
+     * If no list yet exists, creates the list first, and handles date creation.
+     * @param date
+     * @param entry
+     */
+    private void addEntry(Date date, Post entry) {
+        List<Post> entries = getEntries(date);
+        entries.add(entry);
+    }
+
     private void displayEntries(Date date) {
+        // TODO: Possibly add indicator of date being selected in date picker
         tvDate.setText(TimeUtils.toDateString(date));
         List<Post> entriesFromDate = getEntries(date);
         entryAdapter.changeSource(entriesFromDate);
     }
 
     private void loadEntries() {
-        /* TODO:
-         * - Fetch all entries
-         * - For each entry...
-         *   - Try adding it to the list for its date in the hashmap
-         *   - If no list exists yet, create one first
-         * - Display all dates
-         *   - If there are no dates yet, display today unconditionally
-         *     - Likely add this into the data structures, too, so that today simply exists
-         * - Display all entries for the today
-         *   - If there are no entries for a given day, display an empty indicator
-         */
+        User user = (User) ParseUser.getCurrentUser();
+        ParseQuery<Post> journalQuery = user.getQueryJournal();
+        journalQuery.findInBackground((List<Post> list, ParseException e) -> {
+            for (Post entry : list) {
+                Date date = entry.getCreatedAt();
+                addEntry(date, entry);
+            }
+            displayEntries(currDate);
+        });
     }
 
     /**
