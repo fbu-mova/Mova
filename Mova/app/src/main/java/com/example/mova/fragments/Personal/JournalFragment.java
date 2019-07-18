@@ -112,7 +112,8 @@ public class JournalFragment extends Fragment {
         dates = new SortedList<>(Date.class, new SortedList.Callback<Date>() {
             @Override
             public int compare(Date o1, Date o2) {
-                return o1.compareTo(o2);
+                // Reverse order of list
+                return o2.compareTo(o1);
             }
 
             @Override
@@ -259,6 +260,7 @@ public class JournalFragment extends Fragment {
         journalQuery.findInBackground((List<Post> list, ParseException e) -> {
             for (Post entry : list) {
                 Date date = entry.getCreatedAt();
+                date = TimeUtils.normalizeToDay(date);
                 addEntry(date, entry);
             }
             displayEntries(currDate);

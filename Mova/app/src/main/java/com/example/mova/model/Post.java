@@ -67,7 +67,7 @@ public class Post extends ParseObject{
 
     public Mood.Status getMood() {
         String moodValue = getString(KEY_MOOD);
-        return Mood.Status.valueOf(moodValue);
+        return (moodValue == null) ? null : Mood.Status.valueOf(moodValue);
     }
 
     public Post setMood(Mood.Status mood) {
