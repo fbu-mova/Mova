@@ -21,6 +21,11 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
         this.items = items;
     }
 
+    /**
+     * Serves as a factory for the type of component that should be used.
+     * @param item The item to use as data for the component.
+     * @return The component to display.
+     */
     public abstract Component<T> makeComponent(T item);
 
     @Override
