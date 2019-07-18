@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.utils;
 
 import android.content.Context;
 import android.location.Address;

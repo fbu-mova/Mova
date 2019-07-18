@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.example.mova.Mood;
 import com.example.mova.R;
-import com.example.mova.TimeUtils;
+import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.parse.ParseGeoPoint;

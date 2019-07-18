@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
-import com.example.mova.TimeUtils;
+import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.adapters.DatePickerAdapter;
 import com.example.mova.adapters.JournalEntryAdapter;
@@ -30,14 +30,9 @@ import com.parse.ParseException;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

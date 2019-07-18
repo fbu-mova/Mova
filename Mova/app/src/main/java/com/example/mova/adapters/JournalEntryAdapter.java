@@ -11,10 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mova.LocationUtils;
+import com.example.mova.utils.LocationUtils;
 import com.example.mova.Mood;
 import com.example.mova.R;
-import com.example.mova.TimeUtils;
+import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 
 import java.util.List;
