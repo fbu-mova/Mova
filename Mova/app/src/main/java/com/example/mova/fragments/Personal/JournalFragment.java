@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
@@ -78,7 +79,7 @@ public class JournalFragment extends Fragment {
      *
      * @return A new instance of fragment JournalFragment.
      */
-    // TODO: Rename and change types and number of parameters
+    // TODO: Rename and change types and count of parameters
     public static JournalFragment newInstance() {
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
@@ -201,6 +202,14 @@ public class JournalFragment extends Fragment {
         if (requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE
                 && resultCode == Activity.RESULT_OK) {
             Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
+            ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
+            postJournalEntry(journalEntry, tags);
+        }
+    }
+
+    private void postJournalEntry(Post journalEntry, List<Tag> tags) {
+        // Save all tags if they don't yet exist
+        Tag.saveTags(tags, () -> {
             Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
             journalEntry.saveInBackground((e) -> {
                 if (e != null) {
@@ -218,7 +227,7 @@ public class JournalFragment extends Fragment {
                     });
                 }
             });
-        }
+        });
     }
 
     /**

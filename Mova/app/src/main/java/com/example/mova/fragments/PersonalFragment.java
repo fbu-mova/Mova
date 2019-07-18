@@ -59,7 +59,7 @@ public class PersonalFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment PersonalFragment.
      */
-    // TODO: Rename and change types and number of parameters
+    // TODO: Rename and change types and count of parameters
     public static PersonalFragment newInstance(String param1, String param2) {
         PersonalFragment fragment = new PersonalFragment();
         Bundle args = new Bundle();
