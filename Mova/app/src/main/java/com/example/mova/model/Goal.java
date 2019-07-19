@@ -6,15 +6,18 @@ import com.parse.ParseObject;
 @ParseClassName("Goal")
 public class Goal extends ParseObject {
 
-    public static final String KEY_AUTHOR = "author";
-    public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_TITLE = "title";
+    public static final String KEY_AUTHOR = "author";
+    public static final String KEY_COLOR = "color";
+    public static final String KEY_IMAGE = "image";
+    public static final String KEY_USERS_INVOLVED = "usersInvolved";
+
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_ACTIONS = "actions";
     public static final String KEY_TAGS = "tags";
-    public static final String KEY_COLOR = "color";
+
     public final RelationFrame<User> relUsersInvolved = new RelationFrame<>(this, KEY_USERS_INVOLVED);
-    public final RelationFrame<SharedAction> relActions = new RelationFrame<>(this, KEY_ACTIONS);
+    public final RelationFrame<Action> relActions = new RelationFrame<>(this, KEY_ACTIONS);
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
     ;
 
