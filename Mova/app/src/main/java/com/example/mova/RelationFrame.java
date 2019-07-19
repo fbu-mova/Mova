@@ -2,17 +2,15 @@ package com.example.mova;
 
 import android.util.Log;
 
-import com.parse.FindCallback;
-import com.parse.Parse;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class RelationFrame {
+public class RelationFrame<T extends ParseObject> {
 
     private ParseObject parseObject;
 
@@ -20,38 +18,44 @@ public class RelationFrame {
         this.parseObject = parseObject;
     }
 
-    public ParseQuery getQuery(String key){
-        return parseObject.getRelation(key).getQuery();
+    public ParseQuery<T> getQuery(String key) {
+        ParseRelation<T> rel = parseObject.getRelation(key);
+        return rel.getQuery();
     }
 
-    public List getList(String key){
-        ParseQuery query = getQuery(key);
-        List list = new ArrayList<>();
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if(e != null){
-                    Log.e("Group", "error retriving user list");
-                }
-                list.addAll(objects);
+    public void getList(String key, AsyncUtils.ListCallback<T> callback) {
+        ParseQuery<T> query = getQuery(key);
+        query.findInBackground((List<T> objects, ParseException e) -> {
+            if (e != null){
+                Log.e("RelationFrame", "Error retrieving list", e);
+            } else {
+                callback.call(objects);
             }
         });
-        return list;
     }
 
-    public ParseObject add(String key, ParseObject object){
-        ParseRelation relation = parseObject.getRelation(key);
+    public void add(String key, T object, AsyncUtils.ItemCallback<T> callback) {
+        ParseRelation<T> relation = parseObject.getRelation(key);
         relation.add(object);
-        parseObject.put(key, object);
-        parseObject.saveInBackground();
-        return parseObject;
+        parseObject.saveInBackground((ParseException e) -> {
+            if (e != null) {
+                Log.e("RelationFrame", "Error saving object", e);
+            } else {
+                callback.call(object);
+            }
+        });
     }
 
-    public ParseObject remove(String key, ParseObject object){
-        ParseRelation relation = parseObject.getRelation(key);
+    public T remove(String key, T object, AsyncUtils.EmptyCallback callback) {
+        ParseRelation<T> relation = parseObject.getRelation(key);
         relation.remove(object);
-        parseObject.put(key, object);
-        parseObject.saveInBackground();
-        return parseObject;
+        parseObject.deleteInBackground((ParseException e) -> {
+            if (e != null) {
+                Log.e("RelationFrame", "Error deleting object", e);
+            } else {
+                callback.call();
+            }
+        });
+        return object;
     }
 }

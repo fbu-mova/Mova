@@ -8,6 +8,7 @@ import com.example.mova.utils.TimeUtils;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.parse.FindCallback;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -28,7 +29,9 @@ public class Goal extends ParseObject {
     public static final String KEY_ACTIONS = "actions";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_COLOR = "color";
-    RelationFrame relationFrame = new RelationFrame(this);
+    RelationFrame<User> relUsers = new RelationFrame<>(this);
+    RelationFrame<SharedAction> relActions = new RelationFrame<>(this);
+    RelationFrame<Tag> relTags = new RelationFrame<>(this);
     List<SharedAction> saList = new ArrayList<>();
 
     //Author
@@ -74,26 +77,26 @@ public class Goal extends ParseObject {
         return this;
     }
 
-    //Users invovled
+    //Users involved
 
-    public ParseRelation<User> getRelationUsersInvovled(){
+    public ParseRelation<User> getRelationUsersInvolved(){
         return getRelation(KEY_USERS_INVOLVED);
     }
 
-    public ParseQuery<User> getQueryUsersInvovled(){
-        return relationFrame.getQuery(KEY_USERS_INVOLVED);
+    public ParseQuery<User> getQueryUsersInvolved(){
+        return relUsers.getQuery(KEY_USERS_INVOLVED);
     }
 
-    public List<User> getListUsersInvovled(){
-        return relationFrame.getList(KEY_USERS_INVOLVED);
+    public void getListUsersInvolved(AsyncUtils.ListCallback<User> callback) {
+        relUsers.getList(KEY_USERS_INVOLVED, callback);
     }
 
-    public Goal addUserInvovled(User user){
-        return (Goal) relationFrame.add(KEY_USERS_INVOLVED, user);
+    public void addUserInvolved(User user, AsyncUtils.ItemCallback<User> callback) {
+        relUsers.add(KEY_USERS_INVOLVED, user, callback);
     }
 
-    public Goal removeUserInvovled(User user){
-        return (Goal) relationFrame.remove(KEY_USERS_INVOLVED, user);
+    public User removeUserInvolved(User user, AsyncUtils.EmptyCallback callback) {
+        return relUsers.remove(KEY_USERS_INVOLVED, user, callback);
     }
 
     //Actions
@@ -103,19 +106,19 @@ public class Goal extends ParseObject {
     }
 
     public ParseQuery<SharedAction> getQueryAction(){
-        return relationFrame.getQuery(KEY_ACTIONS);
+        return relActions.getQuery(KEY_ACTIONS);
     }
 
-    public List<SharedAction> getListAction(){
-        return relationFrame.getList(KEY_ACTIONS);
+    public void getListActions(AsyncUtils.ListCallback<SharedAction> callback) {
+        relActions.getList(KEY_ACTIONS, callback);
     }
 
-    public Goal addAction(SharedAction action){
-        return (Goal) relationFrame.add(KEY_ACTIONS, action);
+    public void addAction(SharedAction action, AsyncUtils.ItemCallback<SharedAction> callback) {
+        relActions.add(KEY_ACTIONS, action, callback);
     }
 
-    private Goal removeAction(SharedAction action){
-        return (Goal) relationFrame.remove(KEY_ACTIONS, action);
+    public SharedAction removeAction(SharedAction action, AsyncUtils.EmptyCallback callback) {
+        return relActions.remove(KEY_ACTIONS, action, callback);
     }
 
     public void setSharedActionList(AsyncUtils.EmptyCallback callback){
@@ -184,19 +187,19 @@ public class Goal extends ParseObject {
 
     public ParseQuery<Tag> getQueryTags(){
         //Get the parsequery for tags
-        return relationFrame.getQuery(KEY_TAGS);
+        return relTags.getQuery(KEY_TAGS);
     }
 
-    public List<Tag> getListTags(){
-        return relationFrame.getList(KEY_TAGS);
+    public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
+        relTags.getList(KEY_TAGS, callback);
     }
 
-    public Goal addTag(Tag tag){
-        return (Goal) relationFrame.add(KEY_TAGS, tag);
+    public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
+        relTags.add(KEY_TAGS, tag, callback);
     }
 
-    public Goal removeTag(Tag tag){
-        return (Goal) relationFrame.remove(KEY_TAGS,tag);
+    public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
+        return relTags.remove(KEY_TAGS,tag, callback);
     }
 }
 
