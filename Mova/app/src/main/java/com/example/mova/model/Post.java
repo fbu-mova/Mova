@@ -2,38 +2,28 @@ package com.example.mova.model;
 
 
 import com.example.mova.Mood;
-import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 
 @ParseClassName("Post")
 public class Post extends ParseObject{
-    public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_AUTHOR = "author";
     public static final String KEY_GROUP = "group";
     public static final String KEY_IS_PERSONAL = "isPersonal";
-    public static final String KEY_COMMENTS = "comments";
     public static final String KEY_LOCATION = "location";
     public static final String KEY_BODY = "body";
     public static final String KEY_MOOD = "mood";
     public static final String KEY_IMAGE = "embeddedImage";
+
+    //Relations
+    public static final String KEY_COMMENTS = "comments";
     public static final String KEY_TAGS = "tags";
-    RelationFrame<Comment> relComments = new RelationFrame<>(this);
-    RelationFrame<Tag> relTags = new RelationFrame<>(this);
+    public final RelationFrame<Post> relComments = new RelationFrame<>(this,KEY_COMMENTS);
+    public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
 
-    public boolean getIsPersonal(){
-        return getBoolean(KEY_IS_PERSONAL);
-    }
-
-    public Post setIsPersonal(Boolean bool){
-        put(KEY_IS_PERSONAL, bool);
-        return this;
-    }
-
+    //Author
     public User getAuthor(){
         return (User) getParseUser(KEY_AUTHOR);
     }
@@ -43,6 +33,7 @@ public class Post extends ParseObject{
         return this;
     }
 
+    //Group
     public Group getGroup(){
         return (Group) getParseObject(KEY_GROUP);
     }
@@ -52,6 +43,18 @@ public class Post extends ParseObject{
         return this;
     }
 
+    //isPersonal
+    public boolean getIsPersonal(){
+        return getBoolean(KEY_IS_PERSONAL);
+    }
+
+    public Post setIsPersonal(Boolean bool){
+        put(KEY_IS_PERSONAL, bool);
+        return this;
+    }
+
+
+    //location
     public ParseGeoPoint getLocation(){
         return getParseGeoPoint(KEY_LOCATION);
     }
@@ -61,6 +64,18 @@ public class Post extends ParseObject{
         return this;
     }
 
+
+    //body
+    public String getBody() {
+        return getString(KEY_BODY);
+    }
+
+    public Post setBody(String body) {
+        put(KEY_BODY, body);
+        return this;
+    }
+
+    //mood
     public Mood.Status getMood() {
         String moodValue = getString(KEY_MOOD);
         return (moodValue == null) ? null : Mood.Status.valueOf(moodValue);
@@ -71,15 +86,7 @@ public class Post extends ParseObject{
         return this;
     }
 
-    public String getBody() {
-        return getString(KEY_BODY);
-    }
-
-    public Post setBody(String body) {
-        put(KEY_BODY, body);
-        return this;
-    }
-
+    //Image
     public ParseFile getImage(){
         return getParseFile(KEY_IMAGE);
     }
@@ -89,50 +96,5 @@ public class Post extends ParseObject{
         return this;
     }
 
-    //Comments
-    public ParseRelation<Comment> getRelationComments(){
-        //Get the relation of comments
-        return getRelation(KEY_COMMENTS);
-    }
-
-    public ParseQuery<Comment> getQueryComments(){
-        //Get the parsequery for comments
-        return relComments.getQuery(KEY_COMMENTS);
-    }
-
-    public void getListComments(AsyncUtils.ListCallback<Comment> callback) {
-        relComments.getList(KEY_COMMENTS, callback);
-    }
-
-    public void addComment(Comment comment, AsyncUtils.ItemCallback<Comment> callback) {
-        relComments.add(KEY_COMMENTS, comment, callback);
-    }
-
-    public Comment removeComment(Comment comment, AsyncUtils.EmptyCallback callback) {
-        return relComments.remove(KEY_COMMENTS,comment, callback);
-    }
-
-    //Tags
-    public ParseRelation<Tag> getRelationTags(){
-        //Get the relation of tags
-        return getRelation(KEY_TAGS);
-    }
-
-    public ParseQuery<Tag> getQueryTags(){
-        //Get the parsequery for tags
-        return relTags.getQuery(KEY_TAGS);
-    }
-
-    public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
-        relTags.getList(KEY_TAGS, callback);
-    }
-
-    public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
-        relTags.add(KEY_TAGS, tag, callback);
-    }
-
-    public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
-        return relTags.remove(KEY_TAGS,tag, callback);
-    }
 
 }

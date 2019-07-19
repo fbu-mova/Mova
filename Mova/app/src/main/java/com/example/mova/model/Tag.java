@@ -15,6 +15,16 @@ public class Tag extends ParseObject {
 
     public static final String KEY_NAME = "name";
 
+    //Relations
+    public static final String KEY_GOALS = "goals";
+    public static final String KEY_EVENTS = "events";
+    public static final String KEY_GROUPS = "groups";
+    public static final String KEY_POSTS = "posts";
+    public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
+    public final RelationFrame<Event> relEvents = new RelationFrame<>(this, KEY_EVENTS);
+    public final RelationFrame<Group> relGroups = new RelationFrame<>(this, KEY_GROUPS);
+    public final RelationFrame<Post> relPosts = new RelationFrame<>(this, KEY_POSTS);
+
     public Tag(){}
 
     public Tag(String name){

@@ -1,11 +1,7 @@
 package com.example.mova.model;
 
-import com.example.mova.RelationFrame;
-import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 
 @ParseClassName("Goal")
 public class Goal extends ParseObject {
@@ -17,9 +13,9 @@ public class Goal extends ParseObject {
     public static final String KEY_ACTIONS = "actions";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_COLOR = "color";
-    RelationFrame<User> relUsers = new RelationFrame<>(this);
-    RelationFrame<SharedAction> relActions = new RelationFrame<>(this);
-    RelationFrame<Tag> relTags = new RelationFrame<>(this);
+    public final RelationFrame<User> relUsersInvolved = new RelationFrame<>(this, KEY_USERS_INVOLVED);
+    public final RelationFrame<SharedAction> relActions = new RelationFrame<>(this, KEY_ACTIONS);
+    public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
     ;
 
     //Author
@@ -65,76 +61,5 @@ public class Goal extends ParseObject {
         return this;
     }
 
-    //Users involved
-
-    public ParseRelation<User> getRelationUsersInvolved(){
-        return getRelation(KEY_USERS_INVOLVED);
-    }
-
-    public ParseQuery<User> getQueryUsersInvolved(){
-        return relUsers.getQuery(KEY_USERS_INVOLVED);
-    }
-
-    public void getListUsersInvolved(AsyncUtils.ListCallback<User> callback) {
-        relUsers.getList(KEY_USERS_INVOLVED, callback);
-    }
-
-    public void addUserInvolved(User user, AsyncUtils.ItemCallback<User> callback) {
-        relUsers.add(KEY_USERS_INVOLVED, user, callback);
-    }
-
-    public User removeUserInvolved(User user, AsyncUtils.EmptyCallback callback) {
-        return relUsers.remove(KEY_USERS_INVOLVED, user, callback);
-    }
-
-    //Actions
-
-    public ParseRelation<SharedAction> getRelationSharedAction(){
-        return getRelation(KEY_ACTIONS);
-    }
-
-    public ParseQuery<SharedAction> getQuerySharedAction(){
-        return relActions.getQuery(KEY_ACTIONS);
-    }
-
-    public void getListSharedActions(AsyncUtils.ListCallback<SharedAction> callback) {
-        relActions.getList(KEY_ACTIONS, callback);
-    }
-
-    public void addSharedAction(SharedAction action, AsyncUtils.ItemCallback<SharedAction> callback) {
-        relActions.add(KEY_ACTIONS, action, callback);
-    }
-
-    public SharedAction removeSharedAction(SharedAction action, AsyncUtils.EmptyCallback callback) {
-        return relActions.remove(KEY_ACTIONS, action, callback);
-    }
-
-
-    //Tags
-
-    public ParseRelation<Tag> getRelationTags(){
-        //Get the relation of tags
-        return getRelation(KEY_TAGS);
-    }
-
-    public ParseQuery<Tag> getQueryTags(){
-        //Get the parsequery for tags
-        return relTags.getQuery(KEY_TAGS);
-    }
-
-    public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
-        relTags.getList(KEY_TAGS, callback);
-    }
-
-    public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
-        relTags.add(KEY_TAGS, tag, callback);
-    }
-
-    public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
-        return relTags.remove(KEY_TAGS,tag, callback);
-    }
-
-    public void addAction(Action action) {
-    }
 }
 

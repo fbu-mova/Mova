@@ -22,12 +22,12 @@ public class Group extends ParseObject {
     public static final String KEY_TAGS = "tags";
 
 
-    RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
-    RelationFrame<User> relAdmins = new RelationFrame<>(this, KEY_ADMIN);
-    RelationFrame<User> relUsers = new RelationFrame<>(this, KEY_USERS);
-    RelationFrame<Event> relEvents = new RelationFrame<>(this, KEY_EVENTS);
-    RelationFrame<Post> relPosts = new RelationFrame<>(this, KEY_POSTS);
-    RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
+    public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
+    public final RelationFrame<User> relAdmins = new RelationFrame<>(this, KEY_ADMIN);
+    public final RelationFrame<User> relUsers = new RelationFrame<>(this, KEY_USERS);
+    public final RelationFrame<Event> relEvents = new RelationFrame<>(this, KEY_EVENTS);
+    public final RelationFrame<Post> relPosts = new RelationFrame<>(this, KEY_POSTS);
+    public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
 
 
     //CreatedAt

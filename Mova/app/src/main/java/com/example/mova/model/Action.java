@@ -92,7 +92,7 @@ public class Action extends ParseObject {
 
     public Action setParentSharedAction(SharedAction sharedAction, AsyncUtils.ItemCallback<Action> callback){
         put(KEY_PARENT_SHARED_ACTION, sharedAction);
-        sharedAction.addChildAction(this, callback);
+        sharedAction.relChildActions.add(this, callback);
         return this;
     }
 
