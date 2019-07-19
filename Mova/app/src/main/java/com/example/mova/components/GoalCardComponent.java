@@ -1,7 +1,6 @@
 package com.example.mova.components;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +16,11 @@ import com.example.mova.R;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.User;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,8 +97,8 @@ public class GoalCardComponent extends Component<Goal> {
 
     private void loadGoalActions() {
         // make query calls to get the user's actions for a goal
-        ParseQuery<Action> actionQuery = item.ofCurrentUser();
-
+        ParseQuery<Action> actionQuery = item.relActions.getQuery();
+        actionQuery.whereEqualTo("parentUser", (User) ParseUser.getCurrentUser());
         updateAdapter(actionQuery, actions, actionsAdapter, viewHolder.rvActions);
     }
 
