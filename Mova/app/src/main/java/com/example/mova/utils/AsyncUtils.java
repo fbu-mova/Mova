@@ -2,8 +2,6 @@ package com.example.mova.utils;
 
 import android.util.Log;
 
-import com.example.mova.model.Tag;
-
 import java.util.List;
 
 public class AsyncUtils {
@@ -25,20 +23,20 @@ public class AsyncUtils {
         void call(T item, Callback callback);
     }
 
-    private static class ExecuteAllStatus {
+    private static class ExecuteManyStatus {
         public int count = 0;
         public boolean ranCallback = false;
     }
 
-    public static <T> void executeAll(List<T> items, ItemCallbackWithItemCallback<T, ItemCallback<Throwable>> execute, EmptyCallback callback) {
-        ExecuteAllStatus status = new ExecuteAllStatus();
-        for (T item : items) {
-            execute.call(item, (e) -> {
+    public static void executeMany(int length, ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> execute, EmptyCallback callback) {
+        ExecuteManyStatus status = new ExecuteManyStatus();
+        for (int i = 0; i < length; i++) {
+            execute.call(i, (e) -> {
                 if (e != null) {
                     Log.e("AsyncUtils", "Failed to execute call", e);
                 } else {
                     status.count++;
-                    if (!status.ranCallback && status.count == items.size()) {
+                    if (!status.ranCallback && status.count == length) {
                         callback.call();
                     }
                 }
