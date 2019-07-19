@@ -43,7 +43,7 @@ public class SocialFeedFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment SocialFeedFragment.
      */
-    // TODO: Rename and change types and number of parameters
+    // TODO: Rename and change types and count of parameters
     public static SocialFeedFragment newInstance(String param1, String param2) {
         SocialFeedFragment fragment = new SocialFeedFragment();
         Bundle args = new Bundle();

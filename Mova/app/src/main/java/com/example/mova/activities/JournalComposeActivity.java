@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.mova.Mood;
 import com.example.mova.R;
+import com.example.mova.model.Tag;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
@@ -19,6 +20,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +28,7 @@ import butterknife.ButterKnife;
 public class JournalComposeActivity extends AppCompatActivity {
 
     public static final String KEY_COMPOSED_POST = "post";
+    public static final String KEY_COMPOSED_POST_TAGS = "tags";
     public static final int COMPOSE_REQUEST_CODE = 30;
 
     // TODO: Perhaps change this to List<Tag>?
@@ -81,22 +84,27 @@ public class JournalComposeActivity extends AppCompatActivity {
                 location.setLatitude(lat);
                 location.setLongitude(lon);
                 Mood.Status mood = moodSelector.getSelectedItem();
+
+                ArrayList<Tag> tagObjects = new ArrayList<>();
+                for (String s : tags) {
+                    tagObjects.add(new Tag(s));
+                }
+
                 // TODO: Handle media
-                // TODO: Handle tags
 
                 if (body.equals("")) {
-                    // TODO: Move all strings to a strings.xml file for cleaner code
+                    // TODO: Move all Toast strings to a strings.xml file for cleaner code
                     Toast.makeText(JournalComposeActivity.this, "Write an entry first!", Toast.LENGTH_LONG).show();
                 } else {
                     Post post = new Post()
                             .setIsPersonal(true)
                             .setAuthor(user)
                             .setBody(body)
-//                            .setGroup(null) // FIXME: How to explicitly set this to none without crashing?
                             .setLocation(location)
                             .setMood(mood);
 
                     getIntent().putExtra(KEY_COMPOSED_POST, post);
+                    getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
                     setResult(RESULT_OK, getIntent());
                     finish();
                 }
@@ -110,13 +118,23 @@ public class JournalComposeActivity extends AppCompatActivity {
         } else {
             tags.remove(tag);
         }
-        writeTags();
+        writeTags(tags, tvTags);
     }
 
-    private void writeTags() {
+    public static void writeTags(ArrayList<String> tags, TextView tvTags) {
         StringBuilder tagsBuilder = new StringBuilder();
         for (int i = 0; i < tags.size(); i++) {
             tagsBuilder.append(tags.get(i));
+            if (i < tags.size() - 1) tagsBuilder.append(", ");
+        }
+        tvTags.setText(tagsBuilder.toString());
+    }
+
+    // FIXME: List vs. ArrayList is extremely hacky, must be a better way to pass that in
+    public static void writeTags(List<Tag> tags, TextView tvTags) {
+        StringBuilder tagsBuilder = new StringBuilder();
+        for (int i = 0; i < tags.size(); i++) {
+            tagsBuilder.append(tags.get(i).getName());
             if (i < tags.size() - 1) tagsBuilder.append(", ");
         }
         tvTags.setText(tagsBuilder.toString());

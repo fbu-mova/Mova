@@ -90,11 +90,11 @@ public class Goal extends ParseObject {
 
     //Actions
 
-    public ParseRelation<Action> getRelationAction(){
+    public ParseRelation<SharedAction> getRelationAction(){
         return getRelation(KEY_ACTIONS);
     }
 
-    public ParseQuery<Action> getQueryAction(){
+    public ParseQuery<SharedAction> getQueryAction(){
         return relActions.getQuery(KEY_ACTIONS);
     }
 
