@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
+import com.example.mova.fragments.PersonalFragment;
+import com.example.mova.utils.AsyncUtils;
+
+import org.parceler.Parcels;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,6 +21,9 @@ import com.example.mova.R;
  * create an instance of this fragment.
  */
 public class PersonalFeedFragment extends Fragment {
+
+    public static String KEY_SWITCH_FRAGMENT = "switchFragment";
+    private AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment;
 
     public PersonalFeedFragment() {
         // Required empty public constructor
@@ -27,11 +34,10 @@ public class PersonalFeedFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment PersonalFeedFragment.
      */
-    // TODO: Rename and change types and count of parameters
-    public static PersonalFeedFragment newInstance(String param1, String param2) {
+    public static PersonalFeedFragment newInstance(AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment) {
         PersonalFeedFragment fragment = new PersonalFeedFragment();
         Bundle args = new Bundle();
-        // TODO: Add any args with keys set on the class
+        args.putParcelable(KEY_SWITCH_FRAGMENT, Parcels.wrap(switchFragment)); // FIXME: Will this work?
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,7 +46,7 @@ public class PersonalFeedFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            // TODO: Set any parameter values if needed
+            switchFragment = Parcels.unwrap(getArguments().getParcelable(KEY_SWITCH_FRAGMENT));
         }
     }
 

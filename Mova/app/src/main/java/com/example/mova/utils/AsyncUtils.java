@@ -2,27 +2,35 @@ package com.example.mova.utils;
 
 import android.util.Log;
 
+import org.parceler.Parcel;
+
 import java.util.List;
 
 public class AsyncUtils {
+    @Parcel
     public interface EmptyCallback {
         void call();
     }
 
+    @Parcel
     public interface ItemCallback<T> {
         void call(T item);
     }
 
+    @Parcel
     public interface ListCallback<T> extends ItemCallback<List<T>> { }
 
+    @Parcel
     public interface ItemCallbackWithEmptyCallback<T> {
         void call(T item, EmptyCallback callback);
     }
 
+    @Parcel
     public interface ItemCallbackWithItemCallback<T, Callback extends ItemCallback> {
         void call(T item, Callback callback);
     }
 
+    @Parcel
     public interface ItemReturnCallback<T, R> {
         R call(T item);
     }

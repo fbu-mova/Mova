@@ -27,25 +27,14 @@ import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PersonalFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link PersonalFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class PersonalFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     @BindView(R.id.bottom_navigation_personal)
     BottomNavigationView bottomNavigationView;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+    final FragmentManager fragmentManager = getChildFragmentManager();
 
     public PersonalFragment() {
         // Required empty public constructor
@@ -54,17 +43,12 @@ public class PersonalFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment PersonalFragment.
      */
-    // TODO: Rename and change types and count of parameters
-    public static PersonalFragment newInstance(String param1, String param2) {
+    public static PersonalFragment newInstance() {
         PersonalFragment fragment = new PersonalFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        // TODO: Add any parameters necessary
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,46 +57,19 @@ public class PersonalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            // TODO: Add any parameters necessary
         }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final FragmentManager fragmentManager = getChildFragmentManager();
         // implement fragment manager
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment fragment;
-                switch (menuItem.getItemId()){
-                    case R.id.action_progress:
-                        Toast.makeText(getContext(), "Switches to progress", Toast.LENGTH_SHORT).show();
-                        fragment = new ProgressFragment();
-                        break;
-                    case R.id.action_journal:
-                        Toast.makeText(getContext(), "Switches to journal", Toast.LENGTH_SHORT).show();
-                        fragment = new JournalFragment();
-                        break;
-                    case R.id.action_personal_feed:
-                        Toast.makeText(getContext(), "Switches to feed", Toast.LENGTH_SHORT).show();
-                        fragment = new PersonalFeedFragment();
-                        break;
-                    case R.id.action_goals:
-                        Toast.makeText(getContext(), "Switches to goals", Toast.LENGTH_SHORT).show();
-                        fragment = new GoalsFragment();
-                        break;
-                    case R.id.action_profile:
-                        Toast.makeText(getContext(), "Switches to profile", Toast.LENGTH_SHORT).show();
-                        fragment = new ProfileFragment();
-                        break;
-                    default:
-                        return true;
-                }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                FragmentName name = FragmentName.fromMenuItem(menuItem.getItemId());
+                switchFragment(name);
                 return true;
             }
         });
@@ -128,42 +85,56 @@ public class PersonalFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    public void switchFragment(FragmentName name) {
+        Fragment fragment;
+        switch (name) {
+            case Progress:
+                Toast.makeText(getContext(), "Switches to progress", Toast.LENGTH_SHORT).show();
+                fragment = ProgressFragment.newInstance((name) -> switchFragment(name));
+                break;
+            case Journal:
+                Toast.makeText(getContext(), "Switches to journal", Toast.LENGTH_SHORT).show();
+                fragment = JournalFragment.newInstance((name) -> switchFragment(name));
+                break;
+            case Feed:
+                Toast.makeText(getContext(), "Switches to feed", Toast.LENGTH_SHORT).show();
+                fragment = PersonalFeedFragment.newInstance((name) -> switchFragment(name));
+                break;
+            case Goals:
+                Toast.makeText(getContext(), "Switches to goals", Toast.LENGTH_SHORT).show();
+                fragment = GoalsFragment.newInstance((name) -> switchFragment(name));
+                break;
+            case Profile:
+                Toast.makeText(getContext(), "Switches to profile", Toast.LENGTH_SHORT).show();
+                fragment = ProfileFragment.newInstance((name) -> switchFragment(name));
+                break;
+            default:
+                return;
         }
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
+    public enum FragmentName {
+        Progress,
+        Journal,
+        Feed,
+        Goals,
+        Profile;
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        public static FragmentName fromMenuItem(int menuItemId) {
+            switch (menuItemId) {
+                case R.id.action_progress:
+                    return Progress;
+                case R.id.action_journal:
+                    return Journal;
+                case R.id.action_goals:
+                    return Goals;
+                case R.id.action_profile:
+                    return Profile;
+                case R.id.action_personal_feed:
+                default:
+                    return Feed;
+            }
+        }
     }
 }

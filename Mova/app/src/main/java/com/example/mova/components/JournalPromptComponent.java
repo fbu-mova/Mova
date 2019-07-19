@@ -37,7 +37,13 @@ public class JournalPromptComponent extends Component<Post> {
 
     @Override
     public void render() {
-
+        viewHolder.bCompose.setOnClickListener((view) -> {
+            /* TODO:
+             * - Get current mood
+             * - Pass current mood to new JournalComposeActivity
+             * - If desired, switch back to JournalFragment after finished composing
+             */
+        });
     }
 
     public static class ViewHolder extends Component.ViewHolder {

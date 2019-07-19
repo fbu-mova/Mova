@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
@@ -37,6 +38,8 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +54,9 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class JournalFragment extends Fragment {
+
+    public static String KEY_SWITCH_FRAGMENT = "switchFragment";
+    private AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment;
 
     private DatePickerAdapter dateAdapter;
     private JournalEntryAdapter entryAdapter;
@@ -74,10 +80,10 @@ public class JournalFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment JournalFragment.
      */
-    public static JournalFragment newInstance() {
+    public static JournalFragment newInstance(AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment) {
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
-        // TODO: Add any arguments if found to be necessary
+        args.putParcelable(KEY_SWITCH_FRAGMENT, Parcels.wrap(switchFragment)); // FIXME: Will this work?
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,7 +92,7 @@ public class JournalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            // TODO: Set any arguments chosen
+            switchFragment = Parcels.unwrap(getArguments().getParcelable(KEY_SWITCH_FRAGMENT));
         }
     }
 
