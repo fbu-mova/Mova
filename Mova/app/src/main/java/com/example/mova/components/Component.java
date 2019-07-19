@@ -41,10 +41,10 @@ public abstract class Component<T> {
     public abstract ViewHolder getViewHolder();
 
     /**
-     * Attaches any relevant data or events to the component's ViewHolder.
+     * Renders any relevant data or events to the component's ViewHolder.
      * Does nothing if not yet inflated.
      */
-    public abstract void bind();
+    public abstract void render();
 
     public static abstract class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(@NonNull View itemView) {

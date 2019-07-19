@@ -53,7 +53,7 @@ public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Com
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
         Component<T> component = components.get(item);
-        component.bind();
+        component.render();
     }
 
     @Override

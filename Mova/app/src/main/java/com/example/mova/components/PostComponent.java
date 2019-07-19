@@ -25,7 +25,7 @@ public class PostComponent extends Component<Post> {
     }
 
     @Override
-    public void bind() {
+    public void render() {
 
     }
 
