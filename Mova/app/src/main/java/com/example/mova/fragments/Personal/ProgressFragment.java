@@ -41,10 +41,10 @@ import butterknife.ButterKnife;
  */
 public class ProgressFragment extends Fragment {
 
-    @BindView(R.id.graphProgress)
-    GraphView graph;
-    protected List<Goal> mGoals;
-    private int length = 0;
+//    @BindView(R.id.graphProgress)
+//    GraphView graph;
+//    protected List<Goal> mGoals;
+//    private int length = 0;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mova.R;
+import com.example.mova.model.User;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -54,7 +55,7 @@ public class SignupActivity extends AppCompatActivity {
     private void signUp(String username, String password, String email) {
         // Create ParseUser, sign up in background
 
-        ParseUser user = new ParseUser();
+        User user = new User();
 
         user.setUsername(username);
         user.setPassword(password);

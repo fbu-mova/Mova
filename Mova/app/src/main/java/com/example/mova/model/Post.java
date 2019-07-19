@@ -7,6 +7,8 @@ import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
+import org.w3c.dom.Comment;
+
 @ParseClassName("Post")
 public class Post extends ParseObject{
     public static final String KEY_AUTHOR = "author";

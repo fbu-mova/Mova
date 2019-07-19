@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
 import com.example.mova.activities.LoginActivity;
+import com.example.mova.model.User;
 import com.parse.ParseUser;
 
 import butterknife.BindView;
@@ -97,10 +98,15 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ParseUser currentUser = ParseUser.getCurrentUser();
+                String username = currentUser.getUsername();
+
+                ParseUser.logOut();
+                currentUser = ParseUser.getCurrentUser();
                 Intent intent = new Intent(getContext(), LoginActivity.class);
-                intent.putExtra("username",currentUser.getUsername());
-                currentUser.logOut();
+//                intent.putExtra("username", username);
+
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 

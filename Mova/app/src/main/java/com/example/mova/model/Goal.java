@@ -1,8 +1,14 @@
 package com.example.mova.model;
 
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
+
+import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 @ParseClassName("Goal")
 public class Goal extends ParseObject {
@@ -95,6 +101,14 @@ public class Goal extends ParseObject {
     //fromGroup
     public Group getGroup(){
         return (Group) getParseObject(KEY_FROM_GROUP);
+    public String getFromGroupName() {
+        Group group = getFromGroup();
+        if (group == null) {
+            return "";
+        }
+
+        return group.getName();
+    }
     }
 
     public Goal setGroup(Group group){
@@ -102,5 +116,21 @@ public class Goal extends ParseObject {
         return this;
     }
 
+    public static class Query extends ParseQuery<Goal> {
+
+        public Query() {
+            super(Goal.class);
+        }
+
+        public Query getTop() {
+            setLimit(20);
+            return this;
+
+        }
+        public Query withGroup() {
+            include(KEY_FROM_GROUP);
+            return this;
+        }
+    }
 }
 
