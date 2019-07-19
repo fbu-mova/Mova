@@ -115,6 +115,8 @@ public class ProgressFragment extends Fragment {
                             series.setColor(Color.parseColor(goal.getColor()));
                         }
                         graph.addSeries(series);
+//                        graph.getViewport().setMinX(-1*length);
+//                        graph.getViewport().setMaxX(0);
                         callback.call();
                     });
         }
