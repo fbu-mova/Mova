@@ -30,6 +30,6 @@ public class ComponentLayout extends FrameLayout {
     public void inflateComponent(Activity activity, Component component) {
         ViewGroup parent = findViewById(android.R.id.content); // FIXME: Make sure this works!
         component.makeViewHolder(activity, parent);
-        component.bind();
+        component.render();
     }
 }

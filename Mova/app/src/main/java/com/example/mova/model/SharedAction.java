@@ -14,8 +14,8 @@ public class SharedAction extends ParseObject {
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_USERS_DONE = "usersDone";
     public static final String KEY_CHILD_ACTIONS = "childActions";
-    RelationFrame<User> relUsersInvolved = new RelationFrame<>(this);
-    RelationFrame<Action> relChildActions = new RelationFrame<>(this);
+    RelationFrame<User> relUsersInvolved = new RelationFrame<>(this, KEY_USERS_INVOLVED);
+    RelationFrame<Action> relChildActions = new RelationFrame<>(this, KEY_CHILD_ACTIONS);
 
     //Task
     public String getTask(){
@@ -44,19 +44,19 @@ public class SharedAction extends ParseObject {
     }
 
     public ParseQuery<User> getQueryUsersInvovled(){
-        return relUsersInvolved.getQuery(KEY_USERS_INVOLVED);
+        return relUsersInvolved.getQuery();
     }
 
     public void getListUsersInvolved(AsyncUtils.ListCallback<User> callback) {
-        relUsersInvolved.getList(KEY_USERS_INVOLVED, callback);
+        relUsersInvolved.getList(callback);
     }
 
     public void addUserInvolved(User user, AsyncUtils.ItemCallback<User> callback) {
-        relUsersInvolved.add(KEY_USERS_INVOLVED, user, callback);
+        relUsersInvolved.add(user, callback);
     }
 
     public User removeUserInvolved(User user, AsyncUtils.EmptyCallback callback) {
-        return relUsersInvolved.remove(KEY_USERS_INVOLVED, user, callback);
+        return relUsersInvolved.remove(user, callback);
     }
 
 
@@ -66,15 +66,15 @@ public class SharedAction extends ParseObject {
         return getRelation(KEY_CHILD_ACTIONS);
     }
     public void getListChildActions(AsyncUtils.ListCallback<Action> callback){
-        relChildActions.getList(KEY_CHILD_ACTIONS, callback);
+        relChildActions.getList(callback);
     }
 
     public void addChildAction(Action action, AsyncUtils.ItemCallback<Action> callback){
-        relChildActions.add(KEY_CHILD_ACTIONS, action, callback);
+        relChildActions.add(action, callback);
     }
 
     public void removeChildAction(Action action, AsyncUtils.EmptyCallback callback){
-        relChildActions.remove(KEY_CHILD_ACTIONS, action, callback);
+        relChildActions.remove(action, callback);
     }
 
     //Users done

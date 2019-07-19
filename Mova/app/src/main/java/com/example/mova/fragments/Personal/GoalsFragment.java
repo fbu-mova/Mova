@@ -103,6 +103,9 @@ public class GoalsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         activity = getActivity();
+
+        Log.d(TAG, "in goals fragment");
+
         ButterKnife.bind(this, activity);
 
         // thumbnail

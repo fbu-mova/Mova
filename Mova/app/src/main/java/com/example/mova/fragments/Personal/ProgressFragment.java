@@ -18,7 +18,7 @@ import com.example.mova.R;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
-import com.jjoe64.graphview.GraphView;
+//import com.jjoe64.graphview.GraphView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -40,10 +40,10 @@ import butterknife.ButterKnife;
  */
 public class ProgressFragment extends Fragment {
 
-    @BindView(R.id.graphProgress)
-    GraphView graph;
-    protected List<Goal> mGoals;
-    private int length = 0;
+//    @BindView(R.id.graphProgress)
+//    GraphView graph;
+//    protected List<Goal> mGoals;
+//    private int length = 0;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -97,50 +97,50 @@ public class ProgressFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-        length = 7;
-        mGoals = new ArrayList<>();
-        queryGoals(() -> setGraph());
+//        ButterKnife.bind(this, view);
+//        length = 7;
+//        mGoals = new ArrayList<>();
+//        queryGoals(() -> setGraph());
     }
 
-    private void setGraph(){
-        AsyncUtils.executeMany(mGoals.size(), (i, callback) -> {
-                    mGoals.get(i).createGraph(length,(series) -> {
-                        series.setTitle(mGoals.get(i).getTitle());
-                        if(mGoals.get(i).getColor() != null){
-                            series.setColor(Color.parseColor(mGoals.get(i).getColor()));
-                        }
-                        graph.addSeries(series);
-                    });
+//    private void setGraph(){
+//        AsyncUtils.executeMany(mGoals.size(), (i, callback) -> {
+//                    mGoals.get(i).createGraph(length,(series) -> {
+//                        series.setTitle(mGoals.get(i).getTitle());
+//                        if(mGoals.get(i).getColor() != null){
+//                            series.setColor(Color.parseColor(mGoals.get(i).getColor()));
+//                        }
+//                        graph.addSeries(series);
+//                    });
+//
+//                }, () -> Toast.makeText(getContext(), "Created graphs", Toast.LENGTH_SHORT).show()
+//                );
+//
+//
+//
+//
+//    }
 
-                }, () -> Toast.makeText(getContext(), "Created graphs", Toast.LENGTH_SHORT).show()
-                );
 
 
-
-
-    }
-
-
-
-    public void queryGoals(AsyncUtils.EmptyCallback callback){
-        User user = (User) ParseUser.getCurrentUser();
-        ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
-        goalQuery.whereEqualTo("usersInvolved", user);
-        goalQuery.findInBackground(new FindCallback<Goal>() {
-            @Override
-            public void done(List<Goal> objects, ParseException e) {
-                if(e != null){
-                    Log.e("ProgressFragment", "Error with query");
-                    e.printStackTrace();
-                    return;
-                }
-                //Get all the goals TODO- only add goal if the user is part of it
-                mGoals.addAll(objects);
-                callback.call();
-            }
-        });
-    }
+//    public void queryGoals(AsyncUtils.EmptyCallback callback){
+//        User user = (User) ParseUser.getCurrentUser();
+//        ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
+//        goalQuery.whereEqualTo("usersInvolved", user);
+//        goalQuery.findInBackground(new FindCallback<Goal>() {
+//            @Override
+//            public void done(List<Goal> objects, ParseException e) {
+//                if(e != null){
+//                    Log.e("ProgressFragment", "Error with query");
+//                    e.printStackTrace();
+//                    return;
+//                }
+//                //Get all the goals TODO- only add goal if the user is part of it
+//                mGoals.addAll(objects);
+//                callback.call();
+//            }
+//        });
+//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

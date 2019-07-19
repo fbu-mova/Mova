@@ -39,11 +39,12 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
+            return;
         }
 
-        //Fill feild
-        Intent intent = getIntent();
-        etUsername.setText(intent.getStringExtra("username"));
+//        //Fill field
+//        Intent intent = getIntent();
+//        etUsername.setText(intent.getStringExtra("username"));
 
         // Set OnClickListeners
 
@@ -71,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void logIn(String username, String password) {
+
+        Log.d(TAG, "in LogIn function");
 
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override

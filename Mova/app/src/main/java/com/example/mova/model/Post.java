@@ -10,6 +10,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
+import org.w3c.dom.Comment;
+
 @ParseClassName("Post")
 public class Post extends ParseObject{
     public static final String KEY_CREATED_AT = "createdAt";
@@ -22,8 +24,8 @@ public class Post extends ParseObject{
     public static final String KEY_MOOD = "mood";
     public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_TAGS = "tags";
-    RelationFrame<Comment> relComments = new RelationFrame<>(this);
-    RelationFrame<Tag> relTags = new RelationFrame<>(this);
+    RelationFrame<Post> relComments = new RelationFrame<>(this, KEY_COMMENTS);
+    RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
 
     public boolean getIsPersonal(){
         return getBoolean(KEY_IS_PERSONAL);
@@ -90,26 +92,26 @@ public class Post extends ParseObject{
     }
 
     //Comments
-    public ParseRelation<Comment> getRelationComments(){
+    public ParseRelation<Post> getRelationComments(){
         //Get the relation of comments
         return getRelation(KEY_COMMENTS);
     }
 
-    public ParseQuery<Comment> getQueryComments(){
+    public ParseQuery<Post> getQueryComments(){
         //Get the parsequery for comments
-        return relComments.getQuery(KEY_COMMENTS);
+        return relComments.getQuery();
     }
 
-    public void getListComments(AsyncUtils.ListCallback<Comment> callback) {
-        relComments.getList(KEY_COMMENTS, callback);
+    public void getListComments(AsyncUtils.ListCallback<Post> callback) {
+        relComments.getList(callback);
     }
 
-    public void addComment(Comment comment, AsyncUtils.ItemCallback<Comment> callback) {
-        relComments.add(KEY_COMMENTS, comment, callback);
+    public void addComment(Post comment, AsyncUtils.ItemCallback<Post> callback) {
+        relComments.add(comment, callback);
     }
 
-    public Comment removeComment(Comment comment, AsyncUtils.EmptyCallback callback) {
-        return relComments.remove(KEY_COMMENTS,comment, callback);
+    public Post removeComment(Post comment, AsyncUtils.EmptyCallback callback) {
+        return relComments.remove(comment, callback);
     }
 
     //Tags
@@ -120,19 +122,19 @@ public class Post extends ParseObject{
 
     public ParseQuery<Tag> getQueryTags(){
         //Get the parsequery for tags
-        return relTags.getQuery(KEY_TAGS);
+        return relTags.getQuery();
     }
 
     public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
-        relTags.getList(KEY_TAGS, callback);
+        relTags.getList(callback);
     }
 
     public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
-        relTags.add(KEY_TAGS, tag, callback);
+        relTags.add(tag, callback);
     }
 
     public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
-        return relTags.remove(KEY_TAGS,tag, callback);
+        return relTags.remove(tag, callback);
     }
 
 }
