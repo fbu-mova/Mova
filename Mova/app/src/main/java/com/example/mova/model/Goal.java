@@ -2,11 +2,14 @@ package com.example.mova.model;
 
 import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
 import java.util.List;
+
+import static com.example.mova.model.Group.KEY_NAME;
 
 @ParseClassName("Goal")
 public class Goal extends ParseObject {
@@ -18,7 +21,11 @@ public class Goal extends ParseObject {
     public static final String KEY_ACTIONS = "actions";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_COLOR = "color";
+    public static final String KEY_FROM_GROUP = "fromGroup";
+    public static final String KEY_IMAGE = "image";
     RelationFrame relationFrame = new RelationFrame(this);
+
+
 
     //Author
 
@@ -63,7 +70,24 @@ public class Goal extends ParseObject {
         return this;
     }
 
-    //Users invovled
+    //fromGroup: returns the group name (if it exists) to the goal. else, returns null
+
+    public Group getFromGroup() {
+        return (Group) get(KEY_FROM_GROUP);
+    }
+
+    //Image
+
+    public ParseFile getImage() {
+        return getParseFile(KEY_IMAGE);
+    }
+
+    public Goal setImage(ParseFile file) {
+        put(KEY_IMAGE, file);
+        return this;
+    }
+
+    //Users involved
 
     public ParseRelation<User> getRelationUsersInvovled(){
         return getRelation(KEY_USERS_INVOLVED);
@@ -129,6 +153,23 @@ public class Goal extends ParseObject {
 
     public Goal removeTag(Tag tag){
         return (Goal) relationFrame.remove(KEY_TAGS,tag);
+    }
+
+    public static class Query extends ParseQuery<Goal> {
+
+        public Query() {
+            super(Goal.class);
+        }
+
+        public Query getTop() {
+            setLimit(20);
+            return this;
+        }
+
+        public Query withGroup() {
+            include(KEY_FROM_GROUP);
+            return this;
+        }
     }
 }
 

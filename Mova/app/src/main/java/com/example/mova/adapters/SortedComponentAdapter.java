@@ -15,7 +15,7 @@ import java.util.HashMap;
  * Adapts items to a sorted list of components, which are then displayed.
  * @param <T> The type of item to use for each component.
  */
-public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Component<T>.ViewHolder> {
+public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Component.ViewHolder> {
     private Activity activity;
     private SortedList<T> items;
     private HashMap<T, Component<T>> components;
@@ -41,7 +41,7 @@ public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Com
     // CONSTRAINT: Items in items must be unique (and uniquely identifiable by .equals()).
     @NonNull
     @Override
-    public Component<T>.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         T item = items.get(viewType);
         Component<T> component = makeComponent(item);
         components.put(item, component); // FIXME: Make sure that this overrides the last value
@@ -50,7 +50,7 @@ public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Com
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Component<T>.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
         Component<T> component = components.get(item);
         component.bind();
