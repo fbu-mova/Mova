@@ -80,7 +80,6 @@ public class Action extends ParseObject {
 
     public Action setParentGoal(Goal goal){
         put(KEY_PARENT_GOAL, goal);
-        goal.addAction(this);
         return this;
     }
 
