@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,8 +17,12 @@ import com.example.mova.R;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,10 +69,8 @@ public class GoalCardComponent extends Component<Goal> {
             return;
         }
 
-        Goal goal = getItem();
-
-        viewHolder.tvName.setText(goal.getTitle());
-        viewHolder.tvDescription.setText(goal.getDescription());
+        viewHolder.tvName.setText(item.getTitle());
+        viewHolder.tvDescription.setText(item.getDescription());
 
         viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
         viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
@@ -93,6 +96,34 @@ public class GoalCardComponent extends Component<Goal> {
 
     private void loadGoalActions() {
         // make query calls to get the user's actions for a goal
+        ParseQuery<Action> actionQuery = item.ofCurrentUser();
+
+        updateAdapter(actionQuery, actions, actionsAdapter, viewHolder.rvActions);
+    }
+
+    private void updateAdapter(ParseQuery<Action> actionQuery, ArrayList<Action> actions, ComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {
+
+        actionQuery.findInBackground(new FindCallback<Action>() {
+            @Override
+            public void done(List<Action> objects, ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "query for actions successful!");
+
+                    for (int i = 0; i < objects.size(); i++) {
+                        // load into recyclerview
+                        Action action = objects.get(i);
+                        actions.add(0, action);
+                        actionsAdapter.notifyItemInserted(0);
+                    }
+
+                    rvActions.scrollToPosition(0);
+                }
+                else {
+                    Log.e(TAG, "query for actions failed", e);
+                    Toast.makeText(activity, "Query for actions of your goal failed", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     public static class GoalCardViewHolder extends Component.ViewHolder {

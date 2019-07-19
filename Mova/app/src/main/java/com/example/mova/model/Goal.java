@@ -1,12 +1,14 @@
 package com.example.mova.model;
 
-import com.example.mova.RelationFrame;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.parse.ParseUser;
+
+import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 @ParseClassName("Goal")
 public class Goal extends ParseObject {
@@ -16,13 +18,16 @@ public class Goal extends ParseObject {
     public static final String KEY_TITLE = "title";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_ACTIONS = "actions";
+    public static final String KEY_SHARED_ACTIONS = "sharedActions";
     public static final String KEY_TAGS = "tags"; // optional
     public static final String KEY_COLOR = "color";
     public static final String KEY_FROM_GROUP = "fromGroup"; // optional
     public static final String KEY_IMAGE = "image"; // optional
-    RelationFrame<User> relUsers = new RelationFrame<>(this);
-    RelationFrame<SharedAction> relActions = new RelationFrame<>(this);
-    RelationFrame<Tag> relTags = new RelationFrame<>(this);
+
+    RelationFrame<User> relUsers = new RelationFrame<>(this, KEY_USERS_INVOLVED);
+    RelationFrame<Action> relActions = new RelationFrame<>(this, KEY_ACTIONS);
+    RelationFrame<SharedAction> relSharedActions = new RelationFrame<>(this, KEY_SHARED_ACTIONS);
+    RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
 
     //Author
 
@@ -67,7 +72,6 @@ public class Goal extends ParseObject {
         return this;
     }
 
-<<<<<<< HEAD
     //fromGroup: returns the group name (if it exists) to the goal. else, returns null
 
     public Group getFromGroup() {
@@ -94,8 +98,6 @@ public class Goal extends ParseObject {
         return this;
     }
 
-=======
->>>>>>> master
     //Users involved
 
     public ParseRelation<User> getRelationUsersInvolved(){
@@ -103,41 +105,55 @@ public class Goal extends ParseObject {
     }
 
     public ParseQuery<User> getQueryUsersInvolved(){
-        return relUsers.getQuery(KEY_USERS_INVOLVED);
+        return relUsers.getQuery();
     }
 
     public void getListUsersInvolved(AsyncUtils.ListCallback<User> callback) {
-        relUsers.getList(KEY_USERS_INVOLVED, callback);
+        relUsers.getList(callback);
     }
 
     public void addUserInvolved(User user, AsyncUtils.ItemCallback<User> callback) {
-        relUsers.add(KEY_USERS_INVOLVED, user, callback);
+        relUsers.add(user, callback);
     }
 
     public User removeUserInvolved(User user, AsyncUtils.EmptyCallback callback) {
-        return relUsers.remove(KEY_USERS_INVOLVED, user, callback);
+        return relUsers.remove(user, callback);
     }
 
-    //Actions
+    //Shared Actions
 
     public ParseRelation<SharedAction> getRelationSharedAction(){
-        return getRelation(KEY_ACTIONS);
+        return getRelation(KEY_SHARED_ACTIONS);
     }
 
     public ParseQuery<SharedAction> getQuerySharedAction(){
-        return relActions.getQuery(KEY_ACTIONS);
+        return relSharedActions.getQuery();
     }
 
     public void getListSharedActions(AsyncUtils.ListCallback<SharedAction> callback) {
-        relActions.getList(KEY_ACTIONS, callback);
+        relSharedActions.getList(callback);
     }
 
     public void addSharedAction(SharedAction action, AsyncUtils.ItemCallback<SharedAction> callback) {
-        relActions.add(KEY_ACTIONS, action, callback);
+        relSharedActions.add(action, callback);
     }
 
     public SharedAction removeSharedAction(SharedAction action, AsyncUtils.EmptyCallback callback) {
-        return relActions.remove(KEY_ACTIONS, action, callback);
+        return relSharedActions.remove(action, callback);
+    }
+
+    //Actions
+    public ParseRelation<Action> getRelationAction() {
+        return getRelation(KEY_ACTIONS);
+    }
+
+    public ParseQuery<Action> getQueryAction() {
+        return relActions.getQuery();
+    }
+
+    // returns all the actions of a goal that the user has personally
+    public ParseQuery<Action> ofCurrentUser() {
+        return getQueryAction().whereEqualTo(KEY_PARENT_USER, ParseUser.getCurrentUser());
     }
 
 
@@ -150,19 +166,19 @@ public class Goal extends ParseObject {
 
     public ParseQuery<Tag> getQueryTags(){
         //Get the parsequery for tags
-        return relTags.getQuery(KEY_TAGS);
+        return relTags.getQuery();
     }
 
     public void getListTags(AsyncUtils.ListCallback<Tag> callback) {
-        relTags.getList(KEY_TAGS, callback);
+        relTags.getList(callback);
     }
 
     public void addTag(Tag tag, AsyncUtils.ItemCallback<Tag> callback) {
-        relTags.add(KEY_TAGS, tag, callback);
+        relTags.add(tag, callback);
     }
 
     public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
-        return relTags.remove(KEY_TAGS,tag, callback);
+        return relTags.remove(tag, callback);
     }
 
     public void addAction(Action action) {
