@@ -18,8 +18,6 @@ import com.example.mova.R;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

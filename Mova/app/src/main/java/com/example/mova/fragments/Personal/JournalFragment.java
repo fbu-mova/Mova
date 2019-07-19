@@ -220,7 +220,7 @@ public class JournalFragment extends Fragment {
                             if (e != null) {
                                 Log.e("JournalFragment", "Failed to create tag " + tag.getName(), e);
                             } else {
-                                journalEntry.addTag(tagFromDB, (sameTag) -> cb.call(null));
+                                journalEntry.addTag(tag, (sameTag) -> cb.call(null));
                             }
                         });
                     } else {

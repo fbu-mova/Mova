@@ -37,7 +37,6 @@ public class RelationFrame<T extends ParseObject> {
     public void add(String key, T object, AsyncUtils.ItemCallback<T> callback) {
         ParseRelation<T> relation = parseObject.getRelation(key);
         relation.add(object);
-        parseObject.put(key, object);
         parseObject.saveInBackground((ParseException e) -> {
             if (e != null) {
                 Log.e("RelationFrame", "Error saving object", e);
@@ -50,7 +49,6 @@ public class RelationFrame<T extends ParseObject> {
     public T remove(String key, T object, AsyncUtils.EmptyCallback callback) {
         ParseRelation<T> relation = parseObject.getRelation(key);
         relation.remove(object);
-        parseObject.put(key, object);
         parseObject.deleteInBackground((ParseException e) -> {
             if (e != null) {
                 Log.e("RelationFrame", "Error deleting object", e);
