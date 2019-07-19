@@ -28,15 +28,15 @@ public class AsyncUtils {
         public boolean ranCallback = false;
     }
 
-    public static void executeMany(int length, ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> execute, EmptyCallback callback) {
+    public static void executeMany(int count, ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> execute, EmptyCallback callback) {
         ExecuteManyStatus status = new ExecuteManyStatus();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < count; i++) {
             execute.call(i, (e) -> {
                 if (e != null) {
                     Log.e("AsyncUtils", "Failed to execute call", e);
                 } else {
                     status.count++;
-                    if (!status.ranCallback && status.count == length) {
+                    if (!status.ranCallback && status.count == count) {
                         callback.call();
                     }
                 }
