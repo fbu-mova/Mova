@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.Mood;
@@ -24,10 +25,10 @@ import butterknife.ButterKnife;
 
 public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> {
 
-    private List<Post> entries;
+    private SortedList<Post> entries;
     private Activity activity;
 
-    public JournalEntryAdapter(Activity activity, List<Post> entries) {
+    public JournalEntryAdapter(Activity activity, SortedList<Post> entries) {
         this.activity = activity;
         this.entries = entries;
     }
@@ -55,7 +56,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         return entries.size();
     }
 
-    public void changeSource(List<Post> newEntriesSource) {
+    public void changeSource(SortedList<Post> newEntriesSource) {
         this.entries = newEntriesSource;
         notifyDataSetChanged();
     }

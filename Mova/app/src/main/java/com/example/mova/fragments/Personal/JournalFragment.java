@@ -61,7 +61,7 @@ public class JournalFragment extends Fragment {
     private JournalEntryAdapter entryAdapter;
 
     private SortedList<Date> dates;
-    private HashMap<Date, List<Post>> entries;
+    private HashMap<Date, SortedList<Post>> entries;
     private Date currDate;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
@@ -238,7 +238,7 @@ public class JournalFragment extends Fragment {
                         ((User) ParseUser.getCurrentUser()).addJournalPost(journalEntry, (entry) -> {
                             Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
                             Date today = TimeUtils.getToday();
-                            List<Post> todayEntries = getEntries(today);
+                            SortedList<Post> todayEntries = getEntries(today);
                             todayEntries.add(journalEntry);
                             if (currDate.equals(today)) {
                                 entryAdapter.notifyItemInserted(todayEntries.size() - 1);
@@ -257,9 +257,48 @@ public class JournalFragment extends Fragment {
      * @param date
      * @return
      */
-    private List<Post> getEntries(Date date) {
-        List<Post> entriesFromDate = entries.get(date);
-        if (entriesFromDate == null) entriesFromDate = new ArrayList<Post>();
+    private SortedList<Post> getEntries(Date date) {
+        SortedList<Post> entriesFromDate = entries.get(date);
+        if (entriesFromDate == null) {
+            entriesFromDate = new SortedList<>(Post.class, new SortedList.Callback<Post>() {
+                @Override
+                public int compare(Post o1, Post o2) {
+                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
+                }
+
+                @Override
+                public void onChanged(int position, int count) {
+                    // No updates because depends on active date
+                }
+
+                @Override
+                public boolean areContentsTheSame(Post oldItem, Post newItem) {
+                    // FIXME: Is this right, or might it remove duplicates?
+                    return oldItem.getCreatedAt().equals(newItem.getCreatedAt());
+                }
+
+                @Override
+                public boolean areItemsTheSame(Post item1, Post item2) {
+                    // FIXME: Is this right, or might it remove duplicates?
+                    return item1.getCreatedAt().equals(item2.getCreatedAt());
+                }
+
+                @Override
+                public void onInserted(int position, int count) {
+                    // No updates because depends on active date
+                }
+
+                @Override
+                public void onRemoved(int position, int count) {
+                    // No updates because depends on active date
+                }
+
+                @Override
+                public void onMoved(int fromPosition, int toPosition) {
+                    // No updates because depends on active date
+                }
+            });
+        }
         entries.put(date, entriesFromDate);
         if (dates.indexOf(date) < 0) dates.add(date);
         return entriesFromDate;
@@ -272,14 +311,14 @@ public class JournalFragment extends Fragment {
      * @param entry
      */
     private void addEntry(Date date, Post entry) {
-        List<Post> entries = getEntries(date);
+        SortedList<Post> entries = getEntries(date);
         entries.add(entry);
     }
 
     private void displayEntries(Date date) {
         // TODO: Possibly add indicator of date being selected in date picker
         tvDate.setText(TimeUtils.toDateString(date));
-        List<Post> entriesFromDate = getEntries(date);
+        SortedList<Post> entriesFromDate = getEntries(date);
         entryAdapter.changeSource(entriesFromDate);
     }
 
