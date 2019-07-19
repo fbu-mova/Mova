@@ -15,6 +15,7 @@ public class SharedAction extends ParseObject {
     public static final String KEY_GOAL = "goal";
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_USERS_DONE = "usersDone";
+    public static final String KEY_CHILD_ACTION = "childAction";
     RelationFrame relationFrame = new RelationFrame(this);
 
     //Task
@@ -68,6 +69,24 @@ public class SharedAction extends ParseObject {
     public SharedAction setUsersDone(int done){
         put(KEY_USERS_DONE, done);
         return this;
+    }
+
+    //Child action
+    public Action getChildAction(){
+        return (Action) getParseObject(KEY_CHILD_ACTION);
+    }
+
+    public SharedAction setChildAction(Action action){
+        put(KEY_CHILD_ACTION, action);
+        action.setParentSharedAction(this);
+        return this;
+    }
+
+    public Action newChildAction(){
+        Action action = new Action();
+        action.setParentSharedAction(this);
+        action.setTask(this.getTask());
+        return action;
     }
 
 }
