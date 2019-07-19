@@ -20,7 +20,6 @@ import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
-import com.parse.Parse;
 import com.parse.ParseQuery;
 
 import butterknife.BindView;

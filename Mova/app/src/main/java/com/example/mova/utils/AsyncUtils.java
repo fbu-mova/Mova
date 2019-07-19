@@ -30,6 +30,9 @@ public class AsyncUtils {
 
     public static void executeMany(int count, ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> execute, EmptyCallback callback) {
         ExecuteManyStatus status = new ExecuteManyStatus();
+        if (count == 0) {
+            callback.call();
+        }
         for (int i = 0; i < count; i++) {
             execute.call(i, (e) -> {
                 if (e != null) {

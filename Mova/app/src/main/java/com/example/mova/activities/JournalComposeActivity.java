@@ -132,6 +132,10 @@ public class JournalComposeActivity extends AppCompatActivity {
 
     // FIXME: List vs. ArrayList is extremely hacky, must be a better way to pass that in
     public static void writeTags(List<Tag> tags, TextView tvTags) {
+        if (tags.size() == 0) {
+            tvTags.setText("No tags");
+            return;
+        }
         StringBuilder tagsBuilder = new StringBuilder();
         for (int i = 0; i < tags.size(); i++) {
             tagsBuilder.append(tags.get(i).getName());
