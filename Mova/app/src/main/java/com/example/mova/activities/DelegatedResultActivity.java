@@ -1,15 +1,14 @@
 package com.example.mova.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.util.SparseArray;
 
-import java.util.HashMap;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * An activity capable of delegating its intent result handling to a given callback.
  */
-public abstract class DelegatedResultActivity extends Activity {
+public abstract class DelegatedResultActivity extends AppCompatActivity {
     private SparseArray<ActivityResultCallback> delegatedCallbacks = new SparseArray<>();
 
     public interface ActivityResultCallback {
