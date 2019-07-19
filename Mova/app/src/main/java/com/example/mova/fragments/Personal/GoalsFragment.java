@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.components.Component;
+import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.model.Goal;
 import com.parse.FindCallback;
@@ -51,6 +52,11 @@ public class GoalsFragment extends Fragment {
     @BindView(R.id.rvThumbnailGoals)    protected RecyclerView rvThumbnailGoals;
     private ArrayList<Goal> thumbnailGoals;
     private ComponentAdapter<Goal> thumbnailGoalsAdapter;
+
+    // allGoals recyclerview
+    @BindView(R.id.rvAllGoals)      protected RecyclerView rvAllGoals;
+    private ArrayList<Goal> allGoals;
+    private ComponentAdapter<Goal> allGoalsAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -98,6 +104,8 @@ public class GoalsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         activity = getActivity();
         ButterKnife.bind(this, activity);
+
+        // thumbnail
         thumbnailGoals = new ArrayList<>();
 
         // assigns the adapter w/ anonymous class
@@ -118,6 +126,22 @@ public class GoalsFragment extends Fragment {
         // load thumbnail goals into recyclerview
         Log.d(TAG, "in onViewCreated");
         loadThumbNailGoals();
+
+        // allGoals
+        allGoals = new ArrayList<>();
+
+        allGoalsAdapter = new ComponentAdapter<Goal>(activity, allGoals) {
+            @Override
+            public Component<Goal> makeComponent(Goal item) {
+                Component<Goal> component = new GoalCardComponent(item);
+                return component;
+            }
+        };
+
+        rvAllGoals.setLayoutManager(new LinearLayoutManager(activity));
+        rvAllGoals.setAdapter(allGoalsAdapter);
+
+        loadAllGoals();
     }
 
     private void loadThumbNailGoals() {
