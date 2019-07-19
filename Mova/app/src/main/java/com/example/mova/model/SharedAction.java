@@ -13,8 +13,9 @@ public class SharedAction extends ParseObject {
     public static final String KEY_GOAL = "goal";
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_USERS_DONE = "usersDone";
-    public static final String KEY_CHILD_ACTION = "childAction";
+    public static final String KEY_CHILD_ACTIONS = "childActions";
     RelationFrame<User> relUsersInvolved = new RelationFrame<>(this);
+    RelationFrame<Action> relChildActions = new RelationFrame<>(this);
 
     //Task
     public String getTask(){
@@ -58,6 +59,24 @@ public class SharedAction extends ParseObject {
         return relUsersInvolved.remove(KEY_USERS_INVOLVED, user, callback);
     }
 
+
+    //Child action
+
+    public ParseRelation<Action> getRelationChildActions(){
+        return getRelation(KEY_CHILD_ACTIONS);
+    }
+    public void getListChildActions(AsyncUtils.ListCallback<Action> callback){
+        relChildActions.getList(KEY_CHILD_ACTIONS, callback);
+    }
+
+    public void addChildAction(Action action, AsyncUtils.ItemCallback<Action> callback){
+        relChildActions.add(KEY_CHILD_ACTIONS, action, callback);
+    }
+
+    public void removeChildAction(Action action, AsyncUtils.EmptyCallback callback){
+        relChildActions.remove(KEY_CHILD_ACTIONS, action, callback);
+    }
+
     //Users done
 
     public int getUsersDone(){
@@ -68,23 +87,4 @@ public class SharedAction extends ParseObject {
         put(KEY_USERS_DONE, done);
         return this;
     }
-
-    //Child action
-    public Action getChildAction(){
-        return (Action) getParseObject(KEY_CHILD_ACTION);
-    }
-
-    public SharedAction setChildAction(Action action){
-        put(KEY_CHILD_ACTION, action);
-        action.setParentSharedAction(this);
-        return this;
-    }
-
-    public Action newChildAction(){
-        Action action = new Action();
-        action.setParentSharedAction(this);
-        action.setTask(this.getTask());
-        return action;
-    }
-
 }

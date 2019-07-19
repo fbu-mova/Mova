@@ -3,10 +3,10 @@ package com.example.mova;
 import android.app.Application;
 
 import com.example.mova.model.Action;
-import com.example.mova.model.Comment;
 import com.example.mova.model.Event;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
+import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.Tag;
@@ -24,10 +24,10 @@ public class ParseApp extends Application {
         //Registering all the subclasses
         ParseUser.registerSubclass(User.class);
         ParseObject.registerSubclass(Action.class);
-        ParseObject.registerSubclass(Comment.class);
         ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass(Goal.class);
         ParseObject.registerSubclass(Group.class);
+        ParseObject.registerSubclass(Media.class);
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(SharedAction.class);
         ParseObject.registerSubclass(Tag.class);
