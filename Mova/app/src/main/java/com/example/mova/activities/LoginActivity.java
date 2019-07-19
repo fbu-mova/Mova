@@ -18,7 +18,7 @@ import com.parse.ParseUser;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends DelegatedResultActivity {
 
     private static final String TAG = "LoginActivity";
 

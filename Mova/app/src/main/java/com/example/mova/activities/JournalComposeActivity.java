@@ -26,7 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class JournalComposeActivity extends AppCompatActivity {
+public class JournalComposeActivity extends DelegatedResultActivity {
 
     // Incoming intent keys
     /**
