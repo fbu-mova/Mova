@@ -1,7 +1,7 @@
 package com.example.mova.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.model.Tag;
-import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
@@ -29,12 +28,20 @@ import butterknife.ButterKnife;
 
 public class JournalComposeActivity extends AppCompatActivity {
 
+    // Incoming intent keys
+    /**
+     * The key for the entry's mood, passed as the string value of the Mood.Status.
+     */
+    public static final String KEY_MOOD = "mood";
+    public static final String KEY_BODY = "body";
+
+    // Outgoing intent keys
     public static final String KEY_COMPOSED_POST = "post";
     public static final String KEY_COMPOSED_POST_TAGS = "tags";
+
     public static final int COMPOSE_REQUEST_CODE = 30;
 
-    // TODO: Perhaps change this to List<Tag>?
-    ArrayList<String> tags;
+    List<String> tags;
 
     @BindView(R.id.tvTime)       protected TextView tvTime;
     @BindView(R.id.tvLocation)   protected TextView tvLocation;
@@ -54,62 +61,58 @@ public class JournalComposeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         tags = new ArrayList<>();
+        loadIncomingExtras();
 
+        // Store all immediate information relevant to post
         Date startDate = new Date();
         final double lat = 0, lon = 0; // TODO: Get location
 
         tvTime.setText(TimeUtils.toTimeString(startDate));
         tvLocation.setText("Seattle, WA, USA"); // TODO: Get location
-        // TODO: Build and handle mood selection
         // TODO: Build tag removal
 
-        bAddTag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String tagName = etTag.getText().toString();
-                if (tagName.equals("")) {
-                    Toast.makeText(JournalComposeActivity.this, "Write a tag first!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateTags(tagName, true);
-                    etTag.setText("");
-                }
+        bAddTag.setOnClickListener((view) -> {
+            String tagName = etTag.getText().toString();
+            if (tagName.equals("")) {
+                Toast.makeText(JournalComposeActivity.this, "Write a tag first!", Toast.LENGTH_LONG).show();
+            } else {
+                updateTags(tagName, true);
+                etTag.setText("");
             }
         });
 
-        bSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String body = etBody.getText().toString();
-                User user = (User) ParseUser.getCurrentUser();
-                Date endDate = new Date();
-                ParseGeoPoint location = new ParseGeoPoint();
-                location.setLatitude(lat);
-                location.setLongitude(lon);
-                Mood.Status mood = moodSelector.getSelectedItem();
+        bSave.setOnClickListener((view) -> {
+            String body = etBody.getText().toString();
+            User user = (User) ParseUser.getCurrentUser();
+            Date endDate = new Date();
+            // FIXME: Maybe calculate the location on postJournalEntry to keep this running quickly?
+            ParseGeoPoint location = new ParseGeoPoint();
+            location.setLatitude(lat);
+            location.setLongitude(lon);
+            Mood.Status mood = moodSelector.getSelectedItem();
 
-                ArrayList<Tag> tagObjects = new ArrayList<>();
-                for (String s : tags) {
-                    tagObjects.add(new Tag(s));
-                }
+            ArrayList<Tag> tagObjects = new ArrayList<>();
+            for (String s : tags) {
+                tagObjects.add(new Tag(s));
+            }
 
-                // TODO: Handle media
+            // TODO: Handle media
 
-                if (body.equals("")) {
-                    // TODO: Move all Toast strings to a strings.xml file for cleaner code
-                    Toast.makeText(JournalComposeActivity.this, "Write an entry first!", Toast.LENGTH_LONG).show();
-                } else {
-                    Post post = new Post()
-                            .setIsPersonal(true)
-                            .setAuthor(user)
-                            .setBody(body)
-                            .setLocation(location)
-                            .setMood(mood);
+            if (body.equals("")) {
+                // TODO: Move all Toast strings to a strings.xml file for cleaner code
+                Toast.makeText(JournalComposeActivity.this, "Write an entry first!", Toast.LENGTH_LONG).show();
+            } else {
+                Post post = new Post()
+                        .setIsPersonal(true)
+                        .setAuthor(user)
+                        .setBody(body)
+                        .setLocation(location)
+                        .setMood(mood);
 
-                    getIntent().putExtra(KEY_COMPOSED_POST, post);
-                    getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
-                    setResult(RESULT_OK, getIntent());
-                    finish();
-                }
+                getIntent().putExtra(KEY_COMPOSED_POST, post);
+                getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
+                setResult(RESULT_OK, getIntent());
+                finish();
             }
         });
     }
@@ -121,5 +124,17 @@ public class JournalComposeActivity extends AppCompatActivity {
             tags.remove(tag);
         }
         TextUtils.writeCommaSeparated(tags, "No tags", tvTags, (str) -> str);
+    }
+
+    private void loadIncomingExtras() {
+        Intent data = getIntent();
+        String moodName = data.getStringExtra(KEY_MOOD);
+        if (moodName != null && !moodName.equals("")) {
+            moodSelector.setItem(Mood.Status.valueOf(moodName));
+        }
+        String body = data.getStringExtra(KEY_BODY);
+        if (body != null && !body.equals("")) {
+            etBody.setText(body);
+        }
     }
 }

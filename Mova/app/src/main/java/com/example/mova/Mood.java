@@ -1,7 +1,6 @@
 package com.example.mova;
 
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,34 +11,42 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class Mood {
     public static enum Status {
-        Happy,
-        Sad,
-        Excited,
-        Angry,
-        Frustrated,
-        Disappointed,
-        Confident,
-        Determined,
-        Pensive,
-        Relaxed,
-        Fulfilled,
-        Focused,
-        Bored,
-        Annoyed,
-        Tired,
-        Concerned,
-        Inspired,
-        Empowered,
-        Supported
+        Happy(0),
+        Sad(1),
+        Excited(2),
+        Angry(3),
+        Frustrated(4),
+        Disappointed(5),
+        Confident(6),
+        Determined(7),
+        Pensive(8),
+        Relaxed(9),
+        Fulfilled(10),
+        Focused(11),
+        Bored(12),
+        Annoyed(13),
+        Tired(14),
+        Concerned(15),
+        Inspired(16),
+        Empowered(17),
+        Supported(18);
+
+        private final int value;
+        private Status(int value) {
+            this.value = value;
+        }
+
+        // Kept package private because the emotion itself, not the index in the list, should be a unique identifier
+        int getValue() {
+            return value;
+        }
     }
 
     public static class SelectorLayout extends FrameLayout implements AdapterView.OnItemSelectedListener {
@@ -103,6 +110,10 @@ public class Mood {
 
         public Status getSelectedItem() {
             return (Status) spStatus.getSelectedItem();
+        }
+
+        public void setItem(Status status) {
+            spStatus.setSelection(status.getValue());
         }
 
         public static abstract class OnSelectedHandler {

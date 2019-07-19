@@ -43,9 +43,9 @@ public class JournalPromptComponent extends Component<Post> {
         holder.bCompose.setOnClickListener((view) -> {
             Mood.Status mood = holder.moodSelector.getSelectedItem();
             Intent intent = new Intent(activity, JournalComposeActivity.class);
-            // TODO: Pass mood through
-//            intent.putExtra(JournalComposeActivity.KEY_MOOD, mood);
-            activity.startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
+            intent.putExtra(JournalComposeActivity.KEY_MOOD, mood.toString());
+            // TODO: Use ComponentActivity
+//            activity.startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
         });
     }
 
