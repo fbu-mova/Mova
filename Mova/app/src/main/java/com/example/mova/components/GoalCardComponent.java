@@ -58,9 +58,9 @@ public class GoalCardComponent extends Component<Goal> {
     }
 
     @Override
-    public void bind() {
+    public void render() {
         if (viewHolder == null) {
-            Log.e(TAG, "not inflating views to viewHolder, in bind");
+            Log.e(TAG, "not inflating views to viewHolder, in render");
             return;
         }
 
@@ -73,7 +73,7 @@ public class GoalCardComponent extends Component<Goal> {
         viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
         viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
 
-        // get and bind the actions
+        // get and render the actions
 
         actions = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public class GoalCardComponent extends Component<Goal> {
         @BindView(R.id.tvQuote)         protected TextView tvQuote; // todo -- add to Parse ? stretch goal
         @BindView(R.id.tvName)          protected TextView tvName;
         @BindView(R.id.tvDescription)   protected TextView tvDescription;
-        @BindView(R.id.rvActions)       protected RecyclerView rvActions; // todo -- action component to bind in this class
+        @BindView(R.id.rvActions)       protected RecyclerView rvActions; // todo -- action component to render in this class
         @BindView(R.id.tvNumDone)       protected TextView tvNumDone; // fixme -- in personal, only one person ?
         @BindView(R.id.tvTag)           protected TextView tvTag; // fixme -- what about multiple tags?
 

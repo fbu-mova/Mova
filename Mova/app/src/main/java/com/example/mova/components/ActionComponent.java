@@ -45,7 +45,7 @@ public class ActionComponent extends Component<Action> {
     }
 
     @Override
-    public void bind() {
+    public void render() {
 
         Action action = getItem();
 

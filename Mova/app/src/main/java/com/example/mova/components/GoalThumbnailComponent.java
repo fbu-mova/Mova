@@ -51,9 +51,9 @@ public class GoalThumbnailComponent extends Component<Goal> {
     }
 
     @Override
-    public void bind() {
+    public void render() {
         if (viewHolder == null) {
-            Log.e(TAG, "not inflating views to viewHolder, in bind");
+            Log.e(TAG, "not inflating views to viewHolder, in render");
             return;
         }
 

@@ -56,7 +56,7 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
         Component<T> component = components.get(item);
-        component.bind();
+        component.render();
     }
 
     @Override
