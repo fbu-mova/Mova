@@ -153,11 +153,14 @@ public class Goal extends ParseObject {
     //Todo - get data to display
     public void createGraph(int length, AsyncUtils.ItemCallback<LineGraphSeries> callback){
         DataPoint[] points = new DataPoint[length];
+        Date date = TimeUtils.getToday();
         AsyncUtils.executeMany(length,
                 (position, callback2) -> {
-                    Date date = TimeUtils.getToday();
                     final int index = position;
                     //Todo set date equal to current date minus j
+//                    date.setTime(TimeUtils.getToday().getTime());
+//                    long prior =  date.getTime() - index*24*60*60*1000;
+//                    date.setTime(prior);
                     setSharedActionList(() -> {
                         DataPoint point = new DataPoint(index,
                                 getActionsCompleted(TimeUtils.normalizeToDay(date), saList));
