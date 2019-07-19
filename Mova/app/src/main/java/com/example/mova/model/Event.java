@@ -1,6 +1,5 @@
 package com.example.mova.model;
 
-import com.example.mova.RelationFrame;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -10,7 +9,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
 import java.util.Date;
-import java.util.List;
 
 @ParseClassName("Event")
 public class Event extends ParseObject {

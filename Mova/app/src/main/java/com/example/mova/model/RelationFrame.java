@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.model;
 
 import android.util.Log;
 
@@ -13,18 +13,20 @@ import java.util.List;
 public class RelationFrame<T extends ParseObject> {
 
     private ParseObject parseObject;
+    private String key;
 
-    public RelationFrame(ParseObject parseObject) {
+    public RelationFrame(ParseObject parseObject, String key) {
         this.parseObject = parseObject;
+        this.key = key;
     }
 
-    public ParseQuery<T> getQuery(String key) {
+    public ParseQuery<T> getQuery() {
         ParseRelation<T> rel = parseObject.getRelation(key);
         return rel.getQuery();
     }
 
-    public void getList(String key, AsyncUtils.ListCallback<T> callback) {
-        ParseQuery<T> query = getQuery(key);
+    public void getList(AsyncUtils.ListCallback<T> callback) {
+        ParseQuery<T> query = getQuery();
         query.findInBackground((List<T> objects, ParseException e) -> {
             if (e != null){
                 Log.e("RelationFrame", "Error retrieving list", e);
@@ -34,7 +36,7 @@ public class RelationFrame<T extends ParseObject> {
         });
     }
 
-    public void add(String key, T object, AsyncUtils.ItemCallback<T> callback) {
+    public void add(T object, AsyncUtils.ItemCallback<T> callback) {
         ParseRelation<T> relation = parseObject.getRelation(key);
         relation.add(object);
         parseObject.saveInBackground((ParseException e) -> {
@@ -46,7 +48,7 @@ public class RelationFrame<T extends ParseObject> {
         });
     }
 
-    public T remove(String key, T object, AsyncUtils.EmptyCallback callback) {
+    public T remove(T object, AsyncUtils.EmptyCallback callback) {
         ParseRelation<T> relation = parseObject.getRelation(key);
         relation.remove(object);
         parseObject.deleteInBackground((ParseException e) -> {

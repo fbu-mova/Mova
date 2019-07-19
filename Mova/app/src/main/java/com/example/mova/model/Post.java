@@ -1,7 +1,6 @@
 package com.example.mova.model;
 
 
-import com.example.mova.RelationFrame;
 import com.example.mova.Mood;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
@@ -10,9 +9,6 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
-
-import java.util.Date;
-import java.util.List;
 
 @ParseClassName("Post")
 public class Post extends ParseObject{

@@ -1,6 +1,5 @@
 package com.example.mova.model;
 
-import com.example.mova.RelationFrame;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -9,7 +8,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
 import java.util.Date;
-import java.util.List;
 
 @ParseClassName("Group")
 public class Group extends ParseObject {
@@ -198,6 +196,6 @@ public class Group extends ParseObject {
     }
 
     public Tag removeTag(Tag tag, AsyncUtils.EmptyCallback callback) {
-        return relTags.remove(KEY_TAGS,tag, callback);
+        return relTags.remove(KEY_TAGS, tag, callback);
     }
 }

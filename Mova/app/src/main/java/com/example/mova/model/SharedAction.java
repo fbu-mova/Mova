@@ -1,13 +1,10 @@
 package com.example.mova.model;
 
-import com.example.mova.RelationFrame;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
-
-import java.util.List;
 
 @ParseClassName("SharedAction")
 public class SharedAction extends ParseObject {

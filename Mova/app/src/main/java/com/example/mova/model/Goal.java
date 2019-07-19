@@ -2,13 +2,11 @@ package com.example.mova.model;
 
 import android.util.Log;
 
-import com.example.mova.RelationFrame;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.parse.FindCallback;
-import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
