@@ -19,6 +19,9 @@ public class RelationFrame<T extends ParseObject> {
         this.parseObject = parseObject;
         this.key = key;
     }
+    public ParseRelation<T> getRelation(){
+        return parseObject.getRelation(key);
+    }
 
     public ParseQuery<T> getQuery() {
         ParseRelation<T> rel = parseObject.getRelation(key);

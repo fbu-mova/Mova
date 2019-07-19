@@ -18,6 +18,7 @@ import com.example.mova.R;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.GoalUtils;
 import com.jjoe64.graphview.GraphView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -68,7 +69,7 @@ public class ProgressFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ProgressFragment.
      */
-    // TODO: Rename and change types and count of parameters
+    // TODO: Rename and change types and number of parameters
     public static ProgressFragment newInstance(String param1, String param2) {
         ProgressFragment fragment = new ProgressFragment();
         Bundle args = new Bundle();
@@ -100,25 +101,23 @@ public class ProgressFragment extends Fragment {
         ButterKnife.bind(this, view);
         length = 7;
         mGoals = new ArrayList<>();
-        queryGoals(() -> setGraph());
+        queryGoals(() -> setGraph(() -> {
+            Toast.makeText(getContext(), "Graph created", Toast.LENGTH_SHORT).show();
+        }));
     }
 
-    private void setGraph(){
-        AsyncUtils.executeMany(mGoals.size(), (i, callback) -> {
-                    mGoals.get(i).createGraph(length,(series) -> {
-                        series.setTitle(mGoals.get(i).getTitle());
-                        if(mGoals.get(i).getColor() != null){
-                            series.setColor(Color.parseColor(mGoals.get(i).getColor()));
+    private void setGraph(AsyncUtils.EmptyCallback callback){
+        for(Goal goal: mGoals){
+            GoalUtils goalUtils = new GoalUtils();
+                    goalUtils.getDataForGraph(goal, (User) ParseUser.getCurrentUser(), length , (series) -> {
+                        series.setTitle(goal.getTitle());
+                        if(goal.getColor() != null){
+                            series.setColor(Color.parseColor(goal.getColor()));
                         }
                         graph.addSeries(series);
+                        callback.call();
                     });
-
-                }, () -> Toast.makeText(getContext(), "Created graphs", Toast.LENGTH_SHORT).show()
-                );
-
-
-
-
+        }
     }
 
 
@@ -127,9 +126,11 @@ public class ProgressFragment extends Fragment {
         User user = (User) ParseUser.getCurrentUser();
         ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
         goalQuery.whereEqualTo("usersInvolved", user);
+        //Log.d("ProgressFragment", "About to query");
         goalQuery.findInBackground(new FindCallback<Goal>() {
             @Override
             public void done(List<Goal> objects, ParseException e) {
+                //Log.d("ProgressFragment", "querying");
                 if(e != null){
                     Log.e("ProgressFragment", "Error with query");
                     e.printStackTrace();
@@ -137,6 +138,7 @@ public class ProgressFragment extends Fragment {
                 }
                 //Get all the goals TODO- only add goal if the user is part of it
                 mGoals.addAll(objects);
+                //Log.d("ProgressFragment", "Finish with query, the size of mGoals is" + mGoals.size());
                 callback.call();
             }
         });
