@@ -23,6 +23,10 @@ public class AsyncUtils {
         void call(T item, Callback callback);
     }
 
+    public interface ItemReturnCallback<T, R> {
+        R call(T item);
+    }
+
     private static class ExecuteManyStatus {
         public int count = 0;
         public boolean ranCallback = false;

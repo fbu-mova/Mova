@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.model.Tag;
+import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
@@ -118,29 +120,6 @@ public class JournalComposeActivity extends AppCompatActivity {
         } else {
             tags.remove(tag);
         }
-        writeTags(tags, tvTags);
-    }
-
-    public static void writeTags(ArrayList<String> tags, TextView tvTags) {
-        StringBuilder tagsBuilder = new StringBuilder();
-        for (int i = 0; i < tags.size(); i++) {
-            tagsBuilder.append(tags.get(i));
-            if (i < tags.size() - 1) tagsBuilder.append(", ");
-        }
-        tvTags.setText(tagsBuilder.toString());
-    }
-
-    // FIXME: List vs. ArrayList is extremely hacky, must be a better way to pass that in
-    public static void writeTags(List<Tag> tags, TextView tvTags) {
-        if (tags.size() == 0) {
-            tvTags.setText("No tags");
-            return;
-        }
-        StringBuilder tagsBuilder = new StringBuilder();
-        for (int i = 0; i < tags.size(); i++) {
-            tagsBuilder.append(tags.get(i).getName());
-            if (i < tags.size() - 1) tagsBuilder.append(", ");
-        }
-        tvTags.setText(tagsBuilder.toString());
+        TextUtils.writeCommaSeparated(tags, "No tags", tvTags, (str) -> str);
     }
 }

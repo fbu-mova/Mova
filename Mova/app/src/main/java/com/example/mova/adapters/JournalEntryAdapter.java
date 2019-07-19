@@ -18,6 +18,7 @@ import com.example.mova.model.Tag;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.Mood;
 import com.example.mova.R;
+import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 import com.parse.ParseQuery;
@@ -57,7 +58,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
                 Log.e("JournalEntryAdapter", "Failed to load tags on journal entry", e);
                 holder.tvTags.setText("Failed to load");
             } else {
-                JournalComposeActivity.writeTags(tags, holder.tvTags);
+                TextUtils.writeCommaSeparated(tags, "No tags", holder.tvTags, (tag) -> tag.getName());
             }
         });
     }
