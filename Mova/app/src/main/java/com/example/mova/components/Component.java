@@ -14,6 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public abstract class Component<T> {
     protected T item;
 
+    /**
+     * Use this only if the component is not meant to have an item.
+     */
+    public Component() { }
+
     public Component(T item) {
         this.item = item;
     }
