@@ -1,7 +1,11 @@
 package com.example.mova.model;
 
+import com.example.mova.utils.TimeUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+
+import java.util.Calendar;
+import java.util.Date;
 
 @ParseClassName("Action")
 public class Action extends ParseObject {
@@ -10,6 +14,7 @@ public class Action extends ParseObject {
     public static final String KEY_PARENT_SHARED_ACTION = "parentSharedAction";
     public static final String KEY_IS_DONE = "isDone";
     public static final String KEY_IS_CONNECTED_PARENT = "isConnectedToParent";
+    public static final String KEY_COMPLETED_AT = "completedAt";
 
     //Task
 
@@ -30,6 +35,7 @@ public class Action extends ParseObject {
 
     public Action setParentSharedAction(SharedAction sharedAction){
         put(KEY_PARENT_SHARED_ACTION, sharedAction);
+        sharedAction.setChildAction(this);
         return this;
     }
 
@@ -44,6 +50,12 @@ public class Action extends ParseObject {
         return this;
     }
 
+    public Action setDone(){
+        put(KEY_IS_DONE, true);
+        this.setCompletedAt(Calendar.getInstance().getTime());
+        return this;
+    }
+
     // Is Connected to Parent
 
     private Boolean getIsConnectedToParent(){
@@ -52,6 +64,19 @@ public class Action extends ParseObject {
 
     private Action setIsConnectedToParent(Boolean bool){
         put(KEY_IS_CONNECTED_PARENT, bool);
+        return this;
+    }
+
+    //Completed At
+
+    //Get date complete add
+    public Date getCompletedAt(){
+        Date date = getDate(KEY_COMPLETED_AT);
+        return TimeUtils.normalizeToDay(date);
+    }
+
+    public Action setCompletedAt(Date date){
+        put(KEY_COMPLETED_AT, date);
         return this;
     }
 
