@@ -24,12 +24,11 @@ public class GoalThumbnailComponent extends Component<Goal> {
     // todo -- overall scroll method (insert scrollview)
 
     private static final String TAG = "goal thumbnail comp'nt";
+    private static final int viewLayoutRes = R.layout.item_goal_thumbnail_card;
 
     private View view;
     private GoalThumbnailViewHolder viewHolder;
-    private Context context;
-
-    private final int viewLayoutRes = R.layout.item_goal_thumbnail_card;
+    private Activity activity;
 
     public GoalThumbnailComponent(Goal item) {
         super(item);
@@ -38,7 +37,7 @@ public class GoalThumbnailComponent extends Component<Goal> {
     @Override
     public void makeViewHolder(Activity activity, ViewGroup parent) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
-        context = parent.getContext();
+        this.activity = activity;
     }
 
     @Override
@@ -63,8 +62,9 @@ public class GoalThumbnailComponent extends Component<Goal> {
         viewHolder.tvName.setText(goal.getTitle());
 
         // fixme -- does there exist cleaner code to do this casework? / extract as helper function?
-        if (goal.getFromGroup() != null) {
-            viewHolder.tvFromGroup.setText(goal.getFromGroup().getName());
+        String name = goal.getFromGroupName();
+        if (name != "") {
+            viewHolder.tvFromGroup.setText(name);
         }
         else {
             viewHolder.tvFromGroup.setVisibility(View.GONE);
@@ -74,7 +74,7 @@ public class GoalThumbnailComponent extends Component<Goal> {
         // how to get context for binding glide images? -- made it a field
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-        Glide.with(context)
+        Glide.with(activity)
                 .load(url)
                 .error(R.drawable.clock) // todo - replace to be better image, add rounded corners
                 .placeholder(R.drawable.clock)

@@ -19,10 +19,10 @@ public class Goal extends ParseObject {
     public static final String KEY_TITLE = "title";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_ACTIONS = "actions";
-    public static final String KEY_TAGS = "tags";
+    public static final String KEY_TAGS = "tags"; // optional
     public static final String KEY_COLOR = "color";
-    public static final String KEY_FROM_GROUP = "fromGroup";
-    public static final String KEY_IMAGE = "image";
+    public static final String KEY_FROM_GROUP = "fromGroup"; // optional
+    public static final String KEY_IMAGE = "image"; // optional
     RelationFrame relationFrame = new RelationFrame(this);
 
     //Author
@@ -72,6 +72,15 @@ public class Goal extends ParseObject {
 
     public Group getFromGroup() {
         return (Group) get(KEY_FROM_GROUP);
+    }
+
+    public String getFromGroupName() {
+        Group group = getFromGroup();
+        if (group == null) {
+            return "";
+        }
+
+        return group.getName();
     }
 
     //Image

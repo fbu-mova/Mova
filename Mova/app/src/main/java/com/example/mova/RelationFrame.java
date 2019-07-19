@@ -31,7 +31,7 @@ public class RelationFrame {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 if(e != null){
-                    Log.e("Group", "error retriving user list");
+                    Log.e("Group", "error retrieving user list");
                 }
                 list.addAll(objects);
             }
