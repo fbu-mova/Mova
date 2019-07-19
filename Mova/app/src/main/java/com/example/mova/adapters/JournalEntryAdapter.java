@@ -52,7 +52,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         holder.tvLocation.setText(LocationUtils.makeLocationText(activity, entry.getLocation()));
         Mood.Status mood = entry.getMood();
         holder.tvMood.setText((mood == null) ? "" : mood.toString()); // TODO: Hide mood image, etc.
-        ParseQuery<Tag> tagQuery = entry.getQueryTags();
+        ParseQuery<Tag> tagQuery = entry.relTags.getQuery();
         tagQuery.findInBackground((tags, e) -> {
             if (e != null) {
                 Log.e("JournalEntryAdapter", "Failed to load tags on journal entry", e);
