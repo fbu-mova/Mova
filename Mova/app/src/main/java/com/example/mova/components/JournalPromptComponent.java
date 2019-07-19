@@ -12,14 +12,19 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.Mood;
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.model.Post;
+import com.example.mova.model.Tag;
+import com.example.mova.model.User;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class JournalPromptComponent extends Component<Post> {
-    protected Activity activity;
+    protected DelegatedResultActivity activity;
     protected ViewHolder holder;
 
     public JournalPromptComponent(Post item) {
@@ -27,7 +32,7 @@ public class JournalPromptComponent extends Component<Post> {
     }
 
     @Override
-    public void makeViewHolder(Activity activity, ViewGroup parent) {
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
         LayoutInflater inflater = activity.getLayoutInflater();
         View view = inflater.inflate(R.layout.component_journal_prompt, parent, false);
         holder = new ViewHolder(view);
@@ -44,8 +49,15 @@ public class JournalPromptComponent extends Component<Post> {
             Mood.Status mood = holder.moodSelector.getSelectedItem();
             Intent intent = new Intent(activity, JournalComposeActivity.class);
             intent.putExtra(JournalComposeActivity.KEY_MOOD, mood.toString());
-            // TODO: Use ComponentActivity
-//            activity.startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
+
+            activity.startActivityForDelegatedResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE,
+                (int requestCode, int resultCode, Intent data) -> {
+                    if (requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                        Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
+                        ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
+                        ((User) User.getCurrentUser()).postJournalEntry(journalEntry, tags, (entry) -> {});
+                    }
+                });
         });
     }
 
