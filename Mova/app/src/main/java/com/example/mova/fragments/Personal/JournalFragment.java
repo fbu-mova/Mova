@@ -190,45 +190,15 @@ public class JournalFragment extends Fragment {
     }
 
     private void postJournalEntry(Post journalEntry, List<Tag> tags) {
-        // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
-        AsyncUtils.executeMany(
-            tags.size(),
-            (position, cb) -> {
-                Tag tag = tags.get(position);
-                Tag.getTag(tag.getName(), (tagFromDB) -> {
-                    if (tagFromDB == null) {
-                        tag.saveInBackground((e) -> {
-                            if (e != null) {
-                                Log.e("JournalFragment", "Failed to create tag " + tag.getName(), e);
-                            } else {
-                                journalEntry.addTag(tag, (sameTag) -> cb.call(null));
-                            }
-                        });
-                    } else {
-                        journalEntry.addTag(tagFromDB, (sameTag) -> cb.call(null));
-                    }
-                });
-            },
-            () -> {
-                Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
-                journalEntry.saveInBackground((e) -> {
-                    if (e != null) {
-                        Log.e("JournalFragment", "Failed to save entry", e);
-                        Toast.makeText(getActivity(), "Failed to save entry", Toast.LENGTH_LONG).show();
-                    } else {
-                        ((User) ParseUser.getCurrentUser()).relJournal.add(journalEntry, (entry) -> {
-                            Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
-                            Date today = TimeUtils.getToday();
-                            SortedList<Post> todayEntries = getEntries(today);
-                            todayEntries.add(journalEntry);
-                            if (currDate.equals(today)) {
-                                entryAdapter.notifyItemInserted(todayEntries.size() - 1);
-                            }
-                        });
-                    }
-                });
-             }
-         );
+        ((User) ParseUser.getCurrentUser()).postJournalEntry(journalEntry, tags, (entry) -> {
+            Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
+            Date today = TimeUtils.getToday();
+            SortedList<Post> todayEntries = getEntries(today);
+            todayEntries.add(journalEntry);
+            if (currDate.equals(today)) {
+                entryAdapter.notifyItemInserted(todayEntries.size() - 1);
+            }
+        });
     }
 
     /**

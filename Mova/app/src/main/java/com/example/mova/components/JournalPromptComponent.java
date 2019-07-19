@@ -1,6 +1,7 @@
 package com.example.mova.components;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,15 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.Mood;
 import com.example.mova.R;
+import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.model.Post;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class JournalPromptComponent extends Component<Post> {
-    protected ViewHolder viewHolder;
+    protected Activity activity;
+    protected ViewHolder holder;
 
     public JournalPromptComponent(Post item) {
         super(item);
@@ -27,22 +30,22 @@ public class JournalPromptComponent extends Component<Post> {
     public void makeViewHolder(Activity activity, ViewGroup parent) {
         LayoutInflater inflater = activity.getLayoutInflater();
         View view = inflater.inflate(R.layout.component_journal_prompt, parent, false);
-        viewHolder = new ViewHolder(view);
+        holder = new ViewHolder(view);
     }
 
     @Override
     public ViewHolder getViewHolder() {
-        return viewHolder;
+        return holder;
     }
 
     @Override
     public void render() {
-        viewHolder.bCompose.setOnClickListener((view) -> {
-            /* TODO:
-             * - Get current mood
-             * - Pass current mood to new JournalComposeActivity
-             * - If desired, switch back to JournalFragment after finished composing
-             */
+        holder.bCompose.setOnClickListener((view) -> {
+            Mood.Status mood = holder.moodSelector.getSelectedItem();
+            Intent intent = new Intent(activity, JournalComposeActivity.class);
+            // TODO: Pass mood through
+//            intent.putExtra(JournalComposeActivity.KEY_MOOD, mood);
+            activity.startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
         });
     }
 
