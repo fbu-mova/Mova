@@ -118,13 +118,23 @@ public class JournalComposeActivity extends AppCompatActivity {
         } else {
             tags.remove(tag);
         }
-        writeTags();
+        writeTags(tags, tvTags);
     }
 
-    private void writeTags() {
+    public static void writeTags(ArrayList<String> tags, TextView tvTags) {
         StringBuilder tagsBuilder = new StringBuilder();
         for (int i = 0; i < tags.size(); i++) {
             tagsBuilder.append(tags.get(i));
+            if (i < tags.size() - 1) tagsBuilder.append(", ");
+        }
+        tvTags.setText(tagsBuilder.toString());
+    }
+
+    // FIXME: List vs. ArrayList is extremely hacky, must be a better way to pass that in
+    public static void writeTags(List<Tag> tags, TextView tvTags) {
+        StringBuilder tagsBuilder = new StringBuilder();
+        for (int i = 0; i < tags.size(); i++) {
+            tagsBuilder.append(tags.get(i).getName());
             if (i < tags.size() - 1) tagsBuilder.append(", ");
         }
         tvTags.setText(tagsBuilder.toString());
