@@ -210,7 +210,7 @@ public class JournalFragment extends Fragment {
                         Log.e("JournalFragment", "Failed to save entry", e);
                         Toast.makeText(getActivity(), "Failed to save entry", Toast.LENGTH_LONG).show();
                     } else {
-                        ((User) ParseUser.getCurrentUser()).addJournalPost(journalEntry, (entry) -> {
+                        ((User) ParseUser.getCurrentUser()).relJournal.add(journalEntry, (entry) -> {
                             Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
                             Date today = TimeUtils.getToday();
                             SortedList<Post> todayEntries = getEntries(today);
@@ -299,7 +299,7 @@ public class JournalFragment extends Fragment {
 
     private void loadEntries() {
         User user = (User) ParseUser.getCurrentUser();
-        ParseQuery<Post> journalQuery = user.getQueryJournal();
+        ParseQuery<Post> journalQuery = user.relJournal.getQuery();
         journalQuery.findInBackground((List<Post> list, ParseException e) -> {
             for (Post entry : list) {
                 Date date = entry.getCreatedAt();
