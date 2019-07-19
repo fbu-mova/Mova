@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.model.Tag;
+import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.adapters.DatePickerAdapter;
 import com.example.mova.adapters.JournalEntryAdapter;
 import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -39,21 +47,16 @@ import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link JournalFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link JournalFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class JournalFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
-
     private DatePickerAdapter dateAdapter;
     private JournalEntryAdapter entryAdapter;
 
     private SortedList<Date> dates;
-    private HashMap<Date, List<Post>> entries;
+    private HashMap<Date, SortedList<Post>> entries;
     private Date currDate;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
@@ -69,10 +72,8 @@ public class JournalFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @return A new instance of fragment JournalFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static JournalFragment newInstance() {
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
@@ -106,7 +107,8 @@ public class JournalFragment extends Fragment {
         dates = new SortedList<>(Date.class, new SortedList.Callback<Date>() {
             @Override
             public int compare(Date o1, Date o2) {
-                return o1.compareTo(o2);
+                // Reverse order of list
+                return o2.compareTo(o1);
             }
 
             @Override
@@ -171,85 +173,140 @@ public class JournalFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        // TODO: Potentially uncomment and/or use onAttach
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE
                 && resultCode == Activity.RESULT_OK) {
             Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
-            Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
-            journalEntry.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
-                    Date today = TimeUtils.getToday();
-                    List<Post> todayEntries = getEntries(today);
-                    todayEntries.add(journalEntry);
-                    if (currDate.equals(today)) {
-                        entryAdapter.notifyItemInserted(todayEntries.size() - 1);
-                    }
-                }
-            });
+            ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
+            postJournalEntry(journalEntry, tags);
         }
     }
 
-    private List<Post> getEntries(Date date) {
-        List<Post> entriesFromDate = entries.get(date);
-        if (entriesFromDate == null) entriesFromDate = new ArrayList<Post>();
+    private void postJournalEntry(Post journalEntry, List<Tag> tags) {
+        // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
+        AsyncUtils.executeMany(
+            tags.size(),
+            (position, cb) -> {
+                Tag tag = tags.get(position);
+                Tag.getTag(tag.getName(), (tagFromDB) -> {
+                    if (tagFromDB == null) {
+                        tag.saveInBackground((e) -> {
+                            if (e != null) {
+                                Log.e("JournalFragment", "Failed to create tag " + tag.getName(), e);
+                            } else {
+                                journalEntry.addTag(tag, (sameTag) -> cb.call(null));
+                            }
+                        });
+                    } else {
+                        journalEntry.addTag(tagFromDB, (sameTag) -> cb.call(null));
+                    }
+                });
+            },
+            () -> {
+                Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
+                journalEntry.saveInBackground((e) -> {
+                    if (e != null) {
+                        Log.e("JournalFragment", "Failed to save entry", e);
+                        Toast.makeText(getActivity(), "Failed to save entry", Toast.LENGTH_LONG).show();
+                    } else {
+                        ((User) ParseUser.getCurrentUser()).relJournal.add(journalEntry, (entry) -> {
+                            Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
+                            Date today = TimeUtils.getToday();
+                            SortedList<Post> todayEntries = getEntries(today);
+                            todayEntries.add(journalEntry);
+                            if (currDate.equals(today)) {
+                                entryAdapter.notifyItemInserted(todayEntries.size() - 1);
+                            }
+                        });
+                    }
+                });
+             }
+         );
+    }
+
+    /**
+     * Gets the list of entries for a specific date from the hashmap.
+     * If no list has been defined for that date, creates and puts an empty list at that date.
+     * If no date has been stored that matches that date, creates and adds that date to the list of dates.
+     * @param date
+     * @return
+     */
+    private SortedList<Post> getEntries(Date date) {
+        SortedList<Post> entriesFromDate = entries.get(date);
+        if (entriesFromDate == null) {
+            entriesFromDate = new SortedList<>(Post.class, new SortedList.Callback<Post>() {
+                @Override
+                public int compare(Post o1, Post o2) {
+                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
+                }
+
+                @Override
+                public void onChanged(int position, int count) {
+                    // No updates because depends on active date
+                }
+
+                @Override
+                public boolean areContentsTheSame(Post oldItem, Post newItem) {
+                    // FIXME: Is this right, or might it remove duplicates?
+                    return oldItem.getCreatedAt().equals(newItem.getCreatedAt());
+                }
+
+                @Override
+                public boolean areItemsTheSame(Post item1, Post item2) {
+                    // FIXME: Is this right, or might it remove duplicates?
+                    return item1.getCreatedAt().equals(item2.getCreatedAt());
+                }
+
+                @Override
+                public void onInserted(int position, int count) {
+                    // No updates because depends on active date
+                }
+
+                @Override
+                public void onRemoved(int position, int count) {
+                    // No updates because depends on active date
+                }
+
+                @Override
+                public void onMoved(int fromPosition, int toPosition) {
+                    // No updates because depends on active date
+                }
+            });
+        }
         entries.put(date, entriesFromDate);
         if (dates.indexOf(date) < 0) dates.add(date);
         return entriesFromDate;
     }
 
+    /**
+     * Adds an entry to the list for a specific date.
+     * If no list yet exists, creates the list first, and handles date creation.
+     * @param date
+     * @param entry
+     */
+    private void addEntry(Date date, Post entry) {
+        SortedList<Post> entries = getEntries(date);
+        entries.add(entry);
+    }
+
     private void displayEntries(Date date) {
+        // TODO: Possibly add indicator of date being selected in date picker
         tvDate.setText(TimeUtils.toDateString(date));
-        List<Post> entriesFromDate = getEntries(date);
+        SortedList<Post> entriesFromDate = getEntries(date);
         entryAdapter.changeSource(entriesFromDate);
     }
 
     private void loadEntries() {
-        /* TODO:
-         * - Fetch all entries
-         * - For each entry...
-         *   - Try adding it to the list for its date in the hashmap
-         *   - If no list exists yet, create one first
-         * - Display all dates
-         *   - If there are no dates yet, display today unconditionally
-         *     - Likely add this into the data structures, too, so that today simply exists
-         * - Display all entries for the today
-         *   - If there are no entries for a given day, display an empty indicator
-         */
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        User user = (User) ParseUser.getCurrentUser();
+        ParseQuery<Post> journalQuery = user.relJournal.getQuery();
+        journalQuery.findInBackground((List<Post> list, ParseException e) -> {
+            for (Post entry : list) {
+                Date date = entry.getCreatedAt();
+                date = TimeUtils.normalizeToDay(date);
+                addEntry(date, entry);
+            }
+            displayEntries(currDate);
+        });
     }
 }

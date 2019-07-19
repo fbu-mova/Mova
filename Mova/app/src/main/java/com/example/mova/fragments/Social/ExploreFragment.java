@@ -43,7 +43,7 @@ public class ExploreFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ExploreFragment.
      */
-    // TODO: Rename and change types and number of parameters
+    // TODO: Rename and change types and count of parameters
     public static ExploreFragment newInstance(String param1, String param2) {
         ExploreFragment fragment = new ExploreFragment();
         Bundle args = new Bundle();

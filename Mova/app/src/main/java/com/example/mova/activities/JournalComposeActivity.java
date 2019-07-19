@@ -1,7 +1,5 @@
 package com.example.mova.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,8 +7,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.mova.Mood;
 import com.example.mova.R;
+import com.example.mova.model.Tag;
+import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
@@ -19,6 +22,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +30,7 @@ import butterknife.ButterKnife;
 public class JournalComposeActivity extends AppCompatActivity {
 
     public static final String KEY_COMPOSED_POST = "post";
+    public static final String KEY_COMPOSED_POST_TAGS = "tags";
     public static final int COMPOSE_REQUEST_CODE = 30;
 
     // TODO: Perhaps change this to List<Tag>?
@@ -81,22 +86,27 @@ public class JournalComposeActivity extends AppCompatActivity {
                 location.setLatitude(lat);
                 location.setLongitude(lon);
                 Mood.Status mood = moodSelector.getSelectedItem();
+
+                ArrayList<Tag> tagObjects = new ArrayList<>();
+                for (String s : tags) {
+                    tagObjects.add(new Tag(s));
+                }
+
                 // TODO: Handle media
-                // TODO: Handle tags
 
                 if (body.equals("")) {
-                    // TODO: Move all strings to a strings.xml file for cleaner code
+                    // TODO: Move all Toast strings to a strings.xml file for cleaner code
                     Toast.makeText(JournalComposeActivity.this, "Write an entry first!", Toast.LENGTH_LONG).show();
                 } else {
                     Post post = new Post()
                             .setIsPersonal(true)
                             .setAuthor(user)
                             .setBody(body)
-//                            .setGroup(null) // FIXME: How to explicitly set this to none without crashing?
                             .setLocation(location)
                             .setMood(mood);
 
                     getIntent().putExtra(KEY_COMPOSED_POST, post);
+                    getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
                     setResult(RESULT_OK, getIntent());
                     finish();
                 }
@@ -110,15 +120,6 @@ public class JournalComposeActivity extends AppCompatActivity {
         } else {
             tags.remove(tag);
         }
-        writeTags();
-    }
-
-    private void writeTags() {
-        StringBuilder tagsBuilder = new StringBuilder();
-        for (int i = 0; i < tags.size(); i++) {
-            tagsBuilder.append(tags.get(i));
-            if (i < tags.size() - 1) tagsBuilder.append(", ");
-        }
-        tvTags.setText(tagsBuilder.toString());
+        TextUtils.writeCommaSeparated(tags, "No tags", tvTags, (str) -> str);
     }
 }

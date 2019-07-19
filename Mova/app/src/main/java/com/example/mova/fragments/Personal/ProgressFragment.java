@@ -1,15 +1,34 @@
 package com.example.mova.fragments.Personal;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
+import com.example.mova.model.Goal;
+import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
+import com.jjoe64.graphview.GraphView;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +39,12 @@ import com.example.mova.R;
  * create an instance of this fragment.
  */
 public class ProgressFragment extends Fragment {
+
+    @BindView(R.id.graphProgress)
+    GraphView graph;
+    protected List<Goal> mGoals;
+    private int length = 0;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,7 +68,7 @@ public class ProgressFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ProgressFragment.
      */
-    // TODO: Rename and change types and number of parameters
+    // TODO: Rename and change types and count of parameters
     public static ProgressFragment newInstance(String param1, String param2) {
         ProgressFragment fragment = new ProgressFragment();
         Bundle args = new Bundle();
@@ -69,12 +94,62 @@ public class ProgressFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_progress, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+        length = 7;
+        mGoals = new ArrayList<>();
+        queryGoals(() -> setGraph());
+    }
+
+    private void setGraph(){
+        AsyncUtils.executeMany(mGoals.size(), (i, callback) -> {
+                    mGoals.get(i).createGraph(length,(series) -> {
+                        series.setTitle(mGoals.get(i).getTitle());
+                        if(mGoals.get(i).getColor() != null){
+                            series.setColor(Color.parseColor(mGoals.get(i).getColor()));
+                        }
+                        graph.addSeries(series);
+                    });
+
+                }, () -> Toast.makeText(getContext(), "Created graphs", Toast.LENGTH_SHORT).show()
+                );
+
+
+
+
+    }
+
+
+
+    public void queryGoals(AsyncUtils.EmptyCallback callback){
+        User user = (User) ParseUser.getCurrentUser();
+        ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
+        goalQuery.whereEqualTo("usersInvolved", user);
+        goalQuery.findInBackground(new FindCallback<Goal>() {
+            @Override
+            public void done(List<Goal> objects, ParseException e) {
+                if(e != null){
+                    Log.e("ProgressFragment", "Error with query");
+                    e.printStackTrace();
+                    return;
+                }
+                //Get all the goals TODO- only add goal if the user is part of it
+                mGoals.addAll(objects);
+                callback.call();
+            }
+        });
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+
 
     @Override
     public void onAttach(Context context) {

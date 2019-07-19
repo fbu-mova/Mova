@@ -1,6 +1,7 @@
 package com.example.mova.adapters;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,24 +11,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.activities.JournalComposeActivity;
+import com.example.mova.model.Tag;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.Mood;
 import com.example.mova.R;
+import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
-
-import java.util.List;
+import com.parse.ParseQuery;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> {
 
-    private List<Post> entries;
+    private SortedList<Post> entries;
     private Activity activity;
 
-    public JournalEntryAdapter(Activity activity, List<Post> entries) {
+    public JournalEntryAdapter(Activity activity, SortedList<Post> entries) {
         this.activity = activity;
         this.entries = entries;
     }
@@ -48,6 +52,15 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         holder.tvLocation.setText(LocationUtils.makeLocationText(activity, entry.getLocation()));
         Mood.Status mood = entry.getMood();
         holder.tvMood.setText((mood == null) ? "" : mood.toString()); // TODO: Hide mood image, etc.
+        ParseQuery<Tag> tagQuery = entry.getQueryTags();
+        tagQuery.findInBackground((tags, e) -> {
+            if (e != null) {
+                Log.e("JournalEntryAdapter", "Failed to load tags on journal entry", e);
+                holder.tvTags.setText("Failed to load");
+            } else {
+                TextUtils.writeCommaSeparated(tags, "No tags", holder.tvTags, (tag) -> tag.getName());
+            }
+        });
     }
 
     @Override
@@ -55,7 +68,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         return entries.size();
     }
 
-    public void changeSource(List<Post> newEntriesSource) {
+    public void changeSource(SortedList<Post> newEntriesSource) {
         this.entries = newEntriesSource;
         notifyDataSetChanged();
     }
@@ -68,6 +81,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         @BindView(R.id.tvMood)     public TextView tvMood;
         @BindView(R.id.tvBody)     public TextView tvBody;
         @BindView(R.id.flMedia)    public FrameLayout flMedia;
+        @BindView(R.id.tvTags)     public TextView tvTags;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

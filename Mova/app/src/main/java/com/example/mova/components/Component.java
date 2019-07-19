@@ -42,7 +42,6 @@ public abstract class Component<T> {
     public abstract void render();
 
     public static abstract class ViewHolder extends RecyclerView.ViewHolder {
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }

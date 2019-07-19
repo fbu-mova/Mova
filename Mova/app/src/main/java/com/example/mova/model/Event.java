@@ -1,15 +1,11 @@
 package com.example.mova.model;
 
-import com.example.mova.RelationFrame;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 
 import java.util.Date;
-import java.util.List;
 
 @ParseClassName("Event")
 public class Event extends ParseObject {
@@ -18,28 +14,21 @@ public class Event extends ParseObject {
     public static final String KEY_LOCATION = "location";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_TITLE = "title";
-    public static final String KEY_TAGS = "tags";
     public static final String KEY_EVENT_PIC = "eventPic";
-    RelationFrame relationFrame = new RelationFrame(this);
-    //Date
+    public static final String KEY_PARTICIPANTS = "participants";
+    public static final String KEY_TAGS = "tags";
+    public static final String KEY_GROUPS = "groups";
+    public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
+    public final RelationFrame<User> relParticipants = new RelationFrame<>(this, KEY_PARTICIPANTS);
+    public final RelationFrame<Group> relGroup = new RelationFrame<>(this, KEY_GROUPS);
 
+    //Date
     public Date getDate(){
         return getDate(KEY_DATE);
     }
 
     public Event setDate(Date date){
         put(KEY_DATE,date);
-        return this;
-    }
-
-    //Event Pic
-
-    public ParseFile getEventPic(){
-        return getParseFile(KEY_EVENT_PIC);
-    }
-
-    public Event setEventPic(ParseFile file){
-        put(KEY_EVENT_PIC,file);
         return this;
     }
 
@@ -76,27 +65,16 @@ public class Event extends ParseObject {
         return this;
     }
 
-    //Tags
+    //Event Pic
 
-    public ParseRelation<Tag> getRelationTags(){
-        //Get the relation of tags
-        return getRelation(KEY_TAGS);
+    public ParseFile getEventPic(){
+        return getParseFile(KEY_EVENT_PIC);
     }
 
-    public ParseQuery<Tag> getQueryTags(){
-        //Get the parsequery for tags
-        return relationFrame.getQuery(KEY_TAGS);
+    public Event setEventPic(ParseFile file){
+        put(KEY_EVENT_PIC,file);
+        return this;
     }
 
-    public List<Tag> getListTags(){
-        return relationFrame.getList(KEY_TAGS);
-    }
 
-    public Event addTag(Tag tag){
-        return (Event) relationFrame.add(KEY_TAGS, tag);
-    }
-
-    public Event removeTag(Tag tag){
-        return (Event) relationFrame.remove(KEY_TAGS,tag);
-    }
 }
