@@ -25,8 +25,6 @@ public class Goal extends ParseObject {
     public static final String KEY_IMAGE = "image";
     RelationFrame relationFrame = new RelationFrame(this);
 
-
-
     //Author
 
     public User getAuthor(){

@@ -23,6 +23,9 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
     public ComponentAdapter(Activity activity, List<T> items) {
         this.activity = activity;
         this.items = items;
+
+        // added
+        this.components = new HashMap<>();
     }
 
     /**

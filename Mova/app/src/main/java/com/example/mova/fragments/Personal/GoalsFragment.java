@@ -112,7 +112,11 @@ public class GoalsFragment extends Fragment {
         // set layout manager
         rvThumbnailGoals.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
 
+        // set adapter to recyclerview
+        rvThumbnailGoals.setAdapter(thumbnailGoalsAdapter);
+
         // load thumbnail goals into recyclerview
+        Log.d(TAG, "in onViewCreated");
         loadThumbNailGoals();
     }
 
@@ -120,10 +124,12 @@ public class GoalsFragment extends Fragment {
         // todo -- create an algorithm that decides which posts will be featured here
             // todo -- possible querying in Goal model class
             // fixme -- for now, just do normal loadAllGoals
+        Log.d(TAG, "in loadThumbNailGoals");
         loadAllGoals();
     }
 
     private void loadAllGoals() {
+        Log.d(TAG, "in loadAllGoals");
         Goal.Query allGoalsQuery = new Goal.Query();
         allGoalsQuery.getTop()
                 .withGroup();
@@ -134,11 +140,13 @@ public class GoalsFragment extends Fragment {
     private void updateAdapter(Goal.Query goalsQuery, ArrayList<Goal> goals, ComponentAdapter<Goal> goalsAdapter, RecyclerView rvGoals) {
         // todo -- add refresh/loading capabilities
 
+        Log.d(TAG, "in updateAdapter");
         goalsQuery.findInBackground(new FindCallback<Goal>() {
             @Override
             public void done(List<Goal> objects, ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "Goal query succeeded!");
+                    Log.d(TAG, String.format("object size: %s", objects.size()));
 
                     for (int i = 0; i < objects.size(); i++) {
                         // load into recyclerview

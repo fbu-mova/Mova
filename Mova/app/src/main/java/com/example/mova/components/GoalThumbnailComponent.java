@@ -21,6 +21,8 @@ import butterknife.ButterKnife;
 
 public class GoalThumbnailComponent extends Component<Goal> {
 
+    // todo -- overall scroll method (insert scrollview)
+
     private static final String TAG = "goal thumbnail comp'nt";
 
     private View view;
@@ -59,7 +61,15 @@ public class GoalThumbnailComponent extends Component<Goal> {
         Goal goal = getItem();
 
         viewHolder.tvName.setText(goal.getTitle());
-        viewHolder.tvFromGroup.setText(goal.getFromGroup().getName());
+
+        // fixme -- does there exist cleaner code to do this casework? / extract as helper function?
+        if (goal.getFromGroup() != null) {
+            viewHolder.tvFromGroup.setText(goal.getFromGroup().getName());
+        }
+        else {
+            viewHolder.tvFromGroup.setVisibility(View.GONE);
+        }
+
 
         // how to get context for binding glide images? -- made it a field
 
