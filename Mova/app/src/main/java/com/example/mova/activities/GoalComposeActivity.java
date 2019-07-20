@@ -9,6 +9,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.model.Action;
+import com.example.mova.model.Goal;
+import com.example.mova.model.SharedAction;
+import com.example.mova.model.User;
+import com.parse.ParseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,8 +49,23 @@ public class GoalComposeActivity extends AppCompatActivity {
         });
     }
 
-    private void submitGoal(String goalName, String goalDescription, String action) {
-        // save goal + action onto Parse database
-        
+    private void submitGoal(String goalName, String goalDescription, String task) {
+        // TODO -- save goal + action onto Parse database
+
+        // skipped relations -- bidirectional async stuff ??? so less repetitive
+        Goal goal = new Goal()
+                .setAuthor((User) ParseUser.getCurrentUser())
+                .setTitle(goalName)
+                .setDescription(goalDescription);
+        SharedAction sharedAction = new SharedAction()
+                .setTask(task)
+                .setGoal(goal);
+        Action action = new Action()
+                .setTask(task)
+                .setParentGoal(goal)
+                .setParentUser((User) ParseUser.getCurrentUser());
+
+        // put information into it, save in background
+
     }
 }
