@@ -1,11 +1,12 @@
 package com.example.mova.components;
 
-import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mova.activities.DelegatedResultActivity;
 
 /**
  * Handles the view for a given piece of information.
@@ -13,6 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public abstract class Component<T> {
     protected T item;
+
+    /**
+     * Use this only if the component is not meant to have an item.
+     */
+    public Component() { }
 
     public Component(T item) {
         this.item = item;
@@ -27,7 +33,7 @@ public abstract class Component<T> {
      * @param activity The Activity into which to inflate the component.
      * @param parent The ViewGroup into which to inflate the component.
      */
-    public abstract void makeViewHolder(Activity activity, ViewGroup parent);
+    public abstract void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent);
 
     /**
      * Returns the ViewHolder that the component has created once inflated.
@@ -36,7 +42,7 @@ public abstract class Component<T> {
     public abstract ViewHolder getViewHolder();
 
     /**
-     * Attaches any relevant data or events to the component's ViewHolder.
+     * Renders any relevant data or events to the component's ViewHolder.
      * Does nothing if not yet inflated.
      */
     public abstract void render();

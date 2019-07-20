@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.Component;
 
 import java.util.HashMap;
@@ -16,11 +17,11 @@ import java.util.HashMap;
  * @param <T> The type of item to use for each component.
  */
 public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Component.ViewHolder> {
-    private Activity activity;
+    private DelegatedResultActivity activity;
     private SortedList<T> items;
     private HashMap<T, Component<T>> components;
 
-    public SortedComponentAdapter(Activity activity, SortedList<T> items) {
+    public SortedComponentAdapter(DelegatedResultActivity activity, SortedList<T> items) {
         this.activity = activity;
         this.items = items;
     }

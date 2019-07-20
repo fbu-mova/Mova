@@ -25,7 +25,7 @@ import com.parse.SaveCallback;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends DelegatedResultActivity {
 
     @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
 
