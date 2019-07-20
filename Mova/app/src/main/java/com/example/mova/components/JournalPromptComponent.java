@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.example.mova.Mood;
 import com.example.mova.R;
@@ -26,21 +27,26 @@ import butterknife.ButterKnife;
 public class JournalPromptComponent extends Component<Post> {
     protected DelegatedResultActivity activity;
     protected ViewHolder holder;
+    protected View view;
 
-    public JournalPromptComponent(Post item) {
-        super(item);
-    }
+    public JournalPromptComponent() { }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        this.activity = activity;
         LayoutInflater inflater = activity.getLayoutInflater();
-        View view = inflater.inflate(R.layout.component_journal_prompt, parent, false);
+        view = inflater.inflate(R.layout.component_journal_prompt, parent, attachToRoot);
         holder = new ViewHolder(view);
     }
 
     @Override
     public ViewHolder getViewHolder() {
         return holder;
+    }
+
+    @Override
+    public View getView() {
+        return holder.card;
     }
 
     @Override
@@ -66,6 +72,7 @@ public class JournalPromptComponent extends Component<Post> {
         @BindView(R.id.tvGreeting)   public TextView tvGreeting;
         @BindView(R.id.moodSelector) public Mood.SelectorLayout moodSelector;
         @BindView(R.id.bCompose)     public Button bCompose;
+        @BindView(R.id.card)         public CardView card;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -36,8 +36,8 @@ public class GoalThumbnailComponent extends Component<Goal> {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
         this.activity = activity;
     }
 
@@ -49,6 +49,11 @@ public class GoalThumbnailComponent extends Component<Goal> {
         }
         Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
         return null;
+    }
+
+    @Override
+    public View getView() {
+        return view;
     }
 
     @Override

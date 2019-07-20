@@ -29,7 +29,7 @@ public abstract class DelegatedResultActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ActivityResultCallback callback = delegatedCallbacks.get(resultCode);
+        ActivityResultCallback callback = delegatedCallbacks.get(requestCode);
         if (callback != null) {
             delegatedCallbacks.remove(requestCode);
             callback.call(requestCode, resultCode, data);

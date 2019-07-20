@@ -49,7 +49,7 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
         T item = items.get(viewType);
         Component<T> component = makeComponent(item);
         components.put(item, component); // FIXME: Make sure that this overrides the last value
-        component.makeViewHolder(activity, parent);
+        component.makeViewHolder(activity, parent, false);
         return component.getViewHolder();
     }
 

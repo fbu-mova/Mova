@@ -1,6 +1,5 @@
 package com.example.mova.components;
 
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +29,8 @@ public class ActionComponent extends Component<Action> {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
         this.activity = activity;
     }
 
@@ -43,6 +42,11 @@ public class ActionComponent extends Component<Action> {
         }
         Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
         return null;
+    }
+
+    @Override
+    public View getView() {
+        return view;
     }
 
     @Override

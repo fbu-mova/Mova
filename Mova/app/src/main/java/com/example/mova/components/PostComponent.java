@@ -15,12 +15,17 @@ public class PostComponent extends Component<Post> {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
 
     }
 
     @Override
     public ViewHolder getViewHolder() {
+        return null;
+    }
+
+    @Override
+    public View getView() {
         return null;
     }
 

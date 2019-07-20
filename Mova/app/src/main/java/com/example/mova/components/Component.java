@@ -33,13 +33,20 @@ public abstract class Component<T> {
      * @param activity The Activity into which to inflate the component.
      * @param parent The ViewGroup into which to inflate the component.
      */
-    public abstract void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent);
+    public abstract void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
 
     /**
      * Returns the ViewHolder that the component has created once inflated.
      * @return The ViewHolder. Null if not yet inflated.
      */
     public abstract ViewHolder getViewHolder();
+
+    /**
+     * Returns the View created when making the ViewHolder.
+     * @return The View. Null if not yet inflated.
+     * @return
+     */
+    public abstract View getView();
 
     /**
      * Renders any relevant data or events to the component's ViewHolder.

@@ -1,19 +1,21 @@
 package com.example.mova.fragments.Personal;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
-import com.example.mova.fragments.PersonalFragment;
-import com.example.mova.utils.AsyncUtils;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.components.ComponentLayout;
+import com.example.mova.components.JournalPromptComponent;
 
-import org.parceler.Parcels;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +23,8 @@ import org.parceler.Parcels;
  * create an instance of this fragment.
  */
 public class PersonalFeedFragment extends Fragment {
+
+    @BindView(R.id.component) protected ComponentLayout container;
 
     public PersonalFeedFragment() {
         // Required empty public constructor
@@ -50,5 +54,14 @@ public class PersonalFeedFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_personal_feed, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+        JournalPromptComponent component = new JournalPromptComponent();
+        container.inflateComponent((DelegatedResultActivity) getActivity(), component);
     }
 }
