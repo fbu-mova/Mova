@@ -41,9 +41,6 @@ import butterknife.ButterKnife;
  */
 public class ProgressFragment extends Fragment {
 
-    public static String KEY_SWITCH_FRAGMENT = "switchFragment";
-    private AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment;
-
     @BindView(R.id.graphProgress)
     GraphView graph;
     protected List<Goal> mGoals;
@@ -59,10 +56,9 @@ public class ProgressFragment extends Fragment {
      * @return A new instance of fragment ProgressFragment.
      */
     // TODO: Rename and change types and count of parameters
-    public static ProgressFragment newInstance(AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment) {
+    public static ProgressFragment newInstance() {
         ProgressFragment fragment = new ProgressFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_SWITCH_FRAGMENT, Parcels.wrap(switchFragment)); // FIXME: Will this work?
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,7 +67,6 @@ public class ProgressFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            switchFragment = Parcels.unwrap(getArguments().getParcelable(KEY_SWITCH_FRAGMENT));
         }
     }
 

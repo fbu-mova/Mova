@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.GoalCardComponent;
@@ -47,7 +48,7 @@ public class GoalsFragment extends Fragment {
 
     private static final String TAG = "personal goal fragment";
 
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
     // thumbnail recyclerview
     @BindView(R.id.rvThumbnailGoals)    protected RecyclerView rvThumbnailGoals;
@@ -59,9 +60,6 @@ public class GoalsFragment extends Fragment {
     private ArrayList<Goal> allGoals;
     private ComponentAdapter<Goal> allGoalsAdapter;
 
-    public static String KEY_SWITCH_FRAGMENT = "switchFragment";
-    private AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment;
-
     public GoalsFragment() {
         // Required empty public constructor
     }
@@ -71,10 +69,9 @@ public class GoalsFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment GoalsFragment.
      */
-    public static GoalsFragment newInstance(AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment) {
+    public static GoalsFragment newInstance() {
         GoalsFragment fragment = new GoalsFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_SWITCH_FRAGMENT, Parcels.wrap(switchFragment)); // FIXME: Will this work?
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,13 +80,12 @@ public class GoalsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            switchFragment = Parcels.unwrap(getArguments().getParcelable(KEY_SWITCH_FRAGMENT));
         }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        activity = getActivity();
+        activity = (DelegatedResultActivity) getActivity();
 
         Log.d(TAG, "in goals fragment");
 

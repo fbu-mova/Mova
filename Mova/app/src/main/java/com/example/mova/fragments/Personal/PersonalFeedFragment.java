@@ -22,9 +22,6 @@ import org.parceler.Parcels;
  */
 public class PersonalFeedFragment extends Fragment {
 
-    public static String KEY_SWITCH_FRAGMENT = "switchFragment";
-    private AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment;
-
     public PersonalFeedFragment() {
         // Required empty public constructor
     }
@@ -34,10 +31,9 @@ public class PersonalFeedFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment PersonalFeedFragment.
      */
-    public static PersonalFeedFragment newInstance(AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment) {
+    public static PersonalFeedFragment newInstance() {
         PersonalFeedFragment fragment = new PersonalFeedFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_SWITCH_FRAGMENT, Parcels.wrap(switchFragment)); // FIXME: Will this work?
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,7 +42,6 @@ public class PersonalFeedFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            switchFragment = Parcels.unwrap(getArguments().getParcelable(KEY_SWITCH_FRAGMENT));
         }
     }
 

@@ -31,9 +31,6 @@ import butterknife.ButterKnife;
  */
 public class ProfileFragment extends Fragment {
 
-    public static String KEY_SWITCH_FRAGMENT = "switchFragment";
-    private AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment;
-
     @BindView(R.id.btnLogout) protected Button btnLogout;
 
     public ProfileFragment() {
@@ -45,10 +42,9 @@ public class ProfileFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment ProfileFragment.
      */
-    public static ProfileFragment newInstance(AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment) {
+    public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_SWITCH_FRAGMENT, Parcels.wrap(switchFragment)); // FIXME: Will this work?
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,7 +53,6 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            switchFragment = Parcels.unwrap(getArguments().getParcelable(KEY_SWITCH_FRAGMENT));
         }
     }
 

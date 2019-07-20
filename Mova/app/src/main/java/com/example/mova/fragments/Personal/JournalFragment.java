@@ -55,9 +55,6 @@ import butterknife.ButterKnife;
  */
 public class JournalFragment extends Fragment {
 
-    public static String KEY_SWITCH_FRAGMENT = "switchFragment";
-    private AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment;
-
     private DatePickerAdapter dateAdapter;
     private JournalEntryAdapter entryAdapter;
 
@@ -80,10 +77,9 @@ public class JournalFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment JournalFragment.
      */
-    public static JournalFragment newInstance(AsyncUtils.ItemCallback<PersonalFragment.FragmentName> switchFragment) {
+    public static JournalFragment newInstance() {
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
-        args.putParcelable(KEY_SWITCH_FRAGMENT, Parcels.wrap(switchFragment)); // FIXME: Will this work?
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,7 +88,6 @@ public class JournalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            switchFragment = Parcels.unwrap(getArguments().getParcelable(KEY_SWITCH_FRAGMENT));
         }
     }
 

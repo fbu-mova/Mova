@@ -90,23 +90,23 @@ public class PersonalFragment extends Fragment {
         switch (name) {
             case Progress:
                 Toast.makeText(getContext(), "Switches to progress", Toast.LENGTH_SHORT).show();
-                fragment = ProgressFragment.newInstance((fragmentName) -> switchFragment(fragmentName));
+                fragment = ProgressFragment.newInstance();
                 break;
             case Journal:
                 Toast.makeText(getContext(), "Switches to journal", Toast.LENGTH_SHORT).show();
-                fragment = JournalFragment.newInstance((fragmentName) -> switchFragment(fragmentName));
+                fragment = JournalFragment.newInstance();
                 break;
             case Feed:
                 Toast.makeText(getContext(), "Switches to feed", Toast.LENGTH_SHORT).show();
-                fragment = PersonalFeedFragment.newInstance((fragmentName) -> switchFragment(fragmentName));
+                fragment = PersonalFeedFragment.newInstance();
                 break;
             case Goals:
                 Toast.makeText(getContext(), "Switches to goals", Toast.LENGTH_SHORT).show();
-                fragment = GoalsFragment.newInstance((fragmentName) -> switchFragment(fragmentName));
+                fragment = GoalsFragment.newInstance();
                 break;
             case Profile:
                 Toast.makeText(getContext(), "Switches to profile", Toast.LENGTH_SHORT).show();
-                fragment = ProfileFragment.newInstance((fragmentName) -> switchFragment(fragmentName));
+                fragment = ProfileFragment.newInstance();
                 break;
             default:
                 return;
