@@ -14,13 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
-    private final int topPadding, bottomPadding, leftPadding, rightPadding;
+    private final int topMargin, bottomMargin, leftMargin, rightMargin;
 
-    public EdgeDecorator(int topPadding, int bottomPadding, int leftPadding, int rightPadding) {
-        this.topPadding = topPadding;
-        this.bottomPadding = bottomPadding;
-        this.leftPadding = leftPadding;
-        this.rightPadding = rightPadding;
+    public EdgeDecorator(int topMargin, int bottomMargin, int leftMargin, int rightMargin) {
+        this.topMargin = topMargin;
+        this.bottomMargin = bottomMargin;
+        this.leftMargin = leftMargin;
+        this.rightMargin = rightMargin;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
         // first item (bottom and top padding)
         if (itemPosition == 0) {
-            outRect.set(view.getPaddingLeft() + leftPadding, view.getPaddingTop() + topPadding, view.getPaddingRight() + rightPadding, view.getPaddingBottom() + bottomPadding);
+            outRect.set(view.getPaddingLeft() + leftMargin, view.getPaddingTop() + topMargin, view.getPaddingRight() + rightMargin, view.getPaddingBottom() + bottomMargin);
         }
         // last item
 //        else if (itemPosition == itemCount - 1) {
@@ -46,7 +46,7 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
 //        }
         // every other item (only top padding)
         else {
-            outRect.set(view.getPaddingLeft() + leftPadding, view.getPaddingTop(), view.getPaddingRight() + rightPadding, view.getPaddingBottom() + bottomPadding);
+            outRect.set(view.getPaddingLeft() + leftMargin, view.getPaddingTop(), view.getPaddingRight() + rightMargin, view.getPaddingBottom() + bottomMargin);
         }
     }
 }
