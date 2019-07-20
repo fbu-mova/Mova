@@ -2,6 +2,7 @@ package com.example.mova.fragments.Personal;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,11 +21,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.GoalComposeActivity;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.model.Goal;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 
@@ -45,8 +48,11 @@ import butterknife.ButterKnife;
 public class GoalsFragment extends Fragment {
 
     private static final String TAG = "personal goal fragment";
+    private static final int REQUEST_COMPOSE_GOAL = 38;
 
     private Activity activity;
+
+    @BindView(R.id.fabComposeGoal)      protected FloatingActionButton fabComposeGoal;
 
     // thumbnail recyclerview
     @BindView(R.id.rvThumbnailGoals)    protected RecyclerView rvThumbnailGoals;
@@ -54,7 +60,7 @@ public class GoalsFragment extends Fragment {
     private ComponentAdapter<Goal> thumbnailGoalsAdapter;
 
     // allGoals recyclerview
-    @BindView(R.id.rvAllGoals)      protected RecyclerView rvAllGoals;
+    @BindView(R.id.rvAllGoals)          protected RecyclerView rvAllGoals;
     private ArrayList<Goal> allGoals;
     private ComponentAdapter<Goal> allGoalsAdapter;
 
@@ -108,6 +114,15 @@ public class GoalsFragment extends Fragment {
 
         ButterKnife.bind(this, activity);
 
+        // set fabComposeGoal onclick listener
+        fabComposeGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, GoalComposeActivity.class);
+                startActivityForResult(intent, REQUEST_COMPOSE_GOAL);
+            }
+        });
+
         // thumbnail
         thumbnailGoals = new ArrayList<>();
 
@@ -136,6 +151,7 @@ public class GoalsFragment extends Fragment {
         allGoalsAdapter = new ComponentAdapter<Goal>(activity, allGoals) {
             @Override
             public Component<Goal> makeComponent(Goal item) {
+                Log.d(TAG, "in all goals adapter");
                 Component<Goal> component = new GoalCardComponent(item);
                 return component;
             }
@@ -152,7 +168,11 @@ public class GoalsFragment extends Fragment {
             // todo -- possible querying in Goal model class
             // fixme -- for now, just do normal loadAllGoals
         Log.d(TAG, "in loadThumbNailGoals");
-        loadAllGoals();
+        Goal.Query allGoalsQuery = new Goal.Query();
+        allGoalsQuery.getTop()
+                .withGroup();
+
+        updateAdapter(allGoalsQuery, thumbnailGoals, thumbnailGoalsAdapter, rvThumbnailGoals);
     }
 
     private void loadAllGoals() {
@@ -161,7 +181,7 @@ public class GoalsFragment extends Fragment {
         allGoalsQuery.getTop()
                 .withGroup();
 
-        updateAdapter(allGoalsQuery, thumbnailGoals, thumbnailGoalsAdapter, rvThumbnailGoals);
+        updateAdapter(allGoalsQuery, allGoals, allGoalsAdapter, rvAllGoals);
     }
 
     private void updateAdapter(Goal.Query goalsQuery, ArrayList<Goal> goals, ComponentAdapter<Goal> goalsAdapter, RecyclerView rvGoals) {

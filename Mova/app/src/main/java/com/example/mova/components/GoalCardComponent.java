@@ -70,6 +70,8 @@ public class GoalCardComponent extends Component<Goal> {
             return;
         }
 
+        Log.d(TAG, "in render function");
+
         viewHolder.tvName.setText(item.getTitle());
         viewHolder.tvDescription.setText(item.getDescription());
 
