@@ -68,7 +68,7 @@ public class GoalThumbnailComponent extends Component<Goal> {
         viewHolder.tvName.setText(goal.getTitle());
 
         // fixme -- does there exist cleaner code to do this casework? / extract as helper function?
-        String name = goal.getFromGroupName();
+        String name = goal.getGroupName();
         if (name != "") {
             viewHolder.tvFromGroup.setText(name);
         }
