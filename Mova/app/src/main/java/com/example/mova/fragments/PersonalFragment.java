@@ -32,9 +32,7 @@ import butterknife.ButterKnife;
  */
 public class PersonalFragment extends Fragment {
 
-    @BindView(R.id.bottom_navigation_personal)
-    BottomNavigationView bottomNavigationView;
-    final FragmentManager fragmentManager = getChildFragmentManager();
+    @BindView(R.id.bottom_navigation_personal) BottomNavigationView bottomNavigationView;
 
     public PersonalFragment() {
         // Required empty public constructor
@@ -86,6 +84,7 @@ public class PersonalFragment extends Fragment {
     }
 
     public void switchFragment(FragmentName name) {
+        final FragmentManager fragmentManager = getChildFragmentManager();
         Fragment fragment;
         switch (name) {
             case Progress:

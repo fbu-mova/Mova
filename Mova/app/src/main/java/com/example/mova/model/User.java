@@ -70,11 +70,11 @@ public class User extends ParseUser {
                             if (e != null) {
                                 Log.e("User", "Failed to create tag " + tag.getName() + " on journal post", e);
                             } else {
-                                journalEntry.addTag(tag, (sameTag) -> cb.call(null));
+                                journalEntry.relTags.add(tag, (sameTag) -> cb.call(null));
                             }
                         });
                     } else {
-                        journalEntry.addTag(tagFromDB, (sameTag) -> cb.call(null));
+                        journalEntry.relTags.add(tagFromDB, (sameTag) -> cb.call(null));
                     }
                 });
             },

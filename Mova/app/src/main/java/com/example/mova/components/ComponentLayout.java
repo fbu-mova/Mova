@@ -9,6 +9,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.mova.activities.DelegatedResultActivity;
+
 public class ComponentLayout extends FrameLayout {
     public ComponentLayout(@NonNull Context context) {
         super(context);
@@ -27,7 +29,7 @@ public class ComponentLayout extends FrameLayout {
      * @param activity The activity to which the layout belongs.
      * @param component The component to inflate.
      */
-    public void inflateComponent(Activity activity, Component component) {
+    public void inflateComponent(DelegatedResultActivity activity, Component component) {
         ViewGroup parent = findViewById(android.R.id.content); // FIXME: Make sure this works!
         component.makeViewHolder(activity, parent);
         component.render();

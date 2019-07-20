@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
@@ -37,7 +38,7 @@ public class GoalCardComponent extends Component<Goal> {
 
     private View view;
     private GoalCardViewHolder viewHolder;
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
     // for action recyclerview in the card
     private ArrayList<Action> actions;
@@ -48,7 +49,7 @@ public class GoalCardComponent extends Component<Goal> {
     }
 
     @Override
-    public void makeViewHolder(Activity activity, ViewGroup parent) {
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
         this.activity = activity;
     }

@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Action;
 
 import butterknife.BindView;
@@ -22,14 +23,14 @@ public class ActionComponent extends Component<Action> {
 
     private View view;
     private ActionViewHolder viewHolder;
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
     public ActionComponent(Action item) {
         super(item);
     }
 
     @Override
-    public void makeViewHolder(Activity activity, ViewGroup parent) {
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
         this.activity = activity;
     }

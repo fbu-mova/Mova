@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Goal;
 
 import butterknife.BindView;
@@ -28,14 +29,14 @@ public class GoalThumbnailComponent extends Component<Goal> {
 
     private View view;
     private GoalThumbnailViewHolder viewHolder;
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
     public GoalThumbnailComponent(Goal item) {
         super(item);
     }
 
     @Override
-    public void makeViewHolder(Activity activity, ViewGroup parent) {
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
         this.activity = activity;
     }
