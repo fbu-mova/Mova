@@ -13,6 +13,8 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.utils.ViewUtils;
 
 public class ComponentLayout extends FrameLayout {
+    private int margin = 16;
+
     public ComponentLayout(@NonNull Context context) {
         super(context);
     }
@@ -25,6 +27,14 @@ public class ComponentLayout extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
+    public int getMargin() {
+        return margin;
+    }
+
+    public void setMargin(int margin) {
+        this.margin = margin;
+    }
+
     /**
      * Inflates a component into the layout.
      * @param activity The activity to which the layout belongs.
@@ -33,7 +43,7 @@ public class ComponentLayout extends FrameLayout {
     public void inflateComponent(DelegatedResultActivity activity, Component component) {
         ViewGroup parent = this;
         component.makeViewHolder(activity, parent, true);
-        ViewUtils.setMargins(component.getView(), 32);
+        ViewUtils.setMargins(component.getView(), margin * 2);
         component.render();
     }
 }
