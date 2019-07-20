@@ -98,7 +98,7 @@ public class Goal extends ParseObject {
         return (Group) getParseObject(KEY_FROM_GROUP);
     }
 
-    public String getFromGroupName() {
+    public String getGroupName() {
         Group group = getGroup();
         if (group == null) {
             return "";
