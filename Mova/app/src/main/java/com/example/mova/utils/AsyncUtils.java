@@ -60,7 +60,10 @@ public class AsyncUtils {
         }
     }
 
-    public static void relationUpdate(ParseObject object, RelationFrame relation, ItemCallback callback) {
+    public static void saveWithRelation(ParseObject object, RelationFrame relation, ItemCallback callback) {
+        // saves the child automatically to the parent in corresponding parent relation
+            // fixme -- currently can only add object one at a time to parent object. can't .add all, then save so only one save?
+
         // save object in background in own class (e.g. journal entry saved to Post class)
         object.saveInBackground(new SaveCallback() {
             @Override
