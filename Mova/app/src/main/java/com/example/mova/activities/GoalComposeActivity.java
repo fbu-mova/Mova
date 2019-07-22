@@ -67,5 +67,17 @@ public class GoalComposeActivity extends AppCompatActivity {
 
         // put information into it, save in background
 
+        // async outlining :
+
+        // Goal to relation of sharedActions AND relation of actions
+        // sharedAction to relation of child actions
+        // actions point to parent sharedAction and parent goal
+
+        // easier use case :
+
+        // saving a journal entry --
+        // save to Post database since it is a Post
+        // save to User's Journal<Post> relation to access
+
     }
 }
