@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.components.Component;
 import com.example.mova.components.JournalPromptComponent;
+import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
@@ -33,7 +34,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         return 0;
     }
 
-    public void makeCards(SortedList<Prioritized<Component>> addTo, AsyncUtils.EmptyCallback callback) {
+    public void makeCards(SortedList<Prioritized<Component>> addTo, AsyncUtils.ItemCallback<Throwable> callback) {
         ArrayList<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
 
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) -> makeSpecialCards(addTo, cb));
@@ -102,23 +103,42 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         Date morningEnd = TimeUtils.setTime(now, "11:00:00:000");
         Date eveningStart = TimeUtils.setTime(now, "17:00:00:000");
 
+        List<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
+
         // Check number of journal entries to determine whether to add journal prompt
         ParseQuery<Post> journalQuery = ((User) User.getCurrentUser()).relJournal.getQuery();
         journalQuery.whereGreaterThan(Post.KEY_CREATED_AT, TimeUtils.getToday());
-        journalQuery.findInBackground((entries, e) -> {
-            if (e != null) {
-                callback.call(e);
-            } else {
-                if (entries.size() == 0) {
-                    JournalPromptComponent card = new JournalPromptComponent();
-                    addTo.add(new Prioritized<>(card, 100));
+        asyncActions.add((i, cb) ->
+            journalQuery.findInBackground((entries, e) -> {
+                if (e != null) {
+                    cb.call(e);
+                } else {
+                    if (entries.size() == 0) {
+                        JournalPromptComponent card = new JournalPromptComponent();
+                        addTo.add(new Prioritized<>(card, 100));
+                        cb.call(null);
+                    }
                 }
-            }
-        });
+        }));
 
         if (now.compareTo(eveningStart) >= 0) {
-            // TODO: Add goal prompt component
+            asyncActions.add((i, cb) -> {
+                TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent() {
+                    @Override
+                    public void finishInit(Throwable e) {
+                        if (e != null) {
+                            Log.e("PersonalFeedPrioritizer", "Failed to build TomorrowFocusPromptComponent", e);
+                            cb.call(e);
+                        } else {
+                            addTo.add(new Prioritized<>(this, 100));
+                            cb.call(null);
+                        }
+                    }
+                };
+            });
         }
+
+        AsyncUtils.executeMany(asyncActions, callback);
     }
 
     protected void makeGoalCheckIns(SortedList<Prioritized<Component>> addTo, List<Goal> goals) {
