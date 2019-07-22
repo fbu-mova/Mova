@@ -34,7 +34,10 @@ public class AsyncUtils {
         public boolean ranCallback = false;
     }
 
-    public static void executeMany(int count, ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> execute, EmptyCallback callback) {
+    // (int position, (Throwable e) -> void) -> void
+    public interface ExecuteManyCallback extends ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> { }
+
+    public static void executeMany(int count, ExecuteManyCallback execute, EmptyCallback callback) {
         ExecuteManyStatus status = new ExecuteManyStatus();
         if (count == 0) {
             callback.call();
@@ -51,5 +54,9 @@ public class AsyncUtils {
                 }
             });
         }
+    }
+
+    public static void executeMany(List<ExecuteManyCallback> execute, EmptyCallback callback) {
+        executeMany(execute.size(), (i, cb) -> execute.get(i).call(i, cb), callback);
     }
 }
