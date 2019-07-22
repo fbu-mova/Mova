@@ -174,7 +174,8 @@ public class GoalsFragment extends Fragment {
         Log.d(TAG, "in loadThumbNailGoals");
         Goal.Query allGoalsQuery = new Goal.Query();
         allGoalsQuery.getTop()
-                .withGroup();
+                .withGroup()
+                .fromCurrentUser();
 
         updateAdapter(allGoalsQuery, thumbnailGoals, thumbnailGoalsAdapter, rvThumbnailGoals);
     }
@@ -183,7 +184,8 @@ public class GoalsFragment extends Fragment {
         Log.d(TAG, "in loadAllGoals");
         Goal.Query allGoalsQuery = new Goal.Query();
         allGoalsQuery.getTop()
-                .withGroup();
+                .withGroup()
+                .fromCurrentUser();
 
         updateAdapter(allGoalsQuery, allGoals, allGoalsAdapter, rvAllGoals);
     }
