@@ -54,9 +54,14 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
-        T item = items.get(position);
-        Component<T> component = components.get(item);
-        component.render();
+        T item = items.get(position); // items has size 14
+        Component<T> component = components.get(item); // components has size 13
+        if (component == null) { // fixme -- jank solution to onCreateViewHolder not being called before this
+            // need to make a component and put it into components
+            component = makeComponent(item);
+            components.put(item, component);
+        }
+        component.render(); // component is null
     }
 
     @Override

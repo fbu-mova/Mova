@@ -37,6 +37,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+import static com.example.mova.activities.GoalComposeActivity.KEY_COMPOSED_GOAL;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -160,6 +163,7 @@ public class GoalsFragment extends Fragment {
         rvAllGoals.setLayoutManager(new LinearLayoutManager(activity));
         rvAllGoals.setAdapter(allGoalsAdapter);
 
+        Log.d(TAG, "about to call loadAllGoals");
         loadAllGoals();
     }
 
@@ -217,6 +221,30 @@ public class GoalsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_goals, container, false);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_COMPOSE_GOAL) {
+                Goal goal = data.getParcelableExtra(KEY_COMPOSED_GOAL);
+
+                // update recyclerviews
+                Log.d(TAG, "updating allGoals with intent");
+                allGoals.add(0, goal);
+                Log.d(TAG, "updating allGoalsAdapter with intent");
+                allGoalsAdapter.notifyItemInserted(0);
+
+                Log.d(TAG, "updating thumbnailGoals with intent");
+                thumbnailGoals.add(0, goal);
+                Log.d(TAG, "updating thumbnailGoalsAdapter with intent");
+                thumbnailGoalsAdapter.notifyItemInserted(0);
+
+                rvAllGoals.scrollToPosition(0);
+                rvThumbnailGoals.scrollToPosition(0);
+                Log.d(TAG, "finished onActivityResult");
+            }
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

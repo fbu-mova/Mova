@@ -22,12 +22,10 @@ import com.parse.SaveCallback;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.mova.activities.JournalComposeActivity.KEY_COMPOSED_POST_TAGS;
-
 public class GoalComposeActivity extends AppCompatActivity {
 
     private static final String TAG = "Goal Compose Activity";
-    private static final String KEY_COMPOSED_GOAL = "composed goal";
+    public static final String KEY_COMPOSED_GOAL = "composed goal";
 
     // todo : currently most basic (and only personal). features to add:
         // can add 'infinite' number of actions (dynamically create editTexts?)
@@ -73,40 +71,7 @@ public class GoalComposeActivity extends AppCompatActivity {
                 if (e == null) {
                     Log.d(TAG, "Initial goal save successful");
 
-                    // save the SharedAction
-                    SharedAction sharedAction = new SharedAction()
-                            .setTask(task)
-                            .setGoal(goal)
-                            .setUsersDone(0);
-
-                    AsyncUtils.saveWithRelation(sharedAction, goal.relSharedActions, new AsyncUtils.ItemCallback() {
-                        @Override
-                        public void call(Object item) { // sharedAction is item
-                            Log.d(TAG, "Saving SharedAction successful");
-
-                            // save the Action
-                            Action action = new Action()
-                                    .setTask(task)
-                                    .setParentGoal(goal)
-                                    .setParentUser((User) ParseUser.getCurrentUser())
-                                    .setParentSharedAction(sharedAction);
-
-                            AsyncUtils.saveWithRelation(action, sharedAction.relChildActions, new AsyncUtils.ItemCallback() {
-                                @Override
-                                public void call(Object item) { // action is item
-                                    Log.d(TAG, "Saving Action successful");
-
-                                    // everything (for now) is saved, want to go back to Goal feed and update recyclerview
-
-                                    getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
-                                    // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
-                                    setResult(RESULT_OK, getIntent());
-                                    finish();
-                                }
-                            });
-                        }
-                    });
-
+                    saveSharedAction(task, goal);
                 }
                 else {
                     Log.e(TAG, "Initial goal save unsuccessful", e);
@@ -128,5 +93,56 @@ public class GoalComposeActivity extends AppCompatActivity {
         // save to Post database since it is a Post
         // save to User's Journal<Post> relation to access
 
+    }
+
+    private void saveSharedAction(String task, Goal goal) {
+
+        // save the SharedAction
+        SharedAction sharedAction = new SharedAction()
+                .setTask(task)
+                .setGoal(goal)
+                .setUsersDone(0);
+
+        AsyncUtils.saveWithRelation(sharedAction, goal.relSharedActions, new AsyncUtils.ItemCallback() {
+            @Override
+            public void call(Object item) { // sharedAction is item
+                Log.d(TAG, "Saving SharedAction successful");
+
+                saveAction(task, goal, sharedAction);
+            }
+        });
+    }
+
+    private void saveAction(String task, Goal goal, SharedAction sharedAction) {
+
+        // save the Action
+        Action action = new Action()
+                .setTask(task)
+                .setParentGoal(goal)
+                .setParentUser((User) ParseUser.getCurrentUser())
+                .setParentSharedAction(sharedAction);
+
+        AsyncUtils.saveWithRelation(action, sharedAction.relChildActions, new AsyncUtils.ItemCallback() {
+            @Override
+            public void call(Object item) { // action is item
+                Log.d(TAG, "Saving Action to SharedAction successful");
+            }
+        });
+
+        AsyncUtils.saveWithRelation(action, goal.relActions, new AsyncUtils.ItemCallback() {
+            @Override
+            public void call(Object item) {
+                // everything (for now) is saved, want to go back to Goal feed and update recyclerview
+                // fixme -- with multiple actions, only can call this after all of the actions have been saved
+
+                Log.d(TAG, "Saving Action to Goal successful");
+                Toast.makeText(GoalComposeActivity.this, "Goal saved successfully!", Toast.LENGTH_LONG).show();
+
+                getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
+                // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
+                setResult(RESULT_OK, getIntent());
+                finish();
+            }
+        });
     }
 }

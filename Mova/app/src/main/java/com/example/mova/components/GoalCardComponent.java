@@ -45,6 +45,7 @@ public class GoalCardComponent extends Component<Goal> {
 
     public GoalCardComponent(Goal item) {
         super(item);
+        Log.d(TAG, String.format("in goal card comp constructor: %s", item.getTitle()));
     }
 
     @Override
@@ -73,7 +74,11 @@ public class GoalCardComponent extends Component<Goal> {
         Log.d(TAG, "in render function");
 
         viewHolder.tvName.setText(item.getTitle());
+        Log.d(TAG, String.format("tvName of this viewholder: %s", viewHolder.tvName.getText().toString()));
+
         viewHolder.tvDescription.setText(item.getDescription());
+        Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
+
 
         viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
         viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
