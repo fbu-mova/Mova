@@ -6,13 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +26,7 @@ import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
+import com.example.mova.utils.TimeUtils;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -57,7 +57,7 @@ public class ProgressFragment extends Fragment {
     RecyclerView rvWell;
     @BindView(R.id.rvWork) RecyclerView rvWork;
     @BindView(R.id.gvMood)
-    GridView gvMood;
+    RecyclerView gvMood;
     protected List<Goal> mGoals;
     protected List<Goal> goodGoals;
     protected List<Goal> badGoals;
@@ -106,6 +106,7 @@ public class ProgressFragment extends Fragment {
         ButterKnife.bind(this, view);
         length = 7;
         mGoals = new ArrayList<>();
+        userPosts = new ArrayList<>();
         goodGoals = new ArrayList<>();
         badGoals = new ArrayList<>();
         //prioGoals = new TreeSet<>();
@@ -138,11 +139,12 @@ public class ProgressFragment extends Fragment {
 
         rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
+        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 7 ));
 
 
         rvWell.setAdapter(goalsWellAdapter);
         rvWork.setAdapter(goalsWorkAdaper);
-        gvMood.setAdapter((ListAdapter) gridMoodAdapter);
+        gvMood.setAdapter(gridMoodAdapter);
 
 
         queryGoals(() -> setGraph(() -> {
@@ -195,11 +197,11 @@ public class ProgressFragment extends Fragment {
 
         }));
 
-//        queryPosts(() -> {
-////            getListOnePostPerDay();
-////            gridMoodAdapter.notifyDataSetChanged();
-////            gvMood.scrollTo(0,0);
-////        });
+        queryPosts(() -> {
+            getListOnePostPerDay();
+            gridMoodAdapter.notifyDataSetChanged();
+            gvMood.scrollTo(0,0);
+        });
 
 
 
@@ -247,41 +249,41 @@ public class ProgressFragment extends Fragment {
         });
     }
 
-//    public void queryPosts(AsyncUtils.EmptyCallback callback){
-//        User user = (User) ParseUser.getCurrentUser();
-//        ParseQuery<Post> postQuery = new ParseQuery<Post>(Post.class);
-//        postQuery.whereEqualTo("author", user);
-//        postQuery.whereEqualTo("isPersonal", true);
-//        postQuery.orderByDescending("createdAt");
-//        postQuery.findInBackground(new FindCallback<Post>() {
-//            @Override
-//            public void done(List<Post> objects, ParseException e) {
-//                if(e != null){
-//                    Log.e("ProgressFragment", "Error with queryPosts");
-//                    e.printStackTrace();
-//                    return;
-//                }
-//                userPosts.addAll(objects);
-//                callback.call();
-//            }
-//        });
-//    }
-//
-//    public void getListOnePostPerDay(){
-//        Date date = new Date();
-//        for(int i  = 0; i < userPosts.size(); i++){
-//            //Intialize date as the date of the first entry
-//            if(i == 0){
-//                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
-//            }
-//            //If the date of the next element is equal to the previouis one, delete it
-//            else if(date == TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt())){
-//                userPosts.remove(i);
-//            }
-//            //If the date is less, make this the new date
-//            else{
-//                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
-//            }
-//        }
-//    }
+    public void queryPosts(AsyncUtils.EmptyCallback callback){
+        User user = (User) ParseUser.getCurrentUser();
+        ParseQuery<Post> postQuery = new ParseQuery<Post>(Post.class);
+        postQuery.whereEqualTo("author", user);
+        postQuery.whereEqualTo("isPersonal", true);
+        postQuery.orderByDescending("createdAt");
+        postQuery.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if(e != null){
+                    Log.e("ProgressFragment", "Error with queryPosts");
+                    e.printStackTrace();
+                    return;
+                }
+                userPosts.addAll(objects);
+                callback.call();
+            }
+        });
+    }
+
+    public void getListOnePostPerDay(){
+        Date date = new Date();
+        for(int i  = 0; i < userPosts.size(); i++){
+            //Intialize date as the date of the first entry
+            if(i == 0){
+                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
+            }
+            //If the date of the next element is equal to the previouis one, delete it
+            else if(date == TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt())){
+                userPosts.remove(i);
+            }
+            //If the date is less, make this the new date
+            else{
+                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
+            }
+        }
+    }
 }
