@@ -40,8 +40,9 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) -> makeSpecialCards(addTo, cb));
 
         // Get recent goals, add their respective check-in cards
-        Goal.Query goalQuery = new Goal.Query();
-        goalQuery.getTop(10).withGroup();
+        ParseQuery<Goal> goalQuery = ((User) User.getCurrentUser()).relGoals.getQuery();
+        goalQuery.include(Goal.KEY_FROM_GROUP);
+        goalQuery.setLimit(10);
         goalQuery.orderByDescending(Goal.KEY_CREATED_AT);
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
             goalQuery.findInBackground((goals, e) -> {
@@ -123,9 +124,9 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
 
         if (now.compareTo(eveningStart) >= 0) {
             asyncActions.add((i, cb) -> {
-                TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent() {
+                TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent(0, 5) {
                     @Override
-                    public void finishInit(Throwable e) {
+                    public void onLoadGoals(Throwable e) {
                         if (e != null) {
                             Log.e("PersonalFeedPrioritizer", "Failed to build TomorrowFocusPromptComponent", e);
                             cb.call(e);

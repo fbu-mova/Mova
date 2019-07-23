@@ -55,7 +55,6 @@ public abstract class ChecklistItemComponent<T> extends Component<T> {
         holder.cbItem.setText(getTitle.call(item));
         holder.cbItem.setOnClickListener((view) -> onClick(view));
         holder.cbItem.setTextColor(uncheckedColor);
-        holder.cbItem.setBackgroundColor(uncheckedColor);
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }

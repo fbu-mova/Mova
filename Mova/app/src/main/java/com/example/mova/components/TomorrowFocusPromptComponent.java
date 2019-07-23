@@ -1,6 +1,5 @@
 package com.example.mova.components;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,8 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.model.Goal;
-import com.example.mova.utils.AsyncUtils;
+import com.example.mova.model.User;
+import com.parse.ParseQuery;
 
 import java.util.List;
 
@@ -25,28 +25,55 @@ import butterknife.ButterKnife;
 
 public abstract class TomorrowFocusPromptComponent extends Component {
 
+    public class BelowMinimumGoalsError extends Error {
+        public BelowMinimumGoalsError() {
+            super();
+        }
+
+        public BelowMinimumGoalsError(String message) {
+            super(message);
+        }
+    }
+
     private DelegatedResultActivity activity;
     private ViewHolder holder;
     private View view;
     private ComponentAdapter<Goal> adapter;
     private List<Goal> goals;
+    private int minGoals, maxGoals;
 
     public TomorrowFocusPromptComponent() {
-        Goal.Query query = new Goal.Query();
+        this.minGoals = 3;
+        this.maxGoals = 5;
+        loadGoals();
+    }
+
+    public TomorrowFocusPromptComponent(int minGoals, int maxGoals) {
+        this.minGoals = minGoals;
+        this.maxGoals = maxGoals;
+        loadGoals();
+        // TODO: Add bottom portion with search for other goals
+    }
+
+    private void loadGoals() {
+        ParseQuery<Goal> query = ((User) User.getCurrentUser()).relGoals.getQuery();
         query.orderByDescending(Goal.KEY_CREATED_AT);
-        query.getTop(5);
+        query.setLimit(maxGoals);
         query.findInBackground((goals, e) -> {
             if (e != null) {
-                Log.e("TomorrowFocusComponent", "Failed to get top goals", e);
-                finishInit(e);
+                Log.e("TomorrowFocusComponent", "Failed to load goals", e);
+                onLoadGoals(e);
+            } else if (goals.size() < minGoals) {
+                BelowMinimumGoalsError belowMinErr = new BelowMinimumGoalsError("The number of goals loaded is below the minimum number allowed.");
+                onLoadGoals(belowMinErr);
             } else {
                 this.goals = goals;
-                finishInit(null);
+                onLoadGoals(null);
             }
         });
     }
 
-    public abstract void finishInit(Throwable e);
+    public abstract void onLoadGoals(Throwable e);
 
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
@@ -76,7 +103,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
                         (o) -> o.getTitle()) {
                     @Override
                     public void onClick(View view) {
-
+                        // TODO: Prevent more than three goals from being selected at any given time
                     }
                 };
             }

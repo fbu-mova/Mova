@@ -13,6 +13,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.ComponentLayout;
 import com.example.mova.components.JournalPromptComponent;
+import com.example.mova.components.TomorrowFocusPromptComponent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,7 +62,16 @@ public class PersonalFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        JournalPromptComponent component = new JournalPromptComponent();
-        container.inflateComponent((DelegatedResultActivity) getActivity(), component);
+        if (false) {
+            JournalPromptComponent card = new JournalPromptComponent();
+            container.inflateComponent((DelegatedResultActivity) getActivity(), card);
+        } else {
+            TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent() {
+                @Override
+                public void onLoadGoals(Throwable e) {
+                    container.inflateComponent((DelegatedResultActivity) getActivity(), this);
+                }
+            };
+        }
     }
 }
