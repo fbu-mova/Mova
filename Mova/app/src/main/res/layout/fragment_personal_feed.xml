@@ -11,4 +11,9 @@
         android:layout_height="wrap_content">
 
     </com.example.mova.components.ComponentLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCards"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>

@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.components.ComponentLayout;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
@@ -26,6 +29,7 @@ import butterknife.ButterKnife;
 public class PersonalFeedFragment extends Fragment {
 
     @BindView(R.id.component) protected ComponentLayout container;
+    @BindView(R.id.rvCards)   protected RecyclerView rvCards;
 
     public PersonalFeedFragment() {
         // Required empty public constructor
@@ -62,7 +66,13 @@ public class PersonalFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        if (false) {
+        // insertSoloComponent(false);
+        // TODO: Set up recyclerview
+        rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void insertSoloComponent(boolean toggleJournalVsTomorrow) {
+        if (toggleJournalVsTomorrow) {
             JournalPromptComponent card = new JournalPromptComponent();
             container.inflateComponent((DelegatedResultActivity) getActivity(), card);
         } else {
