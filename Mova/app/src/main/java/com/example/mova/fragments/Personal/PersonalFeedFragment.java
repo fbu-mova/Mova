@@ -24,7 +24,9 @@ import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.feed.PersonalFeedPrioritizer;
 import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
+import com.example.mova.model.Tag;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.parse.ParseQuery;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,6 +79,13 @@ public class PersonalFeedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        // REMOVE: Quick test on ParseObject's hashcode
+        Tag.getTag("Programming", (tag1) -> {
+            Tag.getTag("Programming", (tag2) -> {
+                Log.i("PersonalFeedFragment", "tag1 hash: " + tag1.hashCode() + ", tag2 hash: " + tag2.hashCode());
+            });
+        });
 
 //        insertSoloComponent(false);
 

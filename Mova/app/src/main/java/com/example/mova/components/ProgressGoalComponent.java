@@ -11,28 +11,31 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Goal;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProgressGoalComponent extends Component<Goal> {
+public class ProgressGoalComponent extends Component {
 
     private static final String TAG = "ProgressGoalComponent";
     private static final int viewLayoutRes = R.layout.item_progress_goal;
 
+    private Goal goal;
     private View view;
     private ProgressGoalViewHolder viewHolder;
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
     public ProgressGoalComponent(Goal item){
-        super(item);
+        super();
+        this.goal = goal;
     }
 
 
     @Override
-    public void makeViewHolder(Activity activity, ViewGroup parent) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
         this.activity = activity;
     }
 
@@ -47,13 +50,16 @@ public class ProgressGoalComponent extends Component<Goal> {
     }
 
     @Override
+    public View getView() {
+        return view;
+    }
+
+    @Override
     public void render() {
         if(viewHolder == null){
             Log.e(TAG, "Not inflating views in render");
             return;
         }
-
-        Goal goal = getItem();
 
         if(goal.getColor() != null){
             viewHolder.ivGoalColor.setColorFilter(Color.parseColor(goal.getColor()));

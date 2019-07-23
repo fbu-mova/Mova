@@ -97,7 +97,7 @@ public class GoalUtils {
                     cb.call(null);
                 });
             });
-        }, () -> {
+        }, (e) -> {
             Log.d("GoalUtils", "final callback");
             callback.call(tsGoals);
         } );

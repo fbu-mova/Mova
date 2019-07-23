@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.ComponentAdapter;
+import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.fragments.PersonalFragment;
@@ -61,8 +63,8 @@ public class ProgressFragment extends Fragment {
     protected List<Goal> badGoals;
     //protected TreeSet<Prioritized<Goal>> prioGoals;
     private int length = 0;
-    private ComponentAdapter<Goal> goalsWellAdapter;
-    private ComponentAdapter<Goal> goalsWorkAdaper;
+    private DataComponentAdapter<Goal> goalsWellAdapter;
+    private DataComponentAdapter<Goal> goalsWorkAdaper;
     GoalUtils goalUtils;
 
     public ProgressFragment() {
@@ -109,17 +111,17 @@ public class ProgressFragment extends Fragment {
 
         //create the adapter
 
-        goalsWellAdapter = new ComponentAdapter<Goal>(getActivity(), goodGoals) {
+        goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
             @Override
-            public Component<Goal> makeComponent(Goal item) {
-                Component<Goal> component = new ProgressGoalComponent(item);
+            public Component makeComponent(Goal item) {
+                Component component = new ProgressGoalComponent(item);
                 return component;
             }
         };
-        goalsWorkAdaper = new ComponentAdapter<Goal>(getActivity(), badGoals) {
+        goalsWorkAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
             @Override
-            public Component<Goal> makeComponent(Goal item) {
-                Component<Goal> component = new ProgressGoalComponent(item);
+            public Component makeComponent(Goal item) {
+                Component component = new ProgressGoalComponent(item);
                 return component;
             }
         };
@@ -200,7 +202,7 @@ public class ProgressFragment extends Fragment {
 //                        graph.getViewport().setMinX(-1*length);
             });
 
-        }, () -> {callback.call();});
+        }, (e) -> {callback.call();});
 
     }
 
