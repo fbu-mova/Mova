@@ -13,19 +13,29 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.adapters.ComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -43,8 +53,17 @@ public class ProgressFragment extends Fragment {
 
     @BindView(R.id.graphProgress)
     GraphView graph;
+    @BindView(R.id.rvWell)
+    RecyclerView rvWell;
+    @BindView(R.id.rvWork) RecyclerView rvWork;
     protected List<Goal> mGoals;
+    protected List<Goal> goodGoals;
+    protected List<Goal> badGoals;
+    //protected TreeSet<Prioritized<Goal>> prioGoals;
     private int length = 0;
+    private ComponentAdapter<Goal> goalsWellAdapter;
+    private ComponentAdapter<Goal> goalsWorkAdaper;
+    GoalUtils goalUtils;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -101,27 +120,107 @@ public class ProgressFragment extends Fragment {
         ButterKnife.bind(this, view);
         length = 7;
         mGoals = new ArrayList<>();
+        goodGoals = new ArrayList<>();
+        badGoals = new ArrayList<>();
+        //prioGoals = new TreeSet<>();
+        goalUtils = new GoalUtils();
+
+        //create the adapter
+
+        goalsWellAdapter = new ComponentAdapter<Goal>(getActivity(), goodGoals) {
+            @Override
+            public Component<Goal> makeComponent(Goal item) {
+                Component<Goal> component = new ProgressGoalComponent(item);
+                return component;
+            }
+        };
+        goalsWorkAdaper = new ComponentAdapter<Goal>(getActivity(), badGoals) {
+            @Override
+            public Component<Goal> makeComponent(Goal item) {
+                Component<Goal> component = new ProgressGoalComponent(item);
+                return component;
+            }
+        };
+        rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        rvWell.setAdapter(goalsWellAdapter);
+        rvWork.setAdapter(goalsWorkAdaper);
+
+
+
         queryGoals(() -> setGraph(() -> {
+            Calendar cal = Calendar.getInstance();
+            Date d1 = cal.getTime();
+            cal.add(Calendar.DATE, -length + 1);
+            Date d2 = cal.getTime();
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),new SimpleDateFormat("MM/dd")));
+            graph.getViewport().setMinX(Long.valueOf(d2.getTime()).doubleValue());
+            graph.getViewport().setMaxX(Long.valueOf(d1.getTime()).doubleValue());
+            graph.getViewport().setXAxisBoundsManual(true);
+            graph.getGridLabelRenderer().setHumanRounding(false);
+            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
+            graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+            //graph.getGridLabelRenderer().setVerticalAxisTitle("Actions Completed");
+
+
             Toast.makeText(getContext(), "Graph created", Toast.LENGTH_SHORT).show();
+            Log.e("ProgressFragment", "Were not in boys");
+
+            //organize goals and create adapter
+            goalUtils.sortGoals(mGoals, length, (User) ParseUser.getCurrentUser(), (tsGoals) -> {
+                Log.e("ProgressFragment", "Were in boys");
+                Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
+                for(int i = 0; i < mGoals.size(); i++){
+                    if(tsGoals.size() == 0) {
+                        break;
+                    }
+                    if(tsGoals.first().value >= 0) {
+                        goodGoals.add(tsGoals.first().item);
+                        goalsWellAdapter.notifyItemInserted(i);
+                        tsGoals.remove(tsGoals.first());
+                        if(tsGoals.size() == 0){
+                            break;
+                        }
+                    }
+                    if(tsGoals.last().value < 0) {
+                        badGoals.add(tsGoals.last().item);
+                        goalsWorkAdaper.notifyItemInserted(i);
+                        tsGoals.remove(tsGoals.last());
+                    }
+
+                }
+                rvWell.scrollToPosition(0);
+                rvWork.scrollToPosition(0);
+
+            });
+
+
+
         }));
+
+
+
+
     }
 
     private void setGraph(AsyncUtils.EmptyCallback callback){
-        for(Goal goal: mGoals){
-            GoalUtils goalUtils = new GoalUtils();
-                    goalUtils.getDataForGraph(goal, (User) ParseUser.getCurrentUser(), length , (series) -> {
-                        series.setTitle(goal.getTitle());
-                        if(goal.getColor() != null){
-                            series.setColor(Color.parseColor(goal.getColor()));
-                        }
-                        graph.addSeries(series);
+        AsyncUtils.executeMany(mGoals.size(), (i,cb) -> {
+            //todo
+           Goal goal = mGoals.get(i);
+            goalUtils.getDataForGraph(goal, (User) ParseUser.getCurrentUser(), length , (series) -> {
+                series.setTitle(goal.getTitle());
+                if(goal.getColor() != null){
+                    series.setColor(Color.parseColor(goal.getColor()));
+                }
+                graph.addSeries(series);
+                cb.call(null);
 //                        graph.getViewport().setMinX(-1*length);
-//                        graph.getViewport().setMaxX(0);
-                        callback.call();
-                    });
-        }
-    }
+            });
 
+        }, () -> {callback.call();});
+
+    }
 
 
     public void queryGoals(AsyncUtils.EmptyCallback callback){
