@@ -24,6 +24,7 @@ import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.feed.PersonalFeedPrioritizer;
 import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
+import com.example.mova.scrolling.EdgeDecorator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -119,6 +120,7 @@ public class PersonalFeedFragment extends Fragment {
         adapter = new PrioritizedComponentAdapter((DelegatedResultActivity) getActivity(), cards);
         rvCards.setAdapter(adapter);
         rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvCards.addItemDecoration(new EdgeDecorator(32));
 
         prioritizer = new PersonalFeedPrioritizer();
         prioritizer.makeCards(cards, (e) -> {

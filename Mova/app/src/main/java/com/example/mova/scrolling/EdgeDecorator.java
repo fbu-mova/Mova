@@ -16,6 +16,13 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
     private final int topMargin, bottomMargin, leftMargin, rightMargin;
 
+    public EdgeDecorator(int margin) {
+        topMargin = margin;
+        bottomMargin = margin;
+        leftMargin = margin;
+        rightMargin = margin;
+    }
+
     public EdgeDecorator(int topMargin, int bottomMargin, int leftMargin, int rightMargin) {
         this.topMargin = topMargin;
         this.bottomMargin = bottomMargin;
