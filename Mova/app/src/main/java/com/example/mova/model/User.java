@@ -3,6 +3,7 @@ package com.example.mova.model;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.utils.AsyncUtils;
@@ -96,5 +97,10 @@ public class User extends ParseUser {
     @Override
     public int hashCode() {
         return HashableParseObject.getHashCode(this);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return HashableParseObject.equals(this, obj);
     }
 }
