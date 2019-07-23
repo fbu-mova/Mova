@@ -51,15 +51,5 @@ public class MainActivity extends DelegatedResultActivity {
             }
         });
         bottomNavigationView.setSelectedItemId(R.id.action_personal);
-
-        // Log in temporary user
-        // TODO: Move this to a login activity with real user details
-        try {
-            ParseUser.logIn("temp", "temp");
-            Log.d("MainActivity", "Logged in temp user");
-        } catch (ParseException e) {
-            Log.e("MainActivity", "Could not log in user", e);
-            Toast.makeText(this, "Could not log in user", Toast.LENGTH_LONG).show();
-        }
     }
 }
