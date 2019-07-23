@@ -76,7 +76,7 @@ public class GoalUtils {
                 cb.call(null);
             });
 
-        }, () -> {callback.call(new LineGraphSeries<DataPoint>(dataPoints));} );
+        }, (err) -> {callback.call(new LineGraphSeries<DataPoint>(dataPoints));} );
 
     }
 

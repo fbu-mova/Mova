@@ -15,17 +15,19 @@ import com.example.mova.model.Action;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ActionComponent extends Component<Action> {
+public class ActionComponent extends Component {
 
     private static final String TAG = "action comp";
     private static final int viewLayoutRes = R.layout.item_action;
 
+    private Action item;
     private View view;
     private ActionViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
     public ActionComponent(Action item) {
-        super(item);
+        super();
+        this.item = item;
     }
 
     @Override
@@ -52,9 +54,7 @@ public class ActionComponent extends Component<Action> {
     @Override
     public void render() {
 
-        Action action = getItem();
-
-        viewHolder.rbTask.setText(action.getTask());
+        viewHolder.rbTask.setText(item.getTask());
 
         // todo -- set icons later
     }

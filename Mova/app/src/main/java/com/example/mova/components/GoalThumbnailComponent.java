@@ -20,19 +20,21 @@ import com.example.mova.model.Goal;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GoalThumbnailComponent extends Component<Goal> {
+public class GoalThumbnailComponent extends Component {
 
     // todo -- overall scroll method (insert scrollview)
 
     private static final String TAG = "goal thumbnail comp'nt";
     private static final int viewLayoutRes = R.layout.item_goal_thumbnail_card;
 
+    private Goal goal;
     private View view;
     private GoalThumbnailViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
-    public GoalThumbnailComponent(Goal item) {
-        super(item);
+    public GoalThumbnailComponent(Goal goal) {
+        super();
+        this.goal = goal;
     }
 
     @Override
@@ -62,8 +64,6 @@ public class GoalThumbnailComponent extends Component<Goal> {
             Log.e(TAG, "not inflating views to viewHolder, in render");
             return;
         }
-
-        Goal goal = getItem();
 
         viewHolder.tvName.setText(goal.getTitle());
 

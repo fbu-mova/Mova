@@ -15,6 +15,7 @@ public class Goal extends ParseObject {
     public static final String KEY_IS_PERSONAL = "isPersonal";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_FROM_GROUP = "fromGroup";
+    public static final String KEY_CREATED_AT = "createdAt";
 
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_ACTIONS = "actions";
@@ -120,10 +121,15 @@ public class Goal extends ParseObject {
         }
 
         public Query getTop() {
-            setLimit(20);
-            return this;
-
+            return getTop(20);
         }
+
+        public Query getTop(int limit) {
+            setLimit(limit);
+            return this;
+        }
+
+
         public Query withGroup() {
             include(KEY_FROM_GROUP);
             return this;

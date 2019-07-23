@@ -1,6 +1,6 @@
 package com.example.mova.feed;
 
-public class Prioritized<T> implements Comparable<Prioritized<T>>{
+public class Prioritized<T> implements Comparable<Prioritized<T>> {
     public final T item;
     public final float value;
 

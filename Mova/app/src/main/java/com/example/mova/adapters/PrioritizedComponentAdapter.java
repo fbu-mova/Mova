@@ -4,17 +4,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.Component;
+import com.example.mova.feed.Prioritized;
+import com.example.mova.feed.PrioritizedComponent;
 
-import java.util.List;
-
-public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
+public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
-    private List<Component> components;
+    private SortedList<PrioritizedComponent> components;
 
-    public ComponentAdapter(DelegatedResultActivity activity, List<Component> components) {
+    public PrioritizedComponentAdapter(DelegatedResultActivity activity, SortedList<PrioritizedComponent> components) {
         this.activity = activity;
         this.components = components;
     }
@@ -28,15 +29,15 @@ public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder>
     @NonNull
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Component component = components.get(viewType);
-        component.makeViewHolder(activity, parent, false);
-        return component.getViewHolder();
+        Prioritized<Component> pComponent = components.get(viewType);
+        pComponent.item.makeViewHolder(activity, parent, false);
+        return pComponent.item.getViewHolder();
     }
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
-        Component component = components.get(position);
-        component.render();
+        Prioritized<Component> pComponent = components.get(position);
+        pComponent.item.render();
     }
 
     @Override

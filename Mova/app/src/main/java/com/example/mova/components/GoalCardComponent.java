@@ -1,6 +1,5 @@
 package com.example.mova.components;
 
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.adapters.ComponentAdapter;
+import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
@@ -29,23 +28,25 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GoalCardComponent extends Component<Goal> {
+public class GoalCardComponent extends Component {
 
     // fixme -- is there a diff between personal goal cards and social goal cards? social goals will be goals in a post?
 
     private static final String TAG = "goal card comp";
     private static final int viewLayoutRes = R.layout.item_goal_card;
 
+    private Goal item;
     private View view;
     private GoalCardViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
     // for action recyclerview in the card
     private ArrayList<Action> actions;
-    private ComponentAdapter<Action> actionsAdapter;
+    private DataComponentAdapter<Action> actionsAdapter;
 
     public GoalCardComponent(Goal item) {
-        super(item);
+        super();
+        this.item = item;
     }
 
     @Override
@@ -87,10 +88,10 @@ public class GoalCardComponent extends Component<Goal> {
 
         actions = new ArrayList<>();
 
-        actionsAdapter = new ComponentAdapter<Action>(activity, actions) {
+        actionsAdapter = new DataComponentAdapter<Action>(activity, actions) {
             @Override
-            public Component<Action> makeComponent(Action item) {
-                Component<Action> component = new ActionComponent(item);
+            public Component makeComponent(Action item) {
+                Component component = new ActionComponent(item);
                 return component;
             }
         };
@@ -108,7 +109,7 @@ public class GoalCardComponent extends Component<Goal> {
         updateAdapter(actionQuery, actions, actionsAdapter, viewHolder.rvActions);
     }
 
-    private void updateAdapter(ParseQuery<Action> actionQuery, ArrayList<Action> actions, ComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {
+    private void updateAdapter(ParseQuery<Action> actionQuery, ArrayList<Action> actions, DataComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {
 
         actionQuery.findInBackground(new FindCallback<Action>() {
             @Override

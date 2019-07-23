@@ -16,12 +16,12 @@ import java.util.HashMap;
  * Adapts items to a sorted list of components, which are then displayed.
  * @param <T> The type of item to use for each component.
  */
-public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Component.ViewHolder> {
+public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
     private SortedList<T> items;
-    private HashMap<T, Component<T>> components;
+    private HashMap<T, Component> components;
 
-    public SortedComponentAdapter(DelegatedResultActivity activity, SortedList<T> items) {
+    public SortedDataComponentAdapter(DelegatedResultActivity activity, SortedList<T> items) {
         this.activity = activity;
         this.items = items;
     }
@@ -31,7 +31,7 @@ public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Com
      * @param item The item to use as data for the component.
      * @return The component to display.
      */
-    public abstract Component<T> makeComponent(T item);
+    public abstract Component makeComponent(T item);
 
     @Override
     public int getItemViewType(int position) {
@@ -44,7 +44,7 @@ public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Com
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         T item = items.get(viewType);
-        Component<T> component = makeComponent(item);
+        Component component = makeComponent(item);
         components.put(item, component); // FIXME: Make sure that this overrides the last value
         component.makeViewHolder(activity, parent, false);
         return component.getViewHolder();
@@ -53,7 +53,7 @@ public abstract class SortedComponentAdapter<T> extends RecyclerView.Adapter<Com
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
-        Component<T> component = components.get(item);
+        Component component = components.get(item);
         component.render();
     }
 

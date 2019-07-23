@@ -78,7 +78,7 @@ public class User extends ParseUser {
                     }
                 });
             },
-            () -> {
+            (err) -> {
 //                    Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
                 journalEntry.saveInBackground((e) -> {
                     if (e != null) {

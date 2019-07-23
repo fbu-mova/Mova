@@ -34,10 +34,19 @@ public class AsyncUtils {
         public boolean ranCallback = false;
     }
 
-    public static void executeMany(int count, ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> execute, EmptyCallback callback) {
+    // (int position, (Throwable e) -> void) -> void
+    public interface ExecuteManyCallback extends ItemCallbackWithItemCallback<Integer, ItemCallback<Throwable>> { }
+
+    /**
+     * Executes multiple asynchronous actions, and calls the callback only once all actions have been completed.
+     * @param count The number of asynchronous actions to execute.
+     * @param execute The action to execute for each index. Must call the provided callback once the action is complete.
+     * @param callback The callback to call once all actions have finished.
+     */
+    public static void executeMany(int count, ExecuteManyCallback execute, ItemCallback<Throwable> callback) {
         ExecuteManyStatus status = new ExecuteManyStatus();
         if (count == 0) {
-            callback.call();
+            callback.call(null);
         }
         for (int i = 0; i < count; i++) {
             execute.call(i, (e) -> {
@@ -46,10 +55,19 @@ public class AsyncUtils {
                 } else {
                     status.count++;
                     if (!status.ranCallback && status.count == count) {
-                        callback.call();
+                        callback.call(e);
                     }
                 }
             });
         }
+    }
+
+    /**
+     * Executes multiple asynchronous actions, and calls the callback only once all actions have been completed.
+     * @param asyncActions The actions to execute. Each action must call the provided callback once the action is complete.
+     * @param callback The callback to call once all actions have finished.
+     */
+    public static void executeMany(List<ExecuteManyCallback> asyncActions, ItemCallback<Throwable> callback) {
+        executeMany(asyncActions.size(), (i, cb) -> asyncActions.get(i).call(i, cb), callback);
     }
 }

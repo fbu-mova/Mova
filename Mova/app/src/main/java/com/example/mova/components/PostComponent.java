@@ -8,10 +8,13 @@ import androidx.annotation.NonNull;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Post;
 
-public class PostComponent extends Component<Post> {
+public class PostComponent extends Component {
 
-    public PostComponent(Post item) {
-        super(item);
+    private Post post;
+
+    public PostComponent(Post post) {
+        super();
+        this.post = post;
     }
 
     @Override

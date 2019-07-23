@@ -18,6 +18,7 @@ public class Post extends ParseObject{
     public static final String KEY_BODY = "body";
     public static final String KEY_MOOD = "mood";
     public static final String KEY_IMAGE = "embeddedImage";
+    public static final String KEY_CREATED_AT = "createdAt";
 
     //Relations
     public static final String KEY_COMMENTS = "comments";
