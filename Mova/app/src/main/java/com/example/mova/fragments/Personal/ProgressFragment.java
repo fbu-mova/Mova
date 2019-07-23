@@ -1,32 +1,34 @@
 package com.example.mova.fragments.Personal;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.ProgressGoalComponent;
-import com.example.mova.fragments.PersonalFragment;
+import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.model.Goal;
+import com.example.mova.model.Journal;
+import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
+import com.example.mova.utils.TimeUtils;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -36,8 +38,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,15 +58,19 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.rvWell)
     RecyclerView rvWell;
     @BindView(R.id.rvWork) RecyclerView rvWork;
+    @BindView(R.id.gvMood)
+    RecyclerView gvMood;
     protected List<Goal> mGoals;
     protected List<Goal> goodGoals;
     protected List<Goal> badGoals;
+    protected List<Mood.Status> userMoods;
     //protected TreeSet<Prioritized<Goal>> prioGoals;
     private int length = 0;
     private DataComponentAdapter<Goal> goalsWellAdapter;
     private DataComponentAdapter<Goal> goalsWorkAdaper;
+    private DataComponentAdapter<Mood.Status> gridMoodAdapter;
     GoalUtils goalUtils;
-
+    Journal journal;
     public ProgressFragment() {
         // Required empty public constructor
     }
@@ -104,10 +108,12 @@ public class ProgressFragment extends Fragment {
         ButterKnife.bind(this, view);
         length = 7;
         mGoals = new ArrayList<>();
+        userMoods = new ArrayList<>();
         goodGoals = new ArrayList<>();
         badGoals = new ArrayList<>();
         //prioGoals = new TreeSet<>();
         goalUtils = new GoalUtils();
+        journal = new Journal((User) ParseUser.getCurrentUser());
 
         //create the adapter
 
@@ -125,12 +131,23 @@ public class ProgressFragment extends Fragment {
                 return component;
             }
         };
+
+        gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
+            @Override
+            public Component makeComponent(Mood.Status item) {
+                Component component = new ProgressGridMoodComponent(item);
+                return component;
+            }
+        };
+
         rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
+        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 6 ));
+
 
         rvWell.setAdapter(goalsWellAdapter);
         rvWork.setAdapter(goalsWorkAdaper);
-
+        gvMood.setAdapter(gridMoodAdapter);
 
 
         queryGoals(() -> setGraph(() -> {
@@ -148,13 +165,13 @@ public class ProgressFragment extends Fragment {
             //graph.getGridLabelRenderer().setVerticalAxisTitle("Actions Completed");
 
 
-            Toast.makeText(getContext(), "Graph created", Toast.LENGTH_SHORT).show();
-            Log.e("ProgressFragment", "Were not in boys");
+            //Toast.makeText(getContext(), "Graph created", Toast.LENGTH_SHORT).show();
+            //Log.e("ProgressFragment", "Were not in boys");
 
             //organize goals and create adapter
             goalUtils.sortGoals(mGoals, length, (User) ParseUser.getCurrentUser(), (tsGoals) -> {
-                Log.e("ProgressFragment", "Were in boys");
-                Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
+                //Log.e("ProgressFragment", "Were in boys");
+                //Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
                 for(int i = 0; i < mGoals.size(); i++){
                     if(tsGoals.size() == 0) {
                         break;
@@ -182,6 +199,29 @@ public class ProgressFragment extends Fragment {
 
 
         }));
+
+        journal.loadEntries((e) -> {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -length + 1);
+            Date d1 = cal.getTime();
+            for(int i = 0; i < length; i++){
+                SortedList<Post> posts = journal.getEntriesByDate(TimeUtils.normalizeToDay(d1));
+                if(posts.size() == 0){
+                    userMoods.add(Mood.Status.Empty);
+                }else {
+                    userMoods.add(posts.get(0).getMood());
+                }
+                cal.add(Calendar.DATE, 1);
+                d1 = cal.getTime();
+            }
+            gridMoodAdapter.notifyDataSetChanged();
+            gvMood.scrollTo(0,0);
+        });
+//        queryPosts(() -> {
+//            getListOnePostPerDay();
+//            gridMoodAdapter.notifyDataSetChanged();
+//            gvMood.scrollTo(0,0);
+//        });
 
 
 
@@ -228,4 +268,42 @@ public class ProgressFragment extends Fragment {
             }
         });
     }
+
+//    public void queryPosts(AsyncUtils.EmptyCallback callback){
+//        User user = (User) ParseUser.getCurrentUser();
+//        ParseQuery<Post> postQuery = new ParseQuery<Post>(Post.class);
+//        postQuery.whereEqualTo("author", user);
+//        postQuery.whereEqualTo("isPersonal", true);
+//        postQuery.orderByDescending("createdAt");
+//        postQuery.findInBackground(new FindCallback<Post>() {
+//            @Override
+//            public void done(List<Post> objects, ParseException e) {
+//                if(e != null){
+//                    Log.e("ProgressFragment", "Error with queryPosts");
+//                    e.printStackTrace();
+//                    return;
+//                }
+//                userPosts.addAll(objects);
+//                callback.call();
+//            }
+//        });
+//    }
+//
+//    public void getListOnePostPerDay(){
+//        Date date = new Date();
+//        for(int i  = 0; i < userPosts.size(); i++){
+//            //Intialize date as the date of the first entry
+//            if(i == 0){
+//                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
+//            }
+//            //If the date of the next element is equal to the previouis one, delete it
+//            else if(date == TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt())){
+//                userPosts.remove(i);
+//            }
+//            //If the date is less, make this the new date
+//            else{
+//                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
+//            }
+//        }
+//    }
 }

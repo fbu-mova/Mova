@@ -1,34 +1,37 @@
 package com.example.mova.components;
 
-import android.graphics.Color;
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.model.Goal;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProgressGoalComponent extends Component {
+public class ProgressGridMoodComponent extends Component{
 
-    private static final String TAG = "ProgressGoalComponent";
-    private static final int viewLayoutRes = R.layout.item_progress_goal;
+    private static final String TAG = "ProgressMoodComponent";
+    private static final int viewLayoutRes = R.layout.item_grid_mood;
 
-    private Goal goal;
     private View view;
-    private ProgressGoalViewHolder viewHolder;
-    private DelegatedResultActivity activity;
+    private ProgressGridViewHolder viewHolder;
+    private Activity activity;
+    private Mood.Status mood;
 
-    public ProgressGoalComponent(Goal item){
+    public ProgressGridMoodComponent(Mood.Status item){
         super();
-        this.goal = item;
+        if(item != null){
+            this.mood = item;
+        }else{
+            this.mood = Mood.Status.Empty;
+        }
     }
 
     @Override
@@ -37,11 +40,9 @@ public class ProgressGoalComponent extends Component {
         this.activity = activity;
     }
 
-
-
     @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ProgressGoalViewHolder(view);
+        viewHolder = new ProgressGridViewHolder(view);
         if(viewHolder != null){
             return viewHolder;
         }
@@ -61,20 +62,17 @@ public class ProgressGoalComponent extends Component {
             return;
         }
 
-        if(goal.getColor() != null){
-            viewHolder.ivGoalColor.setColorFilter(Color.parseColor(goal.getColor()));
-        }
-        viewHolder.tvGoalTitle.setText(goal.getTitle());
+        viewHolder.ivMood.setColorFilter(Mood.getColor(mood));
     }
 
-    public static class ProgressGoalViewHolder extends Component.ViewHolder{
+    public static class ProgressGridViewHolder extends Component.ViewHolder{
 
-        @BindView(R.id.tvGoalTitle) protected TextView tvGoalTitle;
-        @BindView(R.id.ivGoalColor) protected ImageView ivGoalColor;
+        @BindView(R.id.ivMood)
+        ImageView ivMood;
 
-        public ProgressGoalViewHolder(@NonNull View itemView) {
+        public ProgressGridViewHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }
