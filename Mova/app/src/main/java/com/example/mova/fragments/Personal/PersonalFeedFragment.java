@@ -80,13 +80,6 @@ public class PersonalFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        // REMOVE: Quick test on ParseObject's hashcode
-        Tag.getTag("Programming", (tag1) -> {
-            Tag.getTag("Programming", (tag2) -> {
-                Log.i("PersonalFeedFragment", "tag1 hash: " + tag1.hashCode() + ", tag2 hash: " + tag2.hashCode());
-            });
-        });
-
 //        insertSoloComponent(false);
 
         cards = new SortedList<>(PrioritizedComponent.class, new SortedList.Callback<PrioritizedComponent>() {
