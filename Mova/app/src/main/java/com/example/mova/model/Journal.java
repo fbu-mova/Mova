@@ -82,7 +82,7 @@ public class Journal {
      * @param callback The callback to call once all entries have been added.
      */
     public void loadEntries(AsyncUtils.ItemCallback<Throwable> callback) {
-        User user = (User) ParseUser.getCurrentUser();
+        // TODO: Handle unique queries eventually
         ParseQuery<Post> journalQuery = user.relJournal.getQuery();
         journalQuery.findInBackground((List<Post> list, ParseException e) -> {
             if (e != null) {
