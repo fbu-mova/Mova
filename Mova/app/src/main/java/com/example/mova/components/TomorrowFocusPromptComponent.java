@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.adapters.ComponentAdapter;
+import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.parse.ParseQuery;
@@ -38,7 +38,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
     private DelegatedResultActivity activity;
     private ViewHolder holder;
     private View view;
-    private ComponentAdapter<Goal> adapter;
+    private DataComponentAdapter<Goal> adapter;
     private List<Goal> goals;
     private int minGoals, maxGoals;
 
@@ -95,9 +95,9 @@ public abstract class TomorrowFocusPromptComponent extends Component {
 
     @Override
     public void render() {
-        adapter = new ComponentAdapter<Goal>(activity, goals) {
+        adapter = new DataComponentAdapter<Goal>(activity, goals) {
             @Override
-            public Component<Goal> makeComponent(Goal item) {
+            public Component makeComponent(Goal item) {
                 return new ChecklistItemComponent<Goal>(item,
                         Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"),
                         (o) -> o.getTitle()) {

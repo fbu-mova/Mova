@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.components.ComponentLayout;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
@@ -66,7 +65,7 @@ public class PersonalFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        // insertSoloComponent(false);
+        insertSoloComponent(false);
         // TODO: Set up recyclerview
         rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
@@ -76,10 +75,12 @@ public class PersonalFeedFragment extends Fragment {
             JournalPromptComponent card = new JournalPromptComponent();
             container.inflateComponent((DelegatedResultActivity) getActivity(), card);
         } else {
-            TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent() {
+            TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent(0, 5) {
                 @Override
                 public void onLoadGoals(Throwable e) {
-                    container.inflateComponent((DelegatedResultActivity) getActivity(), this);
+                    if (e == null) {
+                        container.inflateComponent((DelegatedResultActivity) getActivity(), this);
+                    }
                 }
             };
         }

@@ -5,28 +5,25 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.Component;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
- * Adapts items to a list of components, which are then displayed.
+ * Adapts items to a sorted list of components, which are then displayed.
  * @param <T> The type of item to use for each component.
  */
-public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component.ViewHolder> {
+public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
-    private List<T> items;
-    private HashMap<T, Component<T>> components;
+    private SortedList<T> items;
+    private HashMap<T, Component> components;
 
-    public ComponentAdapter(DelegatedResultActivity activity, List<T> items) {
+    public SortedDataComponentAdapter(DelegatedResultActivity activity, SortedList<T> items) {
         this.activity = activity;
         this.items = items;
-
-        // added
-        this.components = new HashMap<>();
     }
 
     /**
@@ -34,7 +31,7 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
      * @param item The item to use as data for the component.
      * @return The component to display.
      */
-    public abstract Component<T> makeComponent(T item);
+    public abstract Component makeComponent(T item);
 
     @Override
     public int getItemViewType(int position) {
@@ -47,7 +44,7 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         T item = items.get(viewType);
-        Component<T> component = makeComponent(item);
+        Component component = makeComponent(item);
         components.put(item, component); // FIXME: Make sure that this overrides the last value
         component.makeViewHolder(activity, parent, false);
         return component.getViewHolder();
@@ -56,7 +53,7 @@ public abstract class ComponentAdapter<T> extends RecyclerView.Adapter<Component
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
-        Component<T> component = components.get(item);
+        Component component = components.get(item);
         component.render();
     }
 

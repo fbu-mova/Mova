@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class JournalPromptComponent extends Component<Post> {
+public class JournalPromptComponent extends Component {
     protected DelegatedResultActivity activity;
     protected ViewHolder holder;
     protected View view;

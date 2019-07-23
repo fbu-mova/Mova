@@ -9,24 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.activities.DelegatedResultActivity;
 
 /**
- * Handles the view for a given piece of information.
- * @param <T> The type of information.
+ * Bundles a view's logic, state, and binding.
  */
-public abstract class Component<T> {
-    protected T item;
+public abstract class Component {
 
-    /**
-     * Use this only if the component is not meant to have an item.
-     */
     public Component() { }
-
-    public Component(T item) {
-        this.item = item;
-    }
-
-    public T getItem() {
-        return item;
-    }
 
     /**
      * Inflates the component's layout into the given activity.

@@ -1,16 +1,10 @@
 package com.example.mova.fragments.Personal;
 
-import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,17 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.adapters.ComponentAdapter;
+import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.model.Goal;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.example.mova.fragments.PersonalFragment;
-import com.example.mova.utils.AsyncUtils;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +43,12 @@ public class GoalsFragment extends Fragment {
     // thumbnail recyclerview
     @BindView(R.id.rvThumbnailGoals)    protected RecyclerView rvThumbnailGoals;
     private ArrayList<Goal> thumbnailGoals;
-    private ComponentAdapter<Goal> thumbnailGoalsAdapter;
+    private DataComponentAdapter<Goal> thumbnailGoalsAdapter;
 
     // allGoals recyclerview
     @BindView(R.id.rvAllGoals)      protected RecyclerView rvAllGoals;
     private ArrayList<Goal> allGoals;
-    private ComponentAdapter<Goal> allGoalsAdapter;
+    private DataComponentAdapter<Goal> allGoalsAdapter;
 
     public GoalsFragment() {
         // Required empty public constructor
@@ -95,10 +85,10 @@ public class GoalsFragment extends Fragment {
         thumbnailGoals = new ArrayList<>();
 
         // assigns the adapter w/ anonymous class
-        thumbnailGoalsAdapter = new ComponentAdapter<Goal>(activity, thumbnailGoals) {
+        thumbnailGoalsAdapter = new DataComponentAdapter<Goal>(activity, thumbnailGoals) {
             @Override
-            public Component<Goal> makeComponent(Goal item) {
-                Component<Goal> component = new GoalThumbnailComponent(item);
+            public Component makeComponent(Goal item) {
+                Component component = new GoalThumbnailComponent(item);
                 return component;
             }
         };
@@ -116,10 +106,10 @@ public class GoalsFragment extends Fragment {
         // allGoals
         allGoals = new ArrayList<>();
 
-        allGoalsAdapter = new ComponentAdapter<Goal>(activity, allGoals) {
+        allGoalsAdapter = new DataComponentAdapter<Goal>(activity, allGoals) {
             @Override
-            public Component<Goal> makeComponent(Goal item) {
-                Component<Goal> component = new GoalCardComponent(item);
+            public Component makeComponent(Goal item) {
+                Component component = new GoalCardComponent(item);
                 return component;
             }
         };
@@ -147,7 +137,7 @@ public class GoalsFragment extends Fragment {
         updateAdapter(allGoalsQuery, thumbnailGoals, thumbnailGoalsAdapter, rvThumbnailGoals);
     }
 
-    private void updateAdapter(Goal.Query goalsQuery, ArrayList<Goal> goals, ComponentAdapter<Goal> goalsAdapter, RecyclerView rvGoals) {
+    private void updateAdapter(Goal.Query goalsQuery, ArrayList<Goal> goals, DataComponentAdapter<Goal> goalsAdapter, RecyclerView rvGoals) {
         // todo -- add refresh/loading capabilities
 
         Log.d(TAG, "in updateAdapter");

@@ -15,7 +15,7 @@ import com.example.mova.utils.AsyncUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class ChecklistItemComponent<T> extends Component<T> {
+public abstract class ChecklistItemComponent<T> extends Component {
 
     private T item;
     private int checkedColor, uncheckedColor;
