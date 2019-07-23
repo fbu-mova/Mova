@@ -34,7 +34,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         return 0;
     }
 
-    public void makeCards(SortedList<Prioritized<Component>> addTo, AsyncUtils.ItemCallback<Throwable> callback) {
+    public void makeCards(SortedList<PrioritizedComponent> addTo, AsyncUtils.ItemCallback<Throwable> callback) {
         ArrayList<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
 
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) -> makeSpecialCards(addTo, cb));
@@ -87,7 +87,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         AsyncUtils.executeMany(asyncActions, callback);
     }
 
-    protected void makeSpecialCards(SortedList<Prioritized<Component>> addTo, AsyncUtils.ItemCallback<Throwable> callback) {
+    protected void makeSpecialCards(SortedList<PrioritizedComponent> addTo, AsyncUtils.ItemCallback<Throwable> callback) {
         /* TODO:
          * - Get all conditional values
          *   - Time of day
@@ -116,7 +116,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                 } else {
                     if (entries.size() == 0) {
                         JournalPromptComponent card = new JournalPromptComponent();
-                        addTo.add(new Prioritized<>(card, 100));
+                        addTo.add(new PrioritizedComponent(card, 100));
                         cb.call(null);
                     }
                 }
@@ -131,7 +131,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                             Log.e("PersonalFeedPrioritizer", "Failed to build TomorrowFocusPromptComponent", e);
                             cb.call(e);
                         } else {
-                            addTo.add(new Prioritized<>(this, 100));
+                            addTo.add(new PrioritizedComponent(this, 100));
                             cb.call(null);
                         }
                     }
@@ -142,15 +142,15 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         AsyncUtils.executeMany(asyncActions, callback);
     }
 
-    protected void makeGoalCheckIns(SortedList<Prioritized<Component>> addTo, List<Goal> goals) {
+    protected void makeGoalCheckIns(SortedList<PrioritizedComponent> addTo, List<Goal> goals) {
         // TODO: Call Brandon's method, add results
     }
 
-    protected void makeJournalMemories(SortedList<Prioritized<Component>> addTo, List<Post> entries) {
+    protected void makeJournalMemories(SortedList<PrioritizedComponent> addTo, List<Post> entries) {
         // TODO: Choose random journal entry
     }
 
-    protected void makeScrapbookMemories(SortedList<Prioritized<Component>> addTo, List<Post> entries) {
+    protected void makeScrapbookMemories(SortedList<PrioritizedComponent> addTo, List<Post> entries) {
         // TODO: Choose random scrapbook entry
     }
 }

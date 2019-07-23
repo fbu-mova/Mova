@@ -1,21 +1,29 @@
 package com.example.mova.fragments.Personal;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.PrioritizedComponentAdapter;
+import com.example.mova.components.Component;
 import com.example.mova.components.ComponentLayout;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
+import com.example.mova.feed.PersonalFeedPrioritizer;
+import com.example.mova.feed.Prioritized;
+import com.example.mova.feed.PrioritizedComponent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +37,10 @@ public class PersonalFeedFragment extends Fragment {
 
     @BindView(R.id.component) protected ComponentLayout container;
     @BindView(R.id.rvCards)   protected RecyclerView rvCards;
+
+    private PrioritizedComponentAdapter adapter;
+    private SortedList<PrioritizedComponent> cards;
+    private PersonalFeedPrioritizer prioritizer;
 
     public PersonalFeedFragment() {
         // Required empty public constructor
@@ -65,9 +77,58 @@ public class PersonalFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        insertSoloComponent(false);
-        // TODO: Set up recyclerview
+//        insertSoloComponent(false);
+
+        cards = new SortedList<>(PrioritizedComponent.class, new SortedList.Callback<PrioritizedComponent>() {
+            @Override
+            public int compare(PrioritizedComponent o1, PrioritizedComponent o2) {
+                return o1.compareTo(o2);
+            }
+
+            @Override
+            public void onChanged(int position, int count) {
+                adapter.notifyItemChanged(position, count);
+            }
+
+            @Override
+            public boolean areContentsTheSame(PrioritizedComponent oldItem, PrioritizedComponent newItem) {
+                return oldItem.equals(newItem);
+            }
+
+            @Override
+            public boolean areItemsTheSame(PrioritizedComponent item1, PrioritizedComponent item2) {
+                return item1.equals(item2);
+            }
+
+            @Override
+            public void onInserted(int position, int count) {
+                adapter.notifyItemRangeInserted(position, count);
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+                adapter.notifyItemRangeRemoved(position, count);
+            }
+
+            @Override
+            public void onMoved(int fromPosition, int toPosition) {
+                adapter.notifyItemMoved(fromPosition, toPosition);
+            }
+        });
+
+        adapter = new PrioritizedComponentAdapter((DelegatedResultActivity) getActivity(), cards);
+        rvCards.setAdapter(adapter);
         rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        prioritizer = new PersonalFeedPrioritizer();
+        prioritizer.makeCards(cards, (e) -> {
+            if (e != null) {
+                Log.e("PersonalFeedFragment", "Failed to make cards", e);
+                Toast.makeText(getActivity(), "Failed to load feed", Toast.LENGTH_LONG).show();
+            } else {
+                Log.i("PersonalFeedFragment", "Loaded cards successfully!");
+            }
+        });
     }
 
     private void insertSoloComponent(boolean toggleJournalVsTomorrow) {
