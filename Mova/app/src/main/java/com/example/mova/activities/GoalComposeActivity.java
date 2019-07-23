@@ -1,6 +1,9 @@
 package com.example.mova.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.adapters.ComposeActionsAdapter;
+import com.example.mova.fragments.Personal.ComposeActionDialog;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
@@ -19,24 +24,32 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GoalComposeActivity extends AppCompatActivity {
+public class GoalComposeActivity extends AppCompatActivity implements ComposeActionDialog.SubmitActionDialogListener {
 
     private static final String TAG = "Goal Compose Activity";
     public static final String KEY_COMPOSED_GOAL = "composed goal";
 
     // todo : currently most basic (and only personal). features to add:
         // can add 'infinite' number of actions (dynamically create editTexts?)
+            // using modal overlay/dialog fragment
         // add image (plus resizing) at some point
         // add tags
         // add icons for actions
 
     @BindView(R.id.etGoalName)              protected EditText etGoalName;
     @BindView(R.id.etGoalDescription)       protected EditText etGoalDescription;
-    @BindView(R.id.etAction)                protected EditText etAction;
+//    @BindView(R.id.etAction)                protected EditText etAction;
     @BindView(R.id.btSubmit)                protected Button btSubmit;
+    @BindView(R.id.rvComposeAction)         protected RecyclerView rvComposeAction;
+
+    ComposeActionsAdapter actionAdapter;
+    List<String> actions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,21 +57,47 @@ public class GoalComposeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_goal_compose);
         ButterKnife.bind(this);
 
+        actions = new ArrayList<>();
+        actionAdapter = new ComposeActionsAdapter(actions);
+        rvComposeAction.setLayoutManager(new LinearLayoutManager(this));
+        rvComposeAction.setAdapter(actionAdapter);
+
+        rvComposeAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAlertDialog();
+            }
+        });
+
         btSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
-                String action = etAction.getText().toString();
+//                String action = etAction.getText().toString();
 
-                submitPersonalGoal(goalName, goalDescription, action);
+//                submitPersonalGoal(goalName, goalDescription, action);
             }
         });
     }
 
+    private void showAlertDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeActionDialog dialog = new ComposeActionDialog();
+        dialog.show(fm, "fragment_alert");
+
+    }
+
+    @Override
+    public void onFinishActionDialog(String inputText) {
+        // update recyclerview
+        actions.add(0, inputText);
+        actionAdapter.notifyItemInserted(0);
+    }
+
     private void submitPersonalGoal(String goalName, String goalDescription, String task) {
         // todo -- include image choosing for goal image
-        // fixme -- update to also encompass Social functionality ?
+        // todo -- update to also encompass Social functionality ?
 
         Goal goal = new Goal()
                 .setAuthor((User) ParseUser.getCurrentUser())
@@ -145,4 +184,5 @@ public class GoalComposeActivity extends AppCompatActivity {
             }
         });
     }
+
 }

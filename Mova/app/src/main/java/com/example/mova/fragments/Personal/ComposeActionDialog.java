@@ -73,7 +73,7 @@ public class ComposeActionDialog extends DialogFragment implements TextView.OnEd
         if (EditorInfo.IME_ACTION_DONE == actionId) {
             // Return input text back to activity through the implemented listener
             SubmitActionDialogListener listener = (SubmitActionDialogListener) getActivity();
-            
+
             // todo -- add ability to pass other data, e.g. icons/notifications info
             listener.onFinishActionDialog(etAction.getText().toString());
             // Close the dialog and return back to the parent activity
