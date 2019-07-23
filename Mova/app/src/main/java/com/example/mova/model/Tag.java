@@ -11,7 +11,7 @@ import com.parse.ParseQuery;
 import java.util.List;
 
 @ParseClassName("Tag")
-public class Tag extends ParseObject {
+public class Tag extends HashableParseObject {
 
     public static final String KEY_NAME = "name";
 

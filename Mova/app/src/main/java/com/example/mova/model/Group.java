@@ -7,7 +7,7 @@ import com.parse.ParseObject;
 import java.util.Date;
 
 @ParseClassName("Group")
-public class Group extends ParseObject {
+public class Group extends HashableParseObject {
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_NAME = "name";
     public static final String KEY_DESCRIPTION = "description";

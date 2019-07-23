@@ -6,7 +6,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 @ParseClassName("Goal")
-public class Goal extends ParseObject {
+public class Goal extends HashableParseObject {
 
     public static final String KEY_TITLE = "title";
     public static final String KEY_AUTHOR = "author";

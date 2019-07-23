@@ -6,6 +6,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.StableNumericalIdProvider;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -90,5 +91,10 @@ public class User extends ParseUser {
                 });
             }
         );
+    }
+
+    @Override
+    public int hashCode() {
+        return HashableParseObject.getHashCode(this);
     }
 }

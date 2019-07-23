@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @ParseClassName("Action")
-public class Action extends ParseObject {
+public class Action extends HashableParseObject {
 
     public static final String KEY_TASK = "task";
     public static final String KEY_IS_DONE = "isDone";

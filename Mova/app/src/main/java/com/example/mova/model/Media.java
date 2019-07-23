@@ -4,7 +4,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
 @ParseClassName("Media")
-public class Media extends ParseObject {
+public class Media extends HashableParseObject {
 
     public static final String KEY_TYPE = "type";
     public static final String KEY_PARENT = "parent";

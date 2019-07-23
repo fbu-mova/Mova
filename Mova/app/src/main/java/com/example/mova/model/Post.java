@@ -10,7 +10,8 @@ import com.parse.ParseObject;
 import org.w3c.dom.Comment;
 
 @ParseClassName("Post")
-public class Post extends ParseObject{
+public class Post extends HashableParseObject {
+
     public static final String KEY_AUTHOR = "author";
     public static final String KEY_GROUP = "group";
     public static final String KEY_IS_PERSONAL = "isPersonal";

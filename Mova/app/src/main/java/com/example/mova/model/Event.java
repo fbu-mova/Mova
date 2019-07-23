@@ -8,7 +8,7 @@ import com.parse.ParseObject;
 import java.util.Date;
 
 @ParseClassName("Event")
-public class Event extends ParseObject {
+public class Event extends HashableParseObject {
 
     public static final String KEY_DATE = "date";
     public static final String KEY_LOCATION = "location";
