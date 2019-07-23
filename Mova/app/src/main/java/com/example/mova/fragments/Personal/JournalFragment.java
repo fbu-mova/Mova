@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
+import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
@@ -58,8 +59,7 @@ public class JournalFragment extends Fragment {
     private DatePickerAdapter dateAdapter;
     private JournalEntryAdapter entryAdapter;
 
-    private SortedList<Date> dates;
-    private HashMap<Date, SortedList<Post>> entries;
+    private Journal journal;
     private Date currDate;
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
@@ -105,54 +105,56 @@ public class JournalFragment extends Fragment {
 
         currDate = TimeUtils.getToday();
 
-        dates = new SortedList<>(Date.class, new SortedList.Callback<Date>() {
-            @Override
-            public int compare(Date o1, Date o2) {
-                // Reverse order of list
-                return o2.compareTo(o1);
-            }
+        journal = new Journal(
+                (User) User.getCurrentUser(),
+                new SortedList.Callback<Date>() {
+                    @Override
+                    public int compare(Date o1, Date o2) {
+                        return Journal.defaultCompareDates(o1, o2);
+                    }
 
-            @Override
-            public void onChanged(int position, int count) {
-                dateAdapter.notifyItemRangeChanged(position, count);
-            }
+                    @Override
+                    public void onChanged(int position, int count) {
+                        dateAdapter.notifyItemRangeChanged(position, count);
+                    }
 
-            @Override
-            public boolean areContentsTheSame(Date oldItem, Date newItem) {
-                return oldItem.equals(newItem);
-            }
+                    @Override
+                    public boolean areContentsTheSame(Date oldItem, Date newItem) {
+                        return Journal.defaultDatesEqual(oldItem, newItem);
+                    }
 
-            @Override
-            public boolean areItemsTheSame(Date item1, Date item2) {
-                return item1.equals(item2);
-            }
+                    @Override
+                    public boolean areItemsTheSame(Date item1, Date item2) {
+                        return Journal.defaultDatesEqual(item1, item2);
+                    }
 
-            @Override
-            public void onInserted(int position, int count) {
-                dateAdapter.notifyItemRangeInserted(position, count);
-            }
+                    @Override
+                    public void onInserted(int position, int count) {
+                        dateAdapter.notifyItemRangeInserted(position, count);
+                    }
 
-            @Override
-            public void onRemoved(int position, int count) {
-                dateAdapter.notifyItemRangeRemoved(position, count);
-            }
+                    @Override
+                    public void onRemoved(int position, int count) {
+                        dateAdapter.notifyItemRangeRemoved(position, count);
+                    }
 
-            @Override
-            public void onMoved(int fromPosition, int toPosition) {
-                dateAdapter.notifyItemMoved(fromPosition, toPosition);
-            }
-        });
-        entries = new HashMap<>();
+                    @Override
+                    public void onMoved(int fromPosition, int toPosition) {
+                        dateAdapter.notifyItemMoved(fromPosition, toPosition);
+                    }
+                },
+                Journal.makeDefaultPostSortHandler()
+        );
 
         // On date click, display only the entries for that date
-        dateAdapter = new DatePickerAdapter(getActivity(), dates, new DatePickerAdapter.OnItemClickListener() {
+        dateAdapter = new DatePickerAdapter(getActivity(), journal.getDates(), new DatePickerAdapter.OnItemClickListener() {
             @Override
             public void onClick(View v, Date date, int position) {
                 displayEntries(date);
             }
         });
 
-        entryAdapter = new JournalEntryAdapter(getActivity(), getEntries(currDate));
+        entryAdapter = new JournalEntryAdapter(getActivity(), journal.getEntriesByDate(currDate));
 
         rvDates.setAdapter(dateAdapter);
         rvDates.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
@@ -185,99 +187,22 @@ public class JournalFragment extends Fragment {
     }
 
     private void postJournalEntry(Post journalEntry, List<Tag> tags) {
-        ((User) ParseUser.getCurrentUser()).postJournalEntry(journalEntry, tags, (entry) -> {
+        journal.postEntry(journalEntry, tags, (e) -> {
             Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
-            Date today = TimeUtils.getToday();
-            SortedList<Post> todayEntries = getEntries(today);
-            todayEntries.add(journalEntry);
-            if (currDate.equals(today)) {
-                entryAdapter.notifyItemInserted(todayEntries.size() - 1);
+            if (currDate.equals(TimeUtils.getToday())) {
+                entryAdapter.notifyItemInserted(journal.getEntriesByDate(currDate).size() - 1);
             }
         });
-    }
-
-    /**
-     * Gets the list of entries for a specific date from the hashmap.
-     * If no list has been defined for that date, creates and puts an empty list at that date.
-     * If no date has been stored that matches that date, creates and adds that date to the list of dates.
-     * @param date
-     * @return
-     */
-    private SortedList<Post> getEntries(Date date) {
-        SortedList<Post> entriesFromDate = entries.get(date);
-        if (entriesFromDate == null) {
-            entriesFromDate = new SortedList<>(Post.class, new SortedList.Callback<Post>() {
-                @Override
-                public int compare(Post o1, Post o2) {
-                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
-                }
-
-                @Override
-                public void onChanged(int position, int count) {
-                    // No updates because depends on active date
-                }
-
-                @Override
-                public boolean areContentsTheSame(Post oldItem, Post newItem) {
-                    // FIXME: Is this right, or might it remove duplicates?
-                    return oldItem.getCreatedAt().equals(newItem.getCreatedAt());
-                }
-
-                @Override
-                public boolean areItemsTheSame(Post item1, Post item2) {
-                    // FIXME: Is this right, or might it remove duplicates?
-                    return item1.getCreatedAt().equals(item2.getCreatedAt());
-                }
-
-                @Override
-                public void onInserted(int position, int count) {
-                    // No updates because depends on active date
-                }
-
-                @Override
-                public void onRemoved(int position, int count) {
-                    // No updates because depends on active date
-                }
-
-                @Override
-                public void onMoved(int fromPosition, int toPosition) {
-                    // No updates because depends on active date
-                }
-            });
-        }
-        entries.put(date, entriesFromDate);
-        if (dates.indexOf(date) < 0) dates.add(date);
-        return entriesFromDate;
-    }
-
-    /**
-     * Adds an entry to the list for a specific date.
-     * If no list yet exists, creates the list first, and handles date creation.
-     * @param date
-     * @param entry
-     */
-    private void addEntry(Date date, Post entry) {
-        SortedList<Post> entries = getEntries(date);
-        entries.add(entry);
     }
 
     private void displayEntries(Date date) {
         // TODO: Possibly add indicator of date being selected in date picker
         tvDate.setText(TimeUtils.toDateString(date));
-        SortedList<Post> entriesFromDate = getEntries(date);
+        SortedList<Post> entriesFromDate = journal.getEntriesByDate(date);
         entryAdapter.changeSource(entriesFromDate);
     }
 
     private void loadEntries() {
-        User user = (User) ParseUser.getCurrentUser();
-        ParseQuery<Post> journalQuery = user.relJournal.getQuery();
-        journalQuery.findInBackground((List<Post> list, ParseException e) -> {
-            for (Post entry : list) {
-                Date date = entry.getCreatedAt();
-                date = TimeUtils.normalizeToDay(date);
-                addEntry(date, entry);
-            }
-            displayEntries(currDate);
-        });
+        journal.loadEntries((e) -> displayEntries(currDate));
     }
 }
