@@ -4,6 +4,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 @ParseClassName("Goal")
 public class Goal extends ParseObject {
@@ -124,8 +125,14 @@ public class Goal extends ParseObject {
             return this;
 
         }
+
         public Query withGroup() {
             include(KEY_FROM_GROUP);
+            return this;
+        }
+
+        public Query fromCurrentUser() {
+            whereEqualTo(KEY_AUTHOR, ParseUser.getCurrentUser());
             return this;
         }
     }
