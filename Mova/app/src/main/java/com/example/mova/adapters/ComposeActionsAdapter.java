@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,7 +44,7 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
     public void onBindViewHolder(@NonNull ComposeActionsAdapter.ViewHolder holder, int position) {
         String action = actions.get(position);
 
-        holder.etAction.setText(action);
+        holder.rbAction.setText(action);
 
     }
 
@@ -57,22 +58,17 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
 //        showAlertDialog();
 //    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.etAction)    public TextView etAction;
+        @BindView(R.id.rbAction)    public RadioButton rbAction;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(this); // fixme: user can tap anywhere on recyclerview and dialog will show up to compose action
+//            itemView.setOnClickListener(this); // fixme: user can tap anywhere on recyclerview and dialog will show up to compose action
 
             // todo -- set onclicklistener so can edit if haven't submitted yet / dialog reshows up to edit
-        }
-
-        @Override
-        public void onClick(View v) {
-            showAlertDialog();
         }
 
     }

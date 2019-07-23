@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
@@ -21,6 +24,7 @@ import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseException;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -30,7 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GoalComposeActivity extends AppCompatActivity implements ComposeActionDialog.SubmitActionDialogListener {
+public class GoalComposeActivity extends AppCompatActivity {
 
     private static final String TAG = "Goal Compose Activity";
     public static final String KEY_COMPOSED_GOAL = "composed goal";
@@ -47,14 +51,18 @@ public class GoalComposeActivity extends AppCompatActivity implements ComposeAct
 //    @BindView(R.id.etAction)                protected EditText etAction;
     @BindView(R.id.btSubmit)                protected Button btSubmit;
     @BindView(R.id.rvComposeAction)         protected RecyclerView rvComposeAction;
+    @BindView(R.id.etAddAction)             protected EditText etAddAction;
 
     ComposeActionsAdapter actionAdapter;
     List<String> actions;
 
+    List<SharedAction> sharedActionsList;
+    List<Action> actionsList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_goal_compose);
+        setContentView(R.layout.activity_goal_compose); // fixme: layout is jank when adding many actions
         ButterKnife.bind(this);
 
         actions = new ArrayList<>();
@@ -62,40 +70,43 @@ public class GoalComposeActivity extends AppCompatActivity implements ComposeAct
         rvComposeAction.setLayoutManager(new LinearLayoutManager(this));
         rvComposeAction.setAdapter(actionAdapter);
 
-        rvComposeAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAlertDialog();
-            }
-        });
+        sharedActionsList = new ArrayList<>();
+        actionsList = new ArrayList<>();
 
-        btSubmit.setOnClickListener(new View.OnClickListener() {
+        btSubmit.setOnClickListener(new View.OnClickListener() { // todo -- maybe make bottom nav to help w/ jank layout ?
             @Override
             public void onClick(View v) {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
-//                String action = etAction.getText().toString();
 
-//                submitPersonalGoal(goalName, goalDescription, action);
+                submitPersonalGoal(goalName, goalDescription, actions);
+            }
+        });
+
+        // add 'enter' soft keyboard usage for etAddAction
+        etAddAction.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                    // save added action to the adapter, clear etAddAction
+                    String newAction = etAddAction.getText().toString();
+                    actions.add(newAction); // put at end rather than beginning
+                    actionAdapter.notifyItemInserted(actions.size() - 1);
+                    etAddAction.setText("");
+
+                    handled = true;
+                }
+                return handled;
             }
         });
     }
 
-    private void showAlertDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        ComposeActionDialog dialog = new ComposeActionDialog();
-        dialog.show(fm, "fragment_alert");
+    private void submitPersonalGoal(String goalName, String goalDescription, List<String> actions) {
 
-    }
+        // currently todo-ing: saving multiple actions within a goal (include shareAction process)
 
-    @Override
-    public void onFinishActionDialog(String inputText) {
-        // update recyclerview
-        actions.add(0, inputText);
-        actionAdapter.notifyItemInserted(0);
-    }
-
-    private void submitPersonalGoal(String goalName, String goalDescription, String task) {
         // todo -- include image choosing for goal image
         // todo -- update to also encompass Social functionality ?
 
@@ -110,79 +121,148 @@ public class GoalComposeActivity extends AppCompatActivity implements ComposeAct
                 if (e == null) {
                     Log.d(TAG, "Initial goal save successful");
 
-                    saveSharedAction(task, goal);
+                    saveSharedAction(actions, goal);
                 }
                 else {
                     Log.e(TAG, "Initial goal save unsuccessful", e);
                 }
             }
         });
+    }
 
-        // put information into it, save in background
+    private void saveSharedAction(List<String> actions, Goal goal) {
 
-        // async outlining :
+        // create a SharedAction for each action in actions
 
-        // Goal to relation of sharedActions AND relation of actions
-        // sharedAction to relation of child actions
-        // actions point to parent sharedAction and parent goal
+        AsyncUtils.executeMany(actions.size(), new AsyncUtils.ItemCallbackWithItemCallback<Integer, AsyncUtils.ItemCallback<Throwable>>() {
+            @Override
+            public void call(Integer item, AsyncUtils.ItemCallback<Throwable> callback) {
+                // the iteration in the for loop
 
-        // easier use case :
+                SharedAction sharedAction = new SharedAction()
+                        .setTask(actions.get(item))
+                        .setGoal(goal)
+                        .setUsersDone(0);
 
-        // saving a journal entry --
-        // save to Post database since it is a Post
-        // save to User's Journal<Post> relation to access
+                sharedActionsList.add(sharedAction);
+
+                // save sharedAction
+                sharedAction.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Log.d(TAG, "Saved SharedAction successfully");
+                        } else {
+                            Log.e(TAG, "SharedAction failed saving", e);
+                        }
+                        callback.call(e);
+                    }
+                });
+
+            }
+        }, new AsyncUtils.EmptyCallback() {
+            @Override
+            public void call() {
+                // when whole for-loop has run though -- save goal
+                Log.d(TAG, "in saveSharedAction final callback");
+
+                // go to create and save actions
+                saveAction(actions, goal, sharedActionsList);
+            }
+        });
 
     }
 
-    private void saveSharedAction(String task, Goal goal) {
+    private void saveAction(List<String> actions, Goal goal, List<SharedAction> sharedActionsList) {
 
-        // save the SharedAction
-        SharedAction sharedAction = new SharedAction()
-                .setTask(task)
-                .setGoal(goal)
-                .setUsersDone(0);
-
-        AsyncUtils.saveWithRelation(sharedAction, goal.relSharedActions, new AsyncUtils.ItemCallback() {
+        AsyncUtils.executeMany(actions.size(), new AsyncUtils.ItemCallbackWithItemCallback<Integer, AsyncUtils.ItemCallback<Throwable>>() {
             @Override
-            public void call(Object item) { // sharedAction is item
-                Log.d(TAG, "Saving SharedAction successful");
+            public void call(Integer item, AsyncUtils.ItemCallback<Throwable> callback) {
+                // the iteration in the for loop
 
-                saveAction(task, goal, sharedAction);
+                // save the Action
+                Action action = new Action()
+                        .setTask(actions.get(item))
+                        .setParentGoal(goal)
+                        .setParentUser((User) ParseUser.getCurrentUser())
+                        .setParentSharedAction(sharedActionsList.get(item));
+
+                actionsList.add(action);
+
+                // save action
+                action.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Log.d(TAG, "Saved Action successfully");
+
+                            // add to specific sharedAction's relation
+                            sharedActionsList.get(item).relChildActions.add(action);
+                            sharedActionsList.get(item).saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        Log.d(TAG, "sharedAction added child action rel");
+                                    }
+                                    else {
+                                        Log.e(TAG, "sharedAction failed to add child action rel", e);
+                                    }
+                                    callback.call(e);
+                                }
+                            });
+                        }
+                        else {
+                            Log.e(TAG, "Action failed saving", e);
+                            callback.call(e);
+                        }
+                    }
+                });
+
+            }
+        }, new AsyncUtils.EmptyCallback() {
+            @Override
+            public void call() {
+                // when whole for-loop has run though -- save goal
+                Log.d(TAG, "in saveAction final callback");
+
+                updateGoalRels(sharedActionsList, actionsList, goal);
             }
         });
     }
 
-    private void saveAction(String task, Goal goal, SharedAction sharedAction) {
+    private void updateGoalRels(List<SharedAction> sharedActionsList, List<Action> actionsList, Goal goal) {
 
-        // save the Action
-        Action action = new Action()
-                .setTask(task)
-                .setParentGoal(goal)
-                .setParentUser((User) ParseUser.getCurrentUser())
-                .setParentSharedAction(sharedAction);
-
-        AsyncUtils.saveWithRelation(action, sharedAction.relChildActions, new AsyncUtils.ItemCallback() {
+        AsyncUtils.executeMany(actions.size(), new AsyncUtils.ItemCallbackWithItemCallback<Integer, AsyncUtils.ItemCallback<Throwable>>() {
             @Override
-            public void call(Object item) { // action is item
-                Log.d(TAG, "Saving Action to SharedAction successful");
+            public void call(Integer item, AsyncUtils.ItemCallback<Throwable> callback) {
+                // the iteration in the for loop
+
+                goal.relSharedActions.add(sharedActionsList.get(item)); // fixme (?) need an execute many callback ?
+                goal.relActions.add(actionsList.get(item)); // has same length as sharedActionsList
+                callback.call(null);
             }
-        });
-
-        AsyncUtils.saveWithRelation(action, goal.relActions, new AsyncUtils.ItemCallback() {
+        }, new AsyncUtils.EmptyCallback() {
             @Override
-            public void call(Object item) {
-                // everything (for now) is saved, want to go back to Goal feed and update recyclerview
-                // fixme -- with multiple actions, only can call this after all of the actions have been saved
+            public void call() {
 
-                Log.d(TAG, "Saving Action to Goal successful");
-                Toast.makeText(GoalComposeActivity.this, "Goal saved successfully!", Toast.LENGTH_LONG).show();
+                goal.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Log.d(TAG, "finished final goal update");
 
-                getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
-                // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
-                setResult(RESULT_OK, getIntent());
-                finish();
+                            // go to general goal fragment page (or details page?)
+                            getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
+                            // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
+                            setResult(RESULT_OK, getIntent());
+                            finish();
+                        }
+                        else {
+                            Log.e(TAG, "failed to finish final goal update", e);
+                        }
+                    }
+                });
             }
         });
     }
-
 }

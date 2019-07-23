@@ -22,6 +22,8 @@ import butterknife.ButterKnife;
 
 public class ComposeActionDialog extends DialogFragment implements TextView.OnEditorActionListener {
 
+    // NO LONGER USING
+
     @BindView(R.id.etAction)        protected EditText etAction;
     @BindView(R.id.btSubmitAction)  protected Button btSubmitAction;
 
