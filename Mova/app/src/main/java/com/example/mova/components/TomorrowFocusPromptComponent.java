@@ -99,7 +99,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
             @Override
             public Component makeComponent(Goal item) {
                 return new ChecklistItemComponent<Goal>(item,
-                        Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"),
+                        Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"), true,
                         (o) -> o.getTitle()) {
                     @Override
                     public void onClick(View view) {

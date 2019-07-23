@@ -19,16 +19,18 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     private T item;
     private int checkedColor, uncheckedColor;
+    private boolean applyColorToggleToText;
     private AsyncUtils.ItemReturnCallback<T, String> getTitle;
 
     private DelegatedResultActivity activity;
     private ViewHolder holder;
     private View view;
 
-    public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, AsyncUtils.ItemReturnCallback<T, String> getTitle) {
+    public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, boolean applyColorToggleToText, AsyncUtils.ItemReturnCallback<T, String> getTitle) {
         this.item = item;
         this.checkedColor = checkedColor;
         this.uncheckedColor = uncheckedColor;
+        this.applyColorToggleToText = applyColorToggleToText;
         this.getTitle = getTitle;
     }
 

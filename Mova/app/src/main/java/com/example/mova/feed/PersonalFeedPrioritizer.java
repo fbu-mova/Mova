@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.components.Component;
+import com.example.mova.components.GoalCheckInComponent;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.model.Goal;
@@ -133,15 +134,27 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         AsyncUtils.executeMany(asyncActions, callback);
     }
 
+    // TODO: Scale to more than one of each goal if desired
+    // TODO: Add conditions to determine whether to display best, worst, or both
+    // TODO: Maybe add card for adding goals if user doesn't yet have any goals
+    // TODO: Make message dependent on time of day
+    // TODO: Improve messages generally, maybe randomize or in some other way vary
     protected void makeGoalCheckIns(SortedList<PrioritizedComponent> addTo, List<Goal> goals, AsyncUtils.ItemCallback<Throwable> callback) {
         // Get goals sorted by progress
         GoalUtils goalUtils = new GoalUtils();
         goalUtils.sortGoals(goals, 7, ((User) User.getCurrentUser()), (TreeSet<Prioritized<Goal>> pGoals) -> {
             // Choose top and bottom goals based on quantities in config
-            // TODO: Scale to more than one of each goal if desired
-            Prioritized<Goal> worstGoal = pGoals.first(), bestGoal = pGoals.last();
-            // TODO: Add conditions to determine whether to display best, worst, or both
-            // TODO: Create goal check-in cards with variable messages
+            if (pGoals.size() == 1) {
+                Prioritized<Goal> goal = pGoals.first();
+                GoalCheckInComponent card = new GoalCheckInComponent(goal.item, "Great work so far!");
+                addTo.add(new PrioritizedComponent(card, 50));
+            } else if (pGoals.size() > 0) {
+                Prioritized<Goal> worstGoal = pGoals.first(), bestGoal = pGoals.last();
+                GoalCheckInComponent worstCard = new GoalCheckInComponent(worstGoal.item, "Keep up the hard work--give " + worstGoal.item.getTitle() + " a bit more of your time if you can.");
+                GoalCheckInComponent bestCard = new GoalCheckInComponent(bestGoal.item, "You've been doing great lately--enjoy what's left for today!");
+                addTo.add(new PrioritizedComponent(bestCard, 50));
+                addTo.add(new PrioritizedComponent(worstCard, 49));
+            }
             callback.call(null);
         });
     }
