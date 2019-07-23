@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Goal;
 
 import butterknife.BindView;
@@ -28,15 +29,15 @@ public class GoalThumbnailComponent extends Component<Goal> {
 
     private View view;
     private GoalThumbnailViewHolder viewHolder;
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
     public GoalThumbnailComponent(Goal item) {
         super(item);
     }
 
     @Override
-    public void makeViewHolder(Activity activity, ViewGroup parent) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
         this.activity = activity;
     }
 
@@ -51,6 +52,11 @@ public class GoalThumbnailComponent extends Component<Goal> {
     }
 
     @Override
+    public View getView() {
+        return view;
+    }
+
+    @Override
     public void render() {
         if (viewHolder == null) {
             Log.e(TAG, "not inflating views to viewHolder, in render");
@@ -62,7 +68,7 @@ public class GoalThumbnailComponent extends Component<Goal> {
         viewHolder.tvName.setText(goal.getTitle());
 
         // fixme -- does there exist cleaner code to do this casework? / extract as helper function?
-        String name = goal.getFromGroupName();
+        String name = goal.getGroupName();
         if (name != "") {
             viewHolder.tvFromGroup.setText(name);
         }

@@ -19,7 +19,7 @@ import com.parse.SignUpCallback;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends DelegatedResultActivity {
 
     private static final String TAG = "SignupActivity";
 

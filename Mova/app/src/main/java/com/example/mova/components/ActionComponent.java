@@ -1,6 +1,5 @@
 package com.example.mova.components;
 
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import android.widget.RadioButton;
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Action;
 
 import butterknife.BindView;
@@ -22,15 +22,15 @@ public class ActionComponent extends Component<Action> {
 
     private View view;
     private ActionViewHolder viewHolder;
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
     public ActionComponent(Action item) {
         super(item);
     }
 
     @Override
-    public void makeViewHolder(Activity activity, ViewGroup parent) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
+    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
         this.activity = activity;
     }
 
@@ -42,6 +42,11 @@ public class ActionComponent extends Component<Action> {
         }
         Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
         return null;
+    }
+
+    @Override
+    public View getView() {
+        return view;
     }
 
     @Override

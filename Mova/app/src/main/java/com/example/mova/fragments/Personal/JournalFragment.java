@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
@@ -36,6 +37,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +80,6 @@ public class JournalFragment extends Fragment {
     public static JournalFragment newInstance() {
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
-        // TODO: Add any arguments if found to be necessary
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,7 +88,6 @@ public class JournalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            // TODO: Set any arguments chosen
         }
     }
 
@@ -184,45 +185,15 @@ public class JournalFragment extends Fragment {
     }
 
     private void postJournalEntry(Post journalEntry, List<Tag> tags) {
-        // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
-        AsyncUtils.executeMany(
-            tags.size(),
-            (position, cb) -> {
-                Tag tag = tags.get(position);
-                Tag.getTag(tag.getName(), (tagFromDB) -> {
-                    if (tagFromDB == null) {
-                        tag.saveInBackground((e) -> {
-                            if (e != null) {
-                                Log.e("JournalFragment", "Failed to create tag " + tag.getName(), e);
-                            } else {
-                                journalEntry.relTags.add(tag, (sameTag) -> cb.call(null));
-                            }
-                        });
-                    } else {
-                        journalEntry.relTags.add(tagFromDB, (sameTag) -> cb.call(null));
-                    }
-                });
-            },
-            () -> {
-                Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
-                journalEntry.saveInBackground((e) -> {
-                    if (e != null) {
-                        Log.e("JournalFragment", "Failed to save entry", e);
-                        Toast.makeText(getActivity(), "Failed to save entry", Toast.LENGTH_LONG).show();
-                    } else {
-                        ((User) ParseUser.getCurrentUser()).relJournal.add(journalEntry, (entry) -> {
-                            Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
-                            Date today = TimeUtils.getToday();
-                            SortedList<Post> todayEntries = getEntries(today);
-                            todayEntries.add(journalEntry);
-                            if (currDate.equals(today)) {
-                                entryAdapter.notifyItemInserted(todayEntries.size() - 1);
-                            }
-                        });
-                    }
-                });
-             }
-         );
+        ((User) ParseUser.getCurrentUser()).postJournalEntry(journalEntry, tags, (entry) -> {
+            Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
+            Date today = TimeUtils.getToday();
+            SortedList<Post> todayEntries = getEntries(today);
+            todayEntries.add(journalEntry);
+            if (currDate.equals(today)) {
+                entryAdapter.notifyItemInserted(todayEntries.size() - 1);
+            }
+        });
     }
 
     /**

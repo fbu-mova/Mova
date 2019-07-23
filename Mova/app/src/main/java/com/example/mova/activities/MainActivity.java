@@ -1,31 +1,25 @@
 package com.example.mova.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.fragments.SocialFragment;
-import com.example.mova.model.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends DelegatedResultActivity {
 
     @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
 

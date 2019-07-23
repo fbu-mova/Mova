@@ -2,6 +2,8 @@ package com.example.mova.utils;
 
 import android.util.Log;
 
+import org.parceler.Parcel;
+
 import java.util.List;
 
 public class AsyncUtils {

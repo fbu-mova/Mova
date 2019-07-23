@@ -1,15 +1,21 @@
 package com.example.mova.fragments.Personal;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.components.ComponentLayout;
+import com.example.mova.components.JournalPromptComponent;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,6 +23,8 @@ import com.example.mova.R;
  * create an instance of this fragment.
  */
 public class PersonalFeedFragment extends Fragment {
+
+    @BindView(R.id.component) protected ComponentLayout container;
 
     public PersonalFeedFragment() {
         // Required empty public constructor
@@ -27,11 +35,9 @@ public class PersonalFeedFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment PersonalFeedFragment.
      */
-    // TODO: Rename and change types and count of parameters
-    public static PersonalFeedFragment newInstance(String param1, String param2) {
+    public static PersonalFeedFragment newInstance() {
         PersonalFeedFragment fragment = new PersonalFeedFragment();
         Bundle args = new Bundle();
-        // TODO: Add any args with keys set on the class
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,7 +46,6 @@ public class PersonalFeedFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            // TODO: Set any parameter values if needed
         }
     }
 
@@ -49,5 +54,14 @@ public class PersonalFeedFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_personal_feed, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+        JournalPromptComponent component = new JournalPromptComponent();
+        container.inflateComponent((DelegatedResultActivity) getActivity(), component);
     }
 }
