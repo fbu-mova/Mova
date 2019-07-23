@@ -1,6 +1,7 @@
 package com.example.mova;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,6 +47,52 @@ public class Mood {
         // Kept package private because the emotion itself, not the index in the list, should be a unique identifier
         int getValue() {
             return value;
+        }
+
+    }
+
+    public static int getColor(Status status){
+        switch (status){
+            case Happy:
+                return Color.RED;
+            case Sad:
+                return Color.RED;
+            case Excited:
+                return Color.RED;
+            case Angry:
+                return Color.RED;
+            case Frustrated:
+                return Color.RED;
+            case Disappointed:
+                return Color.RED;
+            case Confident:
+                return Color.RED;
+            case Determined:
+                return Color.RED;
+            case Pensive:
+                return Color.RED;
+            case Relaxed:
+                return Color.RED;
+            case Fulfilled:
+                return Color.RED;
+            case Focused:
+                return Color.RED;
+            case Bored:
+                return Color.RED;
+            case Annoyed:
+                return Color.RED;
+            case Tired:
+                return Color.RED;
+            case Concerned:
+                return Color.RED;
+            case Inspired:
+                return Color.RED;
+            case Empowered:
+                return Color.RED;
+            case Supported:
+                return Color.RED;
+            default:
+                return Color.BLACK;
         }
     }
 
