@@ -4,9 +4,18 @@ import android.util.Log;
 
 import org.parceler.Parcel;
 
+import com.example.mova.model.RelationFrame;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseRelation;
+import com.parse.SaveCallback;
+
 import java.util.List;
 
 public class AsyncUtils {
+
+    public static final String TAG = "AsyncUtils";
+
     public interface EmptyCallback {
         void call();
     }
@@ -69,5 +78,33 @@ public class AsyncUtils {
      */
     public static void executeMany(List<ExecuteManyCallback> asyncActions, ItemCallback<Throwable> callback) {
         executeMany(asyncActions.size(), (i, cb) -> asyncActions.get(i).call(i, cb), callback);
+    }
+
+    public static void saveWithRelation(ParseObject object, RelationFrame relation, ItemCallback callback) {
+        // saves the child automatically to the parent in corresponding parent relation
+            // fixme -- currently can only add object one at a time to parent object. can't .add all, then save so only one save?
+
+        // save object in background in own class (e.g. journal entry saved to Post class)
+        object.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "object saved in class successfully");
+
+                    // save object in the relation of the other class through relation
+                    // (e.g. journal entry saved to that user's journal relation...)
+                    relation.add(object, new ItemCallback() {
+                        @Override
+                        public void call(Object item) {
+                            // when complete, so assumes it completes successfully (?)
+                            callback.call(object); // like this so coder has access to the callback rather than doubly nested
+                        }
+                    });
+                }
+                else {
+                    Log.e(TAG, "object failed saving in class", e);
+                }
+            }
+        });
     }
 }
