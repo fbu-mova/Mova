@@ -91,7 +91,15 @@ public class Action extends HashableParseObject {
         return (SharedAction) getParseObject(KEY_PARENT_SHARED_ACTION);
     }
 
+
+    public Action setParentSharedAction(SharedAction sharedAction){
+        put(KEY_PARENT_SHARED_ACTION, sharedAction);
+        return this;
+    }
+
     public Action setParentSharedAction(SharedAction sharedAction, AsyncUtils.ItemCallback<Action> callback){
+        // does what updateWithRelation does but for this specific case
+
         put(KEY_PARENT_SHARED_ACTION, sharedAction);
         sharedAction.relChildActions.add(this, callback);
         return this;

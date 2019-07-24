@@ -12,7 +12,9 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -108,6 +110,27 @@ public class GoalUtils {
             Log.d("GoalUtils", "final callback");
             callback.call(tsGoals);
         } );
+    }
+
+    public static void queryGoals(AsyncUtils.ListCallback<Goal> callback){
+        User user = (User) ParseUser.getCurrentUser();
+        List<Goal> goals = new ArrayList<>();
+        ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
+        goalQuery.whereEqualTo("usersInvolved", user);
+        //Log.d("ProgressFragment", "About to query");
+        goalQuery.findInBackground(new FindCallback<Goal>() {
+            @Override
+            public void done(List<Goal> objects, ParseException e) {
+                //Log.d("ProgressFragment", "querying");
+                if(e != null){
+                    Log.e("ProgressFragment", "Error with query");
+                    e.printStackTrace();
+                    return;
+                }
+                goals.addAll(objects);
+                callback.call(goals);
+            }
+        });
     }
 
 }

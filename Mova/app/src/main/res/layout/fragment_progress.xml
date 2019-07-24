@@ -20,21 +20,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:seriesType="line" />
 
-    <GridView
-        android:id="@+id/gvMood"
-        android:layout_width="411dp"
-        android:layout_height="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graphProgress" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginLeft="64dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginLeft="31dp"
         android:text="Going Well"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +35,6 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp"
         android:text="Needs Work"
@@ -71,6 +61,14 @@
         android:layout_marginRight="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gvMood"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graphProgress" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

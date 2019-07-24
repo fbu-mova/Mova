@@ -1,6 +1,6 @@
 package com.example.mova.components;
 
-import android.graphics.Color;
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,26 +9,28 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.model.Goal;
+import com.example.mova.model.Group;
+import com.parse.ParseFile;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProgressGoalComponent extends Component {
+public class ProfileGroupComponent extends Component {
 
-    private static final String TAG = "ProgressGoalComponent";
-    private static final int viewLayoutRes = R.layout.item_progress_goal;
+    private static final String TAG = "ProfileGroupComponent";
+    private static final int viewLayoutRes = R.layout.item_profile_group;
 
-    private Goal goal;
+    private Group group;
     private View view;
-    private ProgressGoalViewHolder viewHolder;
-    private DelegatedResultActivity activity;
+    private ProfileGroupViewHolder viewHolder;
+    private Activity activity;
 
-    public ProgressGoalComponent(Goal item){
+    public ProfileGroupComponent(Group item){
         super();
-        this.goal = item;
+        this.group = item;
     }
 
     @Override
@@ -37,11 +39,9 @@ public class ProgressGoalComponent extends Component {
         this.activity = activity;
     }
 
-
-
     @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ProgressGoalViewHolder(view);
+        viewHolder = new ProfileGroupViewHolder(view);
         if(viewHolder != null){
             return viewHolder;
         }
@@ -61,20 +61,26 @@ public class ProgressGoalComponent extends Component {
             return;
         }
 
-        if(goal.getColor() != null){
-            viewHolder.ivGoalColor.setColorFilter(Color.parseColor(goal.getColor()));
+        viewHolder.tvName.setText(group.getName());
+        ParseFile file = group.getGroupPic();
+        if(file != null){
+            String imageUrl = file.getUrl();
+            Glide.with(activity)
+                    .load(imageUrl)
+                    .into(viewHolder.ivGroupPic);
         }
-        viewHolder.tvGoalTitle.setText(goal.getTitle());
     }
 
-    public static class ProgressGoalViewHolder extends Component.ViewHolder{
+    public static class ProfileGroupViewHolder extends Component.ViewHolder{
 
-        @BindView(R.id.tvGoalTitle) protected TextView tvGoalTitle;
-        @BindView(R.id.ivGoalColor) protected ImageView ivGoalColor;
+        @BindView(R.id.ivGroupPic)
+        ImageView ivGroupPic;
+        @BindView(R.id.tvName)
+        TextView tvName;
 
-        public ProgressGoalViewHolder(@NonNull View itemView) {
+        public ProfileGroupViewHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }
