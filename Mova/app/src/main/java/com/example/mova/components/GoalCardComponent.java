@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,11 +9,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
@@ -27,6 +30,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static android.app.Activity.RESULT_OK;
+import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
 
 public class GoalCardComponent extends Component {
 
@@ -78,6 +85,18 @@ public class GoalCardComponent extends Component {
         }
 
         Log.d(TAG, "in render function");
+
+        viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, GoalDetailsActivity.class);
+                intent.putExtra("goal", item);
+
+                // fixme -- add ability to alter priority of goals as go back to goals fragment
+
+                activity.startActivity(intent);
+            }
+        });
 
         viewHolder.tvName.setText(item.getTitle());
         Log.d(TAG, String.format("tvName of this viewholder: %s", viewHolder.tvName.getText().toString()));
@@ -146,13 +165,15 @@ public class GoalCardComponent extends Component {
         @BindView(R.id.tvQuote)         protected TextView tvQuote; // todo -- add to Parse ? stretch goal
         @BindView(R.id.tvName)          protected TextView tvName;
         @BindView(R.id.tvDescription)   protected TextView tvDescription;
-        @BindView(R.id.rvActions)       protected RecyclerView rvActions; // todo -- action component to render in this class
+        @BindView(R.id.rvActions)       protected RecyclerView rvActions;
         @BindView(R.id.tvNumDone)       protected TextView tvNumDone; // fixme -- in personal, only one person ?
         @BindView(R.id.tvTag)           protected TextView tvTag; // fixme -- what about multiple tags?
+        @BindView(R.id.clLayout)        protected ConstraintLayout clLayout;
 
         public GoalCardViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
         }
     }
 }
