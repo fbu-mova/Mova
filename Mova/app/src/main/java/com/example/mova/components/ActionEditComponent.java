@@ -29,9 +29,12 @@ public class ActionEditComponent extends Component {
     private ActionEditViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
-    public ActionEditComponent(Action action) {
+    private ComponentManager componentManager;
+
+    public ActionEditComponent(Action action, ComponentManager componentManager) {
         super();
         this.action = action;
+        setManager(componentManager);
     }
 
     @Override
@@ -56,6 +59,16 @@ public class ActionEditComponent extends Component {
     }
 
     @Override
+    public String getName() {
+        return "ActionEditComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
+    }
+
+    @Override
     public void render() {
 
         // todo -- implement icons (need to update in action model)
@@ -68,6 +81,7 @@ public class ActionEditComponent extends Component {
                 saveAction(action, new_action);
 
                 // TODO -- needs to set component layout back to old...
+                componentManager.swap("ActionViewComponent");
             }
         });
     }

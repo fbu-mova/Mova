@@ -171,7 +171,7 @@ public class GoalCardComponent extends Component {
         @BindView(R.id.rvActions)       protected RecyclerView rvActions;
         @BindView(R.id.tvNumDone)       protected TextView tvNumDone; // fixme -- in personal, only one person ?
         @BindView(R.id.tvTag)           protected TextView tvTag; // fixme -- what about multiple tags?
-        @BindView(R.id.clLayout)        protected ConstraintLayout clLayout;
+        @BindView(R.id.layout)        protected ConstraintLayout clLayout;
 
         public GoalCardViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -46,4 +46,13 @@ public class ComponentLayout extends FrameLayout {
         ViewUtils.setMargins(component.getView(), margin * 2);
         component.render();
     }
+
+    /**
+     * Removes all components from the layout.
+     * @source https://stackoverflow.com/questions/8020997/removing-all-child-views-from-view
+     *         Has some interesting info on removing only certain kinds of views from a layout--helpful!
+     */
+    public void clear() {
+        removeAllViews();
+    }
 }

@@ -25,9 +25,12 @@ public class ActionViewComponent extends Component {
     private ActionViewViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
-    public ActionViewComponent(Action action) {
+    private ComponentManager componentManager;
+
+    public ActionViewComponent(Action action, ComponentManager componentManager) {
         super();
         this.action = action;
+        setManager(componentManager);
     }
 
     @Override
@@ -49,6 +52,16 @@ public class ActionViewComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "ActionViewComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

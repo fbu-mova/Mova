@@ -28,23 +28,31 @@ public class ActionComponent extends Component {
 
     private ActionViewComponent viewComponent;
     private ActionEditComponent editComponent;
+    private ComponentManager componentManager;
 
-    public ActionComponent(Action item, ActionViewComponent viewComponent, ActionEditComponent editComponent) {
+    public ActionComponent(Action item) {
         super();
         this.item = item;
-        this.viewComponent = viewComponent;
-        this.editComponent = editComponent;
     }
 
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
+        viewHolder = new ActionViewHolder(view);
+        setManager(new ComponentManager() {
+            @Override
+            public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
+                viewHolder.component.clear();
+                viewHolder.component.inflateComponent(activity, toComponent);
+            }
+        });
         this.activity = activity;
+        viewComponent = new ActionViewComponent(item, componentManager);
+        editComponent = new ActionEditComponent(item, componentManager);
     }
 
     @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ActionViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -55,6 +63,16 @@ public class ActionComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "ActionComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override
@@ -75,8 +93,7 @@ public class ActionComponent extends Component {
         viewHolder.component.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                viewHolder.component.inflateComponent(activity, editComponent);
+                componentManager.swap("ActionEditComponent");
             }
         });
 
