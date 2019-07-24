@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -82,10 +83,15 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         loadAllActions();
     }
 
-//    @Override
-//    public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
 //        super.onBackPressed();
-//    }
+
+//        Intent intent = new Intent(this, getCallingActivity().getClass());
+//        intent.putExtra();
+//        setResult(RESULT_OK, intent);
+//        finish();
+    }
 
     private void loadAllActions() {
 
