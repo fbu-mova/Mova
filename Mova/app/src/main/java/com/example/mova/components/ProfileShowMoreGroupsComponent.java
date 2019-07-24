@@ -29,6 +29,8 @@ public class ProfileShowMoreGroupsComponent extends Component {
     private ProfileShowMoreGroupsViewHolder viewHolder;
     private Activity activity;
 
+    private ComponentManager componentManager;
+
     public ProfileShowMoreGroupsComponent(Group item){
         super();
         this.group = item;
@@ -53,6 +55,16 @@ public class ProfileShowMoreGroupsComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "ProfileShowMoreGroupsComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

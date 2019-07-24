@@ -16,6 +16,8 @@ import butterknife.ButterKnife;
 
 public class JournalMemoryComponent extends Component {
 
+    private ComponentManager componentManager;
+
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
 
@@ -29,6 +31,16 @@ public class JournalMemoryComponent extends Component {
     @Override
     public View getView() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "JournalMemoryComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

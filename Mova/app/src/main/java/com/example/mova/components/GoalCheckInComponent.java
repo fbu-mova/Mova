@@ -41,6 +41,8 @@ public class GoalCheckInComponent extends Component {
 
     private DataComponentAdapter<Action> adapter;
 
+    private ComponentManager componentManager;
+
     public GoalCheckInComponent(Goal goal, String message) {
         super();
         this.goal = goal;
@@ -72,6 +74,16 @@ public class GoalCheckInComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "GoalCheckInComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

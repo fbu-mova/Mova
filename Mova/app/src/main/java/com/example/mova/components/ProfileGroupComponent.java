@@ -28,6 +28,8 @@ public class ProfileGroupComponent extends Component {
     private ProfileGroupViewHolder viewHolder;
     private Activity activity;
 
+    private ComponentManager componentManager;
+
     public ProfileGroupComponent(Group item){
         super();
         this.group = item;
@@ -52,6 +54,16 @@ public class ProfileGroupComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "ProfileGroupComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

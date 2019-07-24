@@ -28,6 +28,8 @@ public class ProfileFriendComponent extends Component{
     private ProfileFriendViewHolder viewHolder;
     private Activity activity;
 
+    private ComponentManager componentManager;
+
     public ProfileFriendComponent(User item){
         super();
         this.user = item;
@@ -52,6 +54,16 @@ public class ProfileFriendComponent extends Component{
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "ProfileFriendComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

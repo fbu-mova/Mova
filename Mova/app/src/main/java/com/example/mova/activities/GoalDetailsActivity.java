@@ -85,7 +85,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
+        super.onBackPressed();
 
 //        Intent intent = new Intent(this, getCallingActivity().getClass());
 //        intent.putExtra();
