@@ -29,6 +29,8 @@ public class JournalPromptComponent extends Component {
     protected ViewHolder holder;
     protected View view;
 
+    protected ComponentManager componentManager;
+
     public JournalPromptComponent() { }
 
     @Override
@@ -47,6 +49,16 @@ public class JournalPromptComponent extends Component {
     @Override
     public View getView() {
         return holder.card;
+    }
+
+    @Override
+    public String getName() {
+        return "JournalPromptComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

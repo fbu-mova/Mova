@@ -69,10 +69,8 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
             @Override
             public Component makeComponent(Action item) {
-                ActionViewComponent viewComponent = new ActionViewComponent(item);
-                ActionEditComponent editComponent = new ActionEditComponent(item);
 
-                Component component = new ActionComponent(item, viewComponent, editComponent);
+                Component component = new ActionComponent(item);
                 return component;
             }
         };

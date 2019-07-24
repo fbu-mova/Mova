@@ -24,6 +24,7 @@ public class ProgressGridMoodComponent extends Component{
     private ProgressGridViewHolder viewHolder;
     private Activity activity;
     private Mood.Status mood;
+    private ComponentManager componentManager;
 
     public ProgressGridMoodComponent(Mood.Status item){
         super();
@@ -53,6 +54,16 @@ public class ProgressGridMoodComponent extends Component{
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "ProgressGridMoodComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

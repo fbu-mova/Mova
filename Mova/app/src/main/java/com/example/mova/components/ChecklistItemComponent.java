@@ -25,6 +25,8 @@ public abstract class ChecklistItemComponent<T> extends Component {
     private ViewHolder holder;
     private View view;
 
+    private ComponentManager componentManager;
+
     public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, AsyncUtils.ItemReturnCallback<T, String> getTitle) {
         this.item = item;
         this.checkedColor = checkedColor;
@@ -69,5 +71,15 @@ public abstract class ChecklistItemComponent<T> extends Component {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    @Override
+    public String getName() {
+        return "ChecklistItemComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 }

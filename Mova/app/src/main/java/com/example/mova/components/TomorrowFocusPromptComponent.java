@@ -42,6 +42,8 @@ public abstract class TomorrowFocusPromptComponent extends Component {
     private List<Goal> goals;
     private int minGoals, maxGoals;
 
+    private ComponentManager componentManager;
+
     public TomorrowFocusPromptComponent() {
         this.minGoals = 3;
         this.maxGoals = 5;
@@ -122,5 +124,15 @@ public abstract class TomorrowFocusPromptComponent extends Component {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    @Override
+    public String getName() {
+        return "TomorrowFocusPromptComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 }

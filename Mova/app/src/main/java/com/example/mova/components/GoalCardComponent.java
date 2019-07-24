@@ -51,6 +51,8 @@ public class GoalCardComponent extends Component {
     private ArrayList<Action> actions;
     private DataComponentAdapter<Action> actionsAdapter;
 
+    private ComponentManager componentManager;
+
     public GoalCardComponent(Goal item) {
         super();
         this.item = item;
@@ -75,6 +77,16 @@ public class GoalCardComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "GoalCardComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override
@@ -116,10 +128,7 @@ public class GoalCardComponent extends Component {
         actionsAdapter = new DataComponentAdapter<Action>(activity, actions) {
             @Override
             public Component makeComponent(Action item) {
-                ActionViewComponent viewComponent = new ActionViewComponent(item);
-                ActionEditComponent editComponent = new ActionEditComponent(item);
-
-                Component component = new ActionComponent(item, viewComponent, editComponent);
+                Component component = new ActionComponent(item);
                 return component;
             }
         };

@@ -35,6 +35,8 @@ public class GoalThumbnailComponent extends Component {
     private GoalThumbnailViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
+    private ComponentManager componentManager;
+
     public GoalThumbnailComponent(Goal goal) {
         super();
         this.goal = goal;
@@ -59,6 +61,16 @@ public class GoalThumbnailComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "GoalThumbnailComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override
@@ -103,7 +115,7 @@ public class GoalThumbnailComponent extends Component {
         @BindView(R.id.tvName)      protected TextView tvName;
         @BindView(R.id.ivPhoto)     protected ImageView ivPhoto;
         @BindView(R.id.pbProgress)  protected ProgressBar pbProgress;
-        @BindView(R.id.clLayout)    protected ConstraintLayout clLayout;
+        @BindView(R.id.constraintLayout)    protected ConstraintLayout clLayout;
 
         public GoalThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
