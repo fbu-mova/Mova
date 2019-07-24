@@ -26,6 +26,7 @@ import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
 import com.example.mova.model.Tag;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseQuery;
 
 import butterknife.BindView;
@@ -133,6 +134,44 @@ public class PersonalFeedFragment extends Fragment {
                 Log.i("PersonalFeedFragment", "Loaded cards successfully!");
             }
         });
+
+        // REMOVE: Async waterfall testing
+
+        boolean runTestInSeries = true; // config option--change to use different part of test!
+
+        if (!runTestInSeries) { // allow to run in parallel
+            for (int i = 0; i < 5; i++) {
+                final int finalI = i;
+                new Thread(() -> {
+                    try {
+                        Log.i("WaterfallTest", "Starting " + finalI + "...");
+                        Thread.sleep(finalI * 1000);
+                        Log.i("WaterfallTest", "Done with " + finalI + "!");
+                    } catch (InterruptedException e) {
+                    }
+                }).start();
+            }
+            Log.i("WaterfallTest", "Done with all tasks!");
+        } else { // test whether waterfall forces actions into series
+            AsyncUtils.waterfall(
+                    5,
+                    (i, cb) -> {
+                        new Thread(() -> {
+                            try {
+                                Log.i("WaterfallTest", "Starting " + i + "...");
+                                Thread.sleep(i * 1000);
+                                Log.i("WaterfallTest", "Done with " + i + "!");
+                                cb.call(null);
+                            } catch (InterruptedException e) {
+                                cb.call(e);
+                            }
+                        }).start();
+                    },
+                    (e) -> {
+                        Log.i("WaterfallTest", "Done with all tasks!");
+                    }
+            );
+        }
     }
 
     private void insertSoloComponent(boolean toggleJournalVsTomorrow) {
