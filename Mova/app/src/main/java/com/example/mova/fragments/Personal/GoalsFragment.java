@@ -51,6 +51,8 @@ public class GoalsFragment extends Fragment {
 
     private DelegatedResultActivity activity;
 
+    private OnFragmentInteractionListener mListener;
+
     @BindView(R.id.fabComposeGoal)      protected FloatingActionButton fabComposeGoal;
 
     // thumbnail recyclerview
