@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,9 +24,11 @@ import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.ProfileFriendComponent;
 import com.example.mova.components.ProfileGroupComponent;
+import com.example.mova.components.ProfileShowMoreGroupsComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseUser;
@@ -48,6 +51,8 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.tvDescription) protected TextView tvDesciption;
     @BindView(R.id.tvShowGroups) protected TextView tvShowGroups;
     @BindView(R.id.tvShowFriends) protected TextView tvShowFriends;
+
+    private DataComponentAdapter<Group> showMoreGroupAdapter;
 
     @BindView(R.id.rvGroups) protected RecyclerView rvGroups;
     protected List<Group> userGroups;
@@ -140,6 +145,17 @@ public class ProfileFragment extends Fragment {
             }
         };
 
+        showMoreGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
+            @Override
+            public Component makeComponent(Group item) {
+                Component component = new ProfileShowMoreGroupsComponent(item);
+                return component;
+            }
+        };
+
+
+
+
         rvGroups.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rvFriends.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -149,12 +165,15 @@ public class ProfileFragment extends Fragment {
         tvShowFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO - Make this work
+                EdgeDecorator decorator = new EdgeDecorator(20);
                 //Toast.makeText(getContext(), "We made it", Toast.LENGTH_SHORT).show();
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 View view = inflater.inflate(R.layout.layout_rv_profile_friends, null  );
                 RecyclerView rvExtraFriends = view.findViewById(R.id.rvFriendsExtra);
-                rvExtraFriends.setLayoutManager(new LinearLayoutManager(getActivity()));
+                rvExtraFriends.setLayoutManager(new GridLayoutManager(getActivity(), 3));
                 rvExtraFriends.setAdapter(userFriendAdapter);
+                rvExtraFriends.addItemDecoration(decorator);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
                         .setTitle("Friends")
                         .setPositiveButton("Close", new DialogInterface.OnClickListener() {
@@ -165,8 +184,29 @@ public class ProfileFragment extends Fragment {
                         })
                         .setView(view);
                 dialog.show();
+            }
+        });
 
-
+        tvShowGroups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EdgeDecorator decorator = new EdgeDecorator(10);
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View view1 = inflater.inflate(R.layout.layout_rv_profile_friends, null);
+                RecyclerView rvExtraGroups = view1.findViewById(R.id.rvFriendsExtra);
+                rvExtraGroups.setLayoutManager(new LinearLayoutManager(getActivity()));
+                rvExtraGroups.setAdapter(showMoreGroupAdapter);
+                rvExtraGroups.addItemDecoration(decorator);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Groups")
+                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setView(view1);
+                dialog.show();
             }
         });
 
