@@ -77,7 +77,7 @@ public class GoalCheckInComponent extends Component {
     @Override
     public void render() {
         // Display goal title and message
-        // FIXME: This consistently crashes... not sure why. Seems to be an issue with tvGoalTitle--all other fields exist.
+        // FIXME: This consistently crashes... not sure why. Seems to be an issue with holder being null.
         holder.tvGoalTitle.setText(goal.getTitle());
         holder.tvSubheader.setText(message);
 
