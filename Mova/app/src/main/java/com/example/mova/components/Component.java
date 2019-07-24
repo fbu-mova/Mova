@@ -31,9 +31,20 @@ public abstract class Component {
     /**
      * Returns the View created when making the ViewHolder.
      * @return The View. Null if not yet inflated.
-     * @return
      */
     public abstract View getView();
+
+    /**
+     * Returns a string representation of the component.
+     * Intended for use in ComponentManager and other component keying systems.
+     * @return A string representation of the component.
+     */
+    public abstract String getName();
+
+    /**
+     * Sets the manager of this component to enable component swapping.
+     */
+    public abstract void setManager(ComponentManager manager);
 
     /**
      * Renders any relevant data or events to the component's ViewHolder.
