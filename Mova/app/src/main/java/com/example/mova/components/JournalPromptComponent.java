@@ -18,6 +18,7 @@ import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 
 import java.util.ArrayList;
 
@@ -28,10 +29,17 @@ public class JournalPromptComponent extends Component {
     protected DelegatedResultActivity activity;
     protected ViewHolder holder;
     protected View view;
+    protected AsyncUtils.ItemCallback<Post> onPostJournalEntry;
 
     protected ComponentManager componentManager;
 
-    public JournalPromptComponent() { }
+    public JournalPromptComponent() {
+        onPostJournalEntry = (entry) -> {};
+    }
+
+    public JournalPromptComponent(AsyncUtils.ItemCallback<Post> onPostJournalEntry) {
+        this.onPostJournalEntry = onPostJournalEntry;
+    }
 
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
@@ -73,7 +81,7 @@ public class JournalPromptComponent extends Component {
                     if (requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                         Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
                         ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
-                        ((User) User.getCurrentUser()).postJournalEntry(journalEntry, tags, (entry) -> {});
+                        ((User) User.getCurrentUser()).postJournalEntry(journalEntry, tags, onPostJournalEntry);
                     }
                 });
         });

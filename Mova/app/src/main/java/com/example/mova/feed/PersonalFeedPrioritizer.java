@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.components.Component;
 import com.example.mova.components.GoalCheckInComponent;
+import com.example.mova.components.JournalMemoryComponent;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.model.Goal;
@@ -16,6 +17,7 @@ import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
+import com.example.mova.utils.Wrapper;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -23,6 +25,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.TreeSet;
 
 public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
@@ -107,10 +110,14 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                     cb.call(e);
                 } else {
                     if (entries.size() == 0) {
-                        JournalPromptComponent card = new JournalPromptComponent();
-                        addTo.add(new PrioritizedComponent(card, 100));
-                        cb.call(null);
+                        final Wrapper<PrioritizedComponent> pCard = new Wrapper<>();
+                        JournalPromptComponent card = new JournalPromptComponent((entry) -> {
+                            addTo.remove(pCard.item);
+                        });
+                        pCard.item = new PrioritizedComponent(card, 100);
+                        addTo.add(pCard.item);
                     }
+                    cb.call(null);
                 }
         }));
 
@@ -175,7 +182,11 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
     }
 
     protected void makeJournalMemories(SortedList<PrioritizedComponent> addTo, List<Post> entries) {
-        // TODO: Choose random journal entry
+        // TODO: Randomize further to support random number of cards as opposed to just one
+        Random random = new Random();
+        int index = random.nextInt(entries.size());
+        JournalMemoryComponent card = new JournalMemoryComponent(entries.get(index));
+        addTo.add(new PrioritizedComponent(card, 0));
     }
 
     protected void makeScrapbookMemories(SortedList<PrioritizedComponent> addTo, List<Post> entries) {
