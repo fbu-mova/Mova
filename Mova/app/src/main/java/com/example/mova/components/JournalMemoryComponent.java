@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Post;
+import com.example.mova.utils.TimeUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +51,6 @@ public class JournalMemoryComponent extends Component {
 
     @Override
     public void render() {
-        // TODO: Get correct relative date text, insert into tvDate
         // TODO: Update color based on mood
         // TODO: Set prompt based on mood (and eventually, other mood data patterns)
         // TODO: On button click, open reply to post display with media
@@ -58,6 +58,7 @@ public class JournalMemoryComponent extends Component {
 
         holder.tvMood.setText(entry.getMood().toString().toLowerCase());
         holder.tvExcerpt.setText(truncateEntry(entry));
+        holder.tvDate.setText(TimeUtils.toLongRelativeDateString(entry.getCreatedAt()));
     }
 
     public static class ViewHolder extends Component.ViewHolder {
