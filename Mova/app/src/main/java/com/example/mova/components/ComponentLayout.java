@@ -41,9 +41,17 @@ public class ComponentLayout extends FrameLayout {
      * @param component The component to inflate.
      */
     public void inflateComponent(DelegatedResultActivity activity, Component component) {
-        ViewGroup parent = this;
-        component.makeViewHolder(activity, parent, true);
+        component.makeViewHolder(activity, this, true);
         ViewUtils.setMargins(component.getView(), margin * 2);
         component.render();
+    }
+
+    /**
+     * Removes all components from the layout.
+     * @source https://stackoverflow.com/questions/8020997/removing-all-child-views-from-view
+     *         Has some interesting info on removing only certain kinds of views from a layout--helpful!
+     */
+    public void clear() {
+        removeAllViews();
     }
 }
