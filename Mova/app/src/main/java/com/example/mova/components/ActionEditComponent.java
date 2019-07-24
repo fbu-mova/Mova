@@ -37,12 +37,12 @@ public class ActionEditComponent extends Component {
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
+        viewHolder = new ActionEditViewHolder(view);
         this.activity = activity;
     }
 
     @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ActionEditViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }

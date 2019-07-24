@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.ActionComponent;
+import com.example.mova.components.ActionEditComponent;
+import com.example.mova.components.ActionViewComponent;
 import com.example.mova.components.Component;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
@@ -67,7 +69,10 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
             @Override
             public Component makeComponent(Action item) {
-                Component component = new ActionComponent(item);
+                ActionViewComponent viewComponent = new ActionViewComponent(item);
+                ActionEditComponent editComponent = new ActionEditComponent(item);
+
+                Component component = new ActionComponent(item, viewComponent, editComponent);
                 return component;
             }
         };

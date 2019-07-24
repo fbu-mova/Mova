@@ -22,6 +22,7 @@
         app:srcCompat="@color/colorPrimary" />
 
     <com.example.mova.components.ComponentLayout
+        android:id="@+id/component"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -32,6 +33,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/ibDone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ibDone"
-        app:layout_constraintTop_toTopOf="@+id/ibDone"/>
+        app:layout_constraintTop_toTopOf="@+id/ibDone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

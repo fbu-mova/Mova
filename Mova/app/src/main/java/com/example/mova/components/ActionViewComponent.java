@@ -33,12 +33,12 @@ public class ActionViewComponent extends Component {
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
+        viewHolder = new ActionViewViewHolder(view);
         this.activity = activity;
     }
 
     @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ActionViewViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }

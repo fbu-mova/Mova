@@ -116,7 +116,10 @@ public class GoalCardComponent extends Component {
         actionsAdapter = new DataComponentAdapter<Action>(activity, actions) {
             @Override
             public Component makeComponent(Action item) {
-                Component component = new ActionComponent(item);
+                ActionViewComponent viewComponent = new ActionViewComponent(item);
+                ActionEditComponent editComponent = new ActionEditComponent(item);
+
+                Component component = new ActionComponent(item, viewComponent, editComponent);
                 return component;
             }
         };
