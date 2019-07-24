@@ -108,7 +108,7 @@ public class GoalComposeActivity extends AppCompatActivity {
 
         // currently todo-ing: saving multiple actions within a goal (include shareAction process)
 
-        // todo -- include image choosing for goal image
+        // todo -- include image choosing for goal image + color
         // todo -- update to also encompass Social functionality ?
 
         Goal goal = new Goal()

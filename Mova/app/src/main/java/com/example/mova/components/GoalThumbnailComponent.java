@@ -83,7 +83,7 @@ public class GoalThumbnailComponent extends Component {
         viewHolder.tvName.setText(goal.getTitle());
 
         viewHolder.tvFromGroup.setText(goal.getGroupName());
-        
+
         // how to get context for binding glide images? -- made it a field
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";

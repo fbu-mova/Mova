@@ -3,6 +3,7 @@ package com.example.mova.components;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 
@@ -54,15 +55,31 @@ public class ActionComponent extends Component {
     @Override
     public void render() {
 
-        viewHolder.rbTask.setText(item.getTask());
+        viewHolder.tvAction.setText(item.getTask());
+        viewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        // TODO -- add component layout, hook clicklistener to there, change inflated layout inside on click to be edit instead of text
+
+        viewHolder.ibDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // todo -- what happens when done or not done, need to keep track
+            }
+        });
 
         // todo -- set icons later
     }
 
     public static class ActionViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.rbTask)      protected RadioButton rbTask;
-        @BindView(R.id.ivIcon)      protected ImageView ivIcon; // might need to be ImageButton
+        @BindView(R.id.tvAction)        protected RadioButton tvAction;
+        @BindView(R.id.ibDone)          protected ImageButton ibDone;
+        @BindView(R.id.ivIcon)          protected ImageView ivIcon; // might need to be ImageButton
 
         public ActionViewHolder(@NonNull View itemView) {
             super(itemView);
