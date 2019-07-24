@@ -2,6 +2,7 @@ package com.example.mova.components;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +11,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.model.Goal;
 
 import butterknife.BindView;
@@ -65,18 +68,22 @@ public class GoalThumbnailComponent extends Component {
             return;
         }
 
+        viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, GoalDetailsActivity.class);
+                intent.putExtra("goal", goal);
+
+                // fixme -- add ability to alter priority of goals as go back to goals fragment
+
+                activity.startActivity(intent);
+            }
+        });
+
         viewHolder.tvName.setText(goal.getTitle());
 
-        // fixme -- does there exist cleaner code to do this casework? / extract as helper function?
-        String name = goal.getGroupName();
-        if (name != "") {
-            viewHolder.tvFromGroup.setText(name);
-        }
-        else {
-            viewHolder.tvFromGroup.setVisibility(View.GONE);
-        }
-
-
+        viewHolder.tvFromGroup.setText(goal.getGroupName());
+        
         // how to get context for binding glide images? -- made it a field
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
@@ -96,6 +103,7 @@ public class GoalThumbnailComponent extends Component {
         @BindView(R.id.tvName)      protected TextView tvName;
         @BindView(R.id.ivPhoto)     protected ImageView ivPhoto;
         @BindView(R.id.pbProgress)  protected ProgressBar pbProgress;
+        @BindView(R.id.clLayout)    protected ConstraintLayout clLayout;
 
         public GoalThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
