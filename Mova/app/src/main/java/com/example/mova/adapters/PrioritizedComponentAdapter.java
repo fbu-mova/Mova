@@ -36,7 +36,7 @@ public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
-        Prioritized<Component> pComponent = components.get(position);
+        PrioritizedComponent pComponent = components.get(position);
         pComponent.item.render();
     }
 
