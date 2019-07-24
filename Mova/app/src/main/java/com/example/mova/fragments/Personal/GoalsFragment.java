@@ -51,6 +51,8 @@ public class GoalsFragment extends Fragment {
 
     private DelegatedResultActivity activity;
 
+    private OnFragmentInteractionListener mListener;
+
     @BindView(R.id.fabComposeGoal)      protected FloatingActionButton fabComposeGoal;
 
     // thumbnail recyclerview
@@ -222,13 +224,6 @@ public class GoalsFragment extends Fragment {
                 rvThumbnailGoals.scrollToPosition(0);
                 Log.d(TAG, "finished onActivityResult");
             }
-        }
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
         }
     }
 
