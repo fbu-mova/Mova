@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
@@ -80,6 +81,11 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
         loadAllActions();
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//    }
 
     private void loadAllActions() {
 

@@ -44,11 +44,19 @@ public class ActionComponent extends Component {
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
                 viewHolder.component.clear();
                 viewHolder.component.inflateComponent(activity, toComponent);
+
+//                if (fromKey == editComponent.getName()) {
+//
+//                }
             }
         });
+
         this.activity = activity;
         viewComponent = new ActionViewComponent(item, componentManager);
         editComponent = new ActionEditComponent(item, componentManager);
+
+        componentManager.launch(viewComponent.getName(), viewComponent);
+        componentManager.launch(editComponent.getName(), editComponent);
     }
 
     @Override

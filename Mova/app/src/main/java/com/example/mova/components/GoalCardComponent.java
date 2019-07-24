@@ -107,6 +107,17 @@ public class GoalCardComponent extends Component {
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 
                 activity.startActivity(intent);
+
+//                activity.startActivityForDelegatedResult(intent, REQUEST_GOAL_DETAILS, new DelegatedResultActivity.ActivityResultCallback() {
+//                    @Override
+//                    public void call(int requestCode, int resultCode, Intent data) {
+//                        if (resultCode == RESULT_OK) {
+//                            if (requestCode == REQUEST_GOAL_DETAILS) {
+//
+//                            }
+//                        }
+//                    }
+//                });
             }
         });
 

@@ -80,7 +80,6 @@ public class ActionEditComponent extends Component {
                 String new_action = viewHolder.etAction.getText().toString();
                 saveAction(action, new_action);
 
-                // TODO -- needs to set component layout back to old...
                 componentManager.swap("ActionViewComponent");
             }
         });
