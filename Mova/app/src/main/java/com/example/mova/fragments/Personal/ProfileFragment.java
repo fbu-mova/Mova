@@ -1,5 +1,7 @@
 package com.example.mova.fragments.Personal;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -51,7 +53,7 @@ public class ProfileFragment extends Fragment {
     protected List<Group> userGroups;
     private DataComponentAdapter<Group> userGroupAdapter;
 
-    @BindView(R.id.rvFriends) protected RecyclerView rvFriends;
+    @BindView(R.id.rvFriendsExtra) protected RecyclerView rvFriends;
     protected List<User> userFriends;
     private DataComponentAdapter<User> userFriendAdapter;
 
@@ -106,7 +108,6 @@ public class ProfileFragment extends Fragment {
 
         tvUsername.setText(user.getUsername());
 
-
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,16 +140,42 @@ public class ProfileFragment extends Fragment {
             }
         };
 
-        rvGroups.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
-        rvFriends.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
+        rvGroups.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rvFriends.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rvGroups.setAdapter(userGroupAdapter);
         rvFriends.setAdapter(userFriendAdapter);
+
+        tvShowFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getContext(), "We made it", Toast.LENGTH_SHORT).show();
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View view = inflater.inflate(R.layout.layout_rv_profile_friends, null  );
+                RecyclerView rvExtraFriends = view.findViewById(R.id.rvFriendsExtra);
+                rvExtraFriends.setLayoutManager(new LinearLayoutManager(getActivity()));
+                rvExtraFriends.setAdapter(userFriendAdapter);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Friends")
+                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setView(view);
+                dialog.show();
+
+
+            }
+        });
 
         groupUtils.queryGroups(user, (groups) -> {
             userGroups.addAll(groups);
             userGroupAdapter.notifyDataSetChanged();
             rvGroups.scrollToPosition(0);
+
+
         });
 
         friendUtils.queryFriends(user, (friends) -> {
