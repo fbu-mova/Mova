@@ -14,7 +14,13 @@ public class TimeUtils {
     }
 
     public static String toDateString(Date date) {
-        SimpleDateFormat dateFmt = new SimpleDateFormat("MMMM dd, yyyy", Locale.US);
+        return toDateString(date, true);
+    }
+
+    public static String toDateString(Date date, boolean includeYear) {
+        String fmtStr = "MMMM dd";
+        if (includeYear) fmtStr += ", yyyy";
+        SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
         return dateFmt.format(date);
     }
 
@@ -66,5 +72,48 @@ public class TimeUtils {
             // FIXME: Maybe bad to have a silent error like this?
             return date;
         }
+    }
+
+    public static int getYear(Date date) {
+        SimpleDateFormat yearFmt = new SimpleDateFormat("yyyy", Locale.US);
+        return Integer.parseInt(yearFmt.format(date));
+    }
+
+    public static String toLongRelativeDateString(Date date) {
+        Date now = new Date();
+
+        // FIXME: Possible special case - dateMS >= normalizeToDay(nowMS)
+        long dateMillis = date.getTime();
+        long nowMillis = normalizeToDay(now).getTime();
+        long weekAgoMillis = nowMillis - getManyDaysInMillis(7);
+
+        if (dateMillis >= weekAgoMillis) {
+            SimpleDateFormat dayOfWeekFmt = new SimpleDateFormat("EEEE", Locale.US);
+            return dayOfWeekFmt.format(date);
+        }
+
+        int year = getYear(date);
+        int nowYear = getYear(now);
+        return toDateString(date, year == nowYear);
+    }
+
+    public static long getSecondInMillis() {
+        return 1000;
+    }
+
+    public static long getMinuteInMillis() {
+        return getSecondInMillis() * 60;
+    }
+
+    public static long getHourInMillis() {
+        return getMinuteInMillis() * 60;
+    }
+
+    public static long getDayInMillis() {
+        return getHourInMillis() * 24;
+    }
+
+    public static long getManyDaysInMillis(int numDays) {
+        return getDayInMillis() * numDays;
     }
 }
