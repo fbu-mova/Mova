@@ -17,6 +17,7 @@ import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
+import com.example.mova.utils.Wrapper;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -109,8 +110,12 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                     cb.call(e);
                 } else {
                     if (entries.size() == 0) {
-                        JournalPromptComponent card = new JournalPromptComponent();
-                        addTo.add(new PrioritizedComponent(card, 100));
+                        final Wrapper<PrioritizedComponent> pCard = new Wrapper<>();
+                        JournalPromptComponent card = new JournalPromptComponent((entry) -> {
+                            addTo.remove(pCard.item);
+                        });
+                        pCard.item = new PrioritizedComponent(card, 100);
+                        addTo.add(pCard.item);
                     }
                     cb.call(null);
                 }

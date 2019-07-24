@@ -83,7 +83,6 @@ public class PersonalFeedFragment extends Fragment {
 
 //        insertSoloComponent(false);
 
-        // FIXME: Maybe the issue is that everything is so async that this is hitting at the wrong time, before something's been properly added? But that wouldn't make sense...
         cards = new SortedList<>(PrioritizedComponent.class, new SortedList.Callback<PrioritizedComponent>() {
             @Override
             public int compare(PrioritizedComponent o1, PrioritizedComponent o2) {
