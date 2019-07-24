@@ -44,6 +44,11 @@ public class ActionComponent extends Component {
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
                 viewHolder.component.clear();
                 viewHolder.component.inflateComponent(activity, toComponent);
+
+                if (toKey.equals(editComponent.getName())) {
+                    ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
+                            .setText(item.getTask());
+                }
             }
         });
 
