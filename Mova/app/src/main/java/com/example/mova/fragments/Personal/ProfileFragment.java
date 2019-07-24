@@ -1,25 +1,40 @@
 package com.example.mova.fragments.Personal;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.LoginActivity;
-import com.example.mova.fragments.PersonalFragment;
-import com.example.mova.utils.AsyncUtils;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.ProfileFriendComponent;
+import com.example.mova.components.ProfileGroupComponent;
+import com.example.mova.components.ProfileShowMoreGroupsComponent;
+import com.example.mova.model.Group;
+import com.example.mova.model.Post;
+import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.utils.FriendUtils;
+import com.example.mova.utils.GroupUtils;
 import com.parse.ParseUser;
 
-import org.parceler.Parcels;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +47,28 @@ import butterknife.ButterKnife;
 public class ProfileFragment extends Fragment {
 
     @BindView(R.id.btnLogout) protected Button btnLogout;
+    @BindView(R.id.tvUsername) protected TextView tvUsername;
+    @BindView(R.id.tvDescription) protected TextView tvDesciption;
+    @BindView(R.id.tvShowGroups) protected TextView tvShowGroups;
+    @BindView(R.id.tvShowFriends) protected TextView tvShowFriends;
+
+    private DataComponentAdapter<Group> showMoreGroupAdapter;
+
+    @BindView(R.id.rvGroups) protected RecyclerView rvGroups;
+    protected List<Group> userGroups;
+    private DataComponentAdapter<Group> userGroupAdapter;
+
+    @BindView(R.id.rvFriendsExtra) protected RecyclerView rvFriends;
+    protected List<User> userFriends;
+    private DataComponentAdapter<User> userFriendAdapter;
+
+    @BindView(R.id.rvPosts) protected RecyclerView rvPosts;
+    protected List<Post> userPosts;
+    private DataComponentAdapter<Post> userPostAdapter;
+
+    private User user;
+    private GroupUtils groupUtils;
+    private FriendUtils friendUtils;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -67,6 +104,14 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        user = (User) ParseUser.getCurrentUser();
+        userGroups = new ArrayList<>();
+        userFriends = new ArrayList<>();
+        userPosts = new ArrayList<>();
+        groupUtils = new GroupUtils();
+        friendUtils = new FriendUtils();
+
+        tvUsername.setText(user.getUsername());
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,5 +129,99 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        userGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
+            @Override
+            public Component makeComponent(Group item) {
+                Component component = new ProfileGroupComponent(item);
+                return component;
+            }
+        };
+
+        userFriendAdapter = new DataComponentAdapter<User>((DelegatedResultActivity) getActivity(), userFriends) {
+            @Override
+            public Component makeComponent(User item) {
+                Component component = new ProfileFriendComponent(item);
+                return component;
+            }
+        };
+
+        showMoreGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
+            @Override
+            public Component makeComponent(Group item) {
+                Component component = new ProfileShowMoreGroupsComponent(item);
+                return component;
+            }
+        };
+
+
+
+
+        rvGroups.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rvFriends.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+        rvGroups.setAdapter(userGroupAdapter);
+        rvFriends.setAdapter(userFriendAdapter);
+
+        tvShowFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO - Make this work
+                EdgeDecorator decorator = new EdgeDecorator(20);
+                //Toast.makeText(getContext(), "We made it", Toast.LENGTH_SHORT).show();
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View view = inflater.inflate(R.layout.layout_rv_profile_friends, null  );
+                RecyclerView rvExtraFriends = view.findViewById(R.id.rvFriendsExtra);
+                rvExtraFriends.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+                rvExtraFriends.setAdapter(userFriendAdapter);
+                rvExtraFriends.addItemDecoration(decorator);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Friends")
+                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setView(view);
+                dialog.show();
+            }
+        });
+
+        tvShowGroups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EdgeDecorator decorator = new EdgeDecorator(10);
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View view1 = inflater.inflate(R.layout.layout_rv_profile_friends, null);
+                RecyclerView rvExtraGroups = view1.findViewById(R.id.rvFriendsExtra);
+                rvExtraGroups.setLayoutManager(new LinearLayoutManager(getActivity()));
+                rvExtraGroups.setAdapter(showMoreGroupAdapter);
+                rvExtraGroups.addItemDecoration(decorator);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Groups")
+                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setView(view1);
+                dialog.show();
+            }
+        });
+
+        groupUtils.queryGroups(user, (groups) -> {
+            userGroups.addAll(groups);
+            userGroupAdapter.notifyDataSetChanged();
+            rvGroups.scrollToPosition(0);
+
+
+        });
+
+        friendUtils.queryFriends(user, (friends) -> {
+            userFriends.addAll(friends);
+            userFriendAdapter.notifyDataSetChanged();
+            rvFriends.scrollToPosition(0);
+        });
     }
 }
