@@ -3,6 +3,7 @@ package com.example.mova.components;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 
@@ -25,6 +26,10 @@ public class ActionComponent extends Component {
     private ActionViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
+    private ActionViewComponent viewComponent;
+    private ActionEditComponent editComponent;
+    private ComponentManager componentManager;
+
     public ActionComponent(Action item) {
         super();
         this.item = item;
@@ -33,12 +38,25 @@ public class ActionComponent extends Component {
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
+        viewHolder = new ActionViewHolder(view);
+        setManager(new ComponentManager() {
+            @Override
+            public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
+                viewHolder.component.clear();
+                viewHolder.component.inflateComponent(activity, toComponent);
+            }
+        });
+
         this.activity = activity;
+        viewComponent = new ActionViewComponent(item, componentManager);
+        editComponent = new ActionEditComponent(item, componentManager);
+
+        componentManager.launch(viewComponent.getName(), viewComponent);
+        componentManager.launch(editComponent.getName(), editComponent);
     }
 
     @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ActionViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -52,17 +70,51 @@ public class ActionComponent extends Component {
     }
 
     @Override
-    public void render() {
+    public String getName() {
+        return "ActionComponent";
+    }
 
-        viewHolder.rbTask.setText(item.getTask());
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
+    }
+
+    @Override
+    public void render() {
+//
+//        viewHolder.tvAction.setText(item.getTask());
+//        viewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+
+        // TODO -- add component layout, hook clicklistener to there, change inflated layout inside on click to be edit instead of text
+
+        viewHolder.component.inflateComponent(activity, viewComponent);
+
+        viewHolder.component.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                componentManager.swap("ActionEditComponent");
+            }
+        });
+
+        viewHolder.ibDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // todo -- what happens when done or not done, need to keep track
+            }
+        });
 
         // todo -- set icons later
     }
 
     public static class ActionViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.rbTask)      protected RadioButton rbTask;
-        @BindView(R.id.ivIcon)      protected ImageView ivIcon; // might need to be ImageButton
+        @BindView(R.id.ibDone)          protected ImageButton ibDone;
+        @BindView(R.id.component)       protected ComponentLayout component;
 
         public ActionViewHolder(@NonNull View itemView) {
             super(itemView);

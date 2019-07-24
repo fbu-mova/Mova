@@ -26,6 +26,8 @@ public class ProgressGoalComponent extends Component {
     private ProgressGoalViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
+    private ComponentManager componentManager;
+
     public ProgressGoalComponent(Goal item){
         super();
         this.goal = item;
@@ -52,6 +54,16 @@ public class ProgressGoalComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return "ProgressGoalComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

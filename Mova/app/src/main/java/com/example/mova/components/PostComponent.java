@@ -11,6 +11,7 @@ import com.example.mova.model.Post;
 public class PostComponent extends Component {
 
     private Post post;
+    private ComponentManager componentManager;
 
     public PostComponent(Post post) {
         super();
@@ -30,6 +31,16 @@ public class PostComponent extends Component {
     @Override
     public View getView() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "PostComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override

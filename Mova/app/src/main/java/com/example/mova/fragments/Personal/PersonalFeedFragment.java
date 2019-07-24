@@ -19,6 +19,7 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.PrioritizedComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.ComponentLayout;
+import com.example.mova.components.ComponentManager;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.feed.PersonalFeedPrioritizer;
@@ -143,6 +144,7 @@ public class PersonalFeedFragment extends Fragment {
             container.inflateComponent((DelegatedResultActivity) getActivity(), card);
         } else {
             TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent(0, 5) {
+
                 @Override
                 public void onLoadGoals(Throwable e) {
                     if (e == null) {

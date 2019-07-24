@@ -38,6 +38,7 @@ public class GoalComposeActivity extends AppCompatActivity {
 
     private static final String TAG = "Goal Compose Activity";
     public static final String KEY_COMPOSED_GOAL = "composed goal";
+    public static final int REQUEST_GOAL_DETAILS = 19;
 
     // todo : currently most basic (and only personal). features to add:
         // can add 'infinite' number of actions (dynamically create editTexts?)
@@ -107,7 +108,7 @@ public class GoalComposeActivity extends AppCompatActivity {
 
         // currently todo-ing: saving multiple actions within a goal (include shareAction process)
 
-        // todo -- include image choosing for goal image
+        // todo -- include image choosing for goal image + color
         // todo -- update to also encompass Social functionality ?
 
         Goal goal = new Goal()
