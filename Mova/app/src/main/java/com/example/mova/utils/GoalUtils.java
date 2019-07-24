@@ -82,6 +82,13 @@ public class GoalUtils {
 
     }
 
+    /**
+     * Attaches a set of priority values to a list of goals based on the user's performance in each goal over a given period of time.
+     * @param goalList The list of goals to prioritize.
+     * @param length The amount of time elapsed (in days) in the
+     * @param user The user whose goals should be prioritized.
+     * @param callback
+     */
     public void sortGoals(List<Goal> goalList, int length, User user, AsyncUtils.ItemCallback<TreeSet<Prioritized<Goal>>> callback){
         TreeSet<Prioritized<Goal>> tsGoals = new TreeSet<>();
         AsyncUtils.executeMany(goalList.size(), (i,cb) -> {

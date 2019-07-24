@@ -38,6 +38,8 @@ public class Action extends HashableParseObject {
 
     public Action setIsDone(Boolean bool){
         put(KEY_IS_DONE, bool);
+        // Set completion time if done
+        if (bool) this.setCompletedAt(Calendar.getInstance().getTime());
         return this;
     }
 

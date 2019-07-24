@@ -26,6 +26,7 @@ import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
 import com.example.mova.model.Tag;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseQuery;
 
 import butterknife.BindView;
@@ -82,10 +83,11 @@ public class PersonalFeedFragment extends Fragment {
 
 //        insertSoloComponent(false);
 
+        // FIXME: Maybe the issue is that everything is so async that this is hitting at the wrong time, before something's been properly added? But that wouldn't make sense...
         cards = new SortedList<>(PrioritizedComponent.class, new SortedList.Callback<PrioritizedComponent>() {
             @Override
             public int compare(PrioritizedComponent o1, PrioritizedComponent o2) {
-                return o1.compareTo(o2);
+                return o2.compareTo(o1); // Higher values come first
             }
 
             @Override
@@ -120,8 +122,8 @@ public class PersonalFeedFragment extends Fragment {
         });
 
         adapter = new PrioritizedComponentAdapter((DelegatedResultActivity) getActivity(), cards);
-        rvCards.setAdapter(adapter);
         rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvCards.setAdapter(adapter);
         rvCards.addItemDecoration(new EdgeDecorator(32));
 
         prioritizer = new PersonalFeedPrioritizer();
