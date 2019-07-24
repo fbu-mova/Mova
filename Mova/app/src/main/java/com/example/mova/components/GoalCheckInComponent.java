@@ -58,6 +58,7 @@ public class GoalCheckInComponent extends Component {
 
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+//        Log.d("GoalCheckInComponent", "Hit makeViewHolder");
         this.activity = activity;
         LayoutInflater inflater = activity.getLayoutInflater();
         view = inflater.inflate(R.layout.component_goal_check_in, parent, attachToRoot);
@@ -78,6 +79,7 @@ public class GoalCheckInComponent extends Component {
     public void render() {
         // Display goal title and message
         // FIXME: This consistently crashes... not sure why. Seems to be an issue with holder being null.
+//        Log.d("GoalCheckInComponent", "holder is currently " + ((holder == null) ? "null" : "not null"));
         holder.tvGoalTitle.setText(goal.getTitle());
         holder.tvSubheader.setText(message);
 

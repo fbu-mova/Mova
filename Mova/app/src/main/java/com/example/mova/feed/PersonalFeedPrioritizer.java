@@ -56,37 +56,37 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                 }
         }));
 
-        // Get recent journal entries, add their respective memory cards
-        // TODO: Write a more meaningful query here
-        ParseQuery<Post> journalQuery = ((User) User.getCurrentUser()).relJournal.getQuery();
-        journalQuery.orderByDescending(Post.KEY_CREATED_AT);
-        journalQuery.setLimit(20);
-        asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
-            journalQuery.findInBackground((entries, e) -> {
-                if (e != null) {
-                    cb.call(e);
-                } else if (entries.size() > 0) {
-                    makeJournalMemories(addTo, entries);
-                    cb.call(null);
-                }
-        }));
-
-        // Get recent scrapbook entries, add their respective memory cards
-        ParseQuery<Post> scrapbookQuery = ((User) User.getCurrentUser()).relScrapbook.getQuery();
-        scrapbookQuery.orderByDescending(Post.KEY_CREATED_AT);
-        scrapbookQuery.setLimit(20);
-        asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
-            scrapbookQuery.findInBackground((entries, e) -> {
-                if (e != null) {
-                    cb.call(e);
-                } else if (entries.size() > 0) {
-                    makeScrapbookMemories(addTo, new ArrayList<>());
-                    cb.call(null);
-                }
-        }));
+//        // Get recent journal entries, add their respective memory cards
+//        // TODO: Write a more meaningful query here
+//        ParseQuery<Post> journalQuery = ((User) User.getCurrentUser()).relJournal.getQuery();
+//        journalQuery.orderByDescending(Post.KEY_CREATED_AT);
+//        journalQuery.setLimit(20);
+//        asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
+//            journalQuery.findInBackground((entries, e) -> {
+//                if (e != null) {
+//                    cb.call(e);
+//                } else if (entries.size() > 0) {
+//                    makeJournalMemories(addTo, entries);
+//                    cb.call(null);
+//                }
+//        }));
+//
+//        // Get recent scrapbook entries, add their respective memory cards
+//        ParseQuery<Post> scrapbookQuery = ((User) User.getCurrentUser()).relScrapbook.getQuery();
+//        scrapbookQuery.orderByDescending(Post.KEY_CREATED_AT);
+//        scrapbookQuery.setLimit(20);
+//        asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
+//            scrapbookQuery.findInBackground((entries, e) -> {
+//                if (e != null) {
+//                    cb.call(e);
+//                } else if (entries.size() > 0) {
+//                    makeScrapbookMemories(addTo, new ArrayList<>());
+//                    cb.call(null);
+//                }
+//        }));
 
         // Execute all queries and return via final callback
-//        AsyncUtils.waterfall(asyncActions, callback);
+        AsyncUtils.waterfall(asyncActions, callback);
     }
 
     protected void makeSpecialCards(SortedList<PrioritizedComponent> addTo, AsyncUtils.ItemCallback<Throwable> callback) {
