@@ -21,6 +21,7 @@ import com.example.mova.model.Goal;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,6 +31,9 @@ public class GoalCheckInComponent extends Component {
 
     private Goal goal;
     private String message;
+
+    // Async data
+    private List<Action> goalActions;
 
     private DelegatedResultActivity activity;
     private ViewHolder holder;
@@ -41,6 +45,15 @@ public class GoalCheckInComponent extends Component {
         super();
         this.goal = goal;
         this.message = message;
+        this.goalActions = new ArrayList<>();
+    }
+
+    public void loadData(AsyncUtils.ItemCallback<Throwable> callback) {
+        ParseQuery<Action> actionsQuery = goal.relActions.getQuery();
+        actionsQuery.findInBackground((actions, e) -> {
+            this.goalActions = actions;
+            callback.call(e);
+        });
     }
 
     @Override
@@ -68,38 +81,34 @@ public class GoalCheckInComponent extends Component {
         holder.tvGoalTitle.setText(goal.getTitle());
         holder.tvSubheader.setText(message);
 
-        // Retrieve actions
-        ParseQuery<Action> actionsQuery = goal.relActions.getQuery();
-        actionsQuery.findInBackground((actions, e) -> {
-            // Set up actions checklist
-            adapter = new DataComponentAdapter<Action>(activity, actions) {
-                @Override
-                public Component makeComponent(Action item) {
-                    return new ChecklistItemComponent<Action>(item,
-                            Color.parseColor("#999999"), Color.parseColor("#222222"), false,
-                            (action) -> action.getTask()) {
-                        @Override
-                        public void onClick(View view) {
-                            toggleDone(item, (e) -> {
-                                if (e != null) {
-                                    Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
-                                    Toast.makeText(activity, "Failed to toggle action done", Toast.LENGTH_LONG).show();
-                                } else {
-                                    Log.i("GoalCheckInComponent", "Toggled action done");
-                                }
-                            });
-                        }
-                    };
-                }
-            };
-            holder.rvChecklist.setAdapter(adapter);
-            holder.rvChecklist.setLayoutManager(new LinearLayoutManager(activity));
+        // Set up actions checklist
+        adapter = new DataComponentAdapter<Action>(activity, goalActions) {
+            @Override
+            public Component makeComponent(Action item) {
+                return new ChecklistItemComponent<Action>(item,
+                        Color.parseColor("#999999"), Color.parseColor("#222222"), false,
+                        (action) -> action.getTask()) {
+                    @Override
+                    public void onClick(View view) {
+                        toggleDone(item, (e) -> {
+                            if (e != null) {
+                                Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
+                                Toast.makeText(activity, "Failed to toggle action done", Toast.LENGTH_LONG).show();
+                            } else {
+                                Log.i("GoalCheckInComponent", "Toggled action done");
+                            }
+                        });
+                    }
+                };
+            }
+        };
+        holder.rvChecklist.setAdapter(adapter);
+        holder.rvChecklist.setLayoutManager(new LinearLayoutManager(activity));
 
-            // Display progress
-            holder.pbProgress.setProgress(getProgressPercent(actions));
+        // Display progress
+        holder.pbProgress.setProgress(getProgressPercent(goalActions));
 
-            // TODO: Add onclick listener for whole card to open the goal detail view for the associated goal
-        });
+        // TODO: Add onclick listener for whole card to open the goal detail view for the associated goal
     }
 
 
