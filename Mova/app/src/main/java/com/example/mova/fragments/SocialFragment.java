@@ -121,7 +121,7 @@ public class SocialFragment extends Fragment {
                      default:
                          return true;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flSocialContainer, fragment).commit();
                 return true;
             }
         });

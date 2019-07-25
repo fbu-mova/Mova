@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.LoginActivity;
@@ -31,6 +33,7 @@ import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -51,6 +54,7 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.tvDescription) protected TextView tvDesciption;
     @BindView(R.id.tvShowGroups) protected TextView tvShowGroups;
     @BindView(R.id.tvShowFriends) protected TextView tvShowFriends;
+    @BindView(R.id.ivProfilePic) protected ImageView ivProfilePic;
 
     private DataComponentAdapter<Group> showMoreGroupAdapter;
 
@@ -112,6 +116,13 @@ public class ProfileFragment extends Fragment {
         friendUtils = new FriendUtils();
 
         tvUsername.setText(user.getUsername());
+        ParseFile file = user.getProfilePic();
+        if(file != null){
+            String imageUrl = file.getUrl();
+            Glide.with(getContext())
+                    .load(imageUrl)
+                    .into(ivProfilePic);
+        }
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,7 +177,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO - Make this work
-                EdgeDecorator decorator = new EdgeDecorator(20);
+                EdgeDecorator decorator = new EdgeDecorator(0);
                 //Toast.makeText(getContext(), "We made it", Toast.LENGTH_SHORT).show();
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 View view = inflater.inflate(R.layout.layout_rv_profile_friends, null  );

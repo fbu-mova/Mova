@@ -108,7 +108,9 @@ public class PersonalFragment extends Fragment {
             default:
                 return;
         }
-        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+        fragmentManager.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction().replace(R.id.flPersonalContainer, fragment).commit();
+
     }
 
     public enum FragmentName {

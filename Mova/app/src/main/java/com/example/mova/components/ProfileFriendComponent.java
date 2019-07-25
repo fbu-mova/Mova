@@ -4,14 +4,20 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.fragments.Social.SocialProfileFragment;
 import com.example.mova.model.User;
 import com.parse.ParseFile;
 
@@ -69,6 +75,23 @@ public class ProfileFriendComponent extends Component{
                     .load(imageUrl)
                     .into(viewHolder.ivFriendPic);
         }
+        viewHolder.ivFriendPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment frag = SocialProfileFragment.newInstance(user);
+                FragmentManager manager = ((AppCompatActivity)activity)
+                        .getSupportFragmentManager();
+                FrameLayout fl = activity.findViewById(R.id.flPersonalContainer);
+                //fl.removeAllViews();
+                FragmentTransaction ft = manager
+                        .beginTransaction();
+                ft.add(R.id.flPersonalContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
     }
 
     public static class ProfileFriendViewHolder extends Component.ViewHolder{
