@@ -37,18 +37,10 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(LayoutSize widthSize, LayoutSize heightSize, Handler handler) {
+    public void init(LayoutConfig config, Handler<VH> handler) {
         // Determine whether to use wrap_constraint or match_parent layouts
         // FIXME: wrap_content doesn't work at all, and not because of the if statement
-        int layoutId;
-        boolean xmp = widthSize == LayoutSize.match_parent;
-        boolean ymp = heightSize == LayoutSize.match_parent;
-
-        if      (xmp && ymp)  layoutId = R.layout.layout_esrl_xmp_ymp;
-        else if (xmp && !ymp) layoutId = R.layout.layout_esrl_xmp_ywc;
-        else if (!xmp && ymp) layoutId = R.layout.layout_esrl_xwc_ymp;
-        else /* xwc && ywc */ layoutId = R.layout.layout_esrl_xwc_ywc;
-
+        int layoutId = makeLayout(config);
         inflate(getContext(), layoutId, this);
         ButterKnife.bind(this, this);
 
@@ -89,6 +81,27 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         swipeContainer.setRefreshing(refreshing);
     }
 
+    private int makeLayout(LayoutConfig config) {
+        int layoutId;
+
+        boolean xmp = config.widthSize == LayoutSize.match_parent;
+        boolean ymp = config.heightSize == LayoutSize.match_parent;
+
+        if (config.orientation == Orientation.Vertical) {
+            if      (xmp && ymp)  layoutId = R.layout.layout_esrl_v_xmp_ymp;
+            else if (xmp && !ymp) layoutId = R.layout.layout_esrl_v_xmp_ywc;
+            else if (!xmp && ymp) layoutId = R.layout.layout_esrl_v_xwc_ymp;
+            else /* xwc && ywc */ layoutId = R.layout.layout_esrl_v_xwc_ywc;
+        } else { // Orientation.Horizontal
+            if      (xmp && ymp)  layoutId = R.layout.layout_esrl_h_xmp_ymp;
+            else if (xmp && !ymp) layoutId = R.layout.layout_esrl_h_xmp_ywc;
+            else if (!xmp && ymp) layoutId = R.layout.layout_esrl_h_xwc_ymp;
+            else /* xwc && ywc */ layoutId = R.layout.layout_esrl_h_xwc_ywc;
+        }
+
+        return layoutId;
+    }
+
     public static int[] getDefaultColorScheme() {
         return new int[] {
                 android.R.color.holo_blue_bright,
@@ -111,5 +124,16 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
     public static enum LayoutSize {
         match_parent,
         wrap_content
+    }
+
+    public static enum Orientation {
+        Vertical,
+        Horizontal
+    }
+
+    public static interface LayoutConfig {
+        Orientation orientation = Orientation.Vertical;
+        LayoutSize widthSize = LayoutSize.match_parent;
+        LayoutSize heightSize = LayoutSize.match_parent;
     }
 }
