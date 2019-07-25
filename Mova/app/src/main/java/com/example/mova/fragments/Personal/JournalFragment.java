@@ -225,7 +225,7 @@ public class JournalFragment extends Fragment {
             }
         );
 
-        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 16));
+        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 64));
 
         // On fab click, open compose activity
         fabCompose.setOnClickListener((clickedView) -> {
@@ -261,7 +261,11 @@ public class JournalFragment extends Fragment {
         // TODO: Possibly add indicator of date being selected in date picker
         tvDate.setText(TimeUtils.toDateString(date));
         SortedList<Post> entriesFromDate = journal.getEntriesByDate(date);
+
+        // Change the source of the entries--important to reattach the adapter each time the source is changed
         entryAdapter.changeSource(entriesFromDate);
+        esrlEntries.reattachAdapter();
+        entryAdapter.notifyDataSetChanged();
     }
 
     private void loadEntries() {

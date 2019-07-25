@@ -91,6 +91,10 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         swipeContainer.setRefreshing(refreshing);
     }
 
+    public void reattachAdapter() {
+        rvItems.setAdapter(handler.getAdapter());
+    }
+
     private int makeLayout(LayoutConfig config) {
         int layoutId;
 

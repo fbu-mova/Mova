@@ -64,8 +64,13 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
         return items.size();
     }
 
+    /**
+     * Changes the source of the data. Does not update the RecyclerView.
+     * To be effective, requires that the RecyclerView's adapter be reattached (rv.setAdapter(this)),
+     * and that the adapter only then be notified that the entire data set has changed.
+     * @param newSource The new source to use.
+     */
     public void changeSource(SortedList<T> newSource) {
         this.items = newSource;
-        notifyDataSetChanged();
     }
 }
