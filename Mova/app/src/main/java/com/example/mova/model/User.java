@@ -65,49 +65,7 @@ public class User extends ParseUser {
     }
 
     public void postJournalEntry(Post journalEntry, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
-        // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
-        AsyncUtils.executeMany(
-            tags.size(),
-            (position, cb) -> {
-                Tag tag = tags.get(position);
-                Tag.getTag(tag.getName(), (tagFromDB) -> {
-                    if (tagFromDB == null) {
-                        tag.saveInBackground((e) -> {
-                            if (e != null) {
-                                Log.e("User", "Failed to create tag " + tag.getName() + " on journal post", e);
-                            } else {
-                                journalEntry.relTags.add(tag, (sameTag) -> cb.call(null));
-                            }
-                        });
-                    } else {
-                        journalEntry.relTags.add(tagFromDB, (sameTag) -> cb.call(null));
-                    }
-                });
-            },
-            (err) -> {
-                AsyncUtils.EmptyCallback saveJournal = () -> journalEntry.saveInBackground((e) -> {
-                    if (e != null) {
-                        Log.e("User", "Failed to save entry", e);
-                    } else {
-                        relJournal.add(journalEntry, callback);
-                    }
-                });
-
-                // Save media if it exists
-                if (media != null) {
-                    media.saveInBackground((e) -> {
-                        if (e != null) {
-                            Log.e("User", "Failed to create media", e);
-                        } else {
-                            journalEntry.setMedia(media);
-                            saveJournal.call();
-                        }
-                    });
-                } else {
-                    saveJournal.call();
-                }
-            }
-        );
+        journalEntry.savePost(tags, media, (post) -> relJournal.add(journalEntry, callback));
     }
 
     @Override

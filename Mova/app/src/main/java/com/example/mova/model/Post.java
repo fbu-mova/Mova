@@ -1,7 +1,10 @@
 package com.example.mova.model;
 
 
+import android.util.Log;
+
 import com.example.mova.Mood;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -9,6 +12,8 @@ import com.parse.ParseObject;
 
 import org.json.JSONObject;
 import org.w3c.dom.Comment;
+
+import java.util.List;
 
 @ParseClassName("Post")
 public class Post extends HashableParseObject {
@@ -93,6 +98,11 @@ public class Post extends HashableParseObject {
         return this;
     }
 
+    public Post removeMood() {
+        put(KEY_MOOD, JSONObject.NULL);
+        return this;
+    }
+
     //Image
     public ParseFile getImage(){
         return getParseFile(KEY_IMAGE);
@@ -131,5 +141,56 @@ public class Post extends HashableParseObject {
     public Post removeParent() {
         put(KEY_PARENT_POST, JSONObject.NULL);
         return this;
+    }
+
+    // Saving posts
+    public void savePost(List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
+        savePost(tags, null, callback);
+    }
+
+    public void savePost(List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
+        // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
+        AsyncUtils.executeMany(
+                tags.size(),
+                (position, cb) -> {
+                    Tag tag = tags.get(position);
+                    Tag.getTag(tag.getName(), (tagFromDB) -> {
+                        if (tagFromDB == null) {
+                            tag.saveInBackground((e) -> {
+                                if (e != null) {
+                                    Log.e("User", "Failed to create tag " + tag.getName() + " on journal post", e);
+                                } else {
+                                    this.relTags.add(tag, (sameTag) -> cb.call(null));
+                                }
+                            });
+                        } else {
+                            this.relTags.add(tagFromDB, (sameTag) -> cb.call(null));
+                        }
+                    });
+                },
+                (err) -> {
+                    AsyncUtils.EmptyCallback doSavePost = () -> this.saveInBackground((e) -> {
+                        if (e != null) {
+                            Log.e("User", "Failed to save entry", e);
+                        } else {
+                            callback.call(this);
+                        }
+                    });
+
+                    // Save media if it exists
+                    if (media != null) {
+                        media.saveInBackground((e) -> {
+                            if (e != null) {
+                                Log.e("User", "Failed to create media", e);
+                            } else {
+                                this.setMedia(media);
+                                doSavePost.call();
+                            }
+                        });
+                    } else {
+                        doSavePost.call();
+                    }
+                }
+        );
     }
 }

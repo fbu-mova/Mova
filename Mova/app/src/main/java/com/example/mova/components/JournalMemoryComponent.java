@@ -84,7 +84,7 @@ public class JournalMemoryComponent extends Component {
         // TODO: Update color based on mood
         // TODO: Set prompt based on mood (and eventually, other mood data patterns)
         // TODO: On tap on excerpt, go to that journal entry
-        // TEST: On button click, open reply to post display with media
+        // TODO: Use comments instead of regular posts\
 
         holder.tvMood.setText(entry.getMood().toString().toLowerCase());
         holder.tvExcerpt.setText(truncateEntry(entry));
@@ -100,6 +100,12 @@ public class JournalMemoryComponent extends Component {
                     Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
                     ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
                     Media outMedia = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST_MEDIA);
+
+                    // TODO: Switch to different activity rather than coercing JournalComposeActivity's results to a normal post
+                    journalEntry.removeMood();
+                    journalEntry.setParent(entry);
+
+                    // TODO: Post entry as a comment
 
                     User user = ((User) User.getCurrentUser());
                     if (outMedia == null) user.postJournalEntry(journalEntry, tags, onPost);
