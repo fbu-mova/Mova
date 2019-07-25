@@ -22,11 +22,12 @@ public class Post extends HashableParseObject {
     public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_MEDIA = "media";
+    public static final String KEY_PARENT_POST = "parentPost";
 
     //Relations
     public static final String KEY_COMMENTS = "comments";
     public static final String KEY_TAGS = "tags";
-    public final RelationFrame<Post> relComments = new RelationFrame<>(this,KEY_COMMENTS);
+    public final RelationFrame<Post> relComments = new RelationFrame<>(this, KEY_COMMENTS);
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
 
     //Author
@@ -102,7 +103,7 @@ public class Post extends HashableParseObject {
         return this;
     }
 
-    //Media
+    // Media
     public Media getMedia() {
         return (Media) getParseObject(KEY_MEDIA);
     }
@@ -114,6 +115,21 @@ public class Post extends HashableParseObject {
 
     public Post removeMedia() {
         put(KEY_MEDIA, JSONObject.NULL);
+        return this;
+    }
+
+    // Parent post
+    public Post getParent() {
+        return (Post) getParseObject(KEY_PARENT_POST);
+    }
+
+    public Post setParent(Post parent) {
+        put(KEY_PARENT_POST, parent);
+        return this;
+    }
+
+    public Post removeParent() {
+        put(KEY_PARENT_POST, JSONObject.NULL);
         return this;
     }
 }
