@@ -6,6 +6,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,12 +23,14 @@ import com.example.mova.components.ActionViewComponent;
 import com.example.mova.components.Component;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.Group;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +43,7 @@ import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalDetailsActivity extends DelegatedResultActivity {
 
+    private static final String TAG = "goal details activity";
     private Goal goal;
 
     @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
@@ -46,6 +52,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.tvDescription)   protected TextView tvDescription;
     @BindView(R.id.rvActions)       protected RecyclerView rvActions;
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
+    @BindView(R.id.btShare)         protected Button btShare;
 
     // recyclerview
     private List<Action> actions;
@@ -62,6 +69,18 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         tvGoalName.setText(goal.getTitle());
         tvFromGroup.setText(goal.getGroupName());
         tvDescription.setText(goal.getDescription());
+
+        btShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // todo -- create pop-up to confirm
+                    // ask which group to share it in (or just friends)
+                    // ask if want to include a description (need to create the post as well, with embedded media)
+
+                confirmShare();
+            }
+        });
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
 
@@ -92,6 +111,34 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         rvActions.setAdapter(actionsAdapter);
 
         loadAllActions();
+    }
+
+    private void confirmShare() {
+
+        String description = "";
+        Group group = null;
+
+        if (true) {
+            shareGoal(description, group);
+        }
+    }
+
+    private void shareGoal(String description, Group group) {
+
+        goal.setIsPersonal(true);
+        goal.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "shared goal successfully");
+                    Toast.makeText(GoalDetailsActivity.this, "Shared goal!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.e(TAG, "sharing goal failed");
+                }
+            }
+        });
+
     }
 
     @Override
