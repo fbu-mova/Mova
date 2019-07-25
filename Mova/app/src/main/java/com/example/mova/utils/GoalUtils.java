@@ -12,7 +12,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,9 +54,11 @@ public class GoalUtils {
     public void getNumActionsComplete(Date date, Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback){
         getActionList((actionList) -> {
             int numAction = 0;
-            for(Action action: actionList){
-                if(TimeUtils.normalizeToDay(action.getCompletedAt()).equals(TimeUtils.normalizeToDay(date))){
-                    numAction++;
+            for(Action action: actionList) {
+                if (action.getIsDone()) {
+                    if (TimeUtils.normalizeToDay(action.getCompletedAt()).equals(TimeUtils.normalizeToDay(date))) {
+                        numAction++;
+                    }
                 }
             }
             callback.call(numAction);
@@ -105,8 +106,8 @@ public class GoalUtils {
         } );
     }
 
-    public static void queryGoals(AsyncUtils.ListCallback<Goal> callback){
-        User user = (User) ParseUser.getCurrentUser();
+    public static void queryGoals(User user,AsyncUtils.ListCallback<Goal> callback){
+//        User user = (User) ParseUser.getCurrentUser();
         List<Goal> goals = new ArrayList<>();
         ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
         goalQuery.whereEqualTo("usersInvolved", user);
