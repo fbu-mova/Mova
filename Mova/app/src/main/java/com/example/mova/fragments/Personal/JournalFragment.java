@@ -143,7 +143,8 @@ public class JournalFragment extends Fragment {
         dateAdapter = new DatePickerAdapter(getActivity(), journal.getDates(), new DatePickerAdapter.OnItemClickListener() {
             @Override
             public void onClick(View v, Date date, int position) {
-                displayEntries(date);
+                currDate = date;
+                displayEntries(currDate);
             }
         });
 

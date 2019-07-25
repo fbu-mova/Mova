@@ -3,6 +3,7 @@ package com.example.mova.scrolling;
 import android.content.Context;
 import android.text.Layout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -64,6 +65,7 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.d("ESRL", "Hit load more");
                 // Triggered only when new data needs to be appended to the list
                 handler.loadMore();
             }
@@ -74,6 +76,7 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
 
         // Add swipe to refresh actions
         swipeContainer.setOnRefreshListener(() -> {
+            Log.d("ESRL", "Hit load");
             handler.load();
             adapter.notifyDataSetChanged();
         });
