@@ -3,16 +3,22 @@ package com.example.mova.components;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.fragments.Social.GroupDetailsFragment;
 import com.example.mova.model.Group;
 import com.parse.ParseFile;
 
@@ -28,6 +34,7 @@ public class GroupThumbnailComponent extends Component {
     private View view;
     private GroupThumbnailViewHolder viewHolder;
     private DelegatedResultActivity activity;
+    public static FragmentManager manager;
 
     public GroupThumbnailComponent(Group item){
         super();
@@ -73,6 +80,23 @@ public class GroupThumbnailComponent extends Component {
                     .placeholder(R.color.colorAccent)
                     .into(viewHolder.ivGroupPic);
         }
+
+        viewHolder.ivGroupPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment frag = GroupDetailsFragment.newInstance(group);
+                manager = ((AppCompatActivity)activity)
+                        .getSupportFragmentManager();
+                FrameLayout fl = activity.findViewById(R.id.flSocialContainer);
+                //fl.removeAllViews();
+                FragmentTransaction ft = manager
+                        .beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
 
     }
 

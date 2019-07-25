@@ -8,6 +8,7 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,6 +44,9 @@ public class GroupsFragment extends Fragment {
     //TODO - fix scrolling on goals
 
     User user;
+
+    @BindView(R.id.nsvGroups)
+    NestedScrollView nsvGroups;
 
     @BindView(R.id.svGroups)
     SearchView svGroups;
