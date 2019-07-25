@@ -55,11 +55,19 @@
             android:layout_marginBottom="8dp"
             android:text="Date" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvEntries"
+        <com.example.mova.scrolling.EndlessScrollRefreshLayout
+            android:id="@+id/esrlEntries"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="100" />
+            android:layout_weight="100">
+
+        </com.example.mova.scrolling.EndlessScrollRefreshLayout>
+
+        <!--<androidx.recyclerview.widget.RecyclerView-->
+            <!--android:id="@+id/rvEntries"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="100" />-->
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

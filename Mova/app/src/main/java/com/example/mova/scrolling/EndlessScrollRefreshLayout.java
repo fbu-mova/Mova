@@ -85,6 +85,10 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         rvItems.addItemDecoration(decoration);
     }
 
+    public void setRefreshing(boolean refreshing) {
+        swipeContainer.setRefreshing(refreshing);
+    }
+
     public static int[] getDefaultColorScheme() {
         return new int[] {
                 android.R.color.holo_blue_bright,

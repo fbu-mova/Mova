@@ -52,12 +52,13 @@ public class JournalFragment extends Fragment {
     private Journal journal;
     private Date currDate;
 
-    @BindView(R.id.tvTitle)    protected TextView tvTitle;
-    @BindView(R.id.tvDate)     protected TextView tvDate;
-//    @BindView(R.id.rvDates)    protected RecyclerView rvDates;
-    @BindView(R.id.esrlDates)  protected EndlessScrollRefreshLayout<DatePickerAdapter.ViewHolder> esrlDates; // FIXME: Can I cast it to this generic just like that?
-    @BindView(R.id.rvEntries)  protected RecyclerView rvEntries;
-    @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
+    @BindView(R.id.tvTitle)     protected TextView tvTitle;
+    @BindView(R.id.tvDate)      protected TextView tvDate;
+//    @BindView(R.id.rvDates)     protected RecyclerView rvDates;
+    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<DatePickerAdapter.ViewHolder> esrlDates; // FIXME: Can I cast it to this generic just like that?
+//    @BindView(R.id.rvEntries)   protected RecyclerView rvEntries;
+    @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<JournalEntryAdapter.ViewHolder> esrlEntries; // FIXME: Can I cast it to this generic just like that?
+    @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
 
     public JournalFragment() {
         // Required empty public constructor
@@ -181,11 +182,43 @@ public class JournalFragment extends Fragment {
              }
         );
 
+        esrlEntries.init(
+            EndlessScrollRefreshLayout.LayoutSize.match_parent,
+            EndlessScrollRefreshLayout.LayoutSize.match_parent,
+            new EndlessScrollRefreshLayout.Handler() {
+                // TODO: Perhaps only load more entries for that specific date?
+                @Override
+                public void load() {
+                    loadEntries();
+                }
+
+                @Override
+                public void loadMore() {
+                    loadMoreEntries();
+                }
+
+                @Override
+                public RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> getAdapter() {
+                    return entryAdapter;
+                }
+
+                @Override
+                public RecyclerView.LayoutManager getLayoutManager() {
+                    return entryLayoutManager;
+                }
+
+                @Override
+                public int[] getColorScheme() {
+                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                }
+            }
+        );
+
 //        rvDates.setAdapter(dateAdapter);
 //        rvDates.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
 
-        rvEntries.setLayoutManager(entryLayoutManager);
-        rvEntries.setAdapter(entryAdapter);
+//        rvEntries.setLayoutManager(entryLayoutManager);
+//        rvEntries.setAdapter(entryAdapter);
 
         // On fab click, open compose activity
         fabCompose.setOnClickListener(new View.OnClickListener() {
@@ -228,10 +261,18 @@ public class JournalFragment extends Fragment {
     }
 
     private void loadEntries() {
-        journal.loadEntries((e) -> displayEntries(currDate));
+        journal.loadEntries((e) -> {
+            displayEntries(currDate);
+            esrlEntries.setRefreshing(false);
+            esrlDates.setRefreshing(false);
+        });
     }
 
     private void loadMoreEntries() {
-        journal.loadMoreEntries((e) -> displayEntries(currDate));
+        journal.loadMoreEntries((e) -> {
+            displayEntries(currDate);
+            esrlEntries.setRefreshing(false);
+            esrlDates.setRefreshing(false);
+        });
     }
 }
