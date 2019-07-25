@@ -4,9 +4,11 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.Component;
+import com.example.mova.model.Post;
 
 import java.util.List;
 
@@ -42,5 +44,10 @@ public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder>
     @Override
     public int getItemCount() {
         return components.size();
+    }
+
+    public void changeSource(List<Component> newSource) {
+        this.components = newSource;
+        notifyDataSetChanged();
     }
 }

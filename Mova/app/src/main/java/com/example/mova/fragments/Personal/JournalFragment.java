@@ -1,9 +1,7 @@
 package com.example.mova.fragments.Personal;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,29 +18,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
-import com.example.mova.fragments.PersonalFragment;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.SortedDataComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.DatePickerComponent;
+import com.example.mova.components.JournalEntryComponent;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
-import com.example.mova.utils.AsyncUtils;
+import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
-import com.example.mova.adapters.DatePickerAdapter;
-import com.example.mova.adapters.JournalEntryAdapter;
 import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -56,17 +47,17 @@ import butterknife.ButterKnife;
  */
 public class JournalFragment extends Fragment {
 
-    private DatePickerAdapter dateAdapter;
-    private JournalEntryAdapter entryAdapter;
+    private SortedDataComponentAdapter<Date> dateAdapter;
+    private SortedDataComponentAdapter<Post> entryAdapter;
 
     private Journal journal;
     private Date currDate;
 
-    @BindView(R.id.tvTitle)    protected TextView tvTitle;
-    @BindView(R.id.tvDate)     protected TextView tvDate;
-    @BindView(R.id.rvDates)    protected RecyclerView rvDates;
-    @BindView(R.id.rvEntries)  protected RecyclerView rvEntries;
-    @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
+    @BindView(R.id.tvTitle)     protected TextView tvTitle;
+    @BindView(R.id.tvDate)      protected TextView tvDate;
+    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlDates;
+    @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
+    @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
 
     public JournalFragment() {
         // Required empty public constructor
@@ -147,28 +138,95 @@ public class JournalFragment extends Fragment {
         );
 
         // On date click, display only the entries for that date
-        dateAdapter = new DatePickerAdapter(getActivity(), journal.getDates(), new DatePickerAdapter.OnItemClickListener() {
+        dateAdapter = new SortedDataComponentAdapter<Date>((DelegatedResultActivity) getActivity(), journal.getDates()) {
             @Override
-            public void onClick(View v, Date date, int position) {
-                displayEntries(date);
+            public Component makeComponent(Date item) {
+                return new DatePickerComponent(item, (view, date) -> {
+                    currDate = date;
+                    displayEntries(currDate);
+                });
             }
-        });
+        };
 
-        entryAdapter = new JournalEntryAdapter(getActivity(), journal.getEntriesByDate(currDate));
+        entryAdapter = new SortedDataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate)) {
+            @Override
+            public Component makeComponent(Post item) {
+                return new JournalEntryComponent(item);
+            }
+        };
 
-        rvDates.setAdapter(dateAdapter);
-        rvDates.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
+        LinearLayoutManager dateLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true);
+        LinearLayoutManager entryLayoutManager = new LinearLayoutManager(getActivity());
 
-        rvEntries.setAdapter(entryAdapter);
-        rvEntries.setLayoutManager(new LinearLayoutManager(getActivity()));
+        esrlDates.init(
+            new EndlessScrollRefreshLayout.LayoutConfig()
+                    .setHeightSize(EndlessScrollRefreshLayout.LayoutConfig.Size.wrap_content)
+                    .setOrientation(EndlessScrollRefreshLayout.LayoutConfig.Orientation.Horizontal),
+            new EndlessScrollRefreshLayout.Handler<Component.ViewHolder>() {
+                @Override
+                public void load() {
+                    loadEntries();
+                }
+
+                @Override
+                public void loadMore() {
+                    loadMoreEntries();
+                }
+
+                @Override
+                public SortedDataComponentAdapter<Date> getAdapter() {
+                    return dateAdapter;
+                }
+
+                @Override
+                public RecyclerView.LayoutManager getLayoutManager() {
+                    return dateLayoutManager;
+                }
+
+                @Override
+                public int[] getColorScheme() {
+                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                }
+             }
+        );
+
+        esrlEntries.init(
+            new EndlessScrollRefreshLayout.LayoutConfig(),
+            new EndlessScrollRefreshLayout.Handler<Component.ViewHolder>() {
+                // TODO: Perhaps only load more entries for that specific date?
+                @Override
+                public void load() {
+                    loadEntries();
+                }
+
+                @Override
+                public void loadMore() {
+                    loadMoreEntries();
+                }
+
+                @Override
+                public SortedDataComponentAdapter<Post> getAdapter() {
+                    return entryAdapter;
+                }
+
+                @Override
+                public RecyclerView.LayoutManager getLayoutManager() {
+                    return entryLayoutManager;
+                }
+
+                @Override
+                public int[] getColorScheme() {
+                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                }
+            }
+        );
+
+        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 64));
 
         // On fab click, open compose activity
-        fabCompose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
-                startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
-            }
+        fabCompose.setOnClickListener((clickedView) -> {
+            Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
+            startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
         });
 
         displayEntries(currDate);
@@ -199,10 +257,26 @@ public class JournalFragment extends Fragment {
         // TODO: Possibly add indicator of date being selected in date picker
         tvDate.setText(TimeUtils.toDateString(date));
         SortedList<Post> entriesFromDate = journal.getEntriesByDate(date);
+
+        // Change the source of the entries--important to reattach the adapter each time the source is changed
         entryAdapter.changeSource(entriesFromDate);
+        esrlEntries.reattachAdapter();
+        entryAdapter.notifyDataSetChanged();
     }
 
     private void loadEntries() {
-        journal.loadEntries((e) -> displayEntries(currDate));
+        journal.loadEntries((e) -> {
+            displayEntries(currDate);
+            esrlEntries.setRefreshing(false);
+            esrlDates.setRefreshing(false);
+        });
+    }
+
+    private void loadMoreEntries() {
+        journal.loadMoreEntries((e) -> {
+            displayEntries(currDate);
+            esrlEntries.setRefreshing(false);
+            esrlDates.setRefreshing(false);
+        });
     }
 }

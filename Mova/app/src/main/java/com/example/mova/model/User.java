@@ -61,37 +61,11 @@ public class User extends ParseUser {
     }
 
     public void postJournalEntry(Post journalEntry, List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
-        // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
-        AsyncUtils.executeMany(
-            tags.size(),
-            (position, cb) -> {
-                Tag tag = tags.get(position);
-                Tag.getTag(tag.getName(), (tagFromDB) -> {
-                    if (tagFromDB == null) {
-                        tag.saveInBackground((e) -> {
-                            if (e != null) {
-                                Log.e("User", "Failed to create tag " + tag.getName() + " on journal post", e);
-                            } else {
-                                journalEntry.relTags.add(tag, (sameTag) -> cb.call(null));
-                            }
-                        });
-                    } else {
-                        journalEntry.relTags.add(tagFromDB, (sameTag) -> cb.call(null));
-                    }
-                });
-            },
-            (err) -> {
-//                    Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
-                journalEntry.saveInBackground((e) -> {
-                    if (e != null) {
-                        Log.e("User", "Failed to save entry", e);
-//                            Toast.makeText(getActivity(), "Failed to save entry", Toast.LENGTH_LONG).show();
-                    } else {
-                        relJournal.add(journalEntry, callback);
-                    }
-                });
-            }
-        );
+        postJournalEntry(journalEntry, tags, null, callback);
+    }
+
+    public void postJournalEntry(Post journalEntry, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
+        journalEntry.savePost(tags, media, (post) -> relJournal.add(journalEntry, callback));
     }
 
     @Override
