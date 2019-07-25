@@ -84,7 +84,6 @@ public class JournalMemoryComponent extends Component {
         // TODO: Update color based on mood
         // TODO: Set prompt based on mood (and eventually, other mood data patterns)
         // TODO: On tap on excerpt, go to that journal entry
-        // TODO: Use comments instead of regular posts\
 
         holder.tvMood.setText(entry.getMood().toString().toLowerCase());
         holder.tvExcerpt.setText(truncateEntry(entry));

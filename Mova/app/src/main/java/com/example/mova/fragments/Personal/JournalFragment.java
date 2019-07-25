@@ -55,10 +55,8 @@ public class JournalFragment extends Fragment {
 
     @BindView(R.id.tvTitle)     protected TextView tvTitle;
     @BindView(R.id.tvDate)      protected TextView tvDate;
-//    @BindView(R.id.rvDates)     protected RecyclerView rvDates;
-    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<DatePickerAdapter.ViewHolder> esrlDates; // FIXME: Can I cast it to this generic just like that?
-//    @BindView(R.id.rvEntries)   protected RecyclerView rvEntries;
-    @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<JournalEntryAdapter.ViewHolder> esrlEntries; // FIXME: Can I cast it to this generic just like that?
+    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<DatePickerAdapter.ViewHolder> esrlDates;
+    @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<JournalEntryAdapter.ViewHolder> esrlEntries;
     @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
 
     public JournalFragment() {
@@ -217,19 +215,12 @@ public class JournalFragment extends Fragment {
             }
         );
 
-//        rvDates.setAdapter(dateAdapter);
-//        rvDates.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
-
-//        rvEntries.setLayoutManager(entryLayoutManager);
-//        rvEntries.setAdapter(entryAdapter);
+        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 16));
 
         // On fab click, open compose activity
-        fabCompose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
-                startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
-            }
+        fabCompose.setOnClickListener((clickedView) -> {
+            Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
+            startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
         });
 
         displayEntries(currDate);
