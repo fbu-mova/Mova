@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.SortedDataComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.JournalEntryComponent;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
@@ -48,7 +51,9 @@ import butterknife.ButterKnife;
 public class JournalFragment extends Fragment {
 
     private DatePickerAdapter dateAdapter;
-    private JournalEntryAdapter entryAdapter;
+//    private SortedDataComponentAdapter<Date> dateAdapter;
+//    private JournalEntryAdapter entryAdapter;
+    private SortedDataComponentAdapter<Post> entryAdapter;
 
     private Journal journal;
     private Date currDate;
@@ -56,7 +61,7 @@ public class JournalFragment extends Fragment {
     @BindView(R.id.tvTitle)     protected TextView tvTitle;
     @BindView(R.id.tvDate)      protected TextView tvDate;
     @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<DatePickerAdapter.ViewHolder> esrlDates;
-    @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<JournalEntryAdapter.ViewHolder> esrlEntries;
+    @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
     @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
 
     public JournalFragment() {
@@ -146,8 +151,13 @@ public class JournalFragment extends Fragment {
             }
         });
 
-        // TODO: Set up embedded media on these, maybe with a component migration for easier use?
-        entryAdapter = new JournalEntryAdapter((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate));
+//        entryAdapter = new JournalEntryAdapter((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate));
+        entryAdapter = new SortedDataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate)) {
+            @Override
+            public Component makeComponent(Post item) {
+                return new JournalEntryComponent(item);
+            }
+        };
 
         LinearLayoutManager dateLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true);
         LinearLayoutManager entryLayoutManager = new LinearLayoutManager(getActivity());
@@ -168,7 +178,7 @@ public class JournalFragment extends Fragment {
                 }
 
                 @Override
-                public RecyclerView.Adapter<DatePickerAdapter.ViewHolder> getAdapter() {
+                public DatePickerAdapter getAdapter() {
                     return dateAdapter;
                 }
 
@@ -186,7 +196,7 @@ public class JournalFragment extends Fragment {
 
         esrlEntries.init(
             new EndlessScrollRefreshLayout.LayoutConfig(),
-            new EndlessScrollRefreshLayout.Handler<JournalEntryAdapter.ViewHolder>() {
+            new EndlessScrollRefreshLayout.Handler<Component.ViewHolder>() {
                 // TODO: Perhaps only load more entries for that specific date?
                 @Override
                 public void load() {
@@ -199,7 +209,7 @@ public class JournalFragment extends Fragment {
                 }
 
                 @Override
-                public RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> getAdapter() {
+                public SortedDataComponentAdapter<Post> getAdapter() {
                     return entryAdapter;
                 }
 

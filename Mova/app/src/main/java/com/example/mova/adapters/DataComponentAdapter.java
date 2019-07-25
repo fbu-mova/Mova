@@ -65,7 +65,6 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
 
     public void changeSource(List<T> newSource) {
         this.items = newSource;
-        this.components.clear();
         notifyDataSetChanged();
     }
 }

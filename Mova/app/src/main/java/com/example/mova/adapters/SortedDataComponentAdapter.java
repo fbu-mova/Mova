@@ -25,6 +25,7 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
     public SortedDataComponentAdapter(DelegatedResultActivity activity, SortedList<T> items) {
         this.activity = activity;
         this.items = items;
+        this.components = new HashMap<>();
     }
 
     /**
@@ -65,7 +66,6 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
 
     public void changeSource(SortedList<T> newSource) {
         this.items = newSource;
-        this.components.clear();
         notifyDataSetChanged();
     }
 }
