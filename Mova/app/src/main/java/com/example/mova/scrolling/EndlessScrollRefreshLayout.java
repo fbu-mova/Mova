@@ -12,55 +12,61 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mova.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class EndlessScrollRefreshLayout<Item, VH extends RecyclerView.ViewHolder> extends FrameLayout {
+public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> extends FrameLayout {
 
     protected RecyclerView.Adapter<VH> adapter;
-    protected List<Item> items;
     protected EndlessRecyclerViewScrollListener scrollListener;
+
+    protected Handler handler;
 
     @BindView(R.id.rvItems)         protected RecyclerView rvItems;
     @BindView(R.id.swipeContainer)  protected SwipeRefreshLayout swipeContainer;
 
     public EndlessScrollRefreshLayout(@NonNull Context context) {
         super(context);
-        init();
     }
 
     public EndlessScrollRefreshLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public EndlessScrollRefreshLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
     }
 
-    private void init() {
-        inflate(getContext(), R.layout.layout_endless_scroll_refresh, this);
+    public void init(LayoutSize widthSize, LayoutSize heightSize, Handler handler) {
+        // Determine whether to use wrap_constraint or match_parent layouts
+        // FIXME: wrap_content doesn't work at all, and not because of the if statement
+        int layoutId;
+        boolean xmp = widthSize == LayoutSize.match_parent;
+        boolean ymp = heightSize == LayoutSize.match_parent;
+
+        if      (xmp && ymp)  layoutId = R.layout.layout_esrl_xmp_ymp;
+        else if (xmp && !ymp) layoutId = R.layout.layout_esrl_xmp_ywc;
+        else if (!xmp && ymp) layoutId = R.layout.layout_esrl_xwc_ymp;
+        else /* xwc && ywc */ layoutId = R.layout.layout_esrl_xwc_ywc;
+
+        inflate(getContext(), layoutId, this);
         ButterKnife.bind(this, this);
 
+        this.handler = handler;
+
         // Configure RecyclerView
-        items = new ArrayList<>();
-        adapter = makeAdapter();
-
-        rvItems.setAdapter(adapter);
-        rvItems.addItemDecoration(new EdgeDecorator(getTopEdgeMargin(), getBottomEdgeMargin(), getLeftEdgeMargin(), getRightEdgeMargin()));
-
-        RecyclerView.LayoutManager layoutManager = makeLayoutManager();
+        RecyclerView.LayoutManager layoutManager = handler.getLayoutManager();
         rvItems.setLayoutManager(layoutManager);
+
+        adapter = handler.getAdapter();
+        rvItems.setAdapter(adapter);
+
         // Configure infinite scrolling
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
-                loadMore();
+                handler.loadMore();
             }
         };
 
@@ -69,23 +75,37 @@ public abstract class EndlessScrollRefreshLayout<Item, VH extends RecyclerView.V
 
         // Add swipe to refresh actions
         swipeContainer.setOnRefreshListener(() -> {
-            items.clear();
+            handler.load();
             adapter.notifyDataSetChanged();
-            load();
         });
-        swipeContainer.setColorSchemeResources(getColorScheme());
+        swipeContainer.setColorSchemeResources(handler.getColorScheme());
     }
 
-    public abstract void load();
-    public abstract void loadMore();
+    public void addItemDecoration(RecyclerView.ItemDecoration decoration) {
+        rvItems.addItemDecoration(decoration);
+    }
 
-    public abstract RecyclerView.Adapter<VH> makeAdapter();
-    public abstract RecyclerView.LayoutManager makeLayoutManager();
+    public static int[] getDefaultColorScheme() {
+        return new int[] {
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light
+        };
+    }
 
-    public abstract int[] getColorScheme();
+    public static abstract class Handler<VH extends RecyclerView.ViewHolder> {
+        public abstract void load();
+        public abstract void loadMore();
 
-    public abstract int getTopEdgeMargin();
-    public abstract int getBottomEdgeMargin();
-    public abstract int getLeftEdgeMargin();
-    public abstract int getRightEdgeMargin();
+        public abstract RecyclerView.Adapter<VH> getAdapter();
+        public abstract RecyclerView.LayoutManager getLayoutManager();
+
+        public abstract int[] getColorScheme();
+    }
+
+    public static enum LayoutSize {
+        match_parent,
+        wrap_content
+    }
 }

@@ -1,14 +1,11 @@
 package com.example.mova.model;
 
-import android.widget.Toast;
-
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -77,13 +74,82 @@ public class Journal {
     }
 
     /**
-     * Loads and adds all entries to the journal.
-     * For now, should only be called once; it never clears the entries.
+     * Loads and adds all entries to the journal. Clears all previous entries.
      * @param callback The callback to call once all entries have been added.
      */
     public void loadEntries(AsyncUtils.ItemCallback<Throwable> callback) {
-        // TODO: Handle unique queries eventually
+        loadEntries(20, (query) -> {}, callback);
+    }
+
+    /**
+     * Loads and adds all entries to the journal. Clears all previous entries.
+     * @param editQuery Is called upon to edit the query in whatever way required before sending.
+     * @param callback The callback to call once all entries have been added.
+     */
+    public void loadEntries(AsyncUtils.ItemCallback<ParseQuery<Post>> editQuery, AsyncUtils.ItemCallback<Throwable> callback) {
+        loadEntries(20, editQuery, callback);
+    }
+
+    /**
+     * Loads and adds all entries to the journal. Clears all previous entries.
+     * @param numEntries The number of entries to load.
+     * @param callback The callback to call once all entries have been added.
+     */
+    public void loadEntries(int numEntries, AsyncUtils.ItemCallback<Throwable> callback) {
+        loadEntries(20, (query) -> {}, callback);
+    }
+
+    /**
+     * Loads and adds all entries to the journal. Clears all previous entries.
+     * @param numEntries The number of entries to load.
+     * @param editQuery Is called upon to edit the query in whatever way required before sending.
+     * @param callback The callback to call once all entries have been added.
+     */
+    public void loadEntries(int numEntries, AsyncUtils.ItemCallback<ParseQuery<Post>> editQuery, AsyncUtils.ItemCallback<Throwable> callback) {
+        entries.clear();
+        dates.clear();
+        loadMoreEntries(numEntries, editQuery, callback);
+    }
+
+    /**
+     * Loads and adds more entries to the journal.
+     * @param callback The callback to call once all entries have been added.
+     */
+    public void loadMoreEntries(AsyncUtils.ItemCallback<Throwable> callback) {
+        loadMoreEntries(20, (query) -> {}, callback);
+    }
+
+    /**
+     * Loads and adds more entries to the journal.
+     * @param editQuery Is called upon to edit the query in whatever way required before sending.
+     * @param callback The callback to call once all entries have been added.
+     */
+    public void loadMoreEntries(AsyncUtils.ItemCallback<ParseQuery<Post>> editQuery, AsyncUtils.ItemCallback<Throwable> callback) {
+        loadMoreEntries(20, editQuery, callback);
+    }
+
+    /**
+     * Loads and adds more entries to the journal.
+     * @param numEntries The number of entries to load.
+     * @param callback The callback to call once all entries have been added.
+     */
+    public void loadMoreEntries(int numEntries, AsyncUtils.ItemCallback<Throwable> callback) {
+        loadMoreEntries(numEntries, (query) -> {}, callback);
+    }
+
+    /**
+     * Loads and adds more entries to the journal.
+     * @param numEntries The number of entries to load.
+     * @param editQuery Is called upon to edit the query in whatever way required before sending.
+     * @param callback The callback to call once all entries have been added.
+     */
+    public void loadMoreEntries(int numEntries, AsyncUtils.ItemCallback<ParseQuery<Post>> editQuery, AsyncUtils.ItemCallback<Throwable> callback) {
         ParseQuery<Post> journalQuery = user.relJournal.getQuery();
+        if (entries.size() > 0) {
+            journalQuery.whereLessThan(Post.KEY_CREATED_AT, getOldestLoadedEntry().getCreatedAt());
+        }
+        journalQuery.setLimit(numEntries);
+        editQuery.call(journalQuery);
         journalQuery.findInBackground((List<Post> list, ParseException e) -> {
             if (e != null) {
                 callback.call(e);
@@ -106,6 +172,36 @@ public class Journal {
             todayEntries.add(journalEntry);
             callback.call(null);
         });
+    }
+
+    public Post getOldestLoadedEntry() {
+        // Find the oldest date with at least one entry
+        SortedList<Post> entries;
+        int i = dates.size() - 1;
+        do {
+            Date oldest = dates.get(i);
+            entries = getEntriesByDate(oldest);
+            i--;
+        } while (entries.size() == 0 && i > 0);
+        // If all dates are empty, return null
+        if (entries.size() == 0) return null;
+        // Otherwise, fetch the oldest entry from the oldest date
+        return entries.get(0);
+    }
+
+    public Post getNewestLoadedEntry() {
+        // Find the newest date with at least one entry
+        SortedList<Post> entries;
+        int i = 0;
+        do {
+            Date oldest = dates.get(i);
+            entries = getEntriesByDate(oldest);
+            i++;
+        } while (entries.size() == 0 && i < dates.size());
+        // If all dates are empty, return null
+        if (entries.size() == 0) return null;
+        // Otherwise, fetch the newest entry from the newest date
+        return entries.get(entries.size() - 1);
     }
 
     // -- STATIC METHODS FOR DEFAULT SORTEDLIST.CALLBACK HANDLING -- //

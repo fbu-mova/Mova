@@ -1,9 +1,7 @@
 package com.example.mova.fragments.Personal;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,37 +11,29 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
-import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
-import com.example.mova.utils.AsyncUtils;
+import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.adapters.DatePickerAdapter;
 import com.example.mova.adapters.JournalEntryAdapter;
 import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -64,7 +54,8 @@ public class JournalFragment extends Fragment {
 
     @BindView(R.id.tvTitle)    protected TextView tvTitle;
     @BindView(R.id.tvDate)     protected TextView tvDate;
-    @BindView(R.id.rvDates)    protected RecyclerView rvDates;
+//    @BindView(R.id.rvDates)    protected RecyclerView rvDates;
+    @BindView(R.id.esrlDates)  protected EndlessScrollRefreshLayout<DatePickerAdapter.ViewHolder> esrlDates; // FIXME: Can I cast it to this generic just like that?
     @BindView(R.id.rvEntries)  protected RecyclerView rvEntries;
     @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
 
@@ -156,11 +147,45 @@ public class JournalFragment extends Fragment {
 
         entryAdapter = new JournalEntryAdapter(getActivity(), journal.getEntriesByDate(currDate));
 
-        rvDates.setAdapter(dateAdapter);
-        rvDates.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
+        LinearLayoutManager dateLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true);
+        LinearLayoutManager entryLayoutManager = new LinearLayoutManager(getActivity());
 
+        esrlDates.init(
+            EndlessScrollRefreshLayout.LayoutSize.match_parent,
+            EndlessScrollRefreshLayout.LayoutSize.wrap_content,
+            new EndlessScrollRefreshLayout.Handler<DatePickerAdapter.ViewHolder>() {
+                @Override
+                public void load() {
+                    loadEntries();
+                }
+
+                @Override
+                public void loadMore() {
+                    loadMoreEntries();
+                }
+
+                @Override
+                public RecyclerView.Adapter<DatePickerAdapter.ViewHolder> getAdapter() {
+                    return dateAdapter;
+                }
+
+                @Override
+                public RecyclerView.LayoutManager getLayoutManager() {
+                    return dateLayoutManager;
+                }
+
+                @Override
+                public int[] getColorScheme() {
+                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                }
+             }
+        );
+
+//        rvDates.setAdapter(dateAdapter);
+//        rvDates.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true));
+
+        rvEntries.setLayoutManager(entryLayoutManager);
         rvEntries.setAdapter(entryAdapter);
-        rvEntries.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // On fab click, open compose activity
         fabCompose.setOnClickListener(new View.OnClickListener() {
@@ -204,5 +229,9 @@ public class JournalFragment extends Fragment {
 
     private void loadEntries() {
         journal.loadEntries((e) -> displayEntries(currDate));
+    }
+
+    private void loadMoreEntries() {
+        journal.loadMoreEntries((e) -> displayEntries(currDate));
     }
 }
