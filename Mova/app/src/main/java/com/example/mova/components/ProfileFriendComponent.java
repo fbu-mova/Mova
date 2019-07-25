@@ -33,6 +33,7 @@ public class ProfileFriendComponent extends Component{
     private View view;
     private ProfileFriendViewHolder viewHolder;
     private Activity activity;
+    public static FragmentManager manager;
 
     public ProfileFriendComponent(User item){
         super();
@@ -79,7 +80,7 @@ public class ProfileFriendComponent extends Component{
             @Override
             public void onClick(View v) {
                 Fragment frag = SocialProfileFragment.newInstance(user);
-                FragmentManager manager = ((AppCompatActivity)activity)
+                manager = ((AppCompatActivity)activity)
                         .getSupportFragmentManager();
                 FrameLayout fl = activity.findViewById(R.id.flPersonalContainer);
                 //fl.removeAllViews();

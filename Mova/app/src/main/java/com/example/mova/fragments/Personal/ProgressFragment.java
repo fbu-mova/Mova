@@ -142,7 +142,7 @@ public class ProgressFragment extends Fragment {
 
         rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
-        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 6 ));
+        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 7 ));
 
 
         rvWell.setAdapter(goalsWellAdapter);

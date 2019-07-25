@@ -71,8 +71,8 @@ public class ProfileFragment extends Fragment {
     private DataComponentAdapter<Post> userPostAdapter;
 
     private User user;
-    private GroupUtils groupUtils;
-    private FriendUtils friendUtils;
+//    private GroupUtils groupUtils;
+//    private FriendUtils friendUtils;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -112,8 +112,8 @@ public class ProfileFragment extends Fragment {
         userGroups = new ArrayList<>();
         userFriends = new ArrayList<>();
         userPosts = new ArrayList<>();
-        groupUtils = new GroupUtils();
-        friendUtils = new FriendUtils();
+//        groupUtils = new GroupUtils();
+//        friendUtils = new FriendUtils();
 
         tvUsername.setText(user.getUsername());
         ParseFile file = user.getProfilePic();
@@ -221,7 +221,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        groupUtils.queryGroups(user, (groups) -> {
+        GroupUtils.queryGroups(user, (groups) -> {
             userGroups.addAll(groups);
             userGroupAdapter.notifyDataSetChanged();
             rvGroups.scrollToPosition(0);
@@ -229,7 +229,7 @@ public class ProfileFragment extends Fragment {
 
         });
 
-        friendUtils.queryFriends(user, (friends) -> {
+        FriendUtils.queryFriends(user, (friends) -> {
             userFriends.addAll(friends);
             userFriendAdapter.notifyDataSetChanged();
             rvFriends.scrollToPosition(0);

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -99,23 +98,23 @@ public class SocialFragment extends Fragment {
                 Fragment fragment;
                 switch (menuItem.getItemId()){
                     case R.id.action_scrapbook:
-                        Toast.makeText(getContext(), "Switched to scrapbook", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Switched to scrapbook", Toast.LENGTH_SHORT).show();
                         fragment = new ScrapbookFragment();
                         break;
                     case R.id.action_events:
-                        Toast.makeText(getContext(), "Switched to events", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Switched to events", Toast.LENGTH_SHORT).show();
                         fragment = new EventsFragment();
                         break;
                     case R.id.action_social_feed:
-                        Toast.makeText(getContext(), "Switched to social feed", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Switched to social feed", Toast.LENGTH_SHORT).show();
                         fragment = new SocialFeedFragment();
                         break;
                     case R.id.action_groups:
-                        Toast.makeText(getContext(), "Switched to groups", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Switched to groups", Toast.LENGTH_SHORT).show();
                         fragment = new GroupsFragment();
                         break;
                     case R.id.action_explore:
-                        Toast.makeText(getContext(), "Switched to scrapbook", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Switched to scrapbook", Toast.LENGTH_SHORT).show();
                         fragment = new ExploreFragment();
                         break;
                      default:

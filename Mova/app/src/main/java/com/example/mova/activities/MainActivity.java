@@ -2,7 +2,6 @@ package com.example.mova.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -34,11 +33,11 @@ public class MainActivity extends DelegatedResultActivity {
                 Fragment fragment;
                 switch (menuItem.getItemId()){
                     case R.id.action_personal:
-                        Toast.makeText(MainActivity.this, "Switched to Personal", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "Switched to Personal", Toast.LENGTH_SHORT).show();
                         fragment = new PersonalFragment();
                         break;
                     case R.id.action_social:
-                        Toast.makeText(MainActivity.this, "Switched to Social", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "Switched to Social", Toast.LENGTH_SHORT).show();
                         fragment = new SocialFragment();
                         break;
                     default: return true;

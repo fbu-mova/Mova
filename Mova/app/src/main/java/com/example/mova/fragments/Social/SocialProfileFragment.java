@@ -1,5 +1,7 @@
 package com.example.mova.fragments.Social;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +29,7 @@ import com.example.mova.components.ProfileShowMoreGroupsComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;
@@ -47,7 +51,7 @@ import butterknife.ButterKnife;
  */
 public class SocialProfileFragment extends Fragment {
 
-
+    //Todo - add friend requests
 
     @BindView(R.id.ivSocialPic)
     ImageView ivSocialPic;
@@ -180,6 +184,54 @@ public class SocialProfileFragment extends Fragment {
 
         rvSocialGroups.setAdapter(userGroupAdapter);
         rvSocialFriends.setAdapter(userFriendAdapter);
+
+        tvMoreFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO - Make this work
+                EdgeDecorator decorator = new EdgeDecorator(0);
+                //Toast.makeText(getContext(), "We made it", Toast.LENGTH_SHORT).show();
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View view = inflater.inflate(R.layout.layout_rv_profile_friends, null  );
+                RecyclerView rvExtraFriends = view.findViewById(R.id.rvFriendsExtra);
+                rvExtraFriends.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+                rvExtraFriends.setAdapter(userFriendAdapter);
+                rvExtraFriends.addItemDecoration(decorator);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Friends")
+                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setView(view);
+                dialog.show();
+            }
+        });
+
+        tvMoreGroups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EdgeDecorator decorator = new EdgeDecorator(10);
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View view1 = inflater.inflate(R.layout.layout_rv_profile_friends, null);
+                RecyclerView rvExtraGroups = view1.findViewById(R.id.rvFriendsExtra);
+                rvExtraGroups.setLayoutManager(new LinearLayoutManager(getActivity()));
+                rvExtraGroups.setAdapter(showMoreGroupAdapter);
+                rvExtraGroups.addItemDecoration(decorator);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Groups")
+                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setView(view1);
+                dialog.show();
+            }
+        });
 
         groupUtils.queryGroups(user, (groups) -> {
             userGroups.addAll(groups);
