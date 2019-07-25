@@ -1,5 +1,6 @@
 package com.example.mova;
 
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -37,6 +38,7 @@ public class GoalProgressBar extends View {
 
     // animation to fill progress bar (too much if done for all progress bars?)
     private ValueAnimator barAnimator;
+    private float value;
 
     // data of a goal
     private int progress;
@@ -159,14 +161,14 @@ public class GoalProgressBar extends View {
     public void setProgress(int progress) {
         this.progress = progress;
         updateGoalReached();
-        invalidate();
 
-//        setProgress(progress, true);
+        setProgress(progress, true);
     }
 
     private void setProgress(int progress, boolean animate) {
         if (animate) {
-            barAnimator = ValueAnimator.ofFloat(0,1);
+            barAnimator = ValueAnimator.ofFloat(0, 1);
+
             barAnimator.setDuration(700);
 
             // reset progress without animating
@@ -182,13 +184,12 @@ public class GoalProgressBar extends View {
                 }
             });
 
-            if(!barAnimator.isStarted()) {
+            if (!barAnimator.isStarted()) {
                 barAnimator.start();
             }
-        else {
+        } else {
             this.progress = progress;
-            invalidate();
-        }
+            postInvalidate();
         }
     }
 
