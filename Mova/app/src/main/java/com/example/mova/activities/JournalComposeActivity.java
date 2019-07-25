@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mova.Mood;
 import com.example.mova.R;
+import com.example.mova.components.Component;
+import com.example.mova.components.ComponentLayout;
+import com.example.mova.model.Media;
 import com.example.mova.model.Tag;
 import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
@@ -29,11 +33,12 @@ import butterknife.ButterKnife;
 public class JournalComposeActivity extends DelegatedResultActivity {
 
     // Incoming intent keys
-    /**
-     * The key for the entry's mood, passed as the string value of the Mood.Status.
-     */
+    /** The key for the entry's mood if one already exists, passed as the string value of the Mood.Status. */
     public static final String KEY_MOOD = "mood";
+    /** The key for the body of the entry if one already exists. */
     public static final String KEY_BODY = "body";
+    /** The key for the embedded media of the entry if it exists, passed as a ParseObject. */
+    public static final String KEY_MEDIA = "media";
 
     // Outgoing intent keys
     public static final String KEY_COMPOSED_POST = "post";
@@ -53,6 +58,7 @@ public class JournalComposeActivity extends DelegatedResultActivity {
     @BindView(R.id.bAddTag)      protected Button bAddTag;
 
     @BindView(R.id.moodSelector) protected Mood.SelectorLayout moodSelector;
+    @BindView(R.id.clMedia)      protected ComponentLayout clMedia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +121,13 @@ public class JournalComposeActivity extends DelegatedResultActivity {
                 finish();
             }
         });
+
+        // If embedded media exists, load it into its container
+        Media media = getIntent().getParcelableExtra(KEY_MEDIA);
+        Component mediaComponent = (media == null) ? null : media.makeComponent();
+        if (mediaComponent != null) {
+            clMedia.inflateComponent(this, mediaComponent);
+        }
     }
 
     private void updateTags(String tag, boolean shouldKeep) {

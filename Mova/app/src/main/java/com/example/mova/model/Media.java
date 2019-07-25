@@ -1,5 +1,6 @@
 package com.example.mova.model;
 
+import com.example.mova.components.Component;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -148,6 +149,11 @@ public class Media extends HashableParseObject {
             default:
                 return String.class;
         }
+    }
+
+    public Component makeComponent() {
+        // TODO
+        return null;
     }
 
     public static enum ContentType {
