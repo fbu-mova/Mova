@@ -146,6 +146,7 @@ public class JournalFragment extends Fragment {
             }
         });
 
+        // TODO: Set up embedded media on these, maybe with a component migration for easier use?
         entryAdapter = new JournalEntryAdapter(getActivity(), journal.getEntriesByDate(currDate));
 
         LinearLayoutManager dateLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true);
