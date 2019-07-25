@@ -11,6 +11,7 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.Component;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Adapts items to a sorted list of components, which are then displayed.
@@ -60,5 +61,11 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    public void changeSource(SortedList<T> newSource) {
+        this.items = newSource;
+        this.components.clear();
+        notifyDataSetChanged();
     }
 }

@@ -109,7 +109,6 @@ public class JournalMemoryComponent extends Component {
                             onPost.call(reflection);
                     });
 
-                    User user = ((User) User.getCurrentUser());
                     if (outMedia == null) reflection.savePost(tags, saveOnParent);
                     else                  reflection.savePost(tags, outMedia, saveOnParent);
                 }

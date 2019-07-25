@@ -11,6 +11,8 @@ import com.example.mova.components.Component;
 import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
 
+import java.util.List;
+
 public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
     private SortedList<PrioritizedComponent> components;
@@ -43,5 +45,10 @@ public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.
     @Override
     public int getItemCount() {
         return components.size();
+    }
+
+    public void changeSource(SortedList<PrioritizedComponent> newSource) {
+        this.components = newSource;
+        notifyDataSetChanged();
     }
 }
