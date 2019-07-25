@@ -45,6 +45,8 @@ public class GoalProgressBar extends View {
     private int goal;
     private boolean isGoalReached;
 
+    public static final int PROGRESS_MAX = 100;
+
     public GoalProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
@@ -53,6 +55,8 @@ public class GoalProgressBar extends View {
     private void init(AttributeSet attrs) {
         progressPaint = new Paint();
         progressPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        setGoal(PROGRESS_MAX);
 
         // extract custom attributes
 

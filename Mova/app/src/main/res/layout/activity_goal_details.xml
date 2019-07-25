@@ -60,7 +60,27 @@
             android:text="Description of group"
             app:layout_constraintStart_toEndOf="@+id/ivPhoto"
             app:layout_constraintTop_toBottomOf="@+id/tvFromGroup" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.example.mova.GoalProgressBar
+        android:id="@+id/goalpb"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+        app:goalReachedColor="@color/colorAccent"
+        app:goalNotReachedColor="@color/colorPrimaryDark"
+        app:unfilledSectionColor="@color/colorAccent"
+        app:barHeight="4dp"
+        app:goalIndicatorHeight="16dp"
+        app:goalIndicatorWidth="4dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvActions"
@@ -68,11 +88,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
+        app:layout_constraintTop_toBottomOf="@+id/goalpb" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

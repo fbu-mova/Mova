@@ -21,6 +21,7 @@ import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
+import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -34,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
 
 public class GoalCardComponent extends Component {
@@ -128,9 +130,10 @@ public class GoalCardComponent extends Component {
         viewHolder.tvDescription.setText(item.getDescription());
         Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
-        viewHolder.goalProgressBar.setGoal(70);
-        viewHolder.goalProgressBar.setProgress(50);
-
+        GoalUtils.getNumActionsComplete(item, (User) ParseUser.getCurrentUser(), (portionDone) -> {
+            int progress = (int) (portionDone * PROGRESS_MAX);
+            viewHolder.goalProgressBar.setProgress(progress);
+        });
 
         viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
         viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
