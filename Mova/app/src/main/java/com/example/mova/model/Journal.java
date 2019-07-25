@@ -148,6 +148,7 @@ public class Journal {
         if (entries.size() > 0) {
             journalQuery.whereLessThan(Post.KEY_CREATED_AT, getOldestLoadedEntry().getCreatedAt());
         }
+        journalQuery.include(Post.KEY_MEDIA);
         journalQuery.setLimit(numEntries);
         editQuery.call(journalQuery);
         journalQuery.findInBackground((List<Post> list, ParseException e) -> {

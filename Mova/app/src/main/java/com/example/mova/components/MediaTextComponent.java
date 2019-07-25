@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class MediaTextComponent extends Component {
 
     @Override
     public void render() {
+        Log.d("MediaTextComponent", "Text: " + media.getContentText());
         holder.tvText.setText(media.getContentText());
     }
 

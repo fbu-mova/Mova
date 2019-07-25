@@ -13,7 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.JournalComposeActivity;
+import com.example.mova.components.Component;
+import com.example.mova.components.ComponentLayout;
+import com.example.mova.model.Media;
 import com.example.mova.model.Tag;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.Mood;
@@ -29,9 +33,9 @@ import butterknife.ButterKnife;
 public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapter.ViewHolder> {
 
     private SortedList<Post> entries;
-    private Activity activity;
+    private DelegatedResultActivity activity;
 
-    public JournalEntryAdapter(Activity activity, SortedList<Post> entries) {
+    public JournalEntryAdapter(DelegatedResultActivity activity, SortedList<Post> entries) {
         this.activity = activity;
         this.entries = entries;
     }
@@ -47,11 +51,22 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post entry = entries.get(position);
+
         holder.tvTime.setText(TimeUtils.toTimeString(entry.getCreatedAt()));
         holder.tvBody.setText(entry.getBody());
         holder.tvLocation.setText(LocationUtils.makeLocationText(activity, entry.getLocation()));
+
         Mood.Status mood = entry.getMood();
         holder.tvMood.setText((mood == null) ? "" : mood.toString()); // TODO: Hide mood image, etc.
+
+        Media media = entry.getMedia();
+        Component mediaComponent = (media == null) ? null : media.makeComponent();
+        holder.clMedia.clear();
+        if (mediaComponent != null) {
+            holder.clMedia.setMarginTop(16).setMarginBottom(16);
+            holder.clMedia.inflateComponent(activity, mediaComponent);
+        }
+
         ParseQuery<Tag> tagQuery = entry.relTags.getQuery();
         tagQuery.findInBackground((tags, e) -> {
             if (e != null) {
@@ -80,7 +95,7 @@ public class JournalEntryAdapter extends RecyclerView.Adapter<JournalEntryAdapte
         @BindView(R.id.ivMood)     public ImageView ivMood;
         @BindView(R.id.tvMood)     public TextView tvMood;
         @BindView(R.id.tvBody)     public TextView tvBody;
-        @BindView(R.id.flMedia)    public FrameLayout flMedia;
+        @BindView(R.id.clMedia)    public ComponentLayout clMedia;
         @BindView(R.id.tvTags)     public TextView tvTags;
 
         public ViewHolder(@NonNull View itemView) {

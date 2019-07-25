@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
@@ -147,7 +148,7 @@ public class JournalFragment extends Fragment {
         });
 
         // TODO: Set up embedded media on these, maybe with a component migration for easier use?
-        entryAdapter = new JournalEntryAdapter(getActivity(), journal.getEntriesByDate(currDate));
+        entryAdapter = new JournalEntryAdapter((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate));
 
         LinearLayoutManager dateLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true);
         LinearLayoutManager entryLayoutManager = new LinearLayoutManager(getActivity());
