@@ -29,6 +29,7 @@ public class DatePickerComponent extends Component {
     private ComponentManager manager;
 
     public DatePickerComponent(Date date, OnItemClickListener clickListener) {
+        this.date = date;
         this.clickListener = clickListener;
     }
 

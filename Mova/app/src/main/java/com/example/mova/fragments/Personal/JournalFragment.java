@@ -30,7 +30,6 @@ import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
-import com.example.mova.adapters.DatePickerAdapter;
 import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
