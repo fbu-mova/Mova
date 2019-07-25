@@ -61,6 +61,10 @@ public class User extends ParseUser {
     }
 
     public void postJournalEntry(Post journalEntry, List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
+        postJournalEntry(journalEntry, tags, null, callback);
+    }
+
+    public void postJournalEntry(Post journalEntry, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
         // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
         AsyncUtils.executeMany(
             tags.size(),
@@ -81,15 +85,27 @@ public class User extends ParseUser {
                 });
             },
             (err) -> {
-//                    Toast.makeText(getActivity(), "Saving entry...", Toast.LENGTH_SHORT).show();
-                journalEntry.saveInBackground((e) -> {
+                AsyncUtils.EmptyCallback saveJournal = () -> journalEntry.saveInBackground((e) -> {
                     if (e != null) {
                         Log.e("User", "Failed to save entry", e);
-//                            Toast.makeText(getActivity(), "Failed to save entry", Toast.LENGTH_LONG).show();
                     } else {
                         relJournal.add(journalEntry, callback);
                     }
                 });
+
+                // Save media if it exists
+                if (media != null) {
+                    media.saveInBackground((e) -> {
+                        if (e != null) {
+                            Log.e("User", "Failed to create media", e);
+                        } else {
+                            journalEntry.setMedia(media);
+                            saveJournal.call();
+                        }
+                    });
+                } else {
+                    saveJournal.call();
+                }
             }
         );
     }

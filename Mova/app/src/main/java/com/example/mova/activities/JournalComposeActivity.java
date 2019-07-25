@@ -38,15 +38,17 @@ public class JournalComposeActivity extends DelegatedResultActivity {
     /** The key for the body of the entry if one already exists. */
     public static final String KEY_BODY = "body";
     /** The key for the embedded media of the entry if it exists, passed as a ParseObject. */
-    public static final String KEY_MEDIA = "media";
+    public static final String KEY_MEDIA = "inMedia";
 
     // Outgoing intent keys
     public static final String KEY_COMPOSED_POST = "post";
     public static final String KEY_COMPOSED_POST_TAGS = "tags";
+    public static final String KEY_COMPOSED_POST_MEDIA = "outMedia";
 
     public static final int COMPOSE_REQUEST_CODE = 30;
 
-    List<String> tags;
+    private List<String> tags;
+    private Media media;
 
     @BindView(R.id.tvTime)       protected TextView tvTime;
     @BindView(R.id.tvLocation)   protected TextView tvLocation;
@@ -90,7 +92,6 @@ public class JournalComposeActivity extends DelegatedResultActivity {
         bSave.setOnClickListener((view) -> {
             String body = etBody.getText().toString();
             User user = (User) ParseUser.getCurrentUser();
-            Date endDate = new Date();
             // FIXME: Maybe calculate the location on postJournalEntry to keep this running quickly?
             ParseGeoPoint location = new ParseGeoPoint();
             location.setLatitude(lat);
@@ -101,8 +102,6 @@ public class JournalComposeActivity extends DelegatedResultActivity {
             for (String s : tags) {
                 tagObjects.add(new Tag(s));
             }
-
-            // TODO: Handle media
 
             if (body.equals("")) {
                 // TODO: Move all Toast strings to a strings.xml file for cleaner code
@@ -117,13 +116,15 @@ public class JournalComposeActivity extends DelegatedResultActivity {
 
                 getIntent().putExtra(KEY_COMPOSED_POST, post);
                 getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
+                if (media != null) getIntent().putExtra(KEY_COMPOSED_POST_MEDIA, media);
+
                 setResult(RESULT_OK, getIntent());
                 finish();
             }
         });
 
         // If embedded media exists, load it into its container
-        Media media = getIntent().getParcelableExtra(KEY_MEDIA);
+        media = getIntent().getParcelableExtra(KEY_MEDIA);
         Component mediaComponent = (media == null) ? null : media.makeComponent();
         if (mediaComponent != null) {
             clMedia.inflateComponent(this, mediaComponent);

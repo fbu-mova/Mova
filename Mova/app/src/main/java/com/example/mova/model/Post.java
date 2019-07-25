@@ -7,6 +7,7 @@ import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
+import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
 @ParseClassName("Post")
@@ -20,6 +21,7 @@ public class Post extends HashableParseObject {
     public static final String KEY_MOOD = "mood";
     public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_CREATED_AT = "createdAt";
+    public static final String KEY_MEDIA = "media";
 
     //Relations
     public static final String KEY_COMMENTS = "comments";
@@ -100,5 +102,18 @@ public class Post extends HashableParseObject {
         return this;
     }
 
+    //Media
+    public Media getMedia() {
+        return (Media) getParseObject(KEY_MEDIA);
+    }
 
+    public Post setMedia(Media media) {
+        put(KEY_MEDIA, media);
+        return this;
+    }
+
+    public Post removeMedia() {
+        put(KEY_MEDIA, JSONObject.NULL);
+        return this;
+    }
 }

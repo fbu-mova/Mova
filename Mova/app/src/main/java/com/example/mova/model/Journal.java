@@ -166,12 +166,19 @@ public class Journal {
     }
 
     public void postEntry(Post journalEntry, List<Tag> tags, AsyncUtils.ItemCallback<Throwable> callback) {
-        user.postJournalEntry(journalEntry, tags, (entry) -> {
+        postEntry(journalEntry, tags, null, callback);
+    }
+
+    public void postEntry(Post journalEntry, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Throwable> callback) {
+        AsyncUtils.ItemCallback<Post> cb = (entry) -> {
             Date today = TimeUtils.getToday();
             SortedList<Post> todayEntries = getEntriesByDate(today);
             todayEntries.add(journalEntry);
             callback.call(null);
-        });
+        };
+
+        if (media == null) user.postJournalEntry(journalEntry, tags, cb);
+        else               user.postJournalEntry(journalEntry, tags, media, cb);
     }
 
     public Post getOldestLoadedEntry() {
