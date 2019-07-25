@@ -63,7 +63,10 @@ dependencies {
     // Cardview
     implementation "androidx.cardview:cardview:1.0.0"
 
-    //Graphs
+    // Graphs
     implementation 'com.jjoe64:graphview:4.2.1'
+
+    // SwipeRefreshlayout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 
 }
