@@ -140,6 +140,11 @@ public class Goal extends HashableParseObject {
             whereEqualTo(KEY_AUTHOR, ParseUser.getCurrentUser());
             return this;
         }
+
+        public Query thisGoal(String objectId) {
+            whereEqualTo("objectId", objectId);
+            return this;
+        }
     }
 }
 

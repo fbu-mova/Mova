@@ -104,20 +104,41 @@ public class GoalCardComponent extends Component {
                 Intent intent = new Intent(activity, GoalDetailsActivity.class);
                 intent.putExtra("goal", item);
 
+                intent.putExtra("previous activity", "goal card component");
+
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 
                 activity.startActivity(intent);
 
-//                activity.startActivityForDelegatedResult(intent, REQUEST_GOAL_DETAILS, new DelegatedResultActivity.ActivityResultCallback() {
-//                    @Override
-//                    public void call(int requestCode, int resultCode, Intent data) {
-//                        if (resultCode == RESULT_OK) {
-//                            if (requestCode == REQUEST_GOAL_DETAILS) {
-//
-//                            }
-//                        }
-//                    }
-//                });
+                activity.startActivityForDelegatedResult(intent, REQUEST_GOAL_DETAILS, new DelegatedResultActivity.ActivityResultCallback() {
+                    @Override
+                    public void call(int requestCode, int resultCode, Intent data) {
+                        if (resultCode == RESULT_OK) {
+                            if (requestCode == REQUEST_GOAL_DETAILS) {
+                                if (data.getBooleanExtra("edited", false)) {
+                                    // change occurred, should re-query this goal
+                                    Goal.Query query = new Goal.Query()
+                                            .thisGoal(item.getObjectId());
+
+                                    query.findInBackground(new FindCallback<Goal>() {
+                                        @Override
+                                        public void done(List<Goal> objects, ParseException e) {
+                                            if (e == null) {
+                                                Log.d(TAG, "found goal again");
+                                                render();
+                                            }
+                                            else {
+                                                Log.e(TAG, "failed to find specific goal", e);
+                                            }
+                                        }
+                                    });
+
+                                }
+
+                            }
+                        }
+                    }
+                });
             }
         });
 

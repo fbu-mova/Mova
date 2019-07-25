@@ -17,6 +17,7 @@ import com.example.mova.components.ActionComponent;
 import com.example.mova.components.ActionEditComponent;
 import com.example.mova.components.ActionViewComponent;
 import com.example.mova.components.Component;
+import com.example.mova.fragments.Personal.GoalsFragment;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.parse.FindCallback;
@@ -35,6 +36,10 @@ import static com.example.mova.model.Action.KEY_PARENT_USER;
 public class GoalDetailsActivity extends DelegatedResultActivity {
 
     private Goal goal;
+    public boolean edited;
+
+    // so so so jank
+    private Class previousClass;
 
     @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
@@ -53,6 +58,8 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         ButterKnife.bind(this);
 
         goal = getIntent().getParcelableExtra("goal");
+
+        previousClass = (getIntent().getStringExtra("previous activity") == "goal card component") ? MainActivity.class : null;
 
         tvGoalName.setText(goal.getTitle());
         tvFromGroup.setText(goal.getGroupName());
@@ -87,10 +94,10 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-//        Intent intent = new Intent(this, getCallingActivity().getClass());
-//        intent.putExtra();
-//        setResult(RESULT_OK, intent);
-//        finish();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("edited", edited);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void loadAllActions() {

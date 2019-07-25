@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.model.Action;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
@@ -86,6 +87,9 @@ public class ActionEditComponent extends Component {
     }
 
     private void saveAction(Action action, String new_action) {
+
+        ((GoalDetailsActivity) activity).edited = true;
+
         action.setTask(new_action);
 
         action.saveInBackground(new SaveCallback() {
