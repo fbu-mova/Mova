@@ -1,6 +1,7 @@
 package com.example.mova.scrolling;
 
 import android.content.Context;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mova.R;
+import com.example.mova.utils.AsyncUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,10 +21,11 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
     protected RecyclerView.Adapter<VH> adapter;
     protected EndlessRecyclerViewScrollListener scrollListener;
 
+    protected LayoutConfig config;
     protected Handler handler;
 
-    @BindView(R.id.rvItems)         protected RecyclerView rvItems;
-    @BindView(R.id.swipeContainer)  protected SwipeRefreshLayout swipeContainer;
+    @BindView(R.id.rvItems) protected RecyclerView rvItems;
+    protected SwipeContainer swipeContainer;
 
     public EndlessScrollRefreshLayout(@NonNull Context context) {
         super(context);
@@ -41,9 +44,14 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         // FIXME: wrap_content doesn't work at all, and not because of the if statement
         int layoutId = makeLayout(config);
         inflate(getContext(), layoutId, this);
+
+        swipeContainer = new SwipeContainer(R.id.swipeContainer, config.orientation);
+        swipeContainer.bind();
+
         ButterKnife.bind(this, this);
 
         this.handler = handler;
+        this.config = config;
 
         // Configure RecyclerView
         RecyclerView.LayoutManager layoutManager = handler.getLayoutManager();
@@ -154,6 +162,51 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         public static enum Orientation {
             Vertical,
             Horizontal
+        }
+    }
+
+    protected class SwipeContainer {
+        public final int viewId;
+        public final LayoutConfig.Orientation orientation;
+
+        public SwipeContainer(int viewId, LayoutConfig.Orientation orientation) {
+            this.viewId = viewId;
+            this.orientation = orientation;
+        }
+
+        public SwipeRefreshLayout vertical;
+        public custom.widget.SwipeRefreshLayout horizontal;
+
+        public void bind() {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical = EndlessScrollRefreshLayout.this.findViewById(viewId);
+            } else {
+                horizontal = EndlessScrollRefreshLayout.this.findViewById(viewId);
+            }
+        }
+
+        public void setOnRefreshListener(AsyncUtils.EmptyCallback onRefreshListener) {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical.setOnRefreshListener(() -> onRefreshListener.call());
+            } else {
+                horizontal.setOnRefreshListener(() -> onRefreshListener.call());
+            }
+        }
+
+        public void setColorSchemeResources(int... colorResIds) {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical.setColorSchemeResources(colorResIds);
+            } else {
+                horizontal.setColorSchemeResources(colorResIds);
+            }
+        }
+
+        public void setRefreshing(boolean refreshing) {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical.setRefreshing(refreshing);
+            } else {
+                horizontal.setRefreshing(refreshing);
+            }
         }
     }
 }
