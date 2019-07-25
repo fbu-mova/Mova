@@ -157,9 +157,11 @@ public class GoalProgressBar extends View {
     }
 
     public void setProgress(int progress) {
+        this.progress = progress;
         updateGoalReached();
+        invalidate();
 
-        setProgress(progress, true);
+//        setProgress(progress, true);
     }
 
     private void setProgress(int progress, boolean animate) {
@@ -183,10 +185,10 @@ public class GoalProgressBar extends View {
             if(!barAnimator.isStarted()) {
                 barAnimator.start();
             }
-            else {
-                this.progress = progress;
-                invalidate();
-            }
+        else {
+            this.progress = progress;
+            invalidate();
+        }
         }
     }
 

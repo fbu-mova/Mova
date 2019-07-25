@@ -33,7 +33,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:goalReachedColor="@color/colorAccent"
                 app:goalNotReachedColor="@color/colorPrimaryDark"
-                app:unfilledSectionColor="@color/colorPrimary"
+                app:unfilledSectionColor="@color/colorAccent"
                 app:barHeight="4dp"
                 app:goalIndicatorHeight="16dp"
                 app:goalIndicatorWidth="4dp"/>
