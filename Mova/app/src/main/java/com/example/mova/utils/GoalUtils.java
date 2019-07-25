@@ -64,6 +64,19 @@ public class GoalUtils {
         }, goal, user);
     }
 
+    /**
+     * Overloaded signature so that it doesn't calculate completion for one date only. Used to set progress in GoalProgressBar.
+     * @param goal The parent goal.
+     * @param user The user whose actions we want to track / progress we want to measure.
+     * @param callback The callback to execute once the query is complete and we have the progress.
+     */
+    public void getNumActionsComplete(Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback) {
+        getActionList((actionList) -> {
+            int numAction = actionList.size();
+            callback.call(numAction);
+        }, goal, user);
+    }
+
     public void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ItemCallback<LineGraphSeries<DataPoint>> callback){
         DataPoint[] dataPoints = new DataPoint[length];
         AsyncUtils.executeMany(length, (i, cb) -> {
