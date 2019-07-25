@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.ActionComponent;
@@ -19,6 +20,8 @@ import com.example.mova.components.ActionViewComponent;
 import com.example.mova.components.Component;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.User;
+import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -30,6 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalDetailsActivity extends DelegatedResultActivity {
@@ -41,6 +45,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.tvFromGroup)     protected TextView tvFromGroup;
     @BindView(R.id.tvDescription)   protected TextView tvDescription;
     @BindView(R.id.rvActions)       protected RecyclerView rvActions;
+    @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
 
     // recyclerview
     private List<Action> actions;
@@ -64,6 +69,12 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
                 .load(url)
                 .error(R.color.colorPrimaryDark)
                 .into(ivPhoto);
+
+        // update GoalProgressBar
+        GoalUtils.getNumActionsComplete(goal, (User) ParseUser.getCurrentUser(), (portionDone) -> {
+            int progress = (int) (portionDone * PROGRESS_MAX);
+            goalpb.setProgress(progress);
+        });
 
         // recyclerview
         actions = new ArrayList<>();

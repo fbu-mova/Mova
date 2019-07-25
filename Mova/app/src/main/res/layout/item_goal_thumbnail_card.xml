@@ -55,16 +55,22 @@
                 app:layout_constraintTop_toTopOf="@+id/ivPhoto"
                 app:layout_constraintVertical_bias="0.26" />
 
-            <ProgressBar
-                android:id="@+id/pbProgress"
-                style="?android:attr/progressBarStyleHorizontal"
+            <com.example.mova.GoalProgressBar
+                android:id="@+id/goalProgressBar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/ivPhoto"
                 app:layout_constraintStart_toStartOf="@+id/ivPhoto"
-                app:layout_constraintTop_toBottomOf="@+id/ivPhoto" />
+                app:layout_constraintTop_toBottomOf="@+id/ivPhoto"
+                app:goalReachedColor="@color/colorAccent"
+                app:goalNotReachedColor="@color/colorPrimaryDark"
+                app:unfilledSectionColor="@color/colorAccent"
+                app:barHeight="4dp"
+                app:goalIndicatorHeight="16dp"
+                app:goalIndicatorWidth="4dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
