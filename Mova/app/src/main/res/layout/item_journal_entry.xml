@@ -88,6 +88,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="No tags" />
+
+        <Switch
+            android:id="@+id/sComments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="Comments" />
+
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvComments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="4dp" />
 
 </LinearLayout>
