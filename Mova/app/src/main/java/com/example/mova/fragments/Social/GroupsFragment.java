@@ -1,54 +1,74 @@
 package com.example.mova.fragments.Social;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.GoalCardComponent;
+import com.example.mova.components.GroupThumbnailComponent;
+import com.example.mova.model.Goal;
+import com.example.mova.model.Group;
+import com.example.mova.model.User;
+import com.example.mova.utils.GoalUtils;
+import com.example.mova.utils.GroupUtils;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GroupsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link GroupsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class GroupsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    //TODO - fix scrolling on goals
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    User user;
 
-    private OnFragmentInteractionListener mListener;
+    @BindView(R.id.nsvGroups)
+    NestedScrollView nsvGroups;
+
+    @BindView(R.id.svGroups)
+    SearchView svGroups;
+
+
+    @BindView(R.id.rvGroups) RecyclerView rvGroups;
+    protected List<Group> userGroups;
+    private DataComponentAdapter<Group> groupAdapter;
+
+    @BindView(R.id.rvActiveGoals) RecyclerView rvActiveGoals;
+    protected List<Goal> userActiveSocialGoals;
+    private DataComponentAdapter<Goal> activeGoalAdaper;
+
+
 
     public GroupsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GroupsFragment.
-     */
-    // TODO: Rename and change types and count of parameters
     public static GroupsFragment newInstance(String param1, String param2) {
         GroupsFragment fragment = new GroupsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,10 +76,6 @@ public class GroupsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -69,42 +85,52 @@ public class GroupsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_groups, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+        user = (User) ParseUser.getCurrentUser();
+        userGroups = new ArrayList<>();
+        userActiveSocialGoals = new ArrayList<>();
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+        groupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
+            @Override
+            public Component makeComponent(Group item) {
+                Component component = new GroupThumbnailComponent(item);
+                return component;
+            }
+        };
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        activeGoalAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), userActiveSocialGoals) {
+            @Override
+            public Component makeComponent(Goal item) {
+                Component component = new GoalCardComponent(item);
+                return component;
+            }
+        };
+
+        rvGroups.setLayoutManager(new GridLayoutManager(getContext(), 2,  GridLayoutManager.HORIZONTAL,false));
+        rvActiveGoals.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        rvGroups.setAdapter(groupAdapter);
+        rvActiveGoals.setAdapter(activeGoalAdaper);
+
+        GroupUtils.queryGroups(user, (groups) -> {
+            userGroups.addAll(groups);
+            groupAdapter.notifyDataSetChanged();
+            rvGroups.scrollToPosition(0);
+
+
+        });
+
+        GoalUtils.queryGoals(user, (goals) -> {
+            for(Goal goal:goals){
+                if(!goal.getIsPersonal()){
+                    userActiveSocialGoals.add(0, goal);
+                    activeGoalAdaper.notifyItemInserted(0);
+                }
+            }
+            rvActiveGoals.scrollToPosition(0);
+        });
     }
 }

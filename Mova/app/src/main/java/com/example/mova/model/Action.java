@@ -3,7 +3,6 @@ package com.example.mova.model;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseClassName;
-import com.parse.ParseObject;
 
 import java.util.Calendar;
 import java.util.Date;

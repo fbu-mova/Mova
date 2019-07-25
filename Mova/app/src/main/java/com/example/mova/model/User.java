@@ -1,19 +1,17 @@
 package com.example.mova.model;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.utils.AsyncUtils;
-import com.example.mova.utils.StableNumericalIdProvider;
-import com.example.mova.utils.TimeUtils;
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.Date;
 import java.util.List;
 
 @ParseClassName("_User")
@@ -60,6 +58,18 @@ public class User extends ParseUser {
         return this;
     }
 
+    public void isFriendsWith(User user, AsyncUtils.ItemCallback<Boolean> callback){
+        getFriendsList((friendList) -> {
+            for( User friend : friendList){
+                if(friend.getObjectId().equals(user.getObjectId())){
+                    callback.call(true);
+                    return;
+                }
+            }
+            callback.call(false);
+        });
+    }
+
     public void postJournalEntry(Post journalEntry, List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
         // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
         AsyncUtils.executeMany(
@@ -94,6 +104,16 @@ public class User extends ParseUser {
         );
     }
 
+    public void getFriendsList(AsyncUtils.ListCallback<User> callback){
+        ParseQuery<User> pqUser = this.relFriends.getQuery();
+        pqUser.findInBackground(new FindCallback<User>() {
+            @Override
+            public void done(List<User> objects, ParseException e) {
+                callback.call(objects);
+            }
+        });
+    }
+
     @Override
     public int hashCode() {
         return HashableParseObject.getHashCode(this);
@@ -103,4 +123,5 @@ public class User extends ParseUser {
     public boolean equals(@Nullable Object obj) {
         return HashableParseObject.equals(this, obj);
     }
+
 }

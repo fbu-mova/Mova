@@ -1,8 +1,7 @@
-package com.example.mova.fragments.Personal;
+package com.example.mova.fragments.Social;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.activities.LoginActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.ProfileFriendComponent;
@@ -31,6 +30,7 @@ import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseFile;
@@ -44,48 +44,66 @@ import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
+ * Activities that contain this fragment must implement the
+ * to handle interaction events.
+ * Use the {@link SocialProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment {
+public class SocialProfileFragment extends Fragment {
 
-    @BindView(R.id.btnLogout) protected Button btnLogout;
-    @BindView(R.id.tvUsername) protected TextView tvUsername;
-    @BindView(R.id.tvDescription) protected TextView tvDesciption;
-    @BindView(R.id.tvShowGroups) protected TextView tvShowGroups;
-    @BindView(R.id.tvShowFriends) protected TextView tvShowFriends;
-    @BindView(R.id.ivProfilePic) protected ImageView ivProfilePic;
+    //Todo - add friend requests
+
+    @BindView(R.id.ivSocialPic)
+    ImageView ivSocialPic;
+    @BindView(R.id.tvName)
+    TextView tvName;
+    @BindView(R.id.btnAddFriend)
+    Button btnAddFriend;
+    @BindView(R.id.tvMoreGroups)
+    TextView tvMoreGroups;
+    @BindView(R.id.tvMoreFriends)
+    TextView tvMoreFriends;
+    @BindView(R.id.tvMUTUALFRIENDS)
+    TextView tvMUTUALFRIENDS;
+    @BindView(R.id.divider2)
+    View divider;
+    @BindView(R.id.tvPOSTS)
+    TextView tvPOSTS;
 
     private DataComponentAdapter<Group> showMoreGroupAdapter;
 
-    @BindView(R.id.rvGroups) protected RecyclerView rvGroups;
+    @BindView(R.id.rvSocialGroups)
+    RecyclerView rvSocialGroups;
     protected List<Group> userGroups;
     private DataComponentAdapter<Group> userGroupAdapter;
 
-    @BindView(R.id.rvFriendsExtra) protected RecyclerView rvFriends;
+    @BindView(R.id.rvSocialFriends)
+    RecyclerView rvSocialFriends;
     protected List<User> userFriends;
     private DataComponentAdapter<User> userFriendAdapter;
 
-    @BindView(R.id.rvPosts) protected RecyclerView rvPosts;
+    @BindView(R.id.rvSocialPosts)
+    RecyclerView rvSocialPosts;
     protected List<Post> userPosts;
     private DataComponentAdapter<Post> userPostAdapter;
 
-    private User user;
-//    private GroupUtils groupUtils;
-//    private FriendUtils friendUtils;
 
-    public ProfileFragment() {
+    private GroupUtils groupUtils;
+    private FriendUtils friendUtils;
+    User user;
+    User currentUser;
+
+
+
+    public SocialProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
+
+    public static SocialProfileFragment newInstance(User item) {
+        SocialProfileFragment fragment = new SocialProfileFragment();
         Bundle args = new Bundle();
+        args.putParcelable("user", item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,52 +111,46 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_social_profile, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-        user = (User) ParseUser.getCurrentUser();
+        ButterKnife.bind(this,view);
+        user = this.getArguments().getParcelable("user");
         userGroups = new ArrayList<>();
         userFriends = new ArrayList<>();
         userPosts = new ArrayList<>();
-//        groupUtils = new GroupUtils();
-//        friendUtils = new FriendUtils();
-
-        tvUsername.setText(user.getUsername());
+        groupUtils = new GroupUtils();
+        friendUtils = new FriendUtils();
+        currentUser = (User) ParseUser.getCurrentUser();
+        currentUser.isFriendsWith(user, (bool) -> {
+            Toast.makeText(getContext(), "Inside", Toast.LENGTH_SHORT).show();
+            if(!bool){
+                tvMUTUALFRIENDS.setVisibility(View.GONE);
+                tvMoreFriends.setVisibility(View.GONE);
+                tvPOSTS.setVisibility(View.GONE);
+                rvSocialPosts.setVisibility(View.GONE);
+                rvSocialFriends.setVisibility(View.GONE);
+                divider.setVisibility(View.GONE);
+            }
+        });
+        btnAddFriend.setText("Friends");
+        tvName.setText(user.getUsername());
         ParseFile file = user.getProfilePic();
         if(file != null){
             String imageUrl = file.getUrl();
             Glide.with(getContext())
                     .load(imageUrl)
-                    .into(ivProfilePic);
+                    .into(ivSocialPic);
         }
-
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseUser currentUser = ParseUser.getCurrentUser();
-                String username = currentUser.getUsername();
-
-                ParseUser.logOut();
-                currentUser = ParseUser.getCurrentUser();
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-//                intent.putExtra("username", username);
-
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
 
         userGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
@@ -167,13 +179,13 @@ public class ProfileFragment extends Fragment {
 
 
 
-        rvGroups.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        rvFriends.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rvSocialGroups.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rvSocialFriends.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-        rvGroups.setAdapter(userGroupAdapter);
-        rvFriends.setAdapter(userFriendAdapter);
+        rvSocialGroups.setAdapter(userGroupAdapter);
+        rvSocialFriends.setAdapter(userFriendAdapter);
 
-        tvShowFriends.setOnClickListener(new View.OnClickListener() {
+        tvMoreFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO - Make this work
@@ -198,7 +210,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        tvShowGroups.setOnClickListener(new View.OnClickListener() {
+        tvMoreGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EdgeDecorator decorator = new EdgeDecorator(10);
@@ -221,18 +233,28 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        GroupUtils.queryGroups(user, (groups) -> {
+        groupUtils.queryGroups(user, (groups) -> {
             userGroups.addAll(groups);
             userGroupAdapter.notifyDataSetChanged();
-            rvGroups.scrollToPosition(0);
+            rvSocialGroups.scrollToPosition(0);
 
 
         });
 
-        FriendUtils.queryFriends(user, (friends) -> {
-            userFriends.addAll(friends);
-            userFriendAdapter.notifyDataSetChanged();
-            rvFriends.scrollToPosition(0);
+        friendUtils.queryFriends(user, (friends) -> {
+            AsyncUtils.executeMany(friends.size(), (i,cb) -> {
+                User friend = friends.get(i);
+                currentUser.isFriendsWith(friend, (bool) -> {
+                    if(bool){
+                        userFriends.add(friend);
+                        userFriendAdapter.notifyDataSetChanged();
+                    }
+                });
+                cb.call(null);
+            }, (e) -> {
+                    rvSocialFriends.scrollToPosition(0);
+            });
+
         });
     }
 }

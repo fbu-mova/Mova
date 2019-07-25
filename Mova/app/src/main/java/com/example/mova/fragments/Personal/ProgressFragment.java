@@ -142,7 +142,7 @@ public class ProgressFragment extends Fragment {
 
         rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
-        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 6 ));
+        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 7 ));
 
 
         rvWell.setAdapter(goalsWellAdapter);
@@ -170,7 +170,7 @@ public class ProgressFragment extends Fragment {
 
             //organize goals and create adapter
             goalUtils.sortGoals(mGoals, length, (User) ParseUser.getCurrentUser(), (tsGoals) -> {
-                //Log.e("ProgressFragment", "Were in boys");
+                Log.e("ProgressFragment", "Were in boys");
                 //Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
                 for(int i = 0; i < mGoals.size(); i++){
                     if(tsGoals.size() == 0) {
