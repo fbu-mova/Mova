@@ -1,7 +1,6 @@
 package com.example.mova.scrolling;
 
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
@@ -23,7 +22,7 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
     protected EndlessRecyclerViewScrollListener scrollListener;
 
     protected LayoutConfig config;
-    protected Handler handler;
+    protected ScrollLoadHandler handler;
 
     @BindView(R.id.rvItems) protected RecyclerView rvItems;
     protected SwipeContainer swipeContainer;
@@ -40,9 +39,7 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(LayoutConfig config, Handler<VH> handler) {
-        // Determine whether to use wrap_constraint or match_parent layouts
-        // FIXME: wrap_content doesn't work at all, and not because of the if statement
+    public void init(LayoutConfig config, ScrollLoadHandler<VH> handler) {
         int layoutId = makeLayout(config);
         inflate(getContext(), layoutId, this);
 
@@ -96,11 +93,14 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
     }
 
     private int makeLayout(LayoutConfig config) {
+        // FIXME: wrap_content doesn't work at all, and not because of the if statement
         int layoutId;
 
+        // Determine whether to use wrap_constraint or match_parent layouts
         boolean xmp = config.widthSize == LayoutConfig.Size.match_parent;
         boolean ymp = config.heightSize == LayoutConfig.Size.match_parent;
 
+        // Determine whether to use vertical or horizontal pull to refresh
         if (config.orientation == LayoutConfig.Orientation.Vertical) {
             if      (xmp && ymp)  layoutId = R.layout.layout_esrl_v_xmp_ymp;
             else if (xmp && !ymp) layoutId = R.layout.layout_esrl_v_xmp_ywc;
@@ -123,16 +123,6 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light
         };
-    }
-
-    public static abstract class Handler<VH extends RecyclerView.ViewHolder> {
-        public abstract void load();
-        public abstract void loadMore();
-
-        public abstract RecyclerView.Adapter<VH> getAdapter();
-        public abstract RecyclerView.LayoutManager getLayoutManager();
-
-        public abstract int[] getColorScheme();
     }
 
     public static class LayoutConfig {

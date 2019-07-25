@@ -28,6 +28,7 @@ import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
+import com.example.mova.scrolling.ScrollLoadHandler;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.model.Post;
@@ -162,7 +163,7 @@ public class JournalFragment extends Fragment {
             new EndlessScrollRefreshLayout.LayoutConfig()
                     .setHeightSize(EndlessScrollRefreshLayout.LayoutConfig.Size.wrap_content)
                     .setOrientation(EndlessScrollRefreshLayout.LayoutConfig.Orientation.Horizontal),
-            new EndlessScrollRefreshLayout.Handler<Component.ViewHolder>() {
+            new ScrollLoadHandler<Component.ViewHolder>() {
                 @Override
                 public void load() {
                     loadEntries();
@@ -192,7 +193,7 @@ public class JournalFragment extends Fragment {
 
         esrlEntries.init(
             new EndlessScrollRefreshLayout.LayoutConfig(),
-            new EndlessScrollRefreshLayout.Handler<Component.ViewHolder>() {
+            new ScrollLoadHandler<Component.ViewHolder>() {
                 // TODO: Perhaps only load more entries for that specific date?
                 @Override
                 public void load() {
