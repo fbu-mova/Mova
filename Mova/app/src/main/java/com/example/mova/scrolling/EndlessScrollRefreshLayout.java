@@ -1,7 +1,6 @@
 package com.example.mova.scrolling;
 
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -84,10 +83,10 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
     private int makeLayout(LayoutConfig config) {
         int layoutId;
 
-        boolean xmp = config.widthSize == LayoutSize.match_parent;
-        boolean ymp = config.heightSize == LayoutSize.match_parent;
+        boolean xmp = config.widthSize == LayoutConfig.Size.match_parent;
+        boolean ymp = config.heightSize == LayoutConfig.Size.match_parent;
 
-        if (config.orientation == Orientation.Vertical) {
+        if (config.orientation == LayoutConfig.Orientation.Vertical) {
             if      (xmp && ymp)  layoutId = R.layout.layout_esrl_v_xmp_ymp;
             else if (xmp && !ymp) layoutId = R.layout.layout_esrl_v_xmp_ywc;
             else if (!xmp && ymp) layoutId = R.layout.layout_esrl_v_xwc_ymp;
@@ -121,19 +120,40 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         public abstract int[] getColorScheme();
     }
 
-    public static enum LayoutSize {
-        match_parent,
-        wrap_content
-    }
+    public static class LayoutConfig {
+        public Orientation orientation;
+        public Size widthSize;
+        public Size heightSize;
 
-    public static enum Orientation {
-        Vertical,
-        Horizontal
-    }
+        public LayoutConfig() {
+            orientation = Orientation.Vertical;
+            widthSize = Size.match_parent;
+            heightSize = Size.match_parent;
+        }
 
-    public static interface LayoutConfig {
-        Orientation orientation = Orientation.Vertical;
-        LayoutSize widthSize = LayoutSize.match_parent;
-        LayoutSize heightSize = LayoutSize.match_parent;
+        public LayoutConfig setOrientation(Orientation orientation) {
+            this.orientation = orientation;
+            return this;
+        }
+
+        public LayoutConfig setWidthSize(Size widthSize) {
+            this.widthSize = widthSize;
+            return this;
+        }
+
+        public LayoutConfig setHeightSize(Size heightSize) {
+            this.heightSize = heightSize;
+            return this;
+        }
+
+        public static enum Size {
+            match_parent,
+            wrap_content
+        }
+
+        public static enum Orientation {
+            Vertical,
+            Horizontal
+        }
     }
 }

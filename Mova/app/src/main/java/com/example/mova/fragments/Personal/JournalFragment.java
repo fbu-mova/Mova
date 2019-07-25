@@ -154,8 +154,9 @@ public class JournalFragment extends Fragment {
         LinearLayoutManager entryLayoutManager = new LinearLayoutManager(getActivity());
 
         esrlDates.init(
-            EndlessScrollRefreshLayout.LayoutSize.match_parent,
-            EndlessScrollRefreshLayout.LayoutSize.wrap_content,
+            new EndlessScrollRefreshLayout.LayoutConfig()
+                    .setHeightSize(EndlessScrollRefreshLayout.LayoutConfig.Size.wrap_content)
+                    .setOrientation(EndlessScrollRefreshLayout.LayoutConfig.Orientation.Horizontal),
             new EndlessScrollRefreshLayout.Handler<DatePickerAdapter.ViewHolder>() {
                 @Override
                 public void load() {
@@ -185,9 +186,8 @@ public class JournalFragment extends Fragment {
         );
 
         esrlEntries.init(
-            EndlessScrollRefreshLayout.LayoutSize.match_parent,
-            EndlessScrollRefreshLayout.LayoutSize.match_parent,
-            new EndlessScrollRefreshLayout.Handler() {
+            new EndlessScrollRefreshLayout.LayoutConfig(),
+            new EndlessScrollRefreshLayout.Handler<JournalEntryAdapter.ViewHolder>() {
                 // TODO: Perhaps only load more entries for that specific date?
                 @Override
                 public void load() {
