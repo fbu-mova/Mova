@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
@@ -127,6 +128,9 @@ public class GoalCardComponent extends Component {
         viewHolder.tvDescription.setText(item.getDescription());
         Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
+        viewHolder.goalProgressBar.setGoal(70);
+        viewHolder.goalProgressBar.setProgress(50);
+
 
         viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
         viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
@@ -184,14 +188,14 @@ public class GoalCardComponent extends Component {
 
     public static class GoalCardViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.pbProgress)      protected ProgressBar pbProgress; // todo -- later
+        @BindView(R.id.goalProgressBar) protected GoalProgressBar goalProgressBar;
         @BindView(R.id.tvQuote)         protected TextView tvQuote; // todo -- add to Parse ? stretch goal
         @BindView(R.id.tvName)          protected TextView tvName;
         @BindView(R.id.tvDescription)   protected TextView tvDescription;
         @BindView(R.id.rvActions)       protected RecyclerView rvActions;
         @BindView(R.id.tvNumDone)       protected TextView tvNumDone; // fixme -- in personal, only one person ?
         @BindView(R.id.tvTag)           protected TextView tvTag; // fixme -- what about multiple tags?
-        @BindView(R.id.layout)        protected ConstraintLayout clLayout;
+        @BindView(R.id.layout)          protected ConstraintLayout clLayout;
 
         public GoalCardViewHolder(@NonNull View itemView) {
             super(itemView);
