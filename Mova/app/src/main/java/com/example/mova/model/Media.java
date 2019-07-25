@@ -23,7 +23,7 @@ public class Media extends HashableParseObject {
     }
 
     public Media setType(ContentType type){
-        put(KEY_TYPE, type);
+        put(KEY_TYPE, type.getValue());
         return this;
     }
 
