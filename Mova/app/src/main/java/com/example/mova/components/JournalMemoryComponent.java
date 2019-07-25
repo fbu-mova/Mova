@@ -97,19 +97,22 @@ public class JournalMemoryComponent extends Component {
             intent.putExtra(JournalComposeActivity.KEY_MEDIA, media);
             activity.startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE, (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                    Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
+                    Post reflection = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
                     ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
                     Media outMedia = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST_MEDIA);
 
                     // TODO: Switch to different activity rather than coercing JournalComposeActivity's results to a normal post
-                    journalEntry.removeMood();
-                    journalEntry.setParent(entry);
+                    reflection.removeMood();
+                    reflection.setParent(entry);
 
-                    // TODO: Post entry as a comment
+                    AsyncUtils.ItemCallback<Post> saveOnParent = (postFromCb) ->
+                        entry.relComments.add(reflection, (postFromCb2) -> {
+                            onPost.call(reflection);
+                    });
 
                     User user = ((User) User.getCurrentUser());
-                    if (outMedia == null) user.postJournalEntry(journalEntry, tags, onPost);
-                    else                  user.postJournalEntry(journalEntry, tags, outMedia, onPost);
+                    if (outMedia == null) reflection.savePost(tags, saveOnParent);
+                    else                  reflection.savePost(tags, outMedia, saveOnParent);
                 }
             });
         });
