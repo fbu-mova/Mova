@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.SortedList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +21,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.SortedDataComponentAdapter;
 import com.example.mova.components.Component;
+import com.example.mova.components.DatePickerComponent;
 import com.example.mova.components.JournalEntryComponent;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
@@ -32,7 +31,6 @@ import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.adapters.DatePickerAdapter;
-import com.example.mova.adapters.JournalEntryAdapter;
 import com.example.mova.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -50,9 +48,7 @@ import butterknife.ButterKnife;
  */
 public class JournalFragment extends Fragment {
 
-    private DatePickerAdapter dateAdapter;
-//    private SortedDataComponentAdapter<Date> dateAdapter;
-//    private JournalEntryAdapter entryAdapter;
+    private SortedDataComponentAdapter<Date> dateAdapter;
     private SortedDataComponentAdapter<Post> entryAdapter;
 
     private Journal journal;
@@ -60,7 +56,7 @@ public class JournalFragment extends Fragment {
 
     @BindView(R.id.tvTitle)     protected TextView tvTitle;
     @BindView(R.id.tvDate)      protected TextView tvDate;
-    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<DatePickerAdapter.ViewHolder> esrlDates;
+    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlDates;
     @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
     @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
 
@@ -143,15 +139,16 @@ public class JournalFragment extends Fragment {
         );
 
         // On date click, display only the entries for that date
-        dateAdapter = new DatePickerAdapter(getActivity(), journal.getDates(), new DatePickerAdapter.OnItemClickListener() {
+        dateAdapter = new SortedDataComponentAdapter<Date>((DelegatedResultActivity) getActivity(), journal.getDates()) {
             @Override
-            public void onClick(View v, Date date, int position) {
-                currDate = date;
-                displayEntries(currDate);
+            public Component makeComponent(Date item) {
+                return new DatePickerComponent(item, (view, date) -> {
+                    currDate = date;
+                    displayEntries(currDate);
+                });
             }
-        });
+        };
 
-//        entryAdapter = new JournalEntryAdapter((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate));
         entryAdapter = new SortedDataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate)) {
             @Override
             public Component makeComponent(Post item) {
@@ -166,7 +163,7 @@ public class JournalFragment extends Fragment {
             new EndlessScrollRefreshLayout.LayoutConfig()
                     .setHeightSize(EndlessScrollRefreshLayout.LayoutConfig.Size.wrap_content)
                     .setOrientation(EndlessScrollRefreshLayout.LayoutConfig.Orientation.Horizontal),
-            new EndlessScrollRefreshLayout.Handler<DatePickerAdapter.ViewHolder>() {
+            new EndlessScrollRefreshLayout.Handler<Component.ViewHolder>() {
                 @Override
                 public void load() {
                     loadEntries();
@@ -178,7 +175,7 @@ public class JournalFragment extends Fragment {
                 }
 
                 @Override
-                public DatePickerAdapter getAdapter() {
+                public SortedDataComponentAdapter<Date> getAdapter() {
                     return dateAdapter;
                 }
 
