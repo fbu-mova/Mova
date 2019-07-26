@@ -1,16 +1,21 @@
 package com.example.mova.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mova.ConfirmShareGoalDialog;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -20,12 +25,14 @@ import com.example.mova.components.ActionViewComponent;
 import com.example.mova.components.Component;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.Group;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +45,10 @@ import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalDetailsActivity extends DelegatedResultActivity {
 
+    private static final String TAG = "goal details activity";
     private Goal goal;
+
+    private boolean isPersonal;
 
     @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
@@ -46,6 +56,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.tvDescription)   protected TextView tvDescription;
     @BindView(R.id.rvActions)       protected RecyclerView rvActions;
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
+    @BindView(R.id.btShare)         protected Button btShare;
 
     // recyclerview
     private List<Action> actions;
@@ -62,6 +73,19 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         tvGoalName.setText(goal.getTitle());
         tvFromGroup.setText(goal.getGroupName());
         tvDescription.setText(goal.getDescription());
+
+        btShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // todo -- create pop-up to confirm
+                    // ask which group to share it in (or just friends)
+                    // ask if want to include a description (need to create the post as well, with embedded media)
+                    // include top toolbar in pop-up to confirm
+
+                confirmShare();
+            }
+        });
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
 
@@ -92,6 +116,14 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         rvActions.setAdapter(actionsAdapter);
 
         loadAllActions();
+    }
+
+    private void confirmShare() {
+
+        FragmentManager fm = getSupportFragmentManager();
+        ConfirmShareGoalDialog confirmShareGoalDialog = ConfirmShareGoalDialog.newInstance(goal);
+        confirmShareGoalDialog.show(fm, "showingConfirmShareGoalDialog");
+
     }
 
     @Override
