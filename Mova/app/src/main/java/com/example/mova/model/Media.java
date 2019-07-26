@@ -29,12 +29,12 @@ public class Media extends HashableParseObject {
     }
 
     //Parent
-    public User getParent(){
-        return (User) getParseUser(KEY_PARENT);
+    public Post getParent(){
+        return (Post) getParseObject(KEY_PARENT);
     }
 
-    public Media setParent(User user){
-        put(KEY_PARENT, user);
+    public Media setParent(Post post){
+        put(KEY_PARENT, post);
         return this;
     }
 

@@ -232,7 +232,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         // creates media instance to store goal, then put back in post and save
 
         Media goalMedia = new Media();
-        goalMedia.setParent((User) ParseUser.getCurrentUser())
+        goalMedia.setParent(post)
                 .setContent(goal);
 
         goalMedia.saveInBackground(new SaveCallback() {
@@ -291,7 +291,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         if (group != null) {
             goal.setGroup(group);
         }
-        
+
         goal.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
