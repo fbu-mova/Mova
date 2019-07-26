@@ -24,7 +24,9 @@ import com.example.mova.model.Group;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GroupUtils;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -88,7 +90,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
                     spinnerArray.add(groupsList.get(i).getName());
                 }
             }
-        });
+        }); // fixme -- here and later group finding logic assumes all groups will have diff names, since that's how we find group again (can store locally?)
 
         // set spinner adapter
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
@@ -114,30 +116,75 @@ public class ConfirmShareGoalDialog extends DialogFragment {
 
     private void shareGoal(String description, String groupName) {
 
-        Toast.makeText(getContext(), "you made it", Toast.LENGTH_LONG).show();
-
         // TODO lots of async stuff:
             // find group to share it in (or just friends, which is null group)
             // save goal to group's goal relation (as a goal)
-            // save post of goal to group's post relation
+            // create + save post of goal, possible to group's post relation if group exists
                 // (everything that shows up in social is as a post w/ embedded media)
                 // can query for goals by querying equality via embedded media
             // save updated goal isPersonal boolean
             // save updated goal fromGroup pointer to group -- the fact that they posted it is stored in post version of goal
 
-//        goal.setIsPersonal(true);
-//        goal.saveInBackground(new SaveCallback() {
-//            @Override
-//            public void done(ParseException e) {
-//                if (e == null) {
-//                    Log.d(TAG, "shared goal successfully");
-//                    Toast.makeText(getContext(), "Shared goal!", Toast.LENGTH_SHORT).show();
-//                }
-//                else {
-//                    Log.e(TAG, "sharing goal failed");
-//                }
-//            }
-//        });
+        if (groupName == "Friends") {
+            // only need to make post
+            makeGoalPost(goal);
+        }
+        else {
+            // need to find group, then make post
+
+            Group.Query groupQuery = ((Group.Query) ((User) ParseUser.getCurrentUser()).relGroups.getQuery()).getGroup(groupName);
+            groupQuery.findInBackground(new FindCallback<Group>() {
+                @Override
+                public void done(List<Group> objects, ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "Successfully found group");
+                        if (objects.size() == 1) {
+                            makeGoalPost(goal, objects.get(0));
+                        }
+                        else {
+                            Log.e(TAG, "Found two groups with the same name");
+                        }
+                    }
+                }
+            });
+        }
+
+    }
+
+    private void makeGoalPost(Goal goal, Group group) {
+        // TODO -- if just friends, then group is null. is ok to combine? or can split
+
+        // TODO -- save goal to group relation of goals
+
+        // TODO -- create specific use case of "bi"-directional (or just multi-directional) goal saving:
+            // want to save post of goal to Group's posts
+
+        // TODO -- update fromGroup pointer in the goal
+
+        saveGoal(goal);
+    }
+
+    private void makeGoalPost(Goal goal) {
+
+        makeGoalPost(goal, null);
+
+    }
+
+    private void saveGoal(Goal goal) {
+
+        goal.setIsPersonal(true);
+        goal.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "shared goal successfully");
+                    Toast.makeText(getContext(), "Shared goal!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.e(TAG, "sharing goal failed");
+                }
+            }
+        });
 
     }
 }
