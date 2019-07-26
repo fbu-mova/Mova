@@ -17,6 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
+        <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <!-- possible FIXME: if weird crashes, it's bc authorities attr is not unique across apps (Parstagram)
+                - either need to change name or delete Parstagram from emulator -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.codepath.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/fileprovider" />
+        </provider>
+
         <activity android:name=".activities.GoalDetailsActivity"></activity>
         <activity android:name=".activities.GoalComposeActivity"></activity>
         <activity android:name=".activities.SignupActivity" />
