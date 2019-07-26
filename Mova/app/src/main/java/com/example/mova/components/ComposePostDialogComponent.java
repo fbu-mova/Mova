@@ -222,8 +222,6 @@ public abstract class ComposePostDialogComponent extends Component {
     protected abstract void onPost(Post post, List<Tag> tags, Media media, Post postToReply);
 
     private Post makePost() {
-        Post post = new Post();
-
         String body = holder.etBody.getText().toString();
 
         if (body.equals("")) {
@@ -231,6 +229,7 @@ public abstract class ComposePostDialogComponent extends Component {
             return null;
         }
 
+        Post post = new Post();
         post.setBody(body);
         post.setAuthor((User) User.getCurrentUser());
 

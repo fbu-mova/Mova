@@ -106,7 +106,8 @@ public class AsyncUtils {
      * @param callback The callback to call once all actions have finished.
      */
     public static void waterfall(int count, ExecuteManyCallback execute, ItemCallback<Throwable> callback) {
-        execute.call(0, (e) -> waterfallCallNext(0, count, e, execute, callback));
+        // execute.call(0, (e) -> waterfallCallNext(0, count, e, execute, callback));
+        waterfallCallNext(-1, count, null, execute, callback);
     }
 
     /**
@@ -132,7 +133,7 @@ public class AsyncUtils {
         } else {
             i++;
             // If done, call the callback
-            if (i == count) {
+            if (i >= count) {
                 finalCb.call(err);
             } else {
                 // Otherwise, execute the next position

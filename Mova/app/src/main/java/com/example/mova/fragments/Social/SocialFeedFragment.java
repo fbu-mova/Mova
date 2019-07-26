@@ -1,15 +1,32 @@
 package com.example.mova.fragments.Social;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.components.ComponentLayout;
+import com.example.mova.components.ComposePostDialogComponent;
+import com.example.mova.model.Media;
+import com.example.mova.model.Post;
+import com.example.mova.model.Tag;
+import com.example.mova.utils.AsyncUtils;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,16 +37,10 @@ import com.example.mova.R;
  * create an instance of this fragment.
  */
 public class SocialFeedFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    @BindView(R.id.button) protected Button button; // a very temporary button for testing
 
     public SocialFeedFragment() {
         // Required empty public constructor
@@ -38,17 +49,13 @@ public class SocialFeedFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment SocialFeedFragment.
      */
     // TODO: Rename and change types and count of parameters
     public static SocialFeedFragment newInstance(String param1, String param2) {
         SocialFeedFragment fragment = new SocialFeedFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        // TODO: Set desired params
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,8 +64,7 @@ public class SocialFeedFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            // TODO: Set desired params
         }
     }
 
@@ -69,11 +75,34 @@ public class SocialFeedFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_social_feed, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+        // Temporary button press for testing ComposePostDialogComponent
+        button.setOnClickListener((v) -> {
+            View dialogView = getLayoutInflater().inflate(R.layout.layout_component_layout, null);
+            ComponentLayout container = dialogView.findViewById(R.id.componentLayout);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setView(dialogView);
+            AlertDialog dialog = builder.create();
+
+            ComposePostDialogComponent component = new ComposePostDialogComponent() {
+                @Override
+                protected void onCancel() {
+                    dialog.cancel();
+                }
+
+                @Override
+                protected void onPost(Post post, List<Tag> tags, Media media, Post postToReply) {
+                    dialog.dismiss();
+                }
+            };
+
+            container.inflateComponent((DelegatedResultActivity) getActivity(), component);
+            dialog.show();
+        });
     }
 
     @Override
