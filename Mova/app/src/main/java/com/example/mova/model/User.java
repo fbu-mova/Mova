@@ -29,6 +29,7 @@ public class User extends ParseUser {
     public static final String KEY_GROUPS_IN = "groupsIn";
     public static final String KEY_ADMIN = "adminOf";
     public static final String KEY_SCRAPBOOK = "scrapbook";
+    public static final String KEY_POSTS = "posts";
 
 
     public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
@@ -38,6 +39,7 @@ public class User extends ParseUser {
     public final RelationFrame<Group> relGroups = new RelationFrame<>(this, KEY_GROUPS_IN);
     public final RelationFrame<Group> relAdminOf = new RelationFrame<>(this, KEY_ADMIN);
     public final RelationFrame<Post> relScrapbook = new RelationFrame<>(this, KEY_SCRAPBOOK);
+    public final RelationFrame<Post> relPosts = new RelationFrame<>(this, KEY_POSTS);
 
     //Email verification
 
