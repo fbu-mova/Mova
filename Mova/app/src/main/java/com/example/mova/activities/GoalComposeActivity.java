@@ -101,9 +101,6 @@ public class GoalComposeActivity extends AppCompatActivity {
     }
 
     private void submitPersonalGoal(String goalName, String goalDescription, List<String> actions) {
-
-        // currently todo-ing: saving multiple actions within a goal (include shareAction process)
-
         // todo -- include image choosing for goal image + color
         // todo -- update to also encompass Social functionality ?
 
@@ -226,17 +223,25 @@ public class GoalComposeActivity extends AppCompatActivity {
                     if (e == null) {
                         Log.d(TAG, "finished final goal update");
 
-                        // go to general goal fragment page (or details page?)
-                        getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
-                        // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
-                        setResult(RESULT_OK, getIntent());
-                        finish();
+                        // finally add whole goal to user's goal relation
+                        saveGoalToUser(goal);
                     }
                     else {
                         Log.e(TAG, "failed to finish final goal update", e);
                     }
                 }
             });
+        });
+    }
+
+    private void saveGoalToUser(Goal goal) {
+
+        ((User) ParseUser.getCurrentUser()).relGoals.add(goal, (item) -> {
+            // go to general goal fragment page (or details page?)
+            getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
+            // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
+            setResult(RESULT_OK, getIntent());
+            finish();
         });
     }
 }
