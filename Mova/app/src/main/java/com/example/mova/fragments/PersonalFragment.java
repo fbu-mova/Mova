@@ -12,7 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mova.R;
+import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.components.ProfileFriendComponent;
+import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.fragments.Personal.GoalsFragment;
 import com.example.mova.fragments.Personal.JournalFragment;
 import com.example.mova.fragments.Personal.PersonalFeedFragment;
@@ -108,10 +110,17 @@ public class PersonalFragment extends Fragment {
             default:
                 return;
         }
-        if(ProfileFriendComponent.manager != null) {
-            ProfileFriendComponent.manager.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
         fragmentManager.beginTransaction().replace(R.id.flPersonalContainer, fragment).commit();
+        if(ProfileFriendComponent.manager != null) {
+            ProfileFriendComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        if(ProfileGroupComponent.manager != null){
+            ProfileGroupComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        if(GroupThumbnailComponent.manager != null){
+            GroupThumbnailComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
 
     }
 

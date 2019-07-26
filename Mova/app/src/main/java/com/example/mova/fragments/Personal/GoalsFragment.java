@@ -1,5 +1,6 @@
 package com.example.mova.fragments.Personal;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -257,7 +258,7 @@ public class GoalsFragment extends Fragment {
 //    public void onDetach() {
 //        super.onDetach();
 //        mListener = null;
-//    }
+   }
 
     @Override
     public void onDetach() {

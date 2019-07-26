@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.mova.R;
 import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.components.ProfileFriendComponent;
+import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.fragments.Social.EventsFragment;
 import com.example.mova.fragments.Social.ExploreFragment;
 import com.example.mova.fragments.Social.GroupsFragment;
@@ -122,13 +123,17 @@ public class SocialFragment extends Fragment {
                      default:
                          return true;
                 }
+                fragmentManager.beginTransaction().replace(R.id.flSocialContainer, fragment).commit();
+                //Todo fix manager is already executing a transaction
                 if(ProfileFriendComponent.manager != null) {
-                    ProfileFriendComponent.manager.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    ProfileFriendComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+                if(ProfileGroupComponent.manager != null){
+                    ProfileGroupComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
                 if(GroupThumbnailComponent.manager != null){
-                    GroupThumbnailComponent.manager.popBackStackImmediate(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    GroupThumbnailComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
-                fragmentManager.beginTransaction().replace(R.id.flSocialContainer, fragment).commit();
                 return true;
             }
         });

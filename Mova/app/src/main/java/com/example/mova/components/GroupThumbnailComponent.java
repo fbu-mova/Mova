@@ -26,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GroupThumbnailComponent extends Component {
+    //Todo fill in fields
 
     private static final String TAG = "group thumbnail comp'nt";
     private static final int viewLayoutRes = R.layout.item_group_thumbnail;
@@ -60,6 +61,16 @@ public class GroupThumbnailComponent extends Component {
     @Override
     public View getView() {
         return view;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+
     }
 
     @Override

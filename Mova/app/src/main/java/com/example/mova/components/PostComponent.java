@@ -9,6 +9,8 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Post;
 
 public class PostComponent extends Component {
+    //Todo - edit this file
+
 
     private Post post;
     private ComponentManager componentManager;
