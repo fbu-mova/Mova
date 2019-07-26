@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
     @BindView(R.id.groupSpinner)    protected Spinner groupSpinner;
     @BindView(R.id.etDescription)   protected EditText etDescription;
     @BindView(R.id.btShare)         protected Button btShare;
+    @BindView(R.id.ivClose)         protected ImageView ivClose;
 
     public ConfirmShareGoalDialog() {
         // Empty constructor is required for DialogFragment
@@ -76,6 +78,14 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         goal = getArguments().getParcelable("goal");
 
         tvGoalName.setText(goal.getTitle());
+
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // closes the dialog
+                dismiss();
+            }
+        });
 
         // set up spinner
 

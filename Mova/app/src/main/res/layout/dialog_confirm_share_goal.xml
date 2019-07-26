@@ -103,4 +103,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvShareTItle"
         app:layout_constraintStart_toEndOf="@+id/tvShareTItle"
         app:layout_constraintTop_toTopOf="@+id/tvShareTItle" />
+
+    <ImageView
+        android:id="@+id/ivClose"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/colorAccent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
