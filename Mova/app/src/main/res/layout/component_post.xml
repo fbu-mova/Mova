@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:text="Message"
                 android:textColor="#222"
-                android:textSize="14dp" />
+                android:textSize="18dp" />
 
             <com.example.mova.components.ComponentLayout
                 android:id="@+id/clMedia"

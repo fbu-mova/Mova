@@ -3,6 +3,7 @@ package com.example.mova.model;
 import com.example.mova.components.Component;
 import com.example.mova.components.MediaTextComponent;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 @ParseClassName("Media")
@@ -16,29 +17,30 @@ public class Media extends HashableParseObject {
     public static final String KEY_GOAL = "contentGoal";
     public static final String KEY_ACTION = "contentAction";
     public static final String KEY_TEXT = "contentText";
+    public static final String KEY_IMAGE = "contentImage";
 
-    //Type
-    public ContentType getType(){
+    // Type
+    public ContentType getType() {
         int type = getInt(KEY_TYPE);
         return ContentType.fromValue(type);
     }
 
-    public Media setType(ContentType type){
+    public Media setType(ContentType type) {
         put(KEY_TYPE, type.getValue());
         return this;
     }
 
-    //Parent
-    public User getParent(){
+    // Parent
+    public User getParent() {
         return (User) getParseUser(KEY_PARENT);
     }
 
-    public Media setParent(User user){
-        put(KEY_PARENT, user);
+    public Media setParent(Post post){
+        put(KEY_PARENT, post);
         return this;
     }
 
-    //ContentText
+    // ContentText
     public String getContentText() {
         return getString(KEY_TEXT);
     }
@@ -48,49 +50,64 @@ public class Media extends HashableParseObject {
         return this;
     }
 
-    //ContentPost
-    public Post getContentPost(){
+    // ContentPost
+    public Post getContentPost() {
         return (Post) getParseObject(KEY_POST);
     }
 
-    public void setContentPost(Post post){
+    public Media setContentPost(Post post){
         put(KEY_POST, post);
+        return this;
     }
 
-    //ContentGroup
-    public Group getContentGroup(){
+    // ContentGroup
+    public Group getContentGroup() {
         return (Group) getParseObject(KEY_GROUP);
     }
 
-    public void setContentGroup(Group group){
+    public Media setContentGroup(Group group) {
         put(KEY_GROUP,group);
+        return this;
     }
 
-    //ContentEvent
-    public Event getContentEvent(){
+    // ContentEvent
+    public Event getContentEvent() {
         return (Event) getParseObject(KEY_EVENT);
     }
 
-    public void setContentEvent(Event event){
+    public Media setContentEvent(Event event) {
         put(KEY_EVENT, event);
+        return this;
     }
 
-    //ContentGoal
-    public Goal getContentGoal(){
+    // ContentGoal
+    public Goal getContentGoal() {
         return (Goal) getParseObject(KEY_GOAL);
     }
 
-    public void setContentGoal(Goal goal){
+    public Media setContentGoal(Goal goal) {
         put(KEY_GOAL, goal);
+        return this;
     }
 
-    //ContentAction
-    public Action getContentAction(){
+    // ContentAction
+    public Action getContentAction() {
         return (Action) getParseObject(KEY_ACTION);
     }
 
-    public void setContentAction(Action action){
+    public Media setContentAction(Action action) {
         put(KEY_ACTION, action);
+        return this;
+    }
+
+    // ContentImage
+    public ParseFile getContentImage() {
+        return getParseFile(KEY_IMAGE);
+    }
+
+    public Media setContentImage(ParseFile image) {
+        put(KEY_IMAGE, image);
+        return this;
     }
 
     // Handle content item regardless of type
@@ -106,13 +123,15 @@ public class Media extends HashableParseObject {
                 return getContentGoal();
             case Action:
                 return getContentAction();
+            case Image:
+                return getContentImage();
             case Text:
             default:
                 return getContentText();
         }
     }
 
-    public void setContent(Object content) {
+    public Media setContent(Object content) {
         if (content instanceof Post) {
             setType(ContentType.Post);
             setContentPost((Post) content);
@@ -128,10 +147,14 @@ public class Media extends HashableParseObject {
         } else if (content instanceof Action) {
             setType(ContentType.Action);
             setContentAction((Action) content);
+        } else if (content instanceof ParseFile) {
+            setType(ContentType.Image);
+            setContentImage((ParseFile) content);
         } else {
             setType(ContentType.Text);
             setContentText(content.toString());
         }
+        return this;
     }
 
     public Class getObjectType() {
@@ -146,6 +169,8 @@ public class Media extends HashableParseObject {
                 return Goal.class;
             case Action:
                 return Action.class;
+            case Image:
+                return ParseFile.class;
             case Text:
             default:
                 return String.class;
@@ -167,7 +192,8 @@ public class Media extends HashableParseObject {
         Group(2),
         Event(3),
         Goal(4),
-        Action(5);
+        Action(5),
+        Image(6);
 
         private final int value;
         private ContentType(int value) {

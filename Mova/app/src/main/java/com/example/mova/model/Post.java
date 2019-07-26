@@ -179,6 +179,7 @@ public class Post extends HashableParseObject {
 
                     // Save media if it exists
                     if (media != null) {
+                        media.setParent(this);
                         media.saveInBackground((e) -> {
                             if (e != null) {
                                 Log.e("User", "Failed to create media", e);
