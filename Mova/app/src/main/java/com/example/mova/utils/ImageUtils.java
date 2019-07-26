@@ -81,6 +81,11 @@ public class ImageUtils {
         }
     }
 
+    // the harder launch camera 
+    public static void launchEmbeddedCamera() {
+        // TODO -- fancy stretch goal ?
+    }
+
     /**
      * Helps to handle the onActivityForResult from launching an intent either to gallery or camera.
      * @param requestCode From onActivityForResult. Tells you where intent was launched.
@@ -162,7 +167,7 @@ public class ImageUtils {
             }
         });
     }
-    
+
     /**
      * Same as previous but doesn't save the parentObject if more fields
      * need to be added to it before saving.
