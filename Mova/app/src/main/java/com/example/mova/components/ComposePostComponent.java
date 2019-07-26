@@ -239,7 +239,7 @@ public abstract class ComposePostComponent extends Component {
         return post;
     }
 
-    public class ViewHolder extends Component.ViewHolder {
+    public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.flReplyContent)  public FrameLayout flReplyContent;
         @BindView(R.id.clPostToReply)   public ComponentLayout clPostToReply;

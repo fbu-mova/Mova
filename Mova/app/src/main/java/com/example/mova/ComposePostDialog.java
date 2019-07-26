@@ -26,6 +26,8 @@ public abstract class ComposePostDialog {
     private ComposePostComponent composeComponent;
     // TODO: Store ComposeMediaComponent
 
+    // TODO: Add all necessary constructor signatures
+
     public ComposePostDialog(DelegatedResultActivity activity) {
         this.activity = activity;
         buildDialog();
