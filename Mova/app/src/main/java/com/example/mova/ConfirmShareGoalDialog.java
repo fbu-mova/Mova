@@ -22,6 +22,8 @@ import androidx.fragment.app.DialogFragment;
 import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
+import com.example.mova.model.Media;
+import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GroupUtils;
@@ -124,20 +126,33 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         });
     }
 
+    // TODO lots of async stuff: SHARING A GOAL
+    // find group to share it in (or just friends, which is null group)
+    // save goal to group's goal relation (as a goal)
+    // create + save post of goal, possible to group's post relation if group exists
+    // (everything that shows up in social is as a post w/ embedded media)
+    // can query for goals by querying equality via embedded media
+    // save updated goal isPersonal boolean
+    // save updated goal fromGroup pointer to group -- the fact that they posted it is stored in post version of goal
+
+    // TODO -- save goal to group relation of goals
+
+    // TODO -- create specific use case of "bi"-directional (or just multi-directional) goal saving:
+    // want to save post of goal to Group's posts
+
+    // TODO -- update fromGroup pointer in the goal
+
     private void shareGoal(String description, String groupName) {
 
-        // TODO lots of async stuff:
-            // find group to share it in (or just friends, which is null group)
-            // save goal to group's goal relation (as a goal)
-            // create + save post of goal, possible to group's post relation if group exists
-                // (everything that shows up in social is as a post w/ embedded media)
-                // can query for goals by querying equality via embedded media
-            // save updated goal isPersonal boolean
-            // save updated goal fromGroup pointer to group -- the fact that they posted it is stored in post version of goal
+        findParentGroup(description, groupName);
+
+    }
+
+    private void findParentGroup(String description, String groupName) {
 
         if (groupName == "Friends") {
             // only need to make post
-            makeGoalPost(goal);
+            makeGoalPost(description, null);
         }
         else {
             // need to find group, then make post
@@ -149,7 +164,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
                     if (e == null) {
                         Log.d(TAG, "Successfully found group");
                         if (objects.size() == 1) {
-                            makeGoalPost(goal, objects.get(0));
+                            makeGoalPost(description, objects.get(0));
                         }
                         else {
                             Log.e(TAG, "Found two groups with the same name");
@@ -161,28 +176,99 @@ public class ConfirmShareGoalDialog extends DialogFragment {
 
     }
 
-    private void makeGoalPost(Goal goal, Group group) {
-        // TODO -- if just friends, then group is null. is ok to combine? or can split
+    private void makeGoalPost(String description, Group group) {
+        // makes the post of a goal, saves this post to the User's post relation
 
-        // TODO -- save goal to group relation of goals
+        // fixme -- did not include location of user nor mood
+        User user = (User) ParseUser.getCurrentUser();
 
-        // TODO -- create specific use case of "bi"-directional (or just multi-directional) goal saving:
-            // want to save post of goal to Group's posts
+        Post goalPost = new Post();
+        goalPost.setAuthor(user)
+                .setBody(description)
+                .setIsPersonal(false)
+                .setGroup(group);
 
-        // TODO -- update fromGroup pointer in the goal
+        goalPost.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "Saved newly made goal post");
 
-        saveGoal(goal);
+                    // add to user's post relation
+                    user.relPosts.add(goalPost, (post) -> {
+                        // go to next step:
+                        updatePostMedia(post, group);
+                    });
+                }
+                else {
+                    Log.e(TAG, "Saving goal post failed", e);
+                    Toast.makeText(getContext(), "Sharing your goal didn't work this time, try again", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        
     }
 
-    private void makeGoalPost(Goal goal) {
+    private void updatePostMedia(Post post, Group group) {
+        // creates media instance to store goal, then put back in post and save
 
-        makeGoalPost(goal, null);
+        Media goalMedia = new Media();
+        goalMedia.setParent((User) ParseUser.getCurrentUser())
+                .setContent(goal);
+
+        goalMedia.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "saved goal media");
+                    post.setMedia(goalMedia).saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.d(TAG, "saved goal media to post");
+                                updateParentGroup(post, group);
+                            }
+                            else {
+                                Log.e(TAG, "error saving media to post", e);
+                            }
+                        }
+                    });
+                }
+                else {
+                    Log.e(TAG, "goal media failed saving", e);
+                }
+            }
+        });
+    }
+
+    private void updateParentGroup(Post post, Group group) {
+
+        if (group != null) {
+            // update group's goals and posts, then save
+            group.relGoals.add(goal);
+            group.relPosts.add(post);
+
+            group.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "updated group");
+                    }
+                    else {
+                        Log.e(TAG, "updating group failed", e);
+                    }
+                }
+            });
+        }
+
+        saveGoal(group);
 
     }
 
-    private void saveGoal(Goal goal) {
+    private void saveGoal(Group group) {
 
-        goal.setIsPersonal(true);
+        goal.setIsPersonal(true)
+                .setGroup(group);
         goal.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
