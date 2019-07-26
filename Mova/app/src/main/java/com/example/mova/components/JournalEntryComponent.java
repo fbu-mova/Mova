@@ -111,7 +111,7 @@ public class JournalEntryComponent extends Component {
                 commentAdapter = new DataComponentAdapter<Post>(activity, comments) {
                     @Override
                     public Component makeComponent(Post item) {
-                        return new PostComponent(item);
+                        return new JournalResponseComponent(item);
                     }
                 };
 

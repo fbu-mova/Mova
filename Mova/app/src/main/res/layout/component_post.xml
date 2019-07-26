@@ -62,14 +62,6 @@
 
         </LinearLayout>
 
-        <com.example.mova.components.ComponentLayout
-            android:id="@+id/clMedia"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp">
-
-        </com.example.mova.components.ComponentLayout>
-
         <TextView
             android:id="@+id/tvBody"
             android:layout_width="match_parent"
@@ -77,6 +69,14 @@
             android:text="Message"
             android:textColor="#222"
             android:textSize="14dp" />
+
+        <com.example.mova.components.ComponentLayout
+            android:id="@+id/clMedia"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp">
+
+        </com.example.mova.components.ComponentLayout>
 
     </LinearLayout>
 

@@ -18,7 +18,7 @@ import com.example.mova.utils.TimeUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PostComponent extends Component {
+public class JournalResponseComponent extends Component {
 
     private Post post;
 
@@ -27,7 +27,7 @@ public class PostComponent extends Component {
     private View view;
     private ComponentManager componentManager;
 
-    public PostComponent(Post post) {
+    public JournalResponseComponent(Post post) {
         this.post = post;
     }
 
@@ -35,7 +35,7 @@ public class PostComponent extends Component {
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         this.activity = activity;
         LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_post, parent, attachToRoot);
+        view = inflater.inflate(R.layout.component_journal_response, parent, attachToRoot);
         holder = new ViewHolder(view);
     }
 
@@ -51,7 +51,7 @@ public class PostComponent extends Component {
 
     @Override
     public String getName() {
-        return "Post_" + post.getObjectId();
+        return "JournalResponse_" + post.getObjectId();
     }
 
     @Override
@@ -61,7 +61,6 @@ public class PostComponent extends Component {
 
     @Override
     public void render() {
-        holder.tvUsername.setText(post.getAuthor().getUsername());
         holder.tvDate.setText(TimeUtils.toDateString(post.getCreatedAt(), false));
         holder.tvBody.setText(post.getBody());
 
@@ -85,12 +84,6 @@ public class PostComponent extends Component {
 
     public static class ViewHolder extends Component.ViewHolder {
 
-        // TODO: Find a way to display date without displaying username, etc.
-        // TODO: Create settings for different views (group from, etc.)
-
-        @BindView(R.id.cvProfileImage) public CardView cvProfileImage;
-        @BindView(R.id.ivProfileImage) public ImageView ivProfileImage;
-        @BindView(R.id.tvUsername)     public TextView tvUsername;
         @BindView(R.id.tvDate)         public TextView tvDate;
         @BindView(R.id.tvBody)         public TextView tvBody;
         @BindView(R.id.clMedia)        public ComponentLayout clMedia;
