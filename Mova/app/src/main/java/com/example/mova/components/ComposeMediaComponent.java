@@ -3,6 +3,8 @@ package com.example.mova.components;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
 import com.example.mova.activities.DelegatedResultActivity;
 
 public class ComposeMediaComponent extends Component {
@@ -36,5 +38,10 @@ public class ComposeMediaComponent extends Component {
 
     }
 
-    public static class ViewHolder
+    public static class ViewHolder extends Component.ViewHolder {
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
 }
