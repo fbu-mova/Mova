@@ -53,17 +53,20 @@ public class Media extends HashableParseObject {
         return (Post) getParseObject(KEY_POST);
     }
 
-    public void setContentPost(Post post){
+    public Media setContentPost(Post post){
         put(KEY_POST, post);
+        return this;
     }
 
     //ContentGroup
     public Group getContentGroup(){
         return (Group) getParseObject(KEY_GROUP);
+
     }
 
-    public void setContentGroup(Group group){
+    public Media setContentGroup(Group group){
         put(KEY_GROUP,group);
+        return this;
     }
 
     //ContentEvent
@@ -71,8 +74,9 @@ public class Media extends HashableParseObject {
         return (Event) getParseObject(KEY_EVENT);
     }
 
-    public void setContentEvent(Event event){
+    public Media setContentEvent(Event event){
         put(KEY_EVENT, event);
+        return this;
     }
 
     //ContentGoal
@@ -80,8 +84,9 @@ public class Media extends HashableParseObject {
         return (Goal) getParseObject(KEY_GOAL);
     }
 
-    public void setContentGoal(Goal goal){
+    public Media setContentGoal(Goal goal){
         put(KEY_GOAL, goal);
+        return this;
     }
 
     //ContentAction
@@ -89,8 +94,9 @@ public class Media extends HashableParseObject {
         return (Action) getParseObject(KEY_ACTION);
     }
 
-    public void setContentAction(Action action){
+    public Media setContentAction(Action action){
         put(KEY_ACTION, action);
+        return this;
     }
 
     // Handle content item regardless of type
@@ -112,7 +118,7 @@ public class Media extends HashableParseObject {
         }
     }
 
-    public void setContent(Object content) {
+    public Media setContent(Object content) {
         if (content instanceof Post) {
             setType(ContentType.Post);
             setContentPost((Post) content);
@@ -132,6 +138,7 @@ public class Media extends HashableParseObject {
             setType(ContentType.Text);
             setContentText(content.toString());
         }
+        return this;
     }
 
     public Class getObjectType() {
