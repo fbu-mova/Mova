@@ -53,7 +53,7 @@ public class EventUtils {
             @Override
             public void done(List<Event> objects, ParseException e) {
                 if(e != null){
-                    Log.e("EventUtils", "Error with query");
+                    Log.e("EventUtils", "Error with query  location");
                     e.printStackTrace();
                     return;
                 }

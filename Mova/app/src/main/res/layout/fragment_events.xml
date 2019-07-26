@@ -24,7 +24,7 @@
         android:layout_marginTop="8dp"
         android:text="Group Events"
         android:textColor="#000000"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvYourEvents" />
 
@@ -48,7 +48,7 @@
         android:layout_marginTop="8dp"
         android:text="Events Near You"
         android:textColor="#000000"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvGroupEvents" />
 
@@ -83,6 +83,7 @@
         android:layout_marginTop="8dp"
         android:text="Your Events"
         android:textColor="#000000"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/svEvents" />
 </androidx.constraintlayout.widget.ConstraintLayout>

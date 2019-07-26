@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Event;
+import com.example.mova.utils.LocationUtils;
+import com.example.mova.utils.TimeUtils;
 import com.parse.ParseFile;
 
 import butterknife.BindView;
@@ -72,10 +74,15 @@ public class EventThumbnailComponent extends Component{
             return;
         }
 
+
+        String location = LocationUtils.makeLocationText(activity,event.getLocation());
+        String[] locationsplit = location.split(",");
+        String[] state = locationsplit[2].split(" ");
+
         //viewHolder.tvGroupName.setText();
         viewHolder.tvEventName.setText(event.getTitle());
-        viewHolder.tvEventLocation.setText(event.getLocation().toString());
-        viewHolder.tvWhen.setText(event.getDate().toString());
+        viewHolder.tvEventLocation.setText(locationsplit[1] + ", "+ state[1]);
+        viewHolder.tvWhen.setText(TimeUtils.toDateString(event.getDate()));
 
         ParseFile file = event.getEventPic();
         if(file != null){

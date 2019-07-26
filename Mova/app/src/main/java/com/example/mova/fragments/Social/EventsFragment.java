@@ -1,6 +1,7 @@
 package com.example.mova.fragments.Social;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.model.Event;
 import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.utils.EventUtils;
+import com.example.mova.utils.LocationUtils;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
@@ -91,7 +94,9 @@ public class EventsFragment extends Fragment {
         yourEvents = new ArrayList<>();
         groupEvents = new ArrayList<>();
         nearYouEvents = new ArrayList<>();
-        ParseGeoPoint userLocation = (ParseGeoPoint) user.get("location");
+
+       LocationUtils.saveCurrentUserLocation(getContext());
+        ParseGeoPoint userLocation = LocationUtils.getCurrentUserLocation();
 
         yourEventsAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(),yourEvents) {
             @Override
@@ -117,6 +122,8 @@ public class EventsFragment extends Fragment {
             }
         };
 
+        //Toast.makeText(getContext(), userLocation.toString() , Toast.LENGTH_SHORT).show();
+
         EdgeDecorator decorator = new EdgeDecorator(5);
 
         rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -130,6 +137,19 @@ public class EventsFragment extends Fragment {
         rvYourEvents.setAdapter(yourEventsAdapter);
         rvGroupEvents.setAdapter(groupEventAdapter);
         rvNearYou.setAdapter(nearYouAdapter);
+
+        EventUtils.getYourEvents(user, (yourevents) -> {
+            yourEvents.addAll(yourevents);
+            yourEventsAdapter.notifyDataSetChanged();
+            rvYourEvents.scrollToPosition(0);
+        });
+
+        EventUtils.getEventsNearYou(userLocation, (eventsNearYou) -> {
+            nearYouEvents.addAll(eventsNearYou);
+            nearYouAdapter.notifyDataSetChanged();
+            rvNearYou.scrollToPosition(0);
+            Log.d("Events Fragment", LocationUtils.getCurrentUserLocation().toString());
+        });
 
 
     }
