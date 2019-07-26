@@ -20,6 +20,8 @@ import butterknife.ButterKnife;
 
 public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAdapter.ViewHolder> {
 
+    // no longer used
+
     private List<String> actions;
     Context context;
 
@@ -67,13 +69,6 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
 
             // todo -- set onclicklistener so can edit if haven't submitted yet / dialog reshows up to edit
         }
-
-    }
-
-    private void showAlertDialog() {
-        FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
-        ComposeActionDialog dialog = new ComposeActionDialog();
-        dialog.show(fm, "fragment_alert");
 
     }
 

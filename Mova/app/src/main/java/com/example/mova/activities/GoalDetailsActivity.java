@@ -1,6 +1,7 @@
 package com.example.mova.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mova.ConfirmShareGoalDialog;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -46,6 +48,8 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     private static final String TAG = "goal details activity";
     private Goal goal;
 
+    private boolean isPersonal;
+
     @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
     @BindView(R.id.tvFromGroup)     protected TextView tvFromGroup;
@@ -77,6 +81,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
                 // todo -- create pop-up to confirm
                     // ask which group to share it in (or just friends)
                     // ask if want to include a description (need to create the post as well, with embedded media)
+                    // include top toolbar in pop-up to confirm
 
                 confirmShare();
             }
@@ -115,29 +120,9 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
     private void confirmShare() {
 
-        String description = "";
-        Group group = null;
-
-        if (true) {
-            shareGoal(description, group);
-        }
-    }
-
-    private void shareGoal(String description, Group group) {
-
-        goal.setIsPersonal(true);
-        goal.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "shared goal successfully");
-                    Toast.makeText(GoalDetailsActivity.this, "Shared goal!", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.e(TAG, "sharing goal failed");
-                }
-            }
-        });
+        FragmentManager fm = getSupportFragmentManager();
+        ConfirmShareGoalDialog confirmShareGoalDialog = ConfirmShareGoalDialog.newInstance(goal);
+        confirmShareGoalDialog.show(fm, "showingConfirmShareGoalDialog");
 
     }
 

@@ -12,6 +12,11 @@ import java.util.List;
 
 public class GroupUtils {
 
+    /**
+     * Finds the groups that a user is in.
+     * @param user The user in question.
+     * @param callback The callback that lets us do what we want with the list of Groups we receive.
+     */
     public static void queryGroups(User user, AsyncUtils.ListCallback<Group> callback){
         ParseQuery<Group> pqGroups = user.relGroups.getQuery();
         pqGroups.findInBackground(new FindCallback<Group>() {
