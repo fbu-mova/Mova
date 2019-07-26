@@ -52,11 +52,13 @@ public class GoalUtils {
             }
         });
     }
+
     public void getNumActionsComplete(Date date, Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback){
         getActionList((actionList) -> {
             int numAction = 0;
             for(Action action: actionList){
-                if(TimeUtils.normalizeToDay(action.getCompletedAt()).equals(TimeUtils.normalizeToDay(date))){
+                Date completedAt = action.getCompletedAt();
+                if(completedAt != null && TimeUtils.normalizeToDay(completedAt).equals(TimeUtils.normalizeToDay(date))){
                     numAction++;
                 }
             }

@@ -66,4 +66,6 @@ dependencies {
     //Graphs
     implementation 'com.jjoe64:graphview:4.2.1'
 
+    // Horizontal SwipeRefreshLayout
+    implementation 'com.github.ashakirov:Horizontal-SwipeRefreshLayout:master'
 }
