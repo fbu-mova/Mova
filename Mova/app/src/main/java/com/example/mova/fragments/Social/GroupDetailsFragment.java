@@ -130,6 +130,7 @@ public class GroupDetailsFragment extends Fragment {
             }
         };
 
+        //Todo Merge the rv into one rv and use rv.swapAdapter
 
         rvGroupGoals.setAdapter(groupGoalAdapter);
         rvGroupPosts.setAdapter(groupPostAdapter);
