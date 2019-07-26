@@ -76,6 +76,8 @@ public class PostComponent extends Component {
         holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
         holder.tvBody.setText(post.getBody());
         displayUser();
+        configureButtons();
+        configurePostClick();
         displayMedia();
         displayGroup();
         displaySubheader();
@@ -93,7 +95,9 @@ public class PostComponent extends Component {
                 User loaded = (User) parseObject;
                 holder.tvUsername.setText(loaded.getUsername());
                 // TODO: Profile picture
-                // TODO: Go to profile on click
+                holder.ivProfileImage.setOnClickListener((view) -> {
+                    // TODO: Go to profile page
+                });
             }
         });
     }
@@ -125,7 +129,9 @@ public class PostComponent extends Component {
                     Group loaded = (Group) parseObject;
                     holder.tvGroupName.setText(loaded.getName());
                     // TODO: Group image
-                    // TODO: Go to group on click
+                    holder.ivGroupImage.setOnClickListener((view) -> {
+                        // TODO: Go to group page
+                    });
                 }
             });
         }
@@ -139,6 +145,25 @@ public class PostComponent extends Component {
             holder.tvSubheader.setVisibility(View.VISIBLE);
             holder.tvSubheader.setText(subheader);
         }
+    }
+
+    private void configureButtons() {
+        holder.llButtons.setVisibility(View.VISIBLE);
+        holder.ivRepost.setOnClickListener((view) -> {
+            // TODO: Open compose + media dialog
+        });
+        holder.ivReply.setOnClickListener((view) -> {
+            // TODO: Open compose + reply dialog
+        });
+        holder.ivSave.setOnClickListener((view) -> {
+            // TODO: Save to scrapbook
+        });
+    }
+
+    private void configurePostClick() {
+        holder.card.setOnClickListener((view) -> {
+            // TODO: Go to details view
+        });
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -162,6 +187,11 @@ public class PostComponent extends Component {
         @BindView(R.id.ivProfileImage) public ImageView ivProfileImage;
         @BindView(R.id.tvUsername)     public TextView tvUsername;
         @BindView(R.id.tvDate)         public TextView tvDate;
+
+        @BindView(R.id.llButtons)      public LinearLayout llButtons;
+        @BindView(R.id.ivRepost)       public ImageView ivRepost;
+        @BindView(R.id.ivReply)        public ImageView ivReply;
+        @BindView(R.id.ivSave)         public ImageView ivSave;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
