@@ -39,6 +39,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.mova.model.Group.KEY_NAME;
+
 public class ConfirmShareGoalDialog extends DialogFragment {
 
     private static final String TAG = "confirmShareGoal";
@@ -157,7 +159,8 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         else {
             // need to find group, then make post
 
-            Group.Query groupQuery = ((Group.Query) ((User) ParseUser.getCurrentUser()).relGroups.getQuery()).getGroup(groupName);
+            ParseQuery<Group> groupQuery = (((User) ParseUser.getCurrentUser()).relGroups.getQuery())
+                    .whereEqualTo(KEY_NAME, groupName);
             groupQuery.findInBackground(new FindCallback<Group>() {
                 @Override
                 public void done(List<Group> objects, ParseException e) {
@@ -286,7 +289,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
 
     private void saveGoal(Group group) {
 
-        goal.setIsPersonal(true);
+        goal.setIsPersonal(false);
 
         if (group != null) {
             goal.setGroup(group);
