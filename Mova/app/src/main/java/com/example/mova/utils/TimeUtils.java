@@ -24,6 +24,12 @@ public class TimeUtils {
         return dateFmt.format(date);
     }
 
+    public static String toShortDateString(Date date) {
+        String fmtStr = "MMM dd";
+        SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
+        return dateFmt.format(date);
+    }
+
     // -- DATE NORMALIZATION, COMPARISON, AND KEYING -- //
 
     /**

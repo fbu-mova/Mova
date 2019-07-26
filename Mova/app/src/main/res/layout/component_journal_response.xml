@@ -9,11 +9,11 @@
 
     <TextView
         android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
         android:layout_weight="0"
-        android:text="Date" />
+        android:text="Date 00" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

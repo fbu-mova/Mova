@@ -61,25 +61,20 @@ public class JournalResponseComponent extends Component {
 
     @Override
     public void render() {
-        holder.tvDate.setText(TimeUtils.toDateString(post.getCreatedAt(), false));
+        holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
         holder.tvBody.setText(post.getBody());
+        displayMedia();
+    }
 
+    private void displayMedia() {
         Media media = post.getMedia();
         Component mediaComponent = (media == null) ? null : media.makeComponent();
         if (mediaComponent == null) {
-            hideMedia();
+            holder.clMedia.setVisibility(View.GONE);
         } else {
-            showMedia();
+            holder.clMedia.setVisibility(View.VISIBLE);
             holder.clMedia.inflateComponent(activity, mediaComponent);
         }
-    }
-
-    private void hideMedia() {
-        holder.clMedia.setVisibility(View.GONE);
-    }
-
-    private void showMedia() {
-        holder.clMedia.setVisibility(View.VISIBLE);
     }
 
     public static class ViewHolder extends Component.ViewHolder {
