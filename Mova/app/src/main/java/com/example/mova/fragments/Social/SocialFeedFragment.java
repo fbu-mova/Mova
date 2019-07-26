@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mova.ComposePostDialog;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.ComponentLayout;
-import com.example.mova.components.ComposePostDialogComponent;
+import com.example.mova.components.ComposePostComponent;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
-import com.example.mova.utils.AsyncUtils;
 
 import java.util.List;
 
@@ -80,28 +79,20 @@ public class SocialFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        // Temporary button press for testing ComposePostDialogComponent
+        // Temporary button press for testing ComposePostComponent
         button.setOnClickListener((v) -> {
-            View dialogView = getLayoutInflater().inflate(R.layout.layout_component_layout, null);
-            ComponentLayout container = dialogView.findViewById(R.id.componentLayout);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setView(dialogView);
-            AlertDialog dialog = builder.create();
-
-            ComposePostDialogComponent component = new ComposePostDialogComponent() {
+            ComposePostDialog dialog = new ComposePostDialog((DelegatedResultActivity) getActivity()) {
                 @Override
                 protected void onCancel() {
-                    dialog.cancel();
+
                 }
 
                 @Override
                 protected void onPost(Post post, List<Tag> tags, Media media, Post postToReply) {
-                    dialog.dismiss();
+
                 }
             };
-
-            container.inflateComponent((DelegatedResultActivity) getActivity(), component);
-            dialog.show();
+            dialog.build();
         });
     }
 

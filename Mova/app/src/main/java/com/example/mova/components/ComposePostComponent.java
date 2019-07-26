@@ -31,7 +31,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class ComposePostDialogComponent extends Component {
+public abstract class ComposePostComponent extends Component {
 
     // TODO: Handle tags
 
@@ -42,54 +42,47 @@ public abstract class ComposePostDialogComponent extends Component {
     private DelegatedResultActivity activity;
     private ViewHolder holder;
     private View view;
+
     private ComponentManager manager;
+    private String managerMediaKey;
 
-    public ComposePostDialogComponent() {
-        this.media = null;
-        this.postToReply = null;
-        this.inGroup = null;
+    public ComposePostComponent(String managerMediaKey) {
+        init(managerMediaKey, null, null, null);
     }
 
-    public ComposePostDialogComponent(Media media) {
-        this.media = media;
-        this.postToReply = null;
-        this.inGroup = null;
+    public ComposePostComponent(String managerMediaKey, Media media) {
+        init(managerMediaKey, null, media, null);
     }
 
-    public ComposePostDialogComponent(Post postToReply) {
-        this.media = null;
-        this.postToReply = postToReply;
-        this.inGroup = null;
+    public ComposePostComponent(String managerMediaKey, Post postToReply) {
+        init(managerMediaKey, postToReply, null, null);
     }
 
-    public ComposePostDialogComponent(Post postToReply, Media media) {
-        this.media = media;
-        this.postToReply = postToReply;
-        this.inGroup = null;
+    public ComposePostComponent(String managerMediaKey, Post postToReply, Media media) {
+        init(managerMediaKey, postToReply, media, null);
     }
 
-    public ComposePostDialogComponent(Group inGroup) {
-        this.media = null;
-        this.postToReply = null;
-        this.inGroup = inGroup;
+    public ComposePostComponent(String managerMediaKey, Group inGroup) {
+        init(managerMediaKey, null, null, inGroup);
     }
 
-    public ComposePostDialogComponent(Media media, Group inGroup) {
-        this.media = media;
-        this.postToReply = null;
-        this.inGroup = inGroup;
+    public ComposePostComponent(String managerMediaKey, Media media, Group inGroup) {
+        init(managerMediaKey, null, media, inGroup);
     }
 
-    public ComposePostDialogComponent(Post postToReply, Group inGroup) {
-        this.media = null;
-        this.postToReply = postToReply;
-        this.inGroup = inGroup;
+    public ComposePostComponent(String managerMediaKey, Post postToReply, Group inGroup) {
+        init(managerMediaKey, postToReply, null, inGroup);
     }
 
-    public ComposePostDialogComponent(Post postToReply, Media media, Group inGroup) {
+    public ComposePostComponent(String managerMediaKey, Post postToReply, Media media, Group inGroup) {
+        init(managerMediaKey, postToReply, media, inGroup);
+    }
+
+    private void init(String managerMediaKey, Post postToReply, Media media, Group inGroup) {
         this.media = media;
         this.postToReply = postToReply;
         this.inGroup = inGroup;
+        this.managerMediaKey = managerMediaKey;
     }
 
     @Override
@@ -126,6 +119,11 @@ public abstract class ComposePostDialogComponent extends Component {
         displayPostType();
         displayMedia();
         configureClickEvents();
+    }
+
+    public void setMedia(Media media) {
+        this.media = media;
+        displayMedia();
     }
 
     private void displayToReplyTo() {
@@ -214,7 +212,7 @@ public abstract class ComposePostDialogComponent extends Component {
         });
 
         holder.llAddMedia.setOnClickListener((view) -> {
-            // TODO: Make and launch set media dialog
+            manager.swap(managerMediaKey);
         });
     }
 

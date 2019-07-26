@@ -56,7 +56,7 @@
                         android:layout_marginRight="8dp"
                         android:layout_weight="0"
                         android:scaleType="fitCenter"
-                        tools:srcCompat="#FFBBBBBB" />
+                        tools:srcCompat="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/tvTypeIndicator"
@@ -100,7 +100,7 @@
                             android:layout_marginRight="8dp"
                             android:layout_weight="0"
                             android:foregroundGravity="center_vertical"
-                            tools:srcCompat="#FFABABAB" />
+                            tools:srcCompat="@color/colorPrimary" />
 
                         <TextView
                             android:id="@+id/tvMediaPrompt"
