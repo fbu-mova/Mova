@@ -25,6 +25,7 @@ import java.io.IOException;
 import static android.app.Activity.RESULT_OK;
 
 public class ImageUtils {
+    // code copied from Parstagram, modified to be slightly more abstract
 
     public static final String TAG = "ImageUtils";
     public static final String photoFileName = "photo.jpg";
@@ -32,7 +33,10 @@ public class ImageUtils {
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private static final int PICK_PHOTO_CODE = 1046;
 
-    // choose from gallery
+    /**
+     * Launches an intent to go to Camera Gallery to choose a photo.
+     * @param activity The activity from where the intent is launched.
+     */
     public static void chooseFromGallery(Activity activity) {
 
         // Create intent for picking a photo from the gallery
@@ -49,6 +53,13 @@ public class ImageUtils {
     }
 
     // launch camera and choose from there; copied from Parstagram
+
+    /**
+     * Launches an intent to go to the Camera App to take a photo.
+     * @param photoFile The File (originally a field of activity) in which file taken is stored.
+     * @param parseFile The ParseFile (^same) in which the parseFile is stored after being converted.
+     * @param activity  The activity from where the intent is launched.
+     */
     public static void launchCamera(File photoFile, ParseFile parseFile, Activity activity) {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -70,8 +81,17 @@ public class ImageUtils {
         }
     }
 
-    // fixme -- slightly sketch workarounds
-    // handles ActivityForResult from either gallery or camera -- true means result WASN'T them
+    /**
+     * Helps to handle the onActivityForResult from launching an intent either to gallery or camera.
+     * @param requestCode From onActivityForResult. Tells you where intent was launched.
+     * @param resultCode From onActivityForResult. Tells you if things went well.
+     * @param data The intent. Can have data in it.
+     * @param activity The activity from where the onActivityForResult was called.
+     * @param imageView The ImageView where you want the image to be bound.
+     * @param photoFile Where file is stored, should be field of activity.
+     * @param parseFile Where ParseFile is stored, should be field of activity.
+     * @return true means the intent launched WASN'T from gallery or camera. false means it was from them.
+     */
     public static boolean onImageActivityResult(int requestCode, int resultCode, @Nullable Intent data,
                                                 Activity activity, ImageView imageView,
                                                 File photoFile, ParseFile parseFile) {
@@ -92,6 +112,7 @@ public class ImageUtils {
 
                 // Load the taken image into a preview
                 imageView.setImageBitmap(resizedBitmap);
+                return false;
             }
 
             else if (requestCode == PICK_PHOTO_CODE) {
@@ -109,14 +130,22 @@ public class ImageUtils {
                     // Load the selected image into a preview
                     imageView.setImageBitmap(selectedImage);
                 }
+                return false;
             }
-
+            else {
+                return true;
+            }
         }
-
         return true;
     }
 
-    // save image to Parse as ParseFile
+    /**
+     * Saves image to Parse. // TODO -- new update means image must be stored as Media first
+     * @param file The image.
+     * @param parentObject Where the image will be stored (Post, User profile, Event cover photo, etc.)
+     * @param imageKey String key of column that stores images in parentObject.
+     * @param callback Callback allows actions to be performed after image is saved.
+     */
     public static void saveToParse(ParseFile file, ParseObject parentObject, String imageKey,
                                    AsyncUtils.ItemCallback<ParseFile> callback) {
         parentObject.add(imageKey, file);
@@ -133,8 +162,15 @@ public class ImageUtils {
             }
         });
     }
-
-    // same as previous but doesn't save yet if want to edit parentObject more before saving
+    
+    /**
+     * Same as previous but doesn't save the parentObject if more fields
+     * need to be added to it before saving.
+     * @param file The image.
+     * @param parentObject Where the image will be stored.
+     * @param imageKey The name of the column under which the image is stored.
+     * @return The parentObject, similar to the builder pattern.
+     */
     public static ParseObject saveToParse(ParseFile file, ParseObject parentObject, String imageKey) {
         parentObject.add(imageKey, file);
         return parentObject;
