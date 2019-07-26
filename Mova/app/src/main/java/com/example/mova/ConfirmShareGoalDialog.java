@@ -152,7 +152,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
 
         if (groupName == "Friends") {
             // only need to make post
-            makeGoalPost(description, null);
+            makeGoalPost(description);
         }
         else {
             // need to find group, then make post
@@ -176,6 +176,19 @@ public class ConfirmShareGoalDialog extends DialogFragment {
 
     }
 
+    private void makeGoalPost(String description) {
+        // same but don't set group
+
+        User user = (User) ParseUser.getCurrentUser();
+
+        Post goalPost = new Post();
+        goalPost.setAuthor(user)
+                .setBody(description)
+                .setIsPersonal(false);
+
+        saveGoalPost(goalPost, null);
+    }
+
     private void makeGoalPost(String description, Group group) {
         // makes the post of a goal, saves this post to the User's post relation
 
@@ -188,6 +201,12 @@ public class ConfirmShareGoalDialog extends DialogFragment {
                 .setIsPersonal(false)
                 .setGroup(group);
 
+        saveGoalPost(goalPost, group);
+
+    }
+
+    private void saveGoalPost(Post goalPost, Group group) {
+
         goalPost.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -195,7 +214,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
                     Log.d(TAG, "Saved newly made goal post");
 
                     // add to user's post relation
-                    user.relPosts.add(goalPost, (post) -> {
+                    ((User) ParseUser.getCurrentUser()).relPosts.add(goalPost, (post) -> {
                         // go to next step:
                         updatePostMedia(post, group);
                     });
@@ -206,7 +225,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
                 }
             }
         });
-        
+
     }
 
     private void updatePostMedia(Post post, Group group) {
@@ -267,8 +286,12 @@ public class ConfirmShareGoalDialog extends DialogFragment {
 
     private void saveGoal(Group group) {
 
-        goal.setIsPersonal(true)
-                .setGroup(group);
+        goal.setIsPersonal(true);
+
+        if (group != null) {
+            goal.setGroup(group);
+        }
+        
         goal.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
