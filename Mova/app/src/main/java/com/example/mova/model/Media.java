@@ -1,8 +1,11 @@
 package com.example.mova.model;
 
+import android.media.Image;
+
 import com.example.mova.components.Component;
 import com.example.mova.components.MediaTextComponent;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 @ParseClassName("Media")
@@ -16,6 +19,7 @@ public class Media extends HashableParseObject {
     public static final String KEY_GOAL = "contentGoal";
     public static final String KEY_ACTION = "contentAction";
     public static final String KEY_TEXT = "contentText";
+    public static final String KEY_IMAGE = "contentImage";
 
     //Type
     public ContentType getType(){
@@ -99,6 +103,16 @@ public class Media extends HashableParseObject {
         return this;
     }
 
+    //ContentImage
+    public ParseFile getContentImage() {
+        return getParseFile(KEY_IMAGE);
+    }
+
+    public Media setContentImage(ParseFile parseFile) {
+        put(KEY_IMAGE, parseFile);
+        return this;
+    }
+
     // Handle content item regardless of type
     public Object getContent() {
         switch (getType()) {
@@ -112,6 +126,8 @@ public class Media extends HashableParseObject {
                 return getContentGoal();
             case Action:
                 return getContentAction();
+            case Image:
+                return getContentImage();
             case Text:
             default:
                 return getContentText();
@@ -134,6 +150,9 @@ public class Media extends HashableParseObject {
         } else if (content instanceof Action) {
             setType(ContentType.Action);
             setContentAction((Action) content);
+        } else if (content instanceof ParseFile){
+            setType(ContentType.Image);
+            setContentImage((ParseFile) content);
         } else {
             setType(ContentType.Text);
             setContentText(content.toString());
@@ -153,6 +172,8 @@ public class Media extends HashableParseObject {
                 return Goal.class;
             case Action:
                 return Action.class;
+            case Image:
+                return ParseFile.class;
             case Text:
             default:
                 return String.class;
@@ -174,7 +195,8 @@ public class Media extends HashableParseObject {
         Group(2),
         Event(3),
         Goal(4),
-        Action(5);
+        Action(5),
+        Image(6);
 
         private final int value;
         private ContentType(int value) {
@@ -194,6 +216,7 @@ public class Media extends HashableParseObject {
                 case 5:
                     return Action;
                 case 6:
+                    return Image;
                 default:
                     return Text;
             }
@@ -211,6 +234,8 @@ public class Media extends HashableParseObject {
                     return KEY_GOAL;
                 case Action:
                     return KEY_ACTION;
+                case Image:
+                    return KEY_IMAGE;
                 case Text:
                 default:
                     return KEY_TEXT;
