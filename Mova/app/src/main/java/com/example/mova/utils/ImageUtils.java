@@ -184,43 +184,15 @@ public class ImageUtils {
     }
 
     /**
-     * Use case: when adding an image to a post as embedded media. Creates media, saves it, then sets it to parentPost.
-     * Did not make a builder version.
-     * // TODO -- extract updating Media to Media Utils
-     * @param file The image to save.
-     * @param parentPost The post to save the image under.
-     * @param imageKey The key that tells where to save the image.
-     * @param callback The callback function that executes when saving to Parse is completed.
+     * Use case: when saving an image as part of a post.
+     * @param file
+     * @param parentPost
+     * @param callback What it executes once finished with saving.
      */
-    public static void saveMediaToParse(ParseFile file, Post parentPost, String imageKey, AsyncUtils.ItemCallback<ParseFile> callback) {
-        Media imageMedia = new Media()
-                .setParent(parentPost)
-                .setContent(file);
+    public static void saveMediaToParse(ParseFile file, Post parentPost, AsyncUtils.ItemCallback<Object> callback) {
 
-        imageMedia.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "saved image media");
-                    parentPost.setMedia(imageMedia).saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                Log.d(TAG, "set image media to post");
-                            }
-                            else {
-                                Log.e(TAG, "failed setting image media to post");
-                            }
-                            callback.call(file);
-                        }
-                    });
-                }
-                else {
-                    Log.e(TAG, "error saving media to post", e);
-                    callback.call(file);
-                }
-            }
-        });
+        MediaUtils.updateMediaToPost(parentPost, file, callback);
+
     }
 
     // convert image of type File to ParseFile
