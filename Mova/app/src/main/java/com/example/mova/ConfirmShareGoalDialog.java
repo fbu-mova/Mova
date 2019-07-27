@@ -27,8 +27,10 @@ import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GroupUtils;
+import com.example.mova.utils.MediaUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -234,33 +236,13 @@ public class ConfirmShareGoalDialog extends DialogFragment {
     private void updatePostMedia(Post post, Group group) {
         // creates media instance to store goal, then put back in post and save
 
-        Media goalMedia = new Media();
-        goalMedia.setParent(post)
-                .setContent(goal);
-
-        goalMedia.saveInBackground(new SaveCallback() {
+        MediaUtils.updateMediaToPost(post, goal, new AsyncUtils.ItemCallback<ParseObject>() {
             @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "saved goal media");
-                    post.setMedia(goalMedia).saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                Log.d(TAG, "saved goal media to post");
-                                updateParentGroup(post, group);
-                            }
-                            else {
-                                Log.e(TAG, "error saving media to post", e);
-                            }
-                        }
-                    });
-                }
-                else {
-                    Log.e(TAG, "goal media failed saving", e);
-                }
+            public void call(ParseObject item) {
+                updateParentGroup(post, group);
             }
         });
+
     }
 
     private void updateParentGroup(Post post, Group group) {
