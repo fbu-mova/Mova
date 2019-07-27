@@ -15,13 +15,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.model.Goal;
+import com.example.mova.model.User;
+import com.example.mova.utils.GoalUtils;
+import com.parse.ParseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 
 public class GoalThumbnailComponent extends Component {
 
@@ -105,16 +111,19 @@ public class GoalThumbnailComponent extends Component {
                 .placeholder(R.color.colorAccent)
                 .into(viewHolder.ivPhoto);
 
-        // todo: progressbar
+        GoalUtils.getNumActionsComplete(goal, (User) ParseUser.getCurrentUser(), (portionDone) -> {
+            int progress = (int) (portionDone * PROGRESS_MAX);
+            viewHolder.goalProgressBar.setProgress(progress);
+        });
 
     }
 
     public static class GoalThumbnailViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.tvFromGroup) protected TextView tvFromGroup;
-        @BindView(R.id.tvName)      protected TextView tvName;
-        @BindView(R.id.ivPhoto)     protected ImageView ivPhoto;
-        @BindView(R.id.pbProgress)  protected ProgressBar pbProgress;
+        @BindView(R.id.tvFromGroup)         protected TextView tvFromGroup;
+        @BindView(R.id.tvName)              protected TextView tvName;
+        @BindView(R.id.ivPhoto)             protected ImageView ivPhoto;
+        @BindView(R.id.goalProgressBar)     protected GoalProgressBar goalProgressBar;
         @BindView(R.id.constraintLayout)    protected ConstraintLayout clLayout;
 
         public GoalThumbnailViewHolder(@NonNull View itemView) {

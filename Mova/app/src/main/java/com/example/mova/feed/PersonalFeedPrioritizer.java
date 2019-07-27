@@ -1,12 +1,9 @@
 package com.example.mova.feed;
 
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.SortedList;
 
-import com.example.mova.components.Component;
 import com.example.mova.components.GoalCheckInComponent;
 import com.example.mova.components.JournalMemoryComponent;
 import com.example.mova.components.JournalPromptComponent;
@@ -18,7 +15,6 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.utils.Wrapper;
-import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 

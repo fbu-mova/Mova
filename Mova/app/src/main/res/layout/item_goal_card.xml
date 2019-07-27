@@ -19,15 +19,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ProgressBar
-                android:id="@+id/pbProgress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
+            <com.example.mova.GoalProgressBar
+                android:id="@+id/goalProgressBar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:goalReachedColor="@color/colorAccent"
+                app:goalNotReachedColor="@color/colorPrimaryDark"
+                app:unfilledSectionColor="@color/colorAccent"
+                app:barHeight="4dp"
+                app:goalIndicatorHeight="16dp"
+                app:goalIndicatorWidth="4dp"/>
 
             <TextView
                 android:id="@+id/tvQuote"
@@ -38,7 +47,7 @@
                 android:layout_marginTop="8dp"
                 android:text="Quote"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pbProgress" />
+                app:layout_constraintTop_toBottomOf="@+id/goalProgressBar" />
 
             <TextView
                 android:id="@+id/tvName"

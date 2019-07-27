@@ -21,7 +21,7 @@ import java.util.TreeSet;
 
 public class GoalUtils {
 
-    public void getActionList(AsyncUtils.ListCallback<Action> callback, Goal goal, User user){
+    public static void getActionList(AsyncUtils.ListCallback<Action> callback, Goal goal, User user){
         ParseQuery<Action> pqAction = goal.relActions.getQuery();
         pqAction.whereEqualTo("parentUser", user);
         pqAction.findInBackground(new FindCallback<Action>() {
@@ -51,6 +51,7 @@ public class GoalUtils {
             }
         });
     }
+
     public void getNumActionsComplete(Date date, Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback){
         getActionList((actionList) -> {
             int numAction = 0;
@@ -62,6 +63,25 @@ public class GoalUtils {
                 }
             }
             callback.call(numAction);
+        }, goal, user);
+    }
+
+    /**
+     * Overloaded signature so that it doesn't calculate completion for one date only. Used to set progress in GoalProgressBar.
+     * @param goal The parent goal.
+     * @param user The user whose actions we want to track / progress we want to measure.
+     * @param callback The callback to execute once the query is complete and we have the progress.
+     */
+    public static void getNumActionsComplete(Goal goal, User user, AsyncUtils.ItemCallback<Float> callback) {
+        getActionList((actionList) -> {
+            float totalAction = actionList.size();
+            float doneAction = 0;
+            for (Action action: actionList) {
+                if (action.getIsDone()) {
+                    doneAction++;
+                }
+            }
+            callback.call(doneAction / totalAction);
         }, goal, user);
     }
 

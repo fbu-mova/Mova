@@ -63,8 +63,7 @@ public class Action extends HashableParseObject {
 
     //Get date complete add
     public Date getCompletedAt(){
-        Date date = getDate(KEY_COMPLETED_AT);
-        return TimeUtils.normalizeToDay(date);
+        return getDate(KEY_COMPLETED_AT);
     }
 
     public Action setCompletedAt(Date date){

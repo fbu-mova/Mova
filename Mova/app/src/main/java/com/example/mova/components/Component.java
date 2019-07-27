@@ -13,8 +13,6 @@ import com.example.mova.activities.DelegatedResultActivity;
  */
 public abstract class Component {
 
-    public Component() { }
-
     /**
      * Inflates the component's layout into the given activity.
      * @param activity The Activity into which to inflate the component.

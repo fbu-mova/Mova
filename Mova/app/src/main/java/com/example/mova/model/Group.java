@@ -3,6 +3,7 @@ package com.example.mova.model;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.Date;
 
@@ -63,5 +64,17 @@ public class Group extends HashableParseObject {
     public Group setGroupPic(ParseFile file) {
         put(KEY_GROUP_PIC, file);
         return this;
+    }
+
+    public static class Query extends ParseQuery<Group> {
+
+        public Query() {
+            super(Group.class);
+        }
+
+        public Query getGroup(String name) {
+            whereEqualTo(KEY_NAME, name);
+            return this;
+        }
     }
 }

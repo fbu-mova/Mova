@@ -33,6 +33,8 @@ public class JournalPromptComponent extends Component {
 
     protected ComponentManager componentManager;
 
+    public static final int COMPOSE_REQUEST_CODE = 31;
+
     public JournalPromptComponent() {
         onPostJournalEntry = (entry) -> {};
     }
@@ -76,9 +78,9 @@ public class JournalPromptComponent extends Component {
             Intent intent = new Intent(activity, JournalComposeActivity.class);
             intent.putExtra(JournalComposeActivity.KEY_MOOD, mood.toString());
 
-            activity.startActivityForDelegatedResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE,
+            activity.startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE,
                 (int requestCode, int resultCode, Intent data) -> {
-                    if (requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                    if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                         Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
                         ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
                         ((User) User.getCurrentUser()).postJournalEntry(journalEntry, tags, onPostJournalEntry);

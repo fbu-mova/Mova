@@ -32,14 +32,22 @@
             android:text="Journal"
             android:textSize="18sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvDates"
+        <com.example.mova.scrolling.EndlessScrollRefreshLayout
+            android:id="@+id/esrlDates"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="0">
 
-        </androidx.recyclerview.widget.RecyclerView>
+        </com.example.mova.scrolling.EndlessScrollRefreshLayout>
+
+        <!--<androidx.recyclerview.widget.RecyclerView-->
+            <!--android:id="@+id/rvDates"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_weight="0">-->
+        <!--</androidx.recyclerview.widget.RecyclerView>-->
 
         <TextView
             android:id="@+id/tvDate"
@@ -48,11 +56,19 @@
             android:layout_marginBottom="8dp"
             android:text="Date" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvEntries"
+        <com.example.mova.scrolling.EndlessScrollRefreshLayout
+            android:id="@+id/esrlEntries"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="100" />
+            android:layout_weight="100">
+
+        </com.example.mova.scrolling.EndlessScrollRefreshLayout>
+
+        <!--<androidx.recyclerview.widget.RecyclerView-->
+            <!--android:id="@+id/rvEntries"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="100" />-->
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
