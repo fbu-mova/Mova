@@ -10,13 +10,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.PostComponent;
 import com.example.mova.model.Event;
 import com.example.mova.model.Post;
+import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.TimeUtils;
 import com.google.android.gms.maps.MapView;
@@ -98,5 +103,25 @@ public class EventDetailsFragment extends Fragment {
                     .load(imageUrl)
                     .into(ivEventPic);
         }
+
+        eventCommentsAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), eventComments) {
+            @Override
+            public Component makeComponent(Post item) {
+                Component component = new PostComponent(item);
+                return component;
+            }
+        };
+
+        rvEventComments.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvEventComments.setAdapter(eventCommentsAdapter);
+
+
+        EventUtils.getEventComments(event, (comments) -> {
+            eventComments.addAll(comments);
+            eventCommentsAdapter.notifyDataSetChanged();
+            rvEventComments.scrollToPosition(0);
+        });
     }
+
+
 }

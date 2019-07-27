@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.mova.model.Event;
 import com.example.mova.model.Group;
+import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -54,6 +55,22 @@ public class EventUtils {
             public void done(List<Event> objects, ParseException e) {
                 if(e != null){
                     Log.e("EventUtils", "Error with query  location");
+                    e.printStackTrace();
+                    return;
+                }
+                callback.call(objects);
+            }
+        });
+    }
+
+    public static void getEventComments(Event event, AsyncUtils.ListCallback<Post> callback){
+        ParseQuery<Post> pqComments = event.relComments.getQuery();
+        pqComments.orderByDescending("createdAt");
+        pqComments.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if(e != null){
+                    Log.e("EventUtils", "Error with query comments");
                     e.printStackTrace();
                     return;
                 }
