@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.example.mova.model.Media;
+import com.example.mova.model.Post;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -81,7 +83,7 @@ public class ImageUtils {
         }
     }
 
-    // the harder launch camera 
+    // the harder launch camera
     public static void launchEmbeddedCamera() {
         // TODO -- fancy stretch goal ?
     }
@@ -145,9 +147,9 @@ public class ImageUtils {
     }
 
     /**
-     * Saves image to Parse. // TODO -- new update means image must be stored as Media first
+     * Saves image to Parse. ONLY if doesn't need to be packaged as Media.
      * @param file The image.
-     * @param parentObject Where the image will be stored (Post, User profile, Event cover photo, etc.)
+     * @param parentObject Where the image will be stored (User profile, Event cover photo, etc.)
      * @param imageKey String key of column that stores images in parentObject.
      * @param callback Callback allows actions to be performed after image is saved.
      */
@@ -169,8 +171,8 @@ public class ImageUtils {
     }
 
     /**
-     * Same as previous but doesn't save the parentObject if more fields
-     * need to be added to it before saving.
+     * Same as previous but doesn't save the parentObject if more fields need to be added
+     * to it before saving. ONLY if doesn't need to be packaged as Media.
      * @param file The image.
      * @param parentObject Where the image will be stored.
      * @param imageKey The name of the column under which the image is stored.
@@ -179,6 +181,46 @@ public class ImageUtils {
     public static ParseObject saveToParse(ParseFile file, ParseObject parentObject, String imageKey) {
         parentObject.add(imageKey, file);
         return parentObject;
+    }
+
+    /**
+     * Use case: when adding an image to a post as embedded media. Creates media, saves it, then sets it to parentPost.
+     * Did not make a builder version.
+     * // TODO -- extract updating Media to Media Utils
+     * @param file The image to save.
+     * @param parentPost The post to save the image under.
+     * @param imageKey The key that tells where to save the image.
+     * @param callback The callback function that executes when saving to Parse is completed.
+     */
+    public static void saveMediaToParse(ParseFile file, Post parentPost, String imageKey, AsyncUtils.ItemCallback<ParseFile> callback) {
+        Media imageMedia = new Media()
+                .setParent(parentPost)
+                .setContent(file);
+
+        imageMedia.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "saved image media");
+                    parentPost.setMedia(imageMedia).saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.d(TAG, "set image media to post");
+                            }
+                            else {
+                                Log.e(TAG, "failed setting image media to post");
+                            }
+                            callback.call(file);
+                        }
+                    });
+                }
+                else {
+                    Log.e(TAG, "error saving media to post", e);
+                    callback.call(file);
+                }
+            }
+        });
     }
 
     // convert image of type File to ParseFile
