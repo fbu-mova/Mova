@@ -3,15 +3,20 @@ package com.example.mova.components;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.fragments.Social.EventDetailsFragment;
 import com.example.mova.model.Event;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.TimeUtils;
@@ -91,6 +96,23 @@ public class EventThumbnailComponent extends Component{
                     .load(imageUrl)
                     .into(viewHolder.ivEventPic);
         }
+
+        viewHolder.ivEventPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment frag = EventDetailsFragment.newInstance(event);
+                manager = ((AppCompatActivity)activity)
+                        .getSupportFragmentManager();
+                FrameLayout fl = activity.findViewById(R.id.flSocialContainer);
+                //fl.removeAllViews();
+                FragmentTransaction ft = manager
+                        .beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
 
 
     }

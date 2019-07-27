@@ -3,7 +3,6 @@ package com.example.mova.model;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
 
 import java.util.Date;
 
@@ -18,9 +17,11 @@ public class Event extends HashableParseObject {
     public static final String KEY_PARTICIPANTS = "participants";
     public static final String KEY_TAGS = "tags";
     public static final String KEY_GROUPS = "groups";
+    public static final String KEY_COMMENTS = "comments";
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
     public final RelationFrame<User> relParticipants = new RelationFrame<>(this, KEY_PARTICIPANTS);
     public final RelationFrame<Group> relGroup = new RelationFrame<>(this, KEY_GROUPS);
+    public final RelationFrame<Post> relComments = new RelationFrame<>(this, KEY_COMMENTS);
 
     //Date
     public Date getDate(){
