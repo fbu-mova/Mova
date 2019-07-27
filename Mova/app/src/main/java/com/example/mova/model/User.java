@@ -9,6 +9,7 @@ import com.parse.FindCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -27,6 +28,7 @@ public class User extends ParseUser {
     public static final String KEY_GROUPS_IN = "groupsIn";
     public static final String KEY_ADMIN = "adminOf";
     public static final String KEY_SCRAPBOOK = "scrapbook";
+    public static final String KEY_LOCATION = "Location";
 
 
     public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
@@ -57,6 +59,9 @@ public class User extends ParseUser {
         put(KEY_PROFILE_PIC, file);
         return this;
     }
+
+    //Location
+    public ParseGeoPoint getLocation(){return getParseGeoPoint(KEY_LOCATION);}
 
     public void isFriendsWith(User user, AsyncUtils.ItemCallback<Boolean> callback){
         getFriendsList((friendList) -> {

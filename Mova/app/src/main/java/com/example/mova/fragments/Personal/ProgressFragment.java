@@ -80,7 +80,7 @@ public class ProgressFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment ProgressFragment.
      */
-    // TODO: Rename and change types and count of parameters
+
     public static ProgressFragment newInstance() {
         ProgressFragment fragment = new ProgressFragment();
         Bundle args = new Bundle();
@@ -176,7 +176,7 @@ public class ProgressFragment extends Fragment {
                     if(tsGoals.size() == 0) {
                         break;
                     }
-                    if(tsGoals.first().value >= 0) {
+                    if(tsGoals.first().value >= 0 && goodGoals.size() < 3) {
                         goodGoals.add(tsGoals.first().item);
                         goalsWellAdapter.notifyItemInserted(i);
                         tsGoals.remove(tsGoals.first());
@@ -184,7 +184,7 @@ public class ProgressFragment extends Fragment {
                             break;
                         }
                     }
-                    if(tsGoals.last().value < 0) {
+                    if(tsGoals.last().value < 0 && badGoals.size() < 3) {
                         badGoals.add(tsGoals.last().item);
                         goalsWorkAdaper.notifyItemInserted(i);
                         tsGoals.remove(tsGoals.last());
@@ -230,7 +230,6 @@ public class ProgressFragment extends Fragment {
 
     private void setGraph(AsyncUtils.EmptyCallback callback){
         AsyncUtils.executeMany(mGoals.size(), (i,cb) -> {
-            //todo
            Goal goal = mGoals.get(i);
             goalUtils.getDataForGraph(goal, (User) ParseUser.getCurrentUser(), length , (series) -> {
                 series.setTitle(goal.getTitle());
@@ -261,7 +260,7 @@ public class ProgressFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
-                //Get all the goals TODO- only add goal if the user is part of it
+                //Get all the goals
                 mGoals.addAll(objects);
                 //Log.d("ProgressFragment", "Finish with query, the size of mGoals is" + mGoals.size());
                 callback.call();

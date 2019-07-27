@@ -14,31 +14,31 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.fragments.Social.GroupDetailsFragment;
-import com.example.mova.model.Group;
+import com.example.mova.fragments.Social.EventDetailsFragment;
+import com.example.mova.model.Event;
+import com.example.mova.utils.LocationUtils;
+import com.example.mova.utils.TimeUtils;
 import com.parse.ParseFile;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GroupThumbnailComponent extends Component {
+public class EventThumbnailComponent extends Component{
 
-    private static final String TAG = "group thumbnail comp'nt";
-    private static final int viewLayoutRes = R.layout.item_group_thumbnail;
+    private static final String TAG = "eventThumbnailComp";
+    private static final int viewLayoutRes = R.layout.item_event_thumbnail;
 
-    private Group group;
+    private Event event;
     private View view;
-    private GroupThumbnailViewHolder viewHolder;
+    private EventThumbnailViewHolder viewHolder;
     private DelegatedResultActivity activity;
     public static FragmentManager manager;
 
-    public GroupThumbnailComponent(Group item){
+    public EventThumbnailComponent(Event item){
         super();
-        this.group = item;
+        this.event = item;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class GroupThumbnailComponent extends Component {
 
     @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new GroupThumbnailViewHolder(view);
+        viewHolder = new EventThumbnailViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -79,22 +79,28 @@ public class GroupThumbnailComponent extends Component {
             return;
         }
 
-        viewHolder.tvGroupName.setText(group.getName());
-        ParseFile file = group.getGroupPic();
+
+        String location = LocationUtils.makeLocationText(activity,event.getLocation());
+        String[] locationsplit = location.split(",");
+        String[] state = locationsplit[2].split(" ");
+
+        //viewHolder.tvGroupName.setText();
+        viewHolder.tvEventName.setText(event.getTitle());
+        viewHolder.tvEventLocation.setText(locationsplit[1] + ", "+ state[1]);
+        viewHolder.tvWhen.setText(TimeUtils.toDateString(event.getDate()));
+
+        ParseFile file = event.getEventPic();
         if(file != null){
             String imageUrl = file.getUrl();
             Glide.with(activity)
                     .load(imageUrl)
-                    .transform(new CenterCrop(), new RoundedCorners(150))
-                    .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
-                    .placeholder(R.color.colorAccent)
-                    .into(viewHolder.ivGroupPic);
+                    .into(viewHolder.ivEventPic);
         }
 
-        viewHolder.ivGroupPic.setOnClickListener(new View.OnClickListener() {
+        viewHolder.ivEventPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment frag = GroupDetailsFragment.newInstance(group);
+                Fragment frag = EventDetailsFragment.newInstance(event);
                 manager = ((AppCompatActivity)activity)
                         .getSupportFragmentManager();
                 FrameLayout fl = activity.findViewById(R.id.flSocialContainer);
@@ -108,14 +114,18 @@ public class GroupThumbnailComponent extends Component {
             }
         });
 
+
     }
 
-    public static class GroupThumbnailViewHolder extends Component.ViewHolder{
+    public static class EventThumbnailViewHolder extends Component.ViewHolder{
 
-        @BindView(R.id.tvGroupName) protected TextView tvGroupName;
-        @BindView(R.id.ivGroupPic) protected ImageView ivGroupPic;
+        @BindView(R.id.tvGroupName) TextView tvGroupName;
+        @BindView(R.id.ivEventPic) ImageView ivEventPic;
+        @BindView(R.id.tvEventName) TextView tvEventName;
+        @BindView(R.id.tvEventLocation) TextView tvEventLocation;
+        @BindView(R.id.tvWhen) TextView tvWhen;
 
-        public GroupThumbnailViewHolder(@NonNull View itemView) {
+        public EventThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

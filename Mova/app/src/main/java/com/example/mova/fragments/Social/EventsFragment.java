@@ -1,54 +1,75 @@
 package com.example.mova.fragments.Social;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.EventThumbnailComponent;
+import com.example.mova.model.Event;
+import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.utils.EventUtils;
+import com.example.mova.utils.LocationUtils;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link EventsFragment.OnFragmentInteractionListener} interface
+
  * to handle interaction events.
  * Use the {@link EventsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class EventsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    User user;
 
-    private OnFragmentInteractionListener mListener;
+    @BindView(R.id.svEvents)
+    SearchView svEvents;
+
+    @BindView(R.id.rvYourEvents) RecyclerView rvYourEvents;
+    protected List<Event> yourEvents;
+    private DataComponentAdapter<Event> yourEventsAdapter;
+
+    //TODO - Move group events into the group tab
+    @BindView(R.id.rvGroupEvents) RecyclerView rvGroupEvents;
+    protected List<Event> groupEvents;
+    private DataComponentAdapter<Event> groupEventAdapter;
+
+    @BindView(R.id.rvNearYou) RecyclerView rvNearYou;
+    protected List<Event> nearYouEvents;
+    private DataComponentAdapter<Event> nearYouAdapter;
+
+
 
     public EventsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EventsFragment.
-     */
-    // TODO: Rename and change types and count of parameters
-    public static EventsFragment newInstance(String param1, String param2) {
+
+    public static EventsFragment newInstance() {
         EventsFragment fragment = new EventsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,10 +77,6 @@ public class EventsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -69,42 +86,71 @@ public class EventsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_events, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+        user = (User) ParseUser.getCurrentUser();
+        yourEvents = new ArrayList<>();
+        groupEvents = new ArrayList<>();
+        nearYouEvents = new ArrayList<>();
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+       LocationUtils.saveCurrentUserLocation(getContext());
+        ParseGeoPoint userLocation = LocationUtils.getCurrentUserLocation();
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        yourEventsAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(),yourEvents) {
+            @Override
+            public Component makeComponent(Event item) {
+                Component component = new EventThumbnailComponent(item);
+                return component;
+            }
+        };
+
+        groupEventAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), groupEvents) {
+            @Override
+            public Component makeComponent(Event item) {
+                Component component = new EventThumbnailComponent(item);
+                return component;
+            }
+        };
+
+        nearYouAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), nearYouEvents) {
+            @Override
+            public Component makeComponent(Event item) {
+                Component component = new EventThumbnailComponent(item);
+                return component;
+            }
+        };
+
+        //Toast.makeText(getContext(), userLocation.toString() , Toast.LENGTH_SHORT).show();
+
+        EdgeDecorator decorator = new EdgeDecorator(5);
+
+        rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvGroupEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvNearYou.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        rvYourEvents.addItemDecoration(decorator);
+        rvGroupEvents.addItemDecoration(decorator);
+        rvNearYou.addItemDecoration(decorator);
+
+        rvYourEvents.setAdapter(yourEventsAdapter);
+        rvGroupEvents.setAdapter(groupEventAdapter);
+        rvNearYou.setAdapter(nearYouAdapter);
+
+        EventUtils.getYourEvents(user, (yourevents) -> {
+            yourEvents.addAll(yourevents);
+            yourEventsAdapter.notifyDataSetChanged();
+            rvYourEvents.scrollToPosition(0);
+        });
+
+        EventUtils.getEventsNearYou(userLocation, (eventsNearYou) -> {
+            nearYouEvents.addAll(eventsNearYou);
+            nearYouAdapter.notifyDataSetChanged();
+            rvNearYou.scrollToPosition(0);
+            Log.d("Events Fragment", LocationUtils.getCurrentUserLocation().toString());
+        });
+
+
     }
 }

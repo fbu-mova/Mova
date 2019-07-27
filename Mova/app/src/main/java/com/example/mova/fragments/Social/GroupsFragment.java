@@ -23,6 +23,7 @@ import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseUser;
@@ -66,7 +67,7 @@ public class GroupsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static GroupsFragment newInstance(String param1, String param2) {
+    public static GroupsFragment newInstance() {
         GroupsFragment fragment = new GroupsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -109,8 +110,13 @@ public class GroupsFragment extends Fragment {
             }
         };
 
+        EdgeDecorator decorator = new EdgeDecorator(5);
+
         rvGroups.setLayoutManager(new GridLayoutManager(getContext(), 2,  GridLayoutManager.HORIZONTAL,false));
         rvActiveGoals.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        rvGroups.addItemDecoration(decorator);
+        rvActiveGoals.addItemDecoration(decorator);
 
         rvGroups.setAdapter(groupAdapter);
         rvActiveGoals.setAdapter(activeGoalAdaper);
