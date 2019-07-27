@@ -12,7 +12,13 @@ public class MediaUtils {
 
     public static final String TAG = "MediaUtils";
 
-    public static void updateMediaToPost(Post parentPost, ParseObject child, AsyncUtils.ItemCallback<ParseObject> callback) {
+    /**
+     * Creates and saves an instance of media to their corresponding post.
+     * @param parentPost
+     * @param child
+     * @param callback
+     */
+    public static void updateMediaToPost(Post parentPost, Object child, AsyncUtils.ItemCallback<Object> callback) {
 
         // create Media
         Media childMedia = new Media()
