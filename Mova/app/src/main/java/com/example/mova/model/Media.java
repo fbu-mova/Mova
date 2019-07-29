@@ -217,6 +217,7 @@ public class Media extends HashableParseObject {
                     return Action;
                 case 6:
                     return Image;
+                case 0:
                 default:
                     return Text;
             }
