@@ -98,7 +98,7 @@ public class User extends ParseUser {
     }
 
     public static User getCurrentUser() {
-        return User.getCurrentUser();
+        return (User) ParseUser.getCurrentUser();
     }
 
     @Override
