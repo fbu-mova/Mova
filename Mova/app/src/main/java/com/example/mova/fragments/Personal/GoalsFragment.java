@@ -1,6 +1,5 @@
 package com.example.mova.fragments.Personal;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,9 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.activities.GoalComposeActivity;
-import com.example.mova.adapters.ComponentAdapter;
+import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
@@ -243,7 +241,24 @@ public class GoalsFragment extends Fragment {
 //            throw new RuntimeException(context.toString()
 //                    + " must implement OnFragmentInteractionListener");
 //        }
-    }
+//    }
+//
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+////        if (context instanceof OnFragmentInteractionListener) {
+////            mListener = (OnFragmentInteractionListener) context;
+////        } else {
+////            throw new RuntimeException(context.toString()
+////                    + " must implement OnFragmentInteractionListener");
+////        }
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+   }
 
     @Override
     public void onDetach() {

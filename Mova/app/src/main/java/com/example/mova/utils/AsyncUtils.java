@@ -2,12 +2,9 @@ package com.example.mova.utils;
 
 import android.util.Log;
 
-import org.parceler.Parcel;
-
 import com.example.mova.model.RelationFrame;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseRelation;
 import com.parse.SaveCallback;
 
 import java.util.List;
@@ -170,4 +167,5 @@ public class AsyncUtils {
             }
         });
     }
+
 }

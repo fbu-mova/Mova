@@ -1,19 +1,18 @@
 package com.example.mova.model;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.utils.AsyncUtils;
-import com.example.mova.utils.StableNumericalIdProvider;
-import com.example.mova.utils.TimeUtils;
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.Date;
 import java.util.List;
 
 @ParseClassName("_User")
@@ -29,6 +28,8 @@ public class User extends ParseUser {
     public static final String KEY_GROUPS_IN = "groupsIn";
     public static final String KEY_ADMIN = "adminOf";
     public static final String KEY_SCRAPBOOK = "scrapbook";
+    public static final String KEY_POSTS = "posts";
+    public static final String KEY_LOCATION = "Location";
 
 
     public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
@@ -38,6 +39,7 @@ public class User extends ParseUser {
     public final RelationFrame<Group> relGroups = new RelationFrame<>(this, KEY_GROUPS_IN);
     public final RelationFrame<Group> relAdminOf = new RelationFrame<>(this, KEY_ADMIN);
     public final RelationFrame<Post> relScrapbook = new RelationFrame<>(this, KEY_SCRAPBOOK);
+    public final RelationFrame<Post> relPosts = new RelationFrame<>(this, KEY_POSTS);
 
     //Email verification
 
@@ -60,12 +62,37 @@ public class User extends ParseUser {
         return this;
     }
 
+    //Location
+    public ParseGeoPoint getLocation(){return getParseGeoPoint(KEY_LOCATION);}
+
+    public void isFriendsWith(User user, AsyncUtils.ItemCallback<Boolean> callback){
+        getFriendsList((friendList) -> {
+            for( User friend : friendList){
+                if(friend.getObjectId().equals(user.getObjectId())){
+                    callback.call(true);
+                    return;
+                }
+            }
+            callback.call(false);
+        });
+    }
+
     public void postJournalEntry(Post journalEntry, List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
         postJournalEntry(journalEntry, tags, null, callback);
     }
 
     public void postJournalEntry(Post journalEntry, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
         journalEntry.savePost(tags, media, (post) -> relJournal.add(journalEntry, callback));
+    }
+
+    public void getFriendsList(AsyncUtils.ListCallback<User> callback){
+        ParseQuery<User> pqUser = this.relFriends.getQuery();
+        pqUser.findInBackground(new FindCallback<User>() {
+            @Override
+            public void done(List<User> objects, ParseException e) {
+                callback.call(objects);
+            }
+        });
     }
 
     @Override
@@ -77,4 +104,5 @@ public class User extends ParseUser {
     public boolean equals(@Nullable Object obj) {
         return HashableParseObject.equals(this, obj);
     }
+
 }

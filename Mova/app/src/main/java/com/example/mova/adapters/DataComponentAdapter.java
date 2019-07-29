@@ -1,6 +1,5 @@
 package com.example.mova.adapters;
 
-import android.app.Activity;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -60,6 +59,9 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
 
     @Override
     public int getItemCount() {
+        if(items == null){
+            return 0;
+        }
         return items.size();
     }
 

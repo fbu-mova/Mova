@@ -23,6 +23,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PostComponent extends Component {
+    //Todo - edit this file
+
 
     private Post post;
     private String subheader;

@@ -1,5 +1,7 @@
 package com.example.mova.model;
 
+import android.media.Image;
+
 import com.example.mova.components.Component;
 import com.example.mova.components.MediaTextComponent;
 import com.parse.ParseClassName;
@@ -30,9 +32,9 @@ public class Media extends HashableParseObject {
         return this;
     }
 
-    // Parent
-    public User getParent() {
-        return (User) getParseUser(KEY_PARENT);
+    //Parent
+    public Post getParent(){
+        return (Post) getParseObject(KEY_PARENT);
     }
 
     public Media setParent(Post post){
@@ -63,6 +65,7 @@ public class Media extends HashableParseObject {
     // ContentGroup
     public Group getContentGroup() {
         return (Group) getParseObject(KEY_GROUP);
+
     }
 
     public Media setContentGroup(Group group) {
@@ -105,8 +108,8 @@ public class Media extends HashableParseObject {
         return getParseFile(KEY_IMAGE);
     }
 
-    public Media setContentImage(ParseFile image) {
-        put(KEY_IMAGE, image);
+    public Media setContentImage(ParseFile parseFile) {
+        put(KEY_IMAGE, parseFile);
         return this;
     }
 
@@ -213,6 +216,7 @@ public class Media extends HashableParseObject {
                 case 5:
                     return Action;
                 case 6:
+                    return Image;
                 default:
                     return Text;
             }
@@ -230,6 +234,8 @@ public class Media extends HashableParseObject {
                     return KEY_GOAL;
                 case Action:
                     return KEY_ACTION;
+                case Image:
+                    return KEY_IMAGE;
                 case Text:
                 default:
                     return KEY_TEXT;

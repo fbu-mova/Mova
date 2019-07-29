@@ -11,7 +11,7 @@ import java.util.List;
 
 public class FriendUtils {
 
-    public void queryFriends(User user, AsyncUtils.ListCallback<User> callback){
+    public static void queryFriends(User user, AsyncUtils.ListCallback<User> callback){
         ParseQuery<User> pqFriends = user.relFriends.getQuery();
         pqFriends.findInBackground(new FindCallback<User>() {
             @Override
