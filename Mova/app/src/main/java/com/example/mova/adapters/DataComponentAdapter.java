@@ -22,7 +22,7 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
 
     public DataComponentAdapter(DelegatedResultActivity activity, List<T> items) {
         this.activity = activity;
-        this.items = items;
+        this.items = items; // TODO: If null, instantiate
         this.components = new HashMap<>();
     }
 
@@ -50,16 +50,17 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
         return component.getViewHolder();
     }
 
+    // FIXME: Is holder null when bind is called before create?
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
-        Component component = components.get(item);
+        Component component = components.get(item); // FIXME: Refactor--create a component constructor that takes in a ViewHolder, and make the creation of ViewHolders static instead
         component.render();
     }
 
     @Override
     public int getItemCount() {
-        if(items == null){
+        if (items == null) { // FIXME: When is this used?
             return 0;
         }
         return items.size();

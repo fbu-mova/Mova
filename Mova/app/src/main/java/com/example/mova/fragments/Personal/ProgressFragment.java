@@ -53,6 +53,8 @@ import butterknife.ButterKnife;
  */
 public class ProgressFragment extends Fragment {
 
+    //Todo- allow length to be changed
+
     @BindView(R.id.graphProgress)
     GraphView graph;
     @BindView(R.id.rvWell)

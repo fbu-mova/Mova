@@ -17,16 +17,16 @@ import butterknife.ButterKnife;
 
 public abstract class ChecklistItemComponent<T> extends Component {
 
-    private T item;
-    private int checkedColor, uncheckedColor;
-    private boolean applyColorToggleToText;
-    private AsyncUtils.ItemReturnCallback<T, String> getTitle;
+    protected T item;
+    protected int checkedColor, uncheckedColor;
+    protected boolean applyColorToggleToText;
+    protected AsyncUtils.ItemReturnCallback<T, String> getTitle;
 
-    private DelegatedResultActivity activity;
-    private ViewHolder holder;
-    private View view;
+    protected DelegatedResultActivity activity;
+    protected ViewHolder holder;
+    protected View view;
 
-    private ComponentManager componentManager;
+    protected ComponentManager componentManager;
 
     public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, boolean applyColorToggleToText, AsyncUtils.ItemReturnCallback<T, String> getTitle) {
         this.item = item;
@@ -65,7 +65,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     public abstract void onClick(View view);
 
-    public class ViewHolder extends Component.ViewHolder {
+    public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.cbItem) public CheckBox cbItem;
 

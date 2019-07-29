@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
-import com.example.mova.model.Media;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Post;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -30,10 +30,10 @@ public class ImageUtils {
     // code copied from Parstagram, modified to be slightly more abstract
 
     public static final String TAG = "ImageUtils";
-    public static final String photoFileName = "photo.jpg";
+    public static final String PHOTO_FILE_NAME = "photo.jpg";
 
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    private static final int PICK_PHOTO_CODE = 1046;
+    public static final int PICK_PHOTO_CODE = 1046;
 
     /**
      * Launches an intent to go to Camera Gallery to choose a photo.
@@ -54,20 +54,38 @@ public class ImageUtils {
 
     }
 
+    /**
+     * Launches an intent to go to Camera Gallery to choose a photo.
+     * @param activity The activity from where the intent is launched.
+     * @param cb       The callback to call once the result has been received.
+     */
+    public static void chooseFromGallery(DelegatedResultActivity activity, DelegatedResultActivity.ActivityResultCallback cb) {
+
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            activity.startActivityForDelegatedResult(intent, PICK_PHOTO_CODE, cb);
+        }
+
+    }
+
     // launch camera and choose from there; copied from Parstagram
 
     /**
      * Launches an intent to go to the Camera App to take a photo.
-     * @param photoFile The File (originally a field of activity) in which file taken is stored.
-     * @param parseFile The ParseFile (^same) in which the parseFile is stored after being converted.
      * @param activity  The activity from where the intent is launched.
      */
-    public static void launchCamera(File photoFile, ParseFile parseFile, Activity activity) {
+    public static void launchCamera(Activity activity) {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference to access to future access
-        photoFile = getPhotoFileUri(photoFileName, activity);
-        parseFile = fileToParseFile(photoFile);
+        File photoFile = getPhotoFileUri(PHOTO_FILE_NAME, activity);
+        ParseFile parseFile = fileToParseFile(photoFile);
 
         // wrap File object into a content provider
         // required for API >= 24
@@ -83,9 +101,36 @@ public class ImageUtils {
         }
     }
 
+    /**
+     * Launches an intent to go to the Camera App to take a photo.
+     * @param activity  The activity from where the intent is launched.
+     * @param cb        The callback to call once the result has been received.
+     */
+    public static void launchCamera(DelegatedResultActivity activity, DelegatedResultActivity.ActivityResultCallback cb) {
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Create a File reference to access to future access
+        File photoFile = getPhotoFileUri(PHOTO_FILE_NAME, activity);
+        ParseFile parseFile = fileToParseFile(photoFile);
+
+        // wrap File object into a content provider
+        // required for API >= 24
+        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
+        Uri fileProvider = FileProvider.getUriForFile(activity, "com.codepath.fileprovider", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            // Start the image capture intent to take photo
+            activity.startActivityForDelegatedResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, cb);
+        }
+    }
+
     // the harder launch camera
     public static void launchEmbeddedCamera() {
-        // TODO -- fancy stretch goal ?
+        // TODO: Migrate from ComposeMediaComponent
+        // TODO: Fix stretching/squashing in aspect ratio
     }
 
     /**
@@ -130,7 +175,7 @@ public class ImageUtils {
                     Bitmap selectedImage = null;
                     try {
                         selectedImage = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), photoUri);
-                        bitmapToParse(selectedImage, parseFile);
+                        ParseFile toSave = bitmapToParse(selectedImage);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -144,6 +189,31 @@ public class ImageUtils {
             }
         }
         return true;
+    }
+
+    /**
+     * Fetches the image at the URI for an image stored in the user's library.
+     * @param imageUri The image's URI.
+     * @return The image stored at that address.
+     */
+    public static Bitmap uriToBitmapFromGallery(Activity activity, Uri imageUri) throws IOException {
+        Bitmap selectedImage = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), imageUri);
+        return selectedImage;
+    }
+
+    /**
+     * Fetches the image last taken by the camera as a bitmap.
+     * @param activity The current activity.
+     * @return The last image that the camera took.
+     */
+    public static Bitmap getStoredBitmap(Activity activity) {
+        File photoFile = getPhotoFileUri(PHOTO_FILE_NAME, activity);
+        Uri takenPhotoUri = Uri.fromFile(photoFile);
+        // by this point we have the camera photo on disk
+        Bitmap rawTakenImage = BitmapFactory.decodeFile(takenPhotoUri.getPath());
+        // See BitmapScaler.java: https://gist.github.com/nesquena/3885707fd3773c09f1bb
+        Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(rawTakenImage, 200);
+        return resizedBitmap;
     }
 
     /**
@@ -201,7 +271,7 @@ public class ImageUtils {
     }
 
     // convert image of type Bitmap to ParseFile
-    private static void bitmapToParse(Bitmap selectedImage, ParseFile parseFile) {
+    public static ParseFile bitmapToParse(Bitmap selectedImage) {
         // used code from: https://stackoverflow.com/questions/31227547/how-to-upload-image-to-parse-in-android
 //                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
 //                        R.drawable.androidbegin);
@@ -212,9 +282,13 @@ public class ImageUtils {
         byte[] image = stream.toByteArray();
 
         // Create the ParseFile
-        parseFile = new ParseFile("from_gallery.jpg", image);
+        return new ParseFile("from_gallery.jpg", image);
 //                // Upload the image into Parse Cloud
 //                file.saveInBackground();
+    }
+
+    public static Bitmap fileToBitmap(File photoFile) {
+        return BitmapFactory.decodeFile(photoFile.getPath());
     }
 
     // Returns the File for a photo stored on disk given the fileName

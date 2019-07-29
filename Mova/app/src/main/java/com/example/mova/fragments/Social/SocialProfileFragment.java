@@ -52,6 +52,7 @@ import butterknife.ButterKnife;
 public class SocialProfileFragment extends Fragment {
 
     //Todo - add friend requests
+    //Todo - add edit profile
 
     @BindView(R.id.ivSocialPic)
     ImageView ivSocialPic;

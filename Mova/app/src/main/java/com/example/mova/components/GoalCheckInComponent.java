@@ -114,8 +114,8 @@ public class GoalCheckInComponent extends Component {
                 };
             }
         };
-        holder.rvChecklist.setAdapter(adapter);
         holder.rvChecklist.setLayoutManager(new LinearLayoutManager(activity));
+        holder.rvChecklist.setAdapter(adapter);
 
         // Display progress
         holder.pbProgress.setProgress(GoalUtils.getProgressPercent(goalActions));

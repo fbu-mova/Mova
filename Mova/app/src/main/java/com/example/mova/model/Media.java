@@ -1,12 +1,20 @@
 package com.example.mova.model;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
 import com.example.mova.components.Component;
+import com.example.mova.components.ImageComponent;
 import com.example.mova.components.MediaTextComponent;
+import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.SaveCallback;
+
+import java.io.File;
 
 @ParseClassName("Media")
 public class Media extends HashableParseObject {
@@ -21,13 +29,13 @@ public class Media extends HashableParseObject {
     public static final String KEY_TEXT = "contentText";
     public static final String KEY_IMAGE = "contentImage";
 
-    //Type
-    public ContentType getType(){
+    // Type
+    public ContentType getType() {
         int type = getInt(KEY_TYPE);
         return ContentType.fromValue(type);
     }
 
-    public Media setType(ContentType type){
+    public Media setType(ContentType type) {
         put(KEY_TYPE, type.getValue());
         return this;
     }
@@ -42,7 +50,7 @@ public class Media extends HashableParseObject {
         return this;
     }
 
-    //ContentText
+    // ContentText
     public String getContentText() {
         return getString(KEY_TEXT);
     }
@@ -52,8 +60,8 @@ public class Media extends HashableParseObject {
         return this;
     }
 
-    //ContentPost
-    public Post getContentPost(){
+    // ContentPost
+    public Post getContentPost() {
         return (Post) getParseObject(KEY_POST);
     }
 
@@ -62,48 +70,48 @@ public class Media extends HashableParseObject {
         return this;
     }
 
-    //ContentGroup
-    public Group getContentGroup(){
+    // ContentGroup
+    public Group getContentGroup() {
         return (Group) getParseObject(KEY_GROUP);
 
     }
 
-    public Media setContentGroup(Group group){
+    public Media setContentGroup(Group group) {
         put(KEY_GROUP,group);
         return this;
     }
 
-    //ContentEvent
-    public Event getContentEvent(){
+    // ContentEvent
+    public Event getContentEvent() {
         return (Event) getParseObject(KEY_EVENT);
     }
 
-    public Media setContentEvent(Event event){
+    public Media setContentEvent(Event event) {
         put(KEY_EVENT, event);
         return this;
     }
 
-    //ContentGoal
-    public Goal getContentGoal(){
+    // ContentGoal
+    public Goal getContentGoal() {
         return (Goal) getParseObject(KEY_GOAL);
     }
 
-    public Media setContentGoal(Goal goal){
+    public Media setContentGoal(Goal goal) {
         put(KEY_GOAL, goal);
         return this;
     }
 
-    //ContentAction
-    public Action getContentAction(){
+    // ContentAction
+    public Action getContentAction() {
         return (Action) getParseObject(KEY_ACTION);
     }
 
-    public Media setContentAction(Action action){
+    public Media setContentAction(Action action) {
         put(KEY_ACTION, action);
         return this;
     }
 
-    //ContentImage
+    // ContentImage
     public ParseFile getContentImage() {
         return getParseFile(KEY_IMAGE);
     }
@@ -150,7 +158,7 @@ public class Media extends HashableParseObject {
         } else if (content instanceof Action) {
             setType(ContentType.Action);
             setContentAction((Action) content);
-        } else if (content instanceof ParseFile){
+        } else if (content instanceof ParseFile) {
             setType(ContentType.Image);
             setContentImage((ParseFile) content);
         } else {
@@ -184,6 +192,8 @@ public class Media extends HashableParseObject {
         switch (getType()) {
             case Text:
                 return new MediaTextComponent(this);
+            case Image:
+                return new ImageComponent(getContentImage());
             default:
                 return null;
         }
@@ -217,6 +227,7 @@ public class Media extends HashableParseObject {
                     return Action;
                 case 6:
                     return Image;
+                case 0:
                 default:
                     return Text;
             }
@@ -245,5 +256,15 @@ public class Media extends HashableParseObject {
         public int getValue() {
             return value;
         }
+    }
+
+    public static void fromImage(Bitmap bmp, AsyncUtils.TwoItemCallback<Media, Throwable> cb) {
+        // TODO: Likely move image storage to some other cloud platform
+        Media media = new Media();
+        ParseFile parseFile = ImageUtils.bitmapToParse(bmp);
+        parseFile.saveInBackground((SaveCallback) (e) -> {
+            media.setContent(parseFile);
+            cb.call(media, e);
+        });
     }
 }

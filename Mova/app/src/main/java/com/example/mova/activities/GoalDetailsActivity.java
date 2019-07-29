@@ -1,18 +1,14 @@
 package com.example.mova.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.ConfirmShareGoalDialog;
@@ -20,19 +16,15 @@ import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.ActionComponent;
-import com.example.mova.components.ActionEditComponent;
-import com.example.mova.components.ActionViewComponent;
 import com.example.mova.components.Component;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
-import com.example.mova.model.Group;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +63,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         goal = getIntent().getParcelableExtra("goal");
 
         tvGoalName.setText(goal.getTitle());
-        tvFromGroup.setText(goal.getGroupName());
+//        tvFromGroup.setText(goal.getGroupName());
         tvDescription.setText(goal.getDescription());
 
         btShare.setOnClickListener(new View.OnClickListener() {

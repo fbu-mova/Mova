@@ -20,11 +20,14 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
+import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.PostComponent;
+import com.example.mova.model.Event;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
+import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.GroupUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseFile;
@@ -44,6 +47,7 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class GroupDetailsFragment extends Fragment {
+    //Todo - fix this
 
     Group group;
 
@@ -58,12 +62,15 @@ public class GroupDetailsFragment extends Fragment {
 
     protected List<Post> groupPosts;
     protected List<Goal> groupGoals;
+    protected List<Event> groupEvents;
+
 
     private DataComponentAdapter<Post> groupPostAdapter;
     private DataComponentAdapter<Goal> groupGoalAdapter;
+    private DataComponentAdapter<Event> groupEventAdapter;
 
-    @BindView(R.id.rvGroupGoals)
-    RecyclerView rvGroupGoals;
+//    @BindView(R.id.rvGroupGoals)
+//    RecyclerView rvGroupGoals;
     @BindView(R.id.rvGroupPosts)
     RecyclerView rvGroupPosts;
 
@@ -100,6 +107,7 @@ public class GroupDetailsFragment extends Fragment {
         group = this.getArguments().getParcelable("group");
         groupGoals = new ArrayList<>();
         groupPosts = new ArrayList<>();
+        groupEvents = new ArrayList<>();
 
         tvGroupName.setText(group.getName());
         ParseFile file = group.getGroupPic();
@@ -111,7 +119,7 @@ public class GroupDetailsFragment extends Fragment {
         }
 
 
-        rvGroupGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        rvGroupGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvGroupPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         groupGoalAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), groupGoals) {
@@ -130,22 +138,18 @@ public class GroupDetailsFragment extends Fragment {
             }
         };
 
+        groupEventAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), groupEvents) {
+            @Override
+            public Component makeComponent(Event item) {
+                Component component = new EventThumbnailComponent(item);
+                return component;
+            }
+        };
+
         //Todo Merge the rv into one rv and use rv.swapAdapter
 
-        rvGroupGoals.setAdapter(groupGoalAdapter);
+//        rvGroupGoals.setAdapter(groupGoalAdapter);
         rvGroupPosts.setAdapter(groupPostAdapter);
-
-        GroupUtils.getGroupGoals(group, (goals) -> {
-            groupGoals.addAll(goals);
-            groupGoalAdapter.notifyDataSetChanged();
-            rvGroupGoals.scrollToPosition(0);
-        });
-
-        GroupUtils.getGroupPosts(group, (posts) -> {
-            groupPosts.addAll(posts);
-            groupPostAdapter.notifyDataSetChanged();
-            rvGroupPosts.scrollToPosition(0);
-        });
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -153,16 +157,46 @@ public class GroupDetailsFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.action_group_goals:
+                        GroupUtils.getGroupGoals(group, (goals) -> {
+                            groupGoals.addAll(goals);
+                            groupGoalAdapter.notifyDataSetChanged();
+//                          rvGroupGoals.scrollToPosition(0);
+                            rvGroupPosts.scrollToPosition(0);
+                            rvGroupPosts.swapAdapter(groupGoalAdapter, false);
+                        });
 
-                        rvGroupGoals.setVisibility(View.VISIBLE);
-                        rvGroupPosts.setVisibility(View.GONE);
+
+
+//                        rvGroupGoals.setVisibility(View.VISIBLE);
+//                        rvGroupPosts.setVisibility(View.GONE);
                         return true;
 
                     case R.id.action_group_posts:
+                        GroupUtils.getGroupPosts(group, (posts) -> {
+                            groupPosts.addAll(posts);
+                            groupPostAdapter.notifyDataSetChanged();
+                            rvGroupPosts.scrollToPosition(0);
+                            rvGroupPosts.swapAdapter(groupPostAdapter, false);
+                        });
 
-                        rvGroupGoals.setVisibility(View.GONE);
-                        rvGroupPosts.setVisibility(View.VISIBLE);
+
+
+//                        rvGroupGoals.setVisibility(View.GONE);
+//                        rvGroupPosts.setVisibility(View.VISIBLE);
+                        return true;
+                    case R.id.action_group_events:
+                        EventUtils.getGroupEvents(group, (events) -> {
+                            groupEvents.addAll(events);
+                            groupEventAdapter.notifyDataSetChanged();
+                            rvGroupPosts.scrollToPosition(0);
+                            rvGroupPosts.swapAdapter(groupEventAdapter, false);
+                        });
+
+
+                        return true;
                         default:return true;
+
+
                 }
             }
         });

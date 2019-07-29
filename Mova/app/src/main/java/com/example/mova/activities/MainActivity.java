@@ -1,9 +1,13 @@
 package com.example.mova.activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -17,6 +21,9 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends DelegatedResultActivity {
 
+    private static final int REQUEST_PERMISSIONS_CODE = 10;
+    private static final String[] REQUIRED_PERMISSIONS = new String[] { Manifest.permission.CAMERA };
+
     @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
 
     @Override
@@ -24,7 +31,10 @@ public class MainActivity extends DelegatedResultActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
+    }
 
+    private void initFragments() {
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -47,5 +57,28 @@ public class MainActivity extends DelegatedResultActivity {
             }
         });
         bottomNavigationView.setSelectedItemId(R.id.action_personal);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS_CODE) {
+            if (allPermissionsGranted()) {
+                initFragments();
+            } else {
+                finish();
+                // TODO: Create a better fallback for permissions not being granted
+            }
+        }
+    }
+
+    private boolean allPermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            boolean granted = ContextCompat.checkSelfPermission(getBaseContext(), permission) == PackageManager.PERMISSION_GRANTED;
+            if (!granted) {
+                return false;
+            }
+        }
+        return true;
     }
 }
