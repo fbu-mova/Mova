@@ -10,4 +10,8 @@
         android:id="@+id/action_group_posts"
         android:title="POSTS"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_group_events"
+        android:title="EVENTS"
+        app:showAsAction="always" />
 </menu>
