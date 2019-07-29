@@ -102,7 +102,7 @@ public abstract class ComposeMediaComponent extends Component {
         @BindView(R.id.llPhotos)      public LinearLayout llPhotos;
         @BindView(R.id.cvCamera)      public CardView cvCamera;
         @BindView(R.id.ivCamera)      public ImageView ivCamera;
-        @BindView(R.id.cvLibrary)     public CardView cvLibrary;
+        @BindView(R.id.cvGallery)     public CardView cvLibrary;
 
         @BindView(R.id.llScrapbook)   public LinearLayout llScrapbook;
         @BindView(R.id.esrlScrapbook) public EndlessScrollRefreshLayout<Component.ViewHolder> esrlScrapbook;

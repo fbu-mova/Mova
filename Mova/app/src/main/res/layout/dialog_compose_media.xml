@@ -85,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="Add media"
+                    android:text="From camera"
                     android:textColor="#ababab"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -99,7 +99,7 @@
         </FrameLayout>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvLibrary"
+            android:id="@+id/cvGallery"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -115,7 +115,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/ivLibraryLabel"
+                    android:id="@+id/ivGalleryIcon"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:layout_marginRight="8dp"
@@ -124,11 +124,11 @@
                     tools:srcCompat="@color/colorPrimary" />
 
                 <TextView
-                    android:id="@+id/tvLibraryLabel"
+                    android:id="@+id/tvGalleryLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="Add media"
+                    android:text="From gallery"
                     android:textColor="#ababab"
                     android:textStyle="bold" />
             </LinearLayout>
