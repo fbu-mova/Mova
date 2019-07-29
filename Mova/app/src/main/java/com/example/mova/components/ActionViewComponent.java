@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
     // fixme -- could actually be anonymously created from checklistItemComp, since don't use ComponentManager
-        // needs a separate name for getName component manager?
+        // needs a separate name for getName component manager? and to implement icons...
 
     private static final int viewLayoutRes = R.layout.item_checklist;
     private static final String TAG = "action view comp";
