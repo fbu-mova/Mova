@@ -8,6 +8,7 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.Component;
 import com.example.mova.components.ComponentLayout;
 import com.example.mova.components.ComponentManager;
+import com.example.mova.components.ComposeMediaComponent;
 import com.example.mova.components.ComposePostComponent;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
@@ -24,12 +25,14 @@ public abstract class ComposePostDialog {
     private AlertDialog dialog;
 
     private ComposePostComponent composeComponent;
-    // TODO: Store ComposeMediaComponent
+    private ComposeMediaComponent mediaComponent;
+    private Media lastGeneratedMedia;
 
     // TODO: Add all necessary constructor signatures
 
     public ComposePostDialog(DelegatedResultActivity activity) {
         this.activity = activity;
+        this.lastGeneratedMedia = null;
         buildDialog();
 
         this.manager = new ComponentManager() {
@@ -38,9 +41,9 @@ public abstract class ComposePostDialog {
                 container.clear();
                 container.inflateComponent(activity, toComponent);
 
-                if (toKey.equals(composeComponent.getName())) {
-                    // TODO: Get media from result
-                    composeComponent.setMedia(null);
+                // Pass media to compose component if any media exists
+                if (toKey.equals(composeComponent.getName()) && lastGeneratedMedia != null) {
+                    composeComponent.setMedia(lastGeneratedMedia);
                 }
             }
         };
@@ -56,8 +59,29 @@ public abstract class ComposePostDialog {
     }
 
     public void show() {
-        // TODO: Create ComposeMediaComponent
-        composeComponent = new ComposePostComponent("TODO") {
+        mediaComponent = new ComposeMediaComponent() {
+            @Override
+            public void onSelectMedia(Media media) {
+                lastGeneratedMedia = media;
+                manager.swap(composeComponent.getName());
+            }
+
+            @Override
+            public void onBack() {
+                manager.swap(composeComponent.getName());
+            }
+
+            @Override
+            public void onCancel() {
+                dialog.cancel();
+                ComposePostDialog.this.onCancel();
+            }
+        };
+
+        mediaComponent.setManager(manager);
+        manager.launch(mediaComponent.getName(), mediaComponent);
+
+        composeComponent = new ComposePostComponent(mediaComponent.getName()) {
             @Override
             protected void onCancel() {
                 dialog.cancel();
@@ -70,8 +94,10 @@ public abstract class ComposePostDialog {
                 ComposePostDialog.this.onPost(post, tags, media, postToReply);
             }
         };
+
         composeComponent.setManager(manager);
         manager.launch(composeComponent.getName(), composeComponent);
+
         container.inflateComponent(activity, composeComponent);
 
         dialog.show();
