@@ -1,6 +1,11 @@
 package com.example.mova.model;
 
+import android.media.Image;
+
+import com.example.mova.components.Component;
+import com.example.mova.components.MediaTextComponent;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 @ParseClassName("Media")
@@ -13,24 +18,37 @@ public class Media extends HashableParseObject {
     public static final String KEY_EVENT = "contentEvent";
     public static final String KEY_GOAL = "contentGoal";
     public static final String KEY_ACTION = "contentAction";
+    public static final String KEY_TEXT = "contentText";
+    public static final String KEY_IMAGE = "contentImage";
 
     //Type
-    public int getType(){
-        return getInt(KEY_TYPE);
+    public ContentType getType(){
+        int type = getInt(KEY_TYPE);
+        return ContentType.fromValue(type);
     }
 
-    public Media setType(int i){
-        put(KEY_TYPE, i);
+    public Media setType(ContentType type){
+        put(KEY_TYPE, type.getValue());
         return this;
     }
 
     //Parent
-    public User getParent(){
-        return (User) getParseUser(KEY_PARENT);
+    public Post getParent(){
+        return (Post) getParseObject(KEY_PARENT);
     }
 
-    public Media setParent(User user){
-        put(KEY_PARENT, user);
+    public Media setParent(Post post){
+        put(KEY_PARENT, post);
+        return this;
+    }
+
+    //ContentText
+    public String getContentText() {
+        return getString(KEY_TEXT);
+    }
+
+    public Media setContentText(String text) {
+        put(KEY_TEXT, text);
         return this;
     }
 
@@ -39,17 +57,20 @@ public class Media extends HashableParseObject {
         return (Post) getParseObject(KEY_POST);
     }
 
-    public void setContentPost(Post post){
+    public Media setContentPost(Post post){
         put(KEY_POST, post);
+        return this;
     }
 
     //ContentGroup
     public Group getContentGroup(){
         return (Group) getParseObject(KEY_GROUP);
+
     }
 
-    public void setContentGroup(Group group){
+    public Media setContentGroup(Group group){
         put(KEY_GROUP,group);
+        return this;
     }
 
     //ContentEvent
@@ -57,8 +78,9 @@ public class Media extends HashableParseObject {
         return (Event) getParseObject(KEY_EVENT);
     }
 
-    public void setContentEvent(Event event){
+    public Media setContentEvent(Event event){
         put(KEY_EVENT, event);
+        return this;
     }
 
     //ContentGoal
@@ -66,8 +88,9 @@ public class Media extends HashableParseObject {
         return (Goal) getParseObject(KEY_GOAL);
     }
 
-    public void setContentGoal(Goal goal){
+    public Media setContentGoal(Goal goal){
         put(KEY_GOAL, goal);
+        return this;
     }
 
     //ContentAction
@@ -75,7 +98,152 @@ public class Media extends HashableParseObject {
         return (Action) getParseObject(KEY_ACTION);
     }
 
-    public void setContentAction(Action action){
-        put(KEY_ACTION,action);
+    public Media setContentAction(Action action){
+        put(KEY_ACTION, action);
+        return this;
+    }
+
+    //ContentImage
+    public ParseFile getContentImage() {
+        return getParseFile(KEY_IMAGE);
+    }
+
+    public Media setContentImage(ParseFile parseFile) {
+        put(KEY_IMAGE, parseFile);
+        return this;
+    }
+
+    // Handle content item regardless of type
+    public Object getContent() {
+        switch (getType()) {
+            case Post:
+                return getContentPost();
+            case Group:
+                return getContentGroup();
+            case Event:
+                return getContentEvent();
+            case Goal:
+                return getContentGoal();
+            case Action:
+                return getContentAction();
+            case Image:
+                return getContentImage();
+            case Text:
+            default:
+                return getContentText();
+        }
+    }
+
+    public Media setContent(Object content) {
+        if (content instanceof Post) {
+            setType(ContentType.Post);
+            setContentPost((Post) content);
+        } else if (content instanceof Group) {
+            setType(ContentType.Group);
+            setContentGroup((Group) content);
+        } else if (content instanceof Event) {
+            setType(ContentType.Event);
+            setContentEvent((Event) content);
+        } else if (content instanceof Goal) {
+            setType(ContentType.Goal);
+            setContentGoal((Goal) content);
+        } else if (content instanceof Action) {
+            setType(ContentType.Action);
+            setContentAction((Action) content);
+        } else if (content instanceof ParseFile){
+            setType(ContentType.Image);
+            setContentImage((ParseFile) content);
+        } else {
+            setType(ContentType.Text);
+            setContentText(content.toString());
+        }
+        return this;
+    }
+
+    public Class getObjectType() {
+        switch (getType()) {
+            case Post:
+                return Post.class;
+            case Group:
+                return Group.class;
+            case Event:
+                return Event.class;
+            case Goal:
+                return Goal.class;
+            case Action:
+                return Action.class;
+            case Image:
+                return ParseFile.class;
+            case Text:
+            default:
+                return String.class;
+        }
+    }
+
+    public Component makeComponent() {
+        switch (getType()) {
+            case Text:
+                return new MediaTextComponent(this);
+            default:
+                return null;
+        }
+    }
+
+    public static enum ContentType {
+        Text(0),
+        Post(1),
+        Group(2),
+        Event(3),
+        Goal(4),
+        Action(5),
+        Image(6);
+
+        private final int value;
+        private ContentType(int value) {
+            this.value = value;
+        }
+
+        public static ContentType fromValue(int value) {
+            switch (value) {
+                case 1:
+                    return Post;
+                case 2:
+                    return Group;
+                case 3:
+                    return Event;
+                case 4:
+                    return Goal;
+                case 5:
+                    return Action;
+                case 6:
+                    return Image;
+                default:
+                    return Text;
+            }
+        }
+
+        public String toKey() {
+            switch (this) {
+                case Post:
+                    return KEY_POST;
+                case Group:
+                    return KEY_GROUP;
+                case Event:
+                    return KEY_EVENT;
+                case Goal:
+                    return KEY_GOAL;
+                case Action:
+                    return KEY_ACTION;
+                case Image:
+                    return KEY_IMAGE;
+                case Text:
+                default:
+                    return KEY_TEXT;
+            }
+        }
+
+        public int getValue() {
+            return value;
+        }
     }
 }

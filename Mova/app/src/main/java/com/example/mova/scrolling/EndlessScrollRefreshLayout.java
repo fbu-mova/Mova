@@ -1,8 +1,8 @@
 package com.example.mova.scrolling;
 
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -11,56 +11,60 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mova.R;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.mova.utils.AsyncUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class EndlessScrollRefreshLayout<Item, VH extends RecyclerView.ViewHolder> extends FrameLayout {
+public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> extends FrameLayout {
 
     protected RecyclerView.Adapter<VH> adapter;
-    protected List<Item> items;
     protected EndlessRecyclerViewScrollListener scrollListener;
 
-    @BindView(R.id.rvItems)         protected RecyclerView rvItems;
-    @BindView(R.id.swipeContainer)  protected SwipeRefreshLayout swipeContainer;
+    protected LayoutConfig config;
+    protected ScrollLoadHandler handler;
+
+    @BindView(R.id.rvItems) protected RecyclerView rvItems;
+    protected SwipeContainer swipeContainer;
 
     public EndlessScrollRefreshLayout(@NonNull Context context) {
         super(context);
-        init();
     }
 
     public EndlessScrollRefreshLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public EndlessScrollRefreshLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
     }
 
-    private void init() {
-        inflate(getContext(), R.layout.layout_endless_scroll_refresh, this);
+    public void init(LayoutConfig config, ScrollLoadHandler<VH> handler) {
+        int layoutId = makeLayout(config);
+        inflate(getContext(), layoutId, this);
+
+        swipeContainer = new SwipeContainer(R.id.swipeContainer, config.orientation);
+        swipeContainer.bind();
+
         ButterKnife.bind(this, this);
 
+        this.handler = handler;
+        this.config = config;
+
         // Configure RecyclerView
-        items = new ArrayList<>();
-        adapter = makeAdapter();
-
-        rvItems.setAdapter(adapter);
-        rvItems.addItemDecoration(new EdgeDecorator(getTopEdgeMargin(), getBottomEdgeMargin(), getLeftEdgeMargin(), getRightEdgeMargin()));
-
-        RecyclerView.LayoutManager layoutManager = makeLayoutManager();
+        RecyclerView.LayoutManager layoutManager = handler.getLayoutManager();
         rvItems.setLayoutManager(layoutManager);
+
+        adapter = handler.getAdapter();
+        rvItems.setAdapter(adapter);
+
         // Configure infinite scrolling
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.d("ESRL", "Hit load more");
                 // Triggered only when new data needs to be appended to the list
-                loadMore();
+                handler.loadMore();
             }
         };
 
@@ -69,23 +73,137 @@ public abstract class EndlessScrollRefreshLayout<Item, VH extends RecyclerView.V
 
         // Add swipe to refresh actions
         swipeContainer.setOnRefreshListener(() -> {
-            items.clear();
+            Log.d("ESRL", "Hit load");
+            handler.load();
             adapter.notifyDataSetChanged();
-            load();
         });
-        swipeContainer.setColorSchemeResources(getColorScheme());
+        swipeContainer.setColorSchemeResources(handler.getColorScheme());
     }
 
-    public abstract void load();
-    public abstract void loadMore();
+    public void addItemDecoration(RecyclerView.ItemDecoration decoration) {
+        rvItems.addItemDecoration(decoration);
+    }
 
-    public abstract RecyclerView.Adapter<VH> makeAdapter();
-    public abstract RecyclerView.LayoutManager makeLayoutManager();
+    public void setRefreshing(boolean refreshing) {
+        swipeContainer.setRefreshing(refreshing);
+    }
 
-    public abstract int[] getColorScheme();
+    public void reattachAdapter() {
+        rvItems.setAdapter(handler.getAdapter());
+    }
 
-    public abstract int getTopEdgeMargin();
-    public abstract int getBottomEdgeMargin();
-    public abstract int getLeftEdgeMargin();
-    public abstract int getRightEdgeMargin();
+    private int makeLayout(LayoutConfig config) {
+        // FIXME: wrap_content doesn't work at all, and not because of the if statement
+        int layoutId;
+
+        // Determine whether to use wrap_constraint or match_parent layouts
+        boolean xmp = config.widthSize == LayoutConfig.Size.match_parent;
+        boolean ymp = config.heightSize == LayoutConfig.Size.match_parent;
+
+        // Determine whether to use vertical or horizontal pull to refresh
+        if (config.orientation == LayoutConfig.Orientation.Vertical) {
+            if      (xmp && ymp)  layoutId = R.layout.layout_esrl_v_xmp_ymp;
+            else if (xmp && !ymp) layoutId = R.layout.layout_esrl_v_xmp_ywc;
+            else if (!xmp && ymp) layoutId = R.layout.layout_esrl_v_xwc_ymp;
+            else /* xwc && ywc */ layoutId = R.layout.layout_esrl_v_xwc_ywc;
+        } else { // Orientation.Horizontal
+            if      (xmp && ymp)  layoutId = R.layout.layout_esrl_h_xmp_ymp;
+            else if (xmp && !ymp) layoutId = R.layout.layout_esrl_h_xmp_ywc;
+            else if (!xmp && ymp) layoutId = R.layout.layout_esrl_h_xwc_ymp;
+            else /* xwc && ywc */ layoutId = R.layout.layout_esrl_h_xwc_ywc;
+        }
+
+        return layoutId;
+    }
+
+    public static int[] getDefaultColorScheme() {
+        return new int[] {
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light
+        };
+    }
+
+    public static class LayoutConfig {
+        public Orientation orientation;
+        public Size widthSize;
+        public Size heightSize;
+
+        public LayoutConfig() {
+            orientation = Orientation.Vertical;
+            widthSize = Size.match_parent;
+            heightSize = Size.match_parent;
+        }
+
+        public LayoutConfig setOrientation(Orientation orientation) {
+            this.orientation = orientation;
+            return this;
+        }
+
+        public LayoutConfig setWidthSize(Size widthSize) {
+            this.widthSize = widthSize;
+            return this;
+        }
+
+        public LayoutConfig setHeightSize(Size heightSize) {
+            this.heightSize = heightSize;
+            return this;
+        }
+
+        public static enum Size {
+            match_parent,
+            wrap_content
+        }
+
+        public static enum Orientation {
+            Vertical,
+            Horizontal
+        }
+    }
+
+    protected class SwipeContainer {
+        public final int viewId;
+        public final LayoutConfig.Orientation orientation;
+
+        public SwipeContainer(int viewId, LayoutConfig.Orientation orientation) {
+            this.viewId = viewId;
+            this.orientation = orientation;
+        }
+
+        public SwipeRefreshLayout vertical;
+        public custom.widget.SwipeRefreshLayout horizontal;
+
+        public void bind() {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical = EndlessScrollRefreshLayout.this.findViewById(viewId);
+            } else {
+                horizontal = EndlessScrollRefreshLayout.this.findViewById(viewId);
+            }
+        }
+
+        public void setOnRefreshListener(AsyncUtils.EmptyCallback onRefreshListener) {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical.setOnRefreshListener(() -> onRefreshListener.call());
+            } else {
+                horizontal.setOnRefreshListener(() -> onRefreshListener.call());
+            }
+        }
+
+        public void setColorSchemeResources(int... colorResIds) {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical.setColorSchemeResources(colorResIds);
+            } else {
+                horizontal.setColorSchemeResources(colorResIds);
+            }
+        }
+
+        public void setRefreshing(boolean refreshing) {
+            if (orientation == LayoutConfig.Orientation.Vertical) {
+                vertical.setRefreshing(refreshing);
+            } else {
+                horizontal.setRefreshing(refreshing);
+            }
+        }
+    }
 }

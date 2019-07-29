@@ -13,7 +13,10 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.utils.ViewUtils;
 
 public class ComponentLayout extends FrameLayout {
-    private int margin = 16;
+    private int marginLeft = 0;
+    private int marginTop = 0;
+    private int marginRight = 0;
+    private int marginBottom = 0;
 
     public ComponentLayout(@NonNull Context context) {
         super(context);
@@ -27,14 +30,6 @@ public class ComponentLayout extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public int getMargin() {
-        return margin;
-    }
-
-    public void setMargin(int margin) {
-        this.margin = margin;
-    }
-
     /**
      * Inflates a component into the layout.
      * @param activity The activity to which the layout belongs.
@@ -42,7 +37,7 @@ public class ComponentLayout extends FrameLayout {
      */
     public void inflateComponent(DelegatedResultActivity activity, Component component) {
         component.makeViewHolder(activity, this, true);
-        ViewUtils.setMargins(component.getView(), margin * 2);
+        ViewUtils.setMargins(component.getView(), marginLeft, marginTop, marginRight, marginBottom);
         component.render();
     }
 
@@ -53,5 +48,59 @@ public class ComponentLayout extends FrameLayout {
      */
     public void clear() {
         removeAllViews();
+    }
+
+    // -- MARGINS -- //
+
+    public ComponentLayout setMargin(int margin) {
+        marginLeft = margin;
+        marginTop = margin;
+        marginRight = margin;
+        marginBottom = margin;
+        return this;
+    }
+
+    public ComponentLayout setMargin(int left, int top, int right, int bottom) {
+        marginLeft = left;
+        marginTop = top;
+        marginRight = right;
+        marginBottom = bottom;
+        return this;
+    }
+
+    public int getMarginLeft() {
+        return marginLeft;
+    }
+
+    public ComponentLayout setMarginLeft(int marginLeft) {
+        this.marginLeft = marginLeft;
+        return this;
+    }
+
+    public int getMarginTop() {
+        return marginTop;
+    }
+
+    public ComponentLayout setMarginTop(int marginTop) {
+        this.marginTop = marginTop;
+        return this;
+    }
+
+    public int getMarginRight() {
+        return marginRight;
+    }
+
+    public ComponentLayout setMarginRight(int marginRight) {
+        this.marginRight = marginRight;
+        return this;
+    }
+
+    public int getMarginBottom() {
+        return marginBottom;
+    }
+
+    public ComponentLayout setMarginBottom(int marginBottom) {
+        this.marginBottom = marginBottom;
+        return this;
     }
 }

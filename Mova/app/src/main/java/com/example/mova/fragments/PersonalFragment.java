@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +12,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mova.R;
+import com.example.mova.components.EventThumbnailComponent;
+import com.example.mova.components.GroupThumbnailComponent;
+import com.example.mova.components.ProfileFriendComponent;
+import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.fragments.Personal.GoalsFragment;
 import com.example.mova.fragments.Personal.JournalFragment;
 import com.example.mova.fragments.Personal.PersonalFeedFragment;
@@ -86,29 +89,41 @@ public class PersonalFragment extends Fragment {
         Fragment fragment;
         switch (name) {
             case Progress:
-                Toast.makeText(getContext(), "Switches to progress", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Switches to progress", Toast.LENGTH_SHORT).show();
                 fragment = ProgressFragment.newInstance();
                 break;
             case Journal:
-                Toast.makeText(getContext(), "Switches to journal", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Switches to journal", Toast.LENGTH_SHORT).show();
                 fragment = JournalFragment.newInstance();
                 break;
             case Feed:
-                Toast.makeText(getContext(), "Switches to feed", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Switches to feed", Toast.LENGTH_SHORT).show();
                 fragment = PersonalFeedFragment.newInstance();
                 break;
             case Goals:
-                Toast.makeText(getContext(), "Switches to goals", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Switches to goals", Toast.LENGTH_SHORT).show();
                 fragment = GoalsFragment.newInstance();
                 break;
             case Profile:
-                Toast.makeText(getContext(), "Switches to profile", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Switches to profile", Toast.LENGTH_SHORT).show();
                 fragment = ProfileFragment.newInstance();
                 break;
             default:
                 return;
         }
-        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flPersonalContainer, fragment).commit();
+        if(ProfileFriendComponent.manager != null) {
+            ProfileFriendComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        if(ProfileGroupComponent.manager != null){
+            ProfileGroupComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        if(GroupThumbnailComponent.manager != null){
+            GroupThumbnailComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        if(EventThumbnailComponent.manager != null){
+            EventThumbnailComponent.manager.popBackStack(0,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
     public enum FragmentName {

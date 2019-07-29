@@ -1,9 +1,7 @@
 package com.example.mova.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,8 +11,6 @@ import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.fragments.SocialFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.ParseException;
-import com.parse.ParseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,11 +33,11 @@ public class MainActivity extends DelegatedResultActivity {
                 Fragment fragment;
                 switch (menuItem.getItemId()){
                     case R.id.action_personal:
-                        Toast.makeText(MainActivity.this, "Switched to Personal", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "Switched to Personal", Toast.LENGTH_SHORT).show();
                         fragment = new PersonalFragment();
                         break;
                     case R.id.action_social:
-                        Toast.makeText(MainActivity.this, "Switched to Social", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "Switched to Social", Toast.LENGTH_SHORT).show();
                         fragment = new SocialFragment();
                         break;
                     default: return true;

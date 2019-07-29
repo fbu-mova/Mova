@@ -1,6 +1,5 @@
 package com.example.mova.adapters;
 
-import android.app.Activity;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -60,6 +59,19 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
 
     @Override
     public int getItemCount() {
+        if(items == null){
+            return 0;
+        }
         return items.size();
+    }
+
+    /**
+     * Changes the source of the data. Does not update the RecyclerView.
+     * To be effective, requires that the RecyclerView's adapter be reattached (rv.setAdapter(this)),
+     * and that the adapter only then be notified that the entire data set has changed.
+     * @param newSource The new source to use.
+     */
+    public void changeSource(List<T> newSource) {
+        this.items = newSource;
     }
 }
