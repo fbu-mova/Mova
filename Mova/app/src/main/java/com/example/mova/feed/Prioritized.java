@@ -18,9 +18,9 @@ public class Prioritized<T> implements Comparable<Prioritized<T>> {
     @Override
     public int compareTo(Prioritized<T> o) {
         // FIXME: This very well could rely on the subtraction of the floats instead, but this works for now.
-        if (o.value < value) {
+        if (value < o.value) {
             return -1;
-        } else if (o.value > value) {
+        } else if (value > o.value) {
             return 1;
         }
         // If objects are equal, compare their hash codes

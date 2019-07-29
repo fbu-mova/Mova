@@ -122,15 +122,14 @@ public class PersonalFeedFragment extends Fragment {
         rvCards.addItemDecoration(new EdgeDecorator(32));
 
         prioritizer = new PersonalFeedPrioritizer();
-        // FIXME: The GoalCheckInComponent crash has unfortunately started up again.
-//        prioritizer.makeCards(cards, (e) -> {
-//            if (e != null) {
-//                Log.e("PersonalFeedFragment", "Failed to make cards", e);
-//                Toast.makeText(getActivity(), "Failed to load feed", Toast.LENGTH_LONG).show();
-//            } else {
-//                Log.i("PersonalFeedFragment", "Loaded cards successfully!");
-//            }
-//        });
+        prioritizer.makeCards(cards, (e) -> {
+            if (e != null) {
+                Log.e("PersonalFeedFragment", "Failed to make cards", e);
+                Toast.makeText(getActivity(), "Failed to load feed", Toast.LENGTH_LONG).show();
+            } else {
+                Log.i("PersonalFeedFragment", "Loaded cards successfully!");
+            }
+        });
     }
 
     private void insertSoloComponent(boolean toggleJournalVsTomorrow) {
