@@ -1,12 +1,16 @@
 package com.example.mova.model;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
 import com.example.mova.components.Component;
 import com.example.mova.components.MediaTextComponent;
+import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+
+import java.io.File;
 
 @ParseClassName("Media")
 public class Media extends HashableParseObject {
@@ -246,5 +250,13 @@ public class Media extends HashableParseObject {
         public int getValue() {
             return value;
         }
+    }
+
+    public static Media fromImage(Bitmap bmp) {
+        // TODO: Likely move image storage to some other cloud platform
+        Media media = new Media();
+        ParseFile parseFile = ImageUtils.bitmapToParse(bmp);
+        media.setContent(parseFile);
+        return media;
     }
 }
