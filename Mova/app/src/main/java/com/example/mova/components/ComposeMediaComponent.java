@@ -14,14 +14,23 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Media;
+import com.example.mova.model.Post;
+import com.example.mova.model.User;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
+import com.example.mova.scrolling.ScrollLoadHandler;
 import com.example.mova.utils.ImageUtils;
+import com.parse.ParseQuery;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,9 +42,8 @@ public abstract class ComposeMediaComponent extends Component {
     private View view;
     private ComponentManager manager;
 
-    public ComposeMediaComponent() {
-
-    }
+    private DataComponentAdapter<Post> scrapbookAdapter;
+    private List<Post> scrapbookPosts;
 
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
@@ -70,7 +78,7 @@ public abstract class ComposeMediaComponent extends Component {
         holder.ivBack.setOnClickListener((view) -> onBack());
         holder.ivClose.setOnClickListener((view) -> onCancel());
 
-        holder.cvLibrary.setOnClickListener((view) -> {
+        holder.cvGallery.setOnClickListener((view) -> {
             ImageUtils.chooseFromGallery(activity, (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == ImageUtils.PICK_PHOTO_CODE && resultCode == Activity.RESULT_OK) {
                     Uri photoUri = data.getData();
@@ -86,7 +94,72 @@ public abstract class ComposeMediaComponent extends Component {
             });
         });
 
-        // TODO: Camera, scrapbook, embedded camera
+        holder.cvCamera.setOnClickListener((view) -> {
+            // TODO
+        });
+
+        scrapbookPosts = new ArrayList<>();
+        scrapbookAdapter = new DataComponentAdapter<Post>(activity, scrapbookPosts) {
+            @Override
+            public Component makeComponent(Post item) {
+                return new PostComponent(item);
+            }
+        };
+
+        holder.llScrapbook.setVisibility(View.GONE);
+        holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
+            @Override
+            public void load() {
+                loadScrapbookPosts();
+            }
+
+            @Override
+            public void loadMore() {
+                loadMoreScrapbookPosts();
+            }
+
+            @Override
+            public RecyclerView.Adapter<Component.ViewHolder> getAdapter() {
+                return scrapbookAdapter;
+            }
+
+            @Override
+            public RecyclerView.LayoutManager getLayoutManager() {
+                return new LinearLayoutManager(activity);
+            }
+
+            @Override
+            public int[] getColorScheme() {
+                return EndlessScrollRefreshLayout.getDefaultColorScheme();
+            }
+        });
+
+        // TODO: Embedded camera
+    }
+
+    private void loadScrapbookPosts() {
+        scrapbookPosts.clear();
+        loadMoreScrapbookPosts();
+    }
+
+    private void loadMoreScrapbookPosts() {
+        ParseQuery<Post> query = ((User) User.getCurrentUser()).relScrapbook.getQuery();
+        query.setLimit(20);
+        query.orderByDescending(Post.KEY_CREATED_AT);
+        if (scrapbookPosts.size() > 0) {
+            // Assume last item is oldest item because always queried in descending order
+            query.whereLessThan(Post.KEY_CREATED_AT, scrapbookPosts.get(scrapbookPosts.size() - 1));
+        }
+        query.findInBackground((posts, e) -> {
+            if (e != null) {
+                Log.e("ComposeMediaComponent", "Failed to load scrapbook entries", e);
+            } else if (posts.size() > 0) {
+                holder.llScrapbook.setVisibility(View.VISIBLE);
+                int endPos = scrapbookPosts.size();
+                scrapbookPosts.addAll(posts);
+                scrapbookAdapter.notifyItemRangeInserted(endPos, posts.size());
+            }
+        });
     }
 
     public abstract void onSelectMedia(Media media);
@@ -102,7 +175,7 @@ public abstract class ComposeMediaComponent extends Component {
         @BindView(R.id.llPhotos)      public LinearLayout llPhotos;
         @BindView(R.id.cvCamera)      public CardView cvCamera;
         @BindView(R.id.ivCamera)      public ImageView ivCamera;
-        @BindView(R.id.cvGallery)     public CardView cvLibrary;
+        @BindView(R.id.cvGallery)     public CardView cvGallery;
 
         @BindView(R.id.llScrapbook)   public LinearLayout llScrapbook;
         @BindView(R.id.esrlScrapbook) public EndlessScrollRefreshLayout<Component.ViewHolder> esrlScrapbook;
