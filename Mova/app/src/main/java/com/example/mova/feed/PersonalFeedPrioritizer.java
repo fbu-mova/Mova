@@ -50,7 +50,9 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
             goalQuery.findInBackground((goals, e) -> {
                 if (e != null) {
                     cb.call(e);
-                } else if (goals.size() > 0) {
+                } else if (goals.size() == 0) {
+                    cb.call(null);
+                } else {
                     makeGoalCheckIns(addTo, goals, cb);
                 }
         }));
@@ -64,7 +66,9 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
             journalQuery.findInBackground((entries, e) -> {
                 if (e != null) {
                     cb.call(e);
-                } else if (entries.size() > 0) {
+                } else if (entries.size() == 0) {
+                    cb.call(null);
+                } else {
                     makeJournalMemories(addTo, entries);
                     cb.call(null);
                 }
@@ -78,7 +82,9 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
             scrapbookQuery.findInBackground((entries, e) -> {
                 if (e != null) {
                     cb.call(e);
-                } else if (entries.size() > 0) {
+                } else if (entries.size() == 0) {
+                    cb.call(null);
+                } else {
                     makeScrapbookMemories(addTo, new ArrayList<>());
                     cb.call(null);
                 }
@@ -173,6 +179,8 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                         callback.call(e);
                     }
                 });
+            } else {
+                callback.call(null);
             }
         });
     }

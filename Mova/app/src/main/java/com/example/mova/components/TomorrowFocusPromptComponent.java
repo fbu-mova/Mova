@@ -114,7 +114,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
         holder.rvGoals.setLayoutManager(new LinearLayoutManager(activity));
     }
 
-    public class ViewHolder extends Component.ViewHolder {
+    public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.tvHeader)    public TextView tvHeader;
         @BindView(R.id.tvSubheader) public TextView tvSubheader;

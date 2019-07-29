@@ -39,6 +39,10 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         super(context, attrs, defStyleAttr);
     }
 
+    public void init(ScrollLoadHandler<VH> handler) {
+        init(new LayoutConfig(), handler);
+    }
+
     public void init(LayoutConfig config, ScrollLoadHandler<VH> handler) {
         int layoutId = makeLayout(config);
         inflate(getContext(), layoutId, this);

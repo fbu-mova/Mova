@@ -236,9 +236,10 @@ public class ConfirmShareGoalDialog extends DialogFragment {
     private void updatePostMedia(Post post, Group group) {
         // creates media instance to store goal, then put back in post and save
 
-        MediaUtils.updateMediaToPost(post, goal, new AsyncUtils.ItemCallback<ParseObject>() {
+        // FIXME: This previously used a ParseObject--not sure what it was doing.
+        MediaUtils.updateMediaToPost(post, goal, new AsyncUtils.ItemCallback<Object>() {
             @Override
-            public void call(ParseObject item) {
+            public void call(Object item) {
                 updateParentGroup(post, group);
             }
         });

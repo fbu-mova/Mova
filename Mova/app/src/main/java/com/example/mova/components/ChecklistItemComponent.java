@@ -65,7 +65,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     public abstract void onClick(View view);
 
-    public class ViewHolder extends Component.ViewHolder {
+    public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.cbItem) public CheckBox cbItem;
 

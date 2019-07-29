@@ -13,6 +13,7 @@ import com.parse.ParseObject;
 import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ParseClassName("Post")
@@ -144,6 +145,10 @@ public class Post extends HashableParseObject {
     }
 
     // Saving posts
+    public void savePost(AsyncUtils.ItemCallback<Post> callback) {
+        savePost(new ArrayList<>(), null, callback);
+    }
+
     public void savePost(List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
         savePost(tags, null, callback);
     }
@@ -179,6 +184,7 @@ public class Post extends HashableParseObject {
 
                     // Save media if it exists
                     if (media != null) {
+                        media.setParent(this);
                         media.saveInBackground((e) -> {
                             if (e != null) {
                                 Log.e("User", "Failed to create media", e);
@@ -192,5 +198,18 @@ public class Post extends HashableParseObject {
                     }
                 }
         );
+    }
+
+    public void savePost(Post toReply, AsyncUtils.ItemCallback<Post> callback) {
+        savePost(toReply, new ArrayList<>(), null, callback);
+    }
+
+    public void savePost(Post toReply, List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
+        savePost(toReply, tags, null, callback);
+    }
+
+    public void savePost(Post toReply, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
+        this.setParent(toReply);
+        this.savePost(tags, media, callback);
     }
 }
