@@ -20,7 +20,8 @@ public abstract class ChecklistItemComponent<T> extends Component {
     protected T item;
     protected int checkedColor, uncheckedColor;
     protected boolean applyColorToggleToText;
-    protected AsyncUtils.ItemReturnCallback<T, String> getTitle; // fixme -- necessary? have the item stored already
+    protected AsyncUtils.ItemReturnCallback<T, String> getTitle;
+    protected AsyncUtils.ItemReturnCallback<T, Boolean> getDone;
 
     protected DelegatedResultActivity activity;
     protected static int viewLayoutRes = R.layout.item_checklist;
@@ -29,12 +30,15 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     protected ComponentManager componentManager;
 
-    public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, boolean applyColorToggleToText, AsyncUtils.ItemReturnCallback<T, String> getTitle) {
+    public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, boolean applyColorToggleToText,
+                                  AsyncUtils.ItemReturnCallback<T, String> getTitle,
+                                  AsyncUtils.ItemReturnCallback<T, Boolean> getDone) {
         this.item = item;
         this.checkedColor = checkedColor;
         this.uncheckedColor = uncheckedColor;
         this.applyColorToggleToText = applyColorToggleToText;
         this.getTitle = getTitle;
+        this.getDone = getDone;
     }
 
     @Override
@@ -60,6 +64,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
         holder.cbItem.setText(getTitle.call(item));
         holder.cbItem.setOnClickListener((view) -> onClick(view));
         holder.cbItem.setTextColor(uncheckedColor);
+        holder.cbItem.setChecked(getDone.call(item));
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }

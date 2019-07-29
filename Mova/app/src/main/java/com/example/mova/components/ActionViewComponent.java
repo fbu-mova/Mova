@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,9 @@ import butterknife.ButterKnife;
 
 public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
+    // fixme -- could actually be anonymously created from checklistItemComp, since don't use ComponentManager
+        // needs a separate name for getName component manager?
+
     private static final int viewLayoutRes = R.layout.item_checklist;
     private static final String TAG = "action view comp";
 
@@ -33,7 +37,8 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
     public ActionViewComponent(Action action, ComponentManager componentManager) {
         super(action, Color.parseColor("#999999"), Color.parseColor("#222222"),
-                false, (item) -> item.getTask());
+                false, (item) -> item.getTask(),
+                (item) -> (item.getIsDone()));
         this.action = action;
         setManager(componentManager);
     }
@@ -73,10 +78,10 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
     public void render() {
         viewHolder.cbItem.setText(action.getTask());
         viewHolder.cbItem.setOnClickListener((view) -> onClick(view));
+        // possible fixme - can use onCheckedChangeListener, requires lots of refactoring
+            // may not be worth since doing custom later on probably
 
-        if (action.getIsDone()) {
-            // need it to show up as checked
-        }
+        viewHolder.cbItem.setChecked(action.getIsDone());
 
         // todo -- implement icons
     }
