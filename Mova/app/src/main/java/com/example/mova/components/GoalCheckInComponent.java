@@ -99,7 +99,7 @@ public class GoalCheckInComponent extends Component {
             public Component makeComponent(Action item) {
                 return new ChecklistItemComponent<Action>(item,
                         Color.parseColor("#999999"), Color.parseColor("#222222"), false,
-                        (action) -> action.getTask()) {
+                        (action) -> action.getTask(), (action) -> action.getIsDone()) {
                     @Override
                     public void onClick(View view) {
                         GoalUtils.toggleDone(item, (e) -> {

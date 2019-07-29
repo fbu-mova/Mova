@@ -102,7 +102,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
             public Component makeComponent(Goal item) {
                 return new ChecklistItemComponent<Goal>(item,
                         Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"), true,
-                        (o) -> o.getTitle()) {
+                        (o) -> o.getTitle(), (o) -> false) { // fixme - made goals always not done
                     @Override
                     public void onClick(View view) {
                         // TODO: Prevent more than three goals from being selected at any given time
