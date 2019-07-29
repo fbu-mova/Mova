@@ -118,29 +118,9 @@ public class GoalCheckInComponent extends Component {
         holder.rvChecklist.setAdapter(adapter);
 
         // Display progress
-        holder.pbProgress.setProgress(getProgressPercent(goalActions));
+        holder.pbProgress.setProgress(GoalUtils.getProgressPercent(goalActions));
 
         // TODO: Add onclick listener for whole card to open the goal detail view for the associated goal
-    }
-
-
-    // TODO: Merge this functionality with functionality in GoalUtils
-    private static int numActionsComplete(List<Action> actions) {
-        int completed = 0;
-        for (Action action : actions) {
-            completed += (action.getIsDone()) ? 1 : 0;
-        }
-        return completed;
-    }
-
-    // TODO: Merge this functionality with functionality in GoalUtils
-    private static int getProgressPercent(List<Action> actions) {
-        int numComplete = numActionsComplete(actions);
-        int percent = (int) Math.floor(100
-                * (   ((double) numComplete)
-                    / ((double) actions.size())
-                  ));
-        return percent;
     }
 
     public static class ViewHolder extends Component.ViewHolder {
