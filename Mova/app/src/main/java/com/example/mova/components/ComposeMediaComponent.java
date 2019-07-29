@@ -3,11 +3,15 @@ package com.example.mova.components;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +24,8 @@ import androidx.camera.core.CameraX;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -169,16 +175,63 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     private void launchEmbeddedCamera() {
-        // FIXME: Maybe change this config
+        // pull the metrics from our TextureView
+        DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+        // define the screen size
+        Size screenSize = new Size(metrics.widthPixels, metrics.heightPixels);
+        Rational screenAspectRatio = new Rational(metrics.widthPixels, metrics.heightPixels);
+
+
         PreviewConfig config = new PreviewConfig.Builder()
-                .setTargetAspectRatio(new Rational(1, 1))
-                .setTargetResolution(new Size(640, 640))
+                .setTargetAspectRatio(screenAspectRatio)
+                .setLensFacing(CameraX.LensFacing.BACK)
+                .setTargetResolution(screenSize)
                 .build();
         Preview preview = new Preview(config);
+
         preview.setOnPreviewOutputUpdateListener((Preview.PreviewOutput output) -> {
-            // TODO
+            // Remove and re-add texture to update it
+            ViewGroup parent = (ViewGroup) holder.txvCamera.getParent();
+            parent.removeView(holder.txvCamera);
+            parent.addView(holder.txvCamera, 0);
+
+            holder.txvCamera.setSurfaceTexture(output.getSurfaceTexture());
+            updateCameraTransform();
         });
-        CameraX.bindToLifecycle(activity, preview); // FIXME: Possibly needs higher API
+
+        CameraX.bindToLifecycle(activity, preview);
+    }
+
+    /** @source https://medium.com/simform-engineering/camerax-getting-started-guide-8fda21a750f7 */
+    private void updateCameraTransform() {
+        Matrix matrix = new Matrix();
+
+        // Compute the center of the view finder
+        float centerX = ((float) holder.txvCamera.getWidth()) / 2f;
+        float centerY = ((float) holder.txvCamera.getHeight()) / 2f;
+
+        // Correct preview output to account for display rotation
+        float rotationDegree;
+        switch (holder.txvCamera.getDisplay().getRotation()) {
+            case Surface.ROTATION_0:
+                rotationDegree = 0;
+                break;
+            case Surface.ROTATION_90:
+                rotationDegree = 90;
+                break;
+            case Surface.ROTATION_180:
+                rotationDegree = 180;
+                break;
+            case Surface.ROTATION_270:
+                rotationDegree = 270;
+                break;
+            default:
+                return;
+        }
+        matrix.postRotate(-rotationDegree, centerX, centerY);
+
+        // Finally, apply transformations to our TextureView
+        holder.txvCamera.setTransform(matrix);
     }
 
     public abstract void onSelectMedia(Media media);

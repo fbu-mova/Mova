@@ -136,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:text="From gallery"
-                    android:textColor="#ababab"
+                    android:textColor="#a8a8a8"
                     android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
