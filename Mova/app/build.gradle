@@ -6,7 +6,7 @@ android {
     buildToolsVersion "29.0.0"
     defaultConfig {
         applicationId "com.example.mova"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -69,4 +69,8 @@ dependencies {
 
     // Horizontal SwipeRefreshLayout
     implementation 'com.github.ashakirov:Horizontal-SwipeRefreshLayout:master'
+
+    // Embedded camera
+    implementation "androidx.camera:camera-core:1.0.0-alpha03"
 }
+
