@@ -1,17 +1,20 @@
 package com.example.mova.components;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Action;
+import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +42,9 @@ public class ActionComponent extends Component {
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
         viewHolder = new ActionViewHolder(view);
+        this.activity = activity;
+
+        // for ActionComponent, makeViewHolder should only be called once so it's not redundant
         setManager(new ComponentManager() {
             @Override
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
@@ -52,7 +58,6 @@ public class ActionComponent extends Component {
             }
         });
 
-        this.activity = activity;
         viewComponent = new ActionViewComponent(item, componentManager);
         editComponent = new ActionEditComponent(item, componentManager);
 
@@ -60,6 +65,7 @@ public class ActionComponent extends Component {
         componentManager.launch(editComponent.getName(), editComponent);
     }
 
+    // overrides bc type of viewHolder is different from type of holder in checklistItemComp
     @Override
     public ViewHolder getViewHolder() {
         if (viewHolder != null) {
@@ -86,16 +92,6 @@ public class ActionComponent extends Component {
 
     @Override
     public void render() {
-//
-//        viewHolder.tvAction.setText(item.getTask());
-//        viewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-
-        // TODO -- add component layout, hook clicklistener to there, change inflated layout inside on click to be edit instead of text
 
         viewHolder.component.inflateComponent(activity, viewComponent);
 
@@ -106,19 +102,11 @@ public class ActionComponent extends Component {
             }
         });
 
-        viewHolder.ibDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // todo -- what happens when done or not done, need to keep track
-            }
-        });
-
         // todo -- set icons later
     }
 
     public static class ActionViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.ibDone)          protected ImageButton ibDone;
         @BindView(R.id.component)       protected ComponentLayout component;
 
         public ActionViewHolder(@NonNull View itemView) {

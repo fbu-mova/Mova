@@ -1,23 +1,27 @@
 package com.example.mova.components;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Action;
+import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ActionViewComponent extends Component {
+public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
-    private static final int viewLayoutRes = R.layout.item_action_view;
+    private static final int viewLayoutRes = R.layout.item_checklist;
     private static final String TAG = "action view comp";
 
     private Action action;
@@ -28,7 +32,8 @@ public class ActionViewComponent extends Component {
     private ComponentManager componentManager;
 
     public ActionViewComponent(Action action, ComponentManager componentManager) {
-        super();
+        super(action, Color.parseColor("#999999"), Color.parseColor("#222222"),
+                false, (item) -> item.getTask());
         this.action = action;
         setManager(componentManager);
     }
@@ -66,19 +71,36 @@ public class ActionViewComponent extends Component {
 
     @Override
     public void render() {
-        viewHolder.tvAction.setText(action.getTask());
+        viewHolder.cbItem.setText(action.getTask());
+        viewHolder.cbItem.setOnClickListener((view) -> onClick(view));
+
+        if (action.getIsDone()) {
+            // need it to show up as checked
+        }
 
         // todo -- implement icons
     }
 
-    public static class ActionViewViewHolder extends Component.ViewHolder {
+    @Override
+    public void onClick(View view) {
+        GoalUtils.toggleDone(item, (e) -> {
+            if (e == null) {
+                Log.d(TAG, "toggled action done");
+            }
+            else {
+                Log.e(TAG, "toggled action failed", e);
+                Toast.makeText(activity, "Toggling action failed", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
-        @BindView(R.id.tvAction)        protected TextView tvAction;
-        @BindView(R.id.ivIcon)          protected ImageView ivIcon;
+    public static class ActionViewViewHolder extends ChecklistItemComponent.ViewHolder {
+
+//        @BindView(R.id.cbItem)      protected CheckBox cbItem;
 
         public ActionViewViewHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+//            ButterKnife.bind(this, itemView);
         }
     }
 }
