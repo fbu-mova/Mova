@@ -20,9 +20,10 @@ public abstract class ChecklistItemComponent<T> extends Component {
     protected T item;
     protected int checkedColor, uncheckedColor;
     protected boolean applyColorToggleToText;
-    protected AsyncUtils.ItemReturnCallback<T, String> getTitle;
+    protected AsyncUtils.ItemReturnCallback<T, String> getTitle; // fixme -- necessary? have the item stored already
 
     protected DelegatedResultActivity activity;
+    protected static int viewLayoutRes = R.layout.item_checklist;
     protected ViewHolder holder;
     protected View view;
 
@@ -40,7 +41,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         this.activity = activity;
         LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.item_checklist, parent, attachToRoot);
+        view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
         holder = new ViewHolder(view);
     }
 

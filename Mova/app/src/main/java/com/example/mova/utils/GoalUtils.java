@@ -85,6 +85,28 @@ public class GoalUtils {
         }, goal, user);
     }
 
+    /**
+     * Similar to above function, but has only one parameter of list of actions.
+     * @param actions
+     * @return
+     */
+    public static int numActionsComplete(List<Action> actions) {
+        int completed = 0;
+        for (Action action : actions) {
+            completed += (action.getIsDone()) ? 1 : 0;
+        }
+        return completed;
+    }
+
+    public static int getProgressPercent(List<Action> actions) {
+        int numComplete = numActionsComplete(actions);
+        int percent = (int) Math.floor(100
+                * (   ((double) numComplete)
+                / ((double) actions.size())
+        ));
+        return percent;
+    }
+
     public void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ItemCallback<LineGraphSeries<DataPoint>> callback){
         DataPoint[] dataPoints = new DataPoint[length];
         AsyncUtils.executeMany(length, (i, cb) -> {
@@ -152,6 +174,11 @@ public class GoalUtils {
                 callback.call(goals);
             }
         });
+    }
+
+    public static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
+        action.setIsDone(!action.getIsDone());
+        action.saveInBackground((e) -> callback.call(e));
     }
 
 }
