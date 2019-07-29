@@ -29,6 +29,7 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.MediaUtils;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -236,7 +237,6 @@ public class ConfirmShareGoalDialog extends DialogFragment {
     private void updatePostMedia(Post post, Group group) {
         // creates media instance to store goal, then put back in post and save
 
-        // FIXME: This previously used a ParseObject--not sure what it was doing.
         MediaUtils.updateMediaToPost(post, goal, new AsyncUtils.ItemCallback<Object>() {
             @Override
             public void call(Object item) {
