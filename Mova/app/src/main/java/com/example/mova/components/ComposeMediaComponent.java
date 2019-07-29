@@ -107,7 +107,13 @@ public abstract class ComposeMediaComponent extends Component {
         });
 
         holder.cvCamera.setOnClickListener((view) -> {
-            // TODO
+            ImageUtils.launchCamera(activity, (int requestCode, int resultCode, Intent data) -> {
+                if (requestCode == ImageUtils.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                    Bitmap bmp = ImageUtils.getStoredBitmap(activity);
+                    Media media = Media.fromImage(bmp);
+                    onSelectMedia(media);
+                }
+            });
         });
 
         scrapbookPosts = new ArrayList<>();
