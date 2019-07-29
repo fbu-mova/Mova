@@ -30,6 +30,12 @@ public class Media extends HashableParseObject {
     public static final String KEY_TEXT = "contentText";
     public static final String KEY_IMAGE = "contentImage";
 
+    public Media() { }
+
+    public Media(Object content) {
+        setContent(content);
+    }
+
     // Type
     public ContentType getType() {
         int type = getInt(KEY_TYPE);
