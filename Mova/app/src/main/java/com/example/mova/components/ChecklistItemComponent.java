@@ -1,6 +1,7 @@
 package com.example.mova.components;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public abstract class ChecklistItemComponent<T> extends Component {
+
+    protected final String TAG = "checklistItemComp";
 
     protected T item;
     protected int checkedColor, uncheckedColor;
@@ -51,7 +54,11 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     @Override
     public ViewHolder getViewHolder() {
-        return holder;
+        if (holder != null) {
+            return holder;
+        }
+        Log.e(TAG, "holder null in getViewHolder");
+        return null;
     }
 
     @Override
@@ -63,6 +70,8 @@ public abstract class ChecklistItemComponent<T> extends Component {
     public void render() {
         holder.cbItem.setText(getTitle.call(item));
         holder.cbItem.setOnClickListener((view) -> onClick(view));
+        // possible fixme - can use onCheckedChangeListener, requires lots of refactoring
+            // may not be worth since doing custom later on probably
         holder.cbItem.setTextColor(uncheckedColor);
         holder.cbItem.setChecked(getDone.call(item));
         // TODO: Handle color changes properly
