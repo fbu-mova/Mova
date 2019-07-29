@@ -35,6 +35,10 @@ public class AsyncUtils {
         R call(T item);
     }
 
+    public interface TwoItemCallback<T1, T2> {
+        void call(T1 item1, T2 item2);
+    }
+
     private static class ExecuteManyStatus {
         public int count = 0;
         public boolean ranCallback = false;

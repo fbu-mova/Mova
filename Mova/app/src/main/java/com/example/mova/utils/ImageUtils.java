@@ -287,6 +287,10 @@ public class ImageUtils {
 //                file.saveInBackground();
     }
 
+    public static Bitmap fileToBitmap(File photoFile) {
+        return BitmapFactory.decodeFile(photoFile.getPath());
+    }
+
     // Returns the File for a photo stored on disk given the fileName
     private static File getPhotoFileUri(String photoFileName, Activity activity) {
         // Get safe storage directory for photos

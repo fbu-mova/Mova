@@ -4,11 +4,15 @@ import android.graphics.Bitmap;
 import android.media.Image;
 
 import com.example.mova.components.Component;
+import com.example.mova.components.ImageComponent;
 import com.example.mova.components.MediaTextComponent;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
 import java.io.File;
 
@@ -188,6 +192,8 @@ public class Media extends HashableParseObject {
         switch (getType()) {
             case Text:
                 return new MediaTextComponent(this);
+            case Image:
+                return new ImageComponent(getContentImage());
             default:
                 return null;
         }
@@ -252,11 +258,13 @@ public class Media extends HashableParseObject {
         }
     }
 
-    public static Media fromImage(Bitmap bmp) {
+    public static void fromImage(Bitmap bmp, AsyncUtils.TwoItemCallback<Media, Throwable> cb) {
         // TODO: Likely move image storage to some other cloud platform
         Media media = new Media();
         ParseFile parseFile = ImageUtils.bitmapToParse(bmp);
-        media.setContent(parseFile);
-        return media;
+        parseFile.saveInBackground((SaveCallback) (e) -> {
+            media.setContent(parseFile);
+            cb.call(media, e);
+        });
     }
 }
