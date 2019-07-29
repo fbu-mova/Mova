@@ -87,7 +87,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
                 .into(ivPhoto);
 
         // update GoalProgressBar
-        GoalUtils.getNumActionsComplete(goal, (User) ParseUser.getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             goalpb.setProgress(progress);
         });

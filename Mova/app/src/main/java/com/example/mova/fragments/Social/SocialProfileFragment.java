@@ -131,7 +131,7 @@ public class SocialProfileFragment extends Fragment {
         userPosts = new ArrayList<>();
         groupUtils = new GroupUtils();
         friendUtils = new FriendUtils();
-        currentUser = (User) ParseUser.getCurrentUser();
+        currentUser = User.getCurrentUser();
         currentUser.isFriendsWith(user, (bool) -> {
             Toast.makeText(getContext(), "Inside", Toast.LENGTH_SHORT).show();
             if(!bool){

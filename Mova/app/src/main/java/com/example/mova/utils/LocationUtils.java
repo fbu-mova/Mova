@@ -93,7 +93,7 @@ public class LocationUtils {
     public static ParseGeoPoint getCurrentUserLocation(){
 
         // finding currentUser
-        User currentUser = (User) ParseUser.getCurrentUser();
+        User currentUser = User.getCurrentUser();
 
         if (currentUser == null) {
             // if it's not possible to find the user, do something like returning to login activity

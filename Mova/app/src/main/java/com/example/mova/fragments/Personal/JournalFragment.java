@@ -98,7 +98,7 @@ public class JournalFragment extends Fragment {
         currDate = TimeUtils.getToday();
 
         journal = new Journal(
-                (User) User.getCurrentUser(),
+                User.getCurrentUser(),
                 new SortedList.Callback<Date>() {
                     @Override
                     public int compare(Date o1, Date o2) {

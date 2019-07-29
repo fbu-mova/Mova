@@ -159,7 +159,7 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     private void loadMoreScrapbookPosts() {
-        ParseQuery<Post> query = ((User) User.getCurrentUser()).relScrapbook.getQuery();
+        ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
         query.setLimit(20);
         query.orderByDescending(Post.KEY_CREATED_AT);
         if (scrapbookPosts.size() > 0) {

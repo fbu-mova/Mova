@@ -229,7 +229,7 @@ public abstract class ComposePostComponent extends Component {
 
         Post post = new Post();
         post.setBody(body);
-        post.setAuthor((User) User.getCurrentUser());
+        post.setAuthor(User.getCurrentUser());
 
         // TODO: Handle location
 

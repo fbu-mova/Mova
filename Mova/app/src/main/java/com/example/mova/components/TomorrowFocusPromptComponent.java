@@ -58,7 +58,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
     }
 
     private void loadGoals() {
-        ParseQuery<Goal> query = ((User) User.getCurrentUser()).relGoals.getQuery();
+        ParseQuery<Goal> query = User.getCurrentUser().relGoals.getQuery();
         query.orderByDescending(Goal.KEY_CREATED_AT);
         query.setLimit(maxGoals);
         query.findInBackground((goals, e) -> {

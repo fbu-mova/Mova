@@ -83,7 +83,7 @@ public class JournalPromptComponent extends Component {
                     if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                         Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
                         ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
-                        ((User) User.getCurrentUser()).postJournalEntry(journalEntry, tags, onPostJournalEntry);
+                        User.getCurrentUser().postJournalEntry(journalEntry, tags, onPostJournalEntry);
                     }
                 });
         });
