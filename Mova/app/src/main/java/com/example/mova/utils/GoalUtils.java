@@ -154,4 +154,9 @@ public class GoalUtils {
         });
     }
 
+    public static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
+        action.setIsDone(!action.getIsDone());
+        action.saveInBackground((e) -> callback.call(e));
+    }
+
 }

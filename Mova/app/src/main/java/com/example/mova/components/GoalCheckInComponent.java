@@ -19,6 +19,7 @@ import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.GoalUtils;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class GoalCheckInComponent extends Component {
                         (action) -> action.getTask()) {
                     @Override
                     public void onClick(View view) {
-                        toggleDone(item, (e) -> {
+                        GoalUtils.toggleDone(item, (e) -> {
                             if (e != null) {
                                 Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
                                 Toast.makeText(activity, "Failed to toggle action done", Toast.LENGTH_LONG).show();
@@ -140,12 +141,6 @@ public class GoalCheckInComponent extends Component {
                     / ((double) actions.size())
                   ));
         return percent;
-    }
-
-    // TODO: Merge this functionality with functionality in GoalUtils
-    private static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
-        action.setIsDone(!action.getIsDone());
-        action.saveInBackground((e) -> callback.call(e));
     }
 
     public static class ViewHolder extends Component.ViewHolder {
