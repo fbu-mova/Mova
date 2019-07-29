@@ -94,9 +94,8 @@ public abstract class ComposeMediaComponent extends Component {
                     Uri photoUri = data.getData();
                     try {
                         Bitmap fromGallery = ImageUtils.uriToBitmapFromGallery(activity, photoUri);
-                         Media.fromImage(fromGallery, (media, e) -> {
-                             returnMedia(media);
-                         });
+                        fromGallery = ImageUtils.resizeImage(fromGallery, 300);
+                        Media.fromImage(fromGallery, (media, e) -> returnMedia(media));
                     } catch (IOException e) {
                         Log.e("ComposeMediaComponent", "Failed to retrieve image from library", e);
                         Toast.makeText(activity, "Failed to retrieve image from library", Toast.LENGTH_LONG).show();
@@ -108,10 +107,9 @@ public abstract class ComposeMediaComponent extends Component {
         holder.cvCamera.setOnClickListener((view) -> {
             ImageUtils.launchCamera(activity, (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == ImageUtils.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                    Bitmap bmp = ImageUtils.getStoredBitmap(activity);
-                    Media.fromImage(bmp, (media, e) -> {
-                        returnMedia(media);
-                    });
+                    Bitmap fromCamera = ImageUtils.getStoredBitmap(activity);
+                    fromCamera = ImageUtils.resizeImage(fromCamera, 300);
+                    Media.fromImage(fromCamera, (media, e) -> returnMedia(media));
                 }
             });
         });

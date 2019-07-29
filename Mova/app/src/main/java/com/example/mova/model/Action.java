@@ -4,6 +4,8 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseClassName;
 
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -31,7 +33,7 @@ public class Action extends HashableParseObject {
 
     //isDone
 
-    public Boolean getIsDone(){
+    public boolean getIsDone(){
         return getBoolean(KEY_IS_DONE);
     }
 
@@ -39,6 +41,7 @@ public class Action extends HashableParseObject {
         put(KEY_IS_DONE, bool);
         // Set completion time if done
         if (bool) this.setCompletedAt(Calendar.getInstance().getTime());
+        else      this.removeCompletedAt();
         return this;
     }
 
@@ -54,7 +57,7 @@ public class Action extends HashableParseObject {
         return getBoolean(KEY_IS_CONNECTED_PARENT);
     }
 
-    private Action setIsConnectedToParent(Boolean bool){
+    private Action setIsConnectedToParent(Boolean bool) {
         put(KEY_IS_CONNECTED_PARENT, bool);
         return this;
     }
@@ -62,16 +65,18 @@ public class Action extends HashableParseObject {
     //Completed At
 
     //Get date complete add
-    public Date getCompletedAt(){
+    public Date getCompletedAt() {
         return getDate(KEY_COMPLETED_AT);
     }
 
-    public Action setCompletedAt(Date date){
+    public Action setCompletedAt(Date date) {
         put(KEY_COMPLETED_AT, date);
         return this;
     }
 
-
+    public void removeCompletedAt() {
+        put(KEY_COMPLETED_AT, JSONObject.NULL);
+    }
 
     //Parent Goal
     public Goal getParentGoal(){

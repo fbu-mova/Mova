@@ -209,7 +209,7 @@ public class Post extends HashableParseObject {
     }
 
     public void savePost(Post toReply, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
-        this.setParent(toReply);
+        if (toReply != null) this.setParent(toReply);
         this.savePost(tags, media, callback);
     }
 }

@@ -95,6 +95,10 @@ public class User extends ParseUser {
         });
     }
 
+    public static User getCurrentUser() {
+        return (User) ParseUser.getCurrentUser();
+    }
+
     @Override
     public int hashCode() {
         return HashableParseObject.getHashCode(this);

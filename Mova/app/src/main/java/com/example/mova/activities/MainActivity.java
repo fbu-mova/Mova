@@ -14,7 +14,9 @@ import androidx.fragment.app.FragmentManager;
 import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.fragments.SocialFragment;
+import com.example.mova.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseACL;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +33,10 @@ public class MainActivity extends DelegatedResultActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        User currUser = User.getCurrentUser();
+        currUser.setACL(new ParseACL(currUser));
+
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
     }
 
