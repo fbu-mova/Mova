@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
+import android.util.Rational;
+import android.util.Size;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,6 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.camera.core.CameraX;
+import androidx.camera.core.Preview;
+import androidx.camera.core.PreviewConfig;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -134,7 +140,7 @@ public abstract class ComposeMediaComponent extends Component {
             }
         });
 
-        // TODO: Embedded camera
+        launchEmbeddedCamera();
     }
 
     private void loadScrapbookPosts() {
@@ -162,6 +168,19 @@ public abstract class ComposeMediaComponent extends Component {
         });
     }
 
+    private void launchEmbeddedCamera() {
+        // FIXME: Maybe change this config
+        PreviewConfig config = new PreviewConfig.Builder()
+                .setTargetAspectRatio(new Rational(1, 1))
+                .setTargetResolution(new Size(640, 640))
+                .build();
+        Preview preview = new Preview(config);
+        preview.setOnPreviewOutputUpdateListener((Preview.PreviewOutput output) -> {
+            // TODO
+        });
+        CameraX.bindToLifecycle(activity, preview); // FIXME: Possibly needs higher API
+    }
+
     public abstract void onSelectMedia(Media media);
     public abstract void onBack();
     public abstract void onCancel();
@@ -174,7 +193,7 @@ public abstract class ComposeMediaComponent extends Component {
 
         @BindView(R.id.llPhotos)      public LinearLayout llPhotos;
         @BindView(R.id.cvCamera)      public CardView cvCamera;
-        @BindView(R.id.ivCamera)      public ImageView ivCamera;
+        @BindView(R.id.txvCamera)     public TextureView txvCamera;
         @BindView(R.id.cvGallery)     public CardView cvGallery;
 
         @BindView(R.id.llScrapbook)   public LinearLayout llScrapbook;

@@ -71,6 +71,7 @@ dependencies {
     implementation 'com.github.ashakirov:Horizontal-SwipeRefreshLayout:master'
 
     // Embedded camera
-    implementation "androidx.camera:camera-core:1.0.0-alpha03"
+    implementation 'androidx.camera:camera-core:1.0.0-alpha03'
+    implementation 'androidx.camera:camera-camera2:1.0.0-alpha03'
 }
 
