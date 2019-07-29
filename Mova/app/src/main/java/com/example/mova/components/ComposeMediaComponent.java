@@ -85,8 +85,15 @@ public abstract class ComposeMediaComponent extends Component {
 
     @Override
     public void render() {
-        holder.ivBack.setOnClickListener((view) -> onBack());
-        holder.ivClose.setOnClickListener((view) -> onCancel());
+        holder.ivBack.setOnClickListener((view) -> {
+            endCamera();
+            onBack();
+        });
+
+        holder.ivClose.setOnClickListener((view) -> {
+            endCamera();
+            onCancel();
+        });
 
         holder.cvGallery.setOnClickListener((view) -> {
             ImageUtils.chooseFromGallery(activity, (int requestCode, int resultCode, Intent data) -> {
@@ -238,9 +245,13 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     private void returnMedia(Media media) {
+        endCamera();
+        onSelectMedia(media);
+    }
+
+    private void endCamera() {
         preview.removePreviewOutputListener();
         CameraX.unbind(preview);
-        onSelectMedia(media);
     }
 
     public abstract void onSelectMedia(Media media);
