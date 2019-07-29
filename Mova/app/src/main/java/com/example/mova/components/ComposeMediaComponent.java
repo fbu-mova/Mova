@@ -95,7 +95,7 @@ public abstract class ComposeMediaComponent extends Component {
                     try {
                         Bitmap fromGallery = ImageUtils.uriToBitmapFromGallery(activity, photoUri);
                          Media.fromImage(fromGallery, (media, e) -> {
-                             onSelectMedia(media);
+                             returnMedia(media);
                          });
                     } catch (IOException e) {
                         Log.e("ComposeMediaComponent", "Failed to retrieve image from library", e);
@@ -110,8 +110,7 @@ public abstract class ComposeMediaComponent extends Component {
                 if (requestCode == ImageUtils.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                     Bitmap bmp = ImageUtils.getStoredBitmap(activity);
                     Media.fromImage(bmp, (media, e) -> {
-                        preview.removePreviewOutputListener();
-                        onSelectMedia(media);
+                        returnMedia(media);
                     });
                 }
             });
@@ -238,6 +237,12 @@ public abstract class ComposeMediaComponent extends Component {
 
         // Finally, apply transformations to our TextureView
         holder.txvCamera.setTransform(matrix);
+    }
+
+    private void returnMedia(Media media) {
+        preview.removePreviewOutputListener();
+        CameraX.unbind(preview);
+        onSelectMedia(media);
     }
 
     public abstract void onSelectMedia(Media media);

@@ -89,7 +89,9 @@ public class SocialFeedFragment extends Fragment {
 
                 @Override
                 protected void onPost(Post post, List<Tag> tags, Media media, Post postToReply) {
+                    post.savePost(postToReply, tags, media, (savedPost) -> {
 
+                    });
                 }
             };
             dialog.show();

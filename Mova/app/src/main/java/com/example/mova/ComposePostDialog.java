@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.camera.core.CameraX;
+
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.Component;
 import com.example.mova.components.ComponentLayout;
