@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
 import com.example.mova.ComposePostDialog;
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Group;
@@ -156,13 +157,40 @@ public class PostComponent extends Component {
     private void configureButtons() {
         holder.llButtons.setVisibility(View.VISIBLE);
         holder.ivRepost.setOnClickListener((view) -> {
-            // TODO: Open compose + media dialog
+            PostConfig config = new PostConfig();
+            Media postMedia = new Media(post);
+            config.media = postMedia;
+
+            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
+                @Override
+                protected void onCancel() {
+
+                }
+
+                @Override
+                protected void onPost(PostConfig config) {
+                    config.savePost((savedPost) -> {});
+                }
+            };
         });
         holder.ivReply.setOnClickListener((view) -> {
-            // TODO: Open compose + reply dialog
+            PostConfig config = new PostConfig();
+            config.postToReply = post;
+
+            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
+                @Override
+                protected void onCancel() {
+
+                }
+
+                @Override
+                protected void onPost(PostConfig config) {
+                    config.savePost((savedPost) -> {});
+                }
+            };
         });
         holder.ivSave.setOnClickListener((view) -> {
-            // TODO: Save to scrapbook
+            // TODO: Save to Scrapbook
         });
     }
 
