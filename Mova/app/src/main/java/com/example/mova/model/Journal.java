@@ -146,7 +146,7 @@ public class Journal {
     public void loadMoreEntries(int numEntries, AsyncUtils.ItemCallback<ParseQuery<Post>> editQuery, AsyncUtils.ItemCallback<Throwable> callback) {
         ParseQuery<Post> journalQuery = user.relJournal.getQuery();
         if (entries.size() > 0) {
-            journalQuery.whereLessThan(Post.KEY_CREATED_AT, getOldestLoadedEntry().getCreatedAt());
+            journalQuery.whereLessThan(Post.KEY_CREATED_AT, getOldestDate());
         }
         journalQuery.include(Post.KEY_MEDIA);
         journalQuery.setLimit(numEntries);
@@ -180,6 +180,17 @@ public class Journal {
 
         if (media == null) user.postJournalEntry(journalEntry, tags, cb);
         else               user.postJournalEntry(journalEntry, tags, media, cb);
+    }
+
+    public Date getOldestDate() {
+        Post oldestPost = getOldestLoadedEntry();
+        Date date;
+        if (oldestPost == null) {
+            date = new Date();
+        } else {
+            date = oldestPost.getCreatedAt();
+        }
+        return date;
     }
 
     public Post getOldestLoadedEntry() {
