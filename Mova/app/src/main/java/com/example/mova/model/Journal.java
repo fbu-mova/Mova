@@ -2,6 +2,7 @@ package com.example.mova.model;
 
 import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.PostConfig;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseException;
@@ -166,20 +167,18 @@ public class Journal {
         });
     }
 
-    public void postEntry(Post journalEntry, List<Tag> tags, AsyncUtils.ItemCallback<Throwable> callback) {
-        postEntry(journalEntry, tags, null, callback);
+    public void postEntry(Post journalEntry, AsyncUtils.ItemCallback<Throwable> callback) {
+        postEntry(new PostConfig(journalEntry), callback);
     }
 
-    public void postEntry(Post journalEntry, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Throwable> callback) {
+    public void postEntry(PostConfig config, AsyncUtils.ItemCallback<Throwable> callback) {
         AsyncUtils.ItemCallback<Post> cb = (entry) -> {
             Date today = TimeUtils.getToday();
             SortedList<Post> todayEntries = getEntriesByDate(today);
-            todayEntries.add(journalEntry);
+            todayEntries.add(config.post);
             callback.call(null);
         };
-
-        if (media == null) user.postJournalEntry(journalEntry, tags, cb);
-        else               user.postJournalEntry(journalEntry, tags, media, cb);
+        user.postJournalEntry(config, cb);
     }
 
     public Date getOldestDate() {

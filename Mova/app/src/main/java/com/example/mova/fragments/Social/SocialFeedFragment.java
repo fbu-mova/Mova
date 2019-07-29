@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.ComposePostDialog;
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.components.ComponentLayout;
@@ -88,8 +89,8 @@ public class SocialFeedFragment extends Fragment {
                 }
 
                 @Override
-                protected void onPost(Post post, List<Tag> tags, Media media, Post postToReply) {
-                    post.savePost(postToReply, tags, media, (savedPost) -> {
+                protected void onPost(PostConfig config) {
+                    config.post.savePost(config, (savedPost) -> {
 
                     });
                 }

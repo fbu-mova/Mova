@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
 import com.example.mova.Mood;
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.JournalComposeActivity;
@@ -83,7 +84,11 @@ public class JournalPromptComponent extends Component {
                     if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                         Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
                         ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
-                        User.getCurrentUser().postJournalEntry(journalEntry, tags, onPostJournalEntry);
+
+                        PostConfig config = new PostConfig(journalEntry);
+                        config.tags = tags;
+
+                        User.getCurrentUser().postJournalEntry(config, onPostJournalEntry);
                     }
                 });
         });

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.SortedDataComponentAdapter;
@@ -246,7 +247,10 @@ public class JournalFragment extends Fragment {
     }
 
     private void postJournalEntry(Post journalEntry, List<Tag> tags) {
-        journal.postEntry(journalEntry, tags, (e) -> {
+        PostConfig config = new PostConfig(journalEntry);
+        config.tags = tags;
+
+        journal.postEntry(config, (e) -> {
             Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
             if (currDate.equals(TimeUtils.getToday())) {
                 entryAdapter.notifyItemInserted(journal.getEntriesByDate(currDate).size() - 1);

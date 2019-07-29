@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.JournalComposeActivity;
@@ -109,8 +110,11 @@ public class JournalMemoryComponent extends Component {
                             onPost.call(reflection);
                     });
 
-                    if (outMedia == null) reflection.savePost(tags, saveOnParent);
-                    else                  reflection.savePost(tags, outMedia, saveOnParent);
+                    PostConfig config = new PostConfig(reflection);
+                    config.tags = tags;
+                    config.media = outMedia;
+
+                    config.post.savePost(saveOnParent);
                 }
             });
         });
