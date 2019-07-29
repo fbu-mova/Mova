@@ -30,6 +30,7 @@ public class Post extends HashableParseObject {
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_MEDIA = "media";
     public static final String KEY_PARENT_POST = "parentPost";
+    public static final String KEY_ID = "objectId";
 
     //Relations
     public static final String KEY_COMMENTS = "comments";

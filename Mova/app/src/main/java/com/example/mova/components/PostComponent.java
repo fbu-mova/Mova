@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -21,6 +22,8 @@ import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.TimeUtils;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.List;
 
@@ -156,6 +159,7 @@ public class PostComponent extends Component {
 
     private void configureButtons() {
         holder.llButtons.setVisibility(View.VISIBLE);
+
         holder.ivRepost.setOnClickListener((view) -> {
             PostConfig config = new PostConfig();
             Media postMedia = new Media(post);
@@ -173,6 +177,7 @@ public class PostComponent extends Component {
                 }
             };
         });
+
         holder.ivReply.setOnClickListener((view) -> {
             PostConfig config = new PostConfig();
             config.postToReply = post;
@@ -189,8 +194,26 @@ public class PostComponent extends Component {
                 }
             };
         });
+
         holder.ivSave.setOnClickListener((view) -> {
-            // TODO: Save to Scrapbook
+            ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
+            query.whereEqualTo(Post.KEY_ID, post.getObjectId());
+            query.findInBackground((posts, e) -> {
+                if (e != null) {
+                    Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
+                    Toast.makeText(activity, "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
+                } else if (posts.size() == 0) {
+                    User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
+                        Toast.makeText(activity, "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
+                        // TODO: Update icon
+                    });
+                } else {
+                    User.getCurrentUser().relScrapbook.remove(post, () -> {
+                        Toast.makeText(activity, "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
+                        // TODO: Update icon
+                    });
+                }
+            });
         });
     }
 
