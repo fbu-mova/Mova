@@ -55,6 +55,16 @@ public abstract class ComposeMediaComponent extends Component {
     private List<Post> scrapbookPosts;
     private Preview preview;
 
+    private boolean imagesOnly;
+
+    public ComposeMediaComponent() {
+        this.imagesOnly = false;
+    }
+
+    public ComposeMediaComponent(boolean imagesOnly) {
+        this.imagesOnly = imagesOnly;
+    }
+
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
         this.activity = activity;
@@ -130,32 +140,34 @@ public abstract class ComposeMediaComponent extends Component {
         };
 
         holder.llScrapbook.setVisibility(View.GONE);
-        holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
-            @Override
-            public void load() {
-                loadScrapbookPosts();
-            }
+        if (!imagesOnly) {
+            holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
+                @Override
+                public void load() {
+                    loadScrapbookPosts();
+                }
 
-            @Override
-            public void loadMore() {
-                loadMoreScrapbookPosts();
-            }
+                @Override
+                public void loadMore() {
+                    loadMoreScrapbookPosts();
+                }
 
-            @Override
-            public RecyclerView.Adapter<Component.ViewHolder> getAdapter() {
-                return scrapbookAdapter;
-            }
+                @Override
+                public RecyclerView.Adapter<Component.ViewHolder> getAdapter() {
+                    return scrapbookAdapter;
+                }
 
-            @Override
-            public RecyclerView.LayoutManager getLayoutManager() {
-                return new LinearLayoutManager(activity);
-            }
+                @Override
+                public RecyclerView.LayoutManager getLayoutManager() {
+                    return new LinearLayoutManager(activity);
+                }
 
-            @Override
-            public int[] getColorScheme() {
-                return EndlessScrollRefreshLayout.getDefaultColorScheme();
-            }
-        });
+                @Override
+                public int[] getColorScheme() {
+                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                }
+            });
+        }
 
         launchEmbeddedCamera();
     }
