@@ -9,7 +9,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -24,8 +23,6 @@ import androidx.camera.core.CameraX;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,6 +53,7 @@ public abstract class ComposeMediaComponent extends Component {
 
     private DataComponentAdapter<Post> scrapbookAdapter;
     private List<Post> scrapbookPosts;
+    private Preview preview;
 
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
@@ -109,6 +107,7 @@ public abstract class ComposeMediaComponent extends Component {
         holder.cvCamera.setOnClickListener((view) -> {
             ImageUtils.launchCamera(activity, (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == ImageUtils.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                    preview.removePreviewOutputListener();
                     Bitmap bmp = ImageUtils.getStoredBitmap(activity);
                     Media media = Media.fromImage(bmp);
                     onSelectMedia(media);
@@ -187,13 +186,12 @@ public abstract class ComposeMediaComponent extends Component {
         Size screenSize = new Size(metrics.widthPixels, metrics.heightPixels);
         Rational screenAspectRatio = new Rational(metrics.widthPixels, metrics.heightPixels);
 
-
         PreviewConfig config = new PreviewConfig.Builder()
                 .setTargetAspectRatio(screenAspectRatio)
                 .setLensFacing(CameraX.LensFacing.BACK)
                 .setTargetResolution(screenSize)
                 .build();
-        Preview preview = new Preview(config);
+        preview = new Preview(config);
 
         preview.setOnPreviewOutputUpdateListener((Preview.PreviewOutput output) -> {
             // Remove and re-add texture to update it
