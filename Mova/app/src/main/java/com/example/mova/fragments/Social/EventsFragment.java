@@ -51,10 +51,6 @@ public class EventsFragment extends Fragment {
     protected List<Event> yourEvents;
     private DataComponentAdapter<Event> yourEventsAdapter;
 
-    //TODO - Move group events into the group tab
-    @BindView(R.id.rvGroupEvents) RecyclerView rvGroupEvents;
-    protected List<Event> groupEvents;
-    private DataComponentAdapter<Event> groupEventAdapter;
 
     @BindView(R.id.rvNearYou) RecyclerView rvNearYou;
     protected List<Event> nearYouEvents;
@@ -92,7 +88,7 @@ public class EventsFragment extends Fragment {
         ButterKnife.bind(this, view);
         user = (User) ParseUser.getCurrentUser();
         yourEvents = new ArrayList<>();
-        groupEvents = new ArrayList<>();
+
         nearYouEvents = new ArrayList<>();
 
        LocationUtils.saveCurrentUserLocation(getContext());
@@ -106,13 +102,7 @@ public class EventsFragment extends Fragment {
             }
         };
 
-        groupEventAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), groupEvents) {
-            @Override
-            public Component makeComponent(Event item) {
-                Component component = new EventThumbnailComponent(item);
-                return component;
-            }
-        };
+
 
         nearYouAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), nearYouEvents) {
             @Override
@@ -127,15 +117,14 @@ public class EventsFragment extends Fragment {
         EdgeDecorator decorator = new EdgeDecorator(5);
 
         rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvGroupEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvNearYou.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         rvYourEvents.addItemDecoration(decorator);
-        rvGroupEvents.addItemDecoration(decorator);
+
         rvNearYou.addItemDecoration(decorator);
 
         rvYourEvents.setAdapter(yourEventsAdapter);
-        rvGroupEvents.setAdapter(groupEventAdapter);
+
         rvNearYou.setAdapter(nearYouAdapter);
 
         EventUtils.getYourEvents(user, (yourevents) -> {

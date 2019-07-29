@@ -43,6 +43,7 @@ import butterknife.ButterKnife;
  */
 public class GroupsFragment extends Fragment {
     //TODO - fix scrolling on goals
+    //Todo - allow user to add goals
 
     User user;
 
@@ -51,7 +52,6 @@ public class GroupsFragment extends Fragment {
 
     @BindView(R.id.svGroups)
     SearchView svGroups;
-
 
     @BindView(R.id.rvGroups) RecyclerView rvGroups;
     protected List<Group> userGroups;
@@ -93,6 +93,7 @@ public class GroupsFragment extends Fragment {
         user = (User) ParseUser.getCurrentUser();
         userGroups = new ArrayList<>();
         userActiveSocialGoals = new ArrayList<>();
+
 
         groupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
