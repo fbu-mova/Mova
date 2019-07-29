@@ -211,7 +211,7 @@ public abstract class ComposePostComponent extends Component {
             }
         });
 
-        holder.llAddMedia.setOnClickListener((view) -> {
+        holder.cvAddMedia.setOnClickListener((view) -> {
             manager.swap(managerMediaKey);
         });
     }

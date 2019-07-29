@@ -135,23 +135,31 @@
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvScrapbook"
+    <LinearLayout
+        android:id="@+id/llScrapbook"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_weight="0"
-        android:text="From your Scrapbook"
-        android:textColor="#222"
-        android:textSize="18dp" />
+        android:orientation="vertical">
 
-    <com.example.mova.scrolling.EndlessScrollRefreshLayout
-        android:id="@+id/esrlScrapbook"
-        android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="0">
+        <TextView
+            android:id="@+id/tvScrapbook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="From your Scrapbook"
+            android:textColor="#222"
+            android:textSize="18dp" />
 
-    </com.example.mova.scrolling.EndlessScrollRefreshLayout>
+        <com.example.mova.scrolling.EndlessScrollRefreshLayout
+            android:id="@+id/esrlScrapbook"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="0">
+
+        </com.example.mova.scrolling.EndlessScrollRefreshLayout>
+    </LinearLayout>
 
 </LinearLayout>

@@ -58,7 +58,9 @@ public abstract class ComposeMediaComponent extends Component {
 
     @Override
     public void render() {
-        // TODO
+        holder.cvLibrary.setOnClickListener((view) -> {
+            
+        });
     }
 
     public abstract void onSelectMedia(Media media);
@@ -76,6 +78,7 @@ public abstract class ComposeMediaComponent extends Component {
         @BindView(R.id.ivCamera)      public ImageView ivCamera;
         @BindView(R.id.cvLibrary)     public CardView cvLibrary;
 
+        @BindView(R.id.llScrapbook)   public LinearLayout llScrapbook;
         @BindView(R.id.esrlScrapbook) public EndlessScrollRefreshLayout<Component.ViewHolder> esrlScrapbook;
 
         public ViewHolder(@NonNull View itemView) {

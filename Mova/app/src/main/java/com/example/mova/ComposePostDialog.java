@@ -55,7 +55,7 @@ public abstract class ComposePostDialog {
         dialog = builder.create();
     }
 
-    private void launch() {
+    public void show() {
         // TODO: Create ComposeMediaComponent
         composeComponent = new ComposePostComponent("TODO") {
             @Override
@@ -72,6 +72,7 @@ public abstract class ComposePostDialog {
         };
         composeComponent.setManager(manager);
         manager.launch(composeComponent.getName(), composeComponent);
+        container.inflateComponent(activity, composeComponent);
 
         dialog.show();
     }

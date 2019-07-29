@@ -92,7 +92,7 @@ public class SocialFeedFragment extends Fragment {
 
                 }
             };
-            dialog.build();
+            dialog.show();
         });
     }
 
