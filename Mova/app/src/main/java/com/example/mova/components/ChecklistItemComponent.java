@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 
@@ -69,16 +70,15 @@ public abstract class ChecklistItemComponent<T> extends Component {
     @Override
     public void render() {
         holder.cbItem.setText(getTitle.call(item));
-        holder.cbItem.setOnClickListener((view) -> onClick(view));
-        // possible fixme - can use onCheckedChangeListener, requires lots of refactoring
-            // may not be worth since doing custom later on probably
+        holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
+                onCheckedChanged(buttonView, isChecked));
         holder.cbItem.setTextColor(uncheckedColor);
         holder.cbItem.setChecked(getDone.call(item));
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }
 
-    public abstract void onClick(View view);
+    public abstract void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
 
     public static class ViewHolder extends Component.ViewHolder {
 

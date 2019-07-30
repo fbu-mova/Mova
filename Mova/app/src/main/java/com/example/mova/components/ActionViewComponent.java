@@ -53,7 +53,7 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
     }
 
     @Override
-    public void onClick(View view) {
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         GoalUtils.toggleDone(item, (e) -> {
             if (e == null) {
                 Log.d(TAG, "toggled action done");
