@@ -91,7 +91,7 @@ public class JournalComposeActivity extends DelegatedResultActivity {
 
         bSave.setOnClickListener((view) -> {
             String body = etBody.getText().toString();
-            User user = (User) ParseUser.getCurrentUser();
+            User user = User.getCurrentUser();
             // FIXME: Maybe calculate the location on postJournalEntry to keep this running quickly?
             ParseGeoPoint location = new ParseGeoPoint();
             location.setLatitude(lat);

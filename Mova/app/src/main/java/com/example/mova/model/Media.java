@@ -6,6 +6,7 @@ import android.media.Image;
 import com.example.mova.components.Component;
 import com.example.mova.components.ImageComponent;
 import com.example.mova.components.MediaTextComponent;
+import com.example.mova.components.PostComponent;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
@@ -28,6 +29,12 @@ public class Media extends HashableParseObject {
     public static final String KEY_ACTION = "contentAction";
     public static final String KEY_TEXT = "contentText";
     public static final String KEY_IMAGE = "contentImage";
+
+    public Media() { }
+
+    public Media(Object content) {
+        setContent(content);
+    }
 
     // Type
     public ContentType getType() {
@@ -194,6 +201,8 @@ public class Media extends HashableParseObject {
                 return new MediaTextComponent(this);
             case Image:
                 return new ImageComponent(getContentImage());
+            case Post:
+                return new PostComponent(getContentPost());
             default:
                 return null;
         }

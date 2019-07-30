@@ -7,17 +7,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.ComposePostDialog;
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
+import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.TimeUtils;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -151,14 +159,61 @@ public class PostComponent extends Component {
 
     private void configureButtons() {
         holder.llButtons.setVisibility(View.VISIBLE);
+
         holder.ivRepost.setOnClickListener((view) -> {
-            // TODO: Open compose + media dialog
+            PostConfig config = new PostConfig();
+            Media postMedia = new Media(post);
+            config.media = postMedia;
+
+            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
+                @Override
+                protected void onCancel() {
+
+                }
+
+                @Override
+                protected void onPost(PostConfig config) {
+                    config.savePost((savedPost) -> {});
+                }
+            };
         });
+
         holder.ivReply.setOnClickListener((view) -> {
-            // TODO: Open compose + reply dialog
+            PostConfig config = new PostConfig();
+            config.postToReply = post;
+
+            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
+                @Override
+                protected void onCancel() {
+
+                }
+
+                @Override
+                protected void onPost(PostConfig config) {
+                    config.savePost((savedPost) -> {});
+                }
+            };
         });
+
         holder.ivSave.setOnClickListener((view) -> {
-            // TODO: Save to scrapbook
+            ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
+            query.whereEqualTo(Post.KEY_ID, post.getObjectId());
+            query.findInBackground((posts, e) -> {
+                if (e != null) {
+                    Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
+                    Toast.makeText(activity, "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
+                } else if (posts.size() == 0) {
+                    User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
+                        Toast.makeText(activity, "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
+                        // TODO: Update icon
+                    });
+                } else {
+                    User.getCurrentUser().relScrapbook.remove(post, () -> {
+                        Toast.makeText(activity, "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
+                        // TODO: Update icon
+                    });
+                }
+            });
         });
     }
 

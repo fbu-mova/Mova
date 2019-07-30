@@ -100,7 +100,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         ArrayList<String> spinnerArray = new ArrayList<String>();
         spinnerArray.add("Friends");
 
-        GroupUtils.queryGroups((User) ParseUser.getCurrentUser(), new AsyncUtils.ListCallback<Group>() {
+        GroupUtils.queryGroups(User.getCurrentUser(), new AsyncUtils.ListCallback<Group>() {
             @Override
             public void call(List<Group> groupsList) {
                 for (int i = 0; i < groupsList.size(); i++ ) {
@@ -162,7 +162,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         else {
             // need to find group, then make post
 
-            ParseQuery<Group> groupQuery = (((User) ParseUser.getCurrentUser()).relGroups.getQuery())
+            ParseQuery<Group> groupQuery = User.getCurrentUser().relGroups.getQuery()
                     .whereEqualTo(KEY_NAME, groupName);
             groupQuery.findInBackground(new FindCallback<Group>() {
                 @Override
@@ -185,7 +185,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
     private void makeGoalPost(String description) {
         // same but don't set group
 
-        User user = (User) ParseUser.getCurrentUser();
+        User user = User.getCurrentUser();
 
         Post goalPost = new Post();
         goalPost.setAuthor(user)
@@ -199,7 +199,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
         // makes the post of a goal, saves this post to the User's post relation
 
         // fixme -- did not include location of user nor mood
-        User user = (User) ParseUser.getCurrentUser();
+        User user = User.getCurrentUser();
 
         Post goalPost = new Post();
         goalPost.setAuthor(user)
@@ -220,7 +220,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
                     Log.d(TAG, "Saved newly made goal post");
 
                     // add to user's post relation
-                    ((User) ParseUser.getCurrentUser()).relPosts.add(goalPost, (post) -> {
+                    User.getCurrentUser().relPosts.add(goalPost, (post) -> {
                         // go to next step:
                         updatePostMedia(post, group);
                     });

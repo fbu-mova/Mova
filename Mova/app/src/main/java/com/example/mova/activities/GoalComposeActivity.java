@@ -109,7 +109,7 @@ public class GoalComposeActivity extends AppCompatActivity {
         // todo -- update to also encompass Social functionality ?
 
         Goal goal = new Goal()
-                .setAuthor((User) ParseUser.getCurrentUser())
+                .setAuthor(User.getCurrentUser())
                 .setTitle(goalName)
                 .setDescription(goalDescription);
 
@@ -173,7 +173,7 @@ public class GoalComposeActivity extends AppCompatActivity {
             Action action = new Action()
                     .setTask(actions.get(item))
                     .setParentGoal(goal)
-                    .setParentUser((User) ParseUser.getCurrentUser())
+                    .setParentUser(User.getCurrentUser())
                     .setParentSharedAction(sharedActionsList.get(item));
 
             actionsList.add(action);
@@ -240,7 +240,7 @@ public class GoalComposeActivity extends AppCompatActivity {
 
     private void saveGoalToUser(Goal goal) {
 
-        ((User) ParseUser.getCurrentUser()).relGoals.add(goal, (item) -> {
+        User.getCurrentUser().relGoals.add(goal, (item) -> {
             // go to general goal fragment page (or details page?)
             getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
             // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);

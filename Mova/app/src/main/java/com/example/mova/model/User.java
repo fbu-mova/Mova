@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.mova.PostConfig;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
@@ -30,7 +31,6 @@ public class User extends ParseUser {
     public static final String KEY_SCRAPBOOK = "scrapbook";
     public static final String KEY_POSTS = "posts";
     public static final String KEY_LOCATION = "Location";
-
 
     public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
     public final RelationFrame<User> relFriends = new RelationFrame<>(this, KEY_FRIENDS);
@@ -77,12 +77,13 @@ public class User extends ParseUser {
         });
     }
 
-    public void postJournalEntry(Post journalEntry, List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
-        postJournalEntry(journalEntry, tags, null, callback);
+    public void postJournalEntry(Post journalEntry, AsyncUtils.ItemCallback<Post> callback) {
+        PostConfig config = new PostConfig(journalEntry);
+        postJournalEntry(config, callback);
     }
 
-    public void postJournalEntry(Post journalEntry, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
-        journalEntry.savePost(tags, media, (post) -> relJournal.add(journalEntry, callback));
+    public void postJournalEntry(PostConfig config, AsyncUtils.ItemCallback<Post> callback) {
+        config.post.savePost(config, (post) -> relJournal.add(config.post, callback));
     }
 
     public void getFriendsList(AsyncUtils.ListCallback<User> callback){
@@ -93,6 +94,10 @@ public class User extends ParseUser {
                 callback.call(objects);
             }
         });
+    }
+
+    public static User getCurrentUser() {
+        return (User) ParseUser.getCurrentUser();
     }
 
     @Override

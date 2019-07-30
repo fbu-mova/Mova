@@ -42,7 +42,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) -> makeSpecialCards(addTo, cb));
 
         // Get recent goals, add their respective check-in cards
-        ParseQuery<Goal> goalQuery = ((User) User.getCurrentUser()).relGoals.getQuery();
+        ParseQuery<Goal> goalQuery = User.getCurrentUser().relGoals.getQuery();
         goalQuery.include(Goal.KEY_FROM_GROUP);
         goalQuery.setLimit(10);
         goalQuery.orderByDescending(Goal.KEY_CREATED_AT);
@@ -59,7 +59,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
 
         // Get recent journal entries, add their respective memory cards
         // TODO: Write a more meaningful query here
-        ParseQuery<Post> journalQuery = ((User) User.getCurrentUser()).relJournal.getQuery();
+        ParseQuery<Post> journalQuery = User.getCurrentUser().relJournal.getQuery();
         journalQuery.orderByDescending(Post.KEY_CREATED_AT);
         journalQuery.setLimit(20);
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
@@ -75,7 +75,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         }));
 
         // Get recent scrapbook entries, add their respective memory cards
-        ParseQuery<Post> scrapbookQuery = ((User) User.getCurrentUser()).relScrapbook.getQuery();
+        ParseQuery<Post> scrapbookQuery = User.getCurrentUser().relScrapbook.getQuery();
         scrapbookQuery.orderByDescending(Post.KEY_CREATED_AT);
         scrapbookQuery.setLimit(20);
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
@@ -104,7 +104,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         List<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
 
         // Check number of journal entries to determine whether to add journal prompt
-        ParseQuery<Post> journalQuery = ((User) User.getCurrentUser()).relJournal.getQuery();
+        ParseQuery<Post> journalQuery = User.getCurrentUser().relJournal.getQuery();
         journalQuery.whereGreaterThan(Post.KEY_CREATED_AT, TimeUtils.getToday());
         asyncActions.add((i, cb) ->
             journalQuery.findInBackground((entries, e) -> {
@@ -151,7 +151,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
     protected void makeGoalCheckIns(SortedList<PrioritizedComponent> addTo, List<Goal> goals, AsyncUtils.ItemCallback<Throwable> callback) {
         // Get goals sorted by progress
         GoalUtils goalUtils = new GoalUtils();
-        goalUtils.sortGoals(goals, 7, ((User) User.getCurrentUser()), (TreeSet<Prioritized<Goal>> pGoals) -> {
+        goalUtils.sortGoals(goals, 7, User.getCurrentUser(), (TreeSet<Prioritized<Goal>> pGoals) -> {
             // Choose top and bottom goals based on quantities in config
             if (pGoals.size() == 1) {
                 Prioritized<Goal> goal = pGoals.first();

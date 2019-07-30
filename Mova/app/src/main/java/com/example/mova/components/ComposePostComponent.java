@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Group;
@@ -22,8 +23,11 @@ import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.Wrapper;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +39,7 @@ public abstract class ComposePostComponent extends Component {
 
     // TODO: Handle tags
 
-    private Media media;
-    private Post postToReply;
+    private PostConfig postConfig;
     private Group inGroup;
 
     private DelegatedResultActivity activity;
@@ -47,42 +50,13 @@ public abstract class ComposePostComponent extends Component {
     private String managerMediaKey;
 
     public ComposePostComponent(String managerMediaKey) {
-        init(managerMediaKey, null, null, null);
+        this(managerMediaKey, new PostConfig());
     }
 
-    public ComposePostComponent(String managerMediaKey, Media media) {
-        init(managerMediaKey, null, media, null);
-    }
-
-    public ComposePostComponent(String managerMediaKey, Post postToReply) {
-        init(managerMediaKey, postToReply, null, null);
-    }
-
-    public ComposePostComponent(String managerMediaKey, Post postToReply, Media media) {
-        init(managerMediaKey, postToReply, media, null);
-    }
-
-    public ComposePostComponent(String managerMediaKey, Group inGroup) {
-        init(managerMediaKey, null, null, inGroup);
-    }
-
-    public ComposePostComponent(String managerMediaKey, Media media, Group inGroup) {
-        init(managerMediaKey, null, media, inGroup);
-    }
-
-    public ComposePostComponent(String managerMediaKey, Post postToReply, Group inGroup) {
-        init(managerMediaKey, postToReply, null, inGroup);
-    }
-
-    public ComposePostComponent(String managerMediaKey, Post postToReply, Media media, Group inGroup) {
-        init(managerMediaKey, postToReply, media, inGroup);
-    }
-
-    private void init(String managerMediaKey, Post postToReply, Media media, Group inGroup) {
-        this.media = media;
-        this.postToReply = postToReply;
-        this.inGroup = inGroup;
+    public ComposePostComponent(String managerMediaKey, PostConfig postConfig) {
         this.managerMediaKey = managerMediaKey;
+        this.postConfig = postConfig;
+        this.inGroup = (postConfig.post == null) ? null : postConfig.post.getGroup();
     }
 
     @Override
@@ -122,16 +96,16 @@ public abstract class ComposePostComponent extends Component {
     }
 
     public void setMedia(Media media) {
-        this.media = media;
+        postConfig.media = media;
         displayMedia();
     }
 
     private void displayToReplyTo() {
         // FIXME: Should post be fetched in background if needed?
-        if (postToReply == null) {
+        if (postConfig.postToReply == null) {
             holder.flReplyContent.setVisibility(View.GONE);
         } else {
-            PostComponent postComponent = new PostComponent(postToReply);
+            PostComponent postComponent = new PostComponent(postConfig.postToReply);
             holder.flReplyContent.setVisibility(View.VISIBLE);
             holder.clPostToReply.inflateComponent(activity, postComponent);
         }
@@ -144,9 +118,9 @@ public abstract class ComposePostComponent extends Component {
 
         List<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
 
-        if (postToReply != null) {
+        if (postConfig.postToReply != null) {
             asyncActions.add((i, cb) ->
-                postToReply.getAuthor().fetchIfNeededInBackground((parseObject, e) -> {
+                postConfig.postToReply.getAuthor().fetchIfNeededInBackground((parseObject, e) -> {
                     if (e != null) {
                         Log.e("ComposePostDialog", "Failed to get reply to author", e);
                     } else if (!(parseObject instanceof User)) {
@@ -172,7 +146,7 @@ public abstract class ComposePostComponent extends Component {
                         type.item += " in " + group.getName();
                     }
             }));
-        } else if (postToReply == null) {
+        } else if (postConfig.postToReply == null) {
             type.item += "to friends";
         }
 
@@ -190,7 +164,7 @@ public abstract class ComposePostComponent extends Component {
 
     private void displayMedia() {
         // FIXME: Should media be fetched in background if needed?
-        Component mediaComponent = (media == null) ? null : media.makeComponent();
+        Component mediaComponent = (postConfig.media == null) ? null : postConfig.media.makeComponent();
         if (mediaComponent == null) {
             holder.llAddMedia.setVisibility(View.VISIBLE);
             holder.clMedia.clear();
@@ -206,8 +180,8 @@ public abstract class ComposePostComponent extends Component {
         holder.fabPost.setOnClickListener((view) -> {
             Post post = makePost();
             if (post != null) {
-                List<Tag> tags = new ArrayList<>(); // TODO: Handle real tags
-                onPost(post, tags, media, postToReply);
+                postConfig.post = post;
+                onPost(postConfig);
             }
         });
 
@@ -217,7 +191,7 @@ public abstract class ComposePostComponent extends Component {
     }
 
     protected abstract void onCancel();
-    protected abstract void onPost(Post post, List<Tag> tags, Media media, Post postToReply);
+    protected abstract void onPost(PostConfig postConfig);
 
     private Post makePost() {
         String body = holder.etBody.getText().toString();
@@ -229,12 +203,14 @@ public abstract class ComposePostComponent extends Component {
 
         Post post = new Post();
         post.setBody(body);
-        post.setAuthor((User) User.getCurrentUser());
+        post.setAuthor(User.getCurrentUser());
+        post.setIsPersonal(postConfig.isPersonal);
 
-        // TODO: Handle location
+        ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
+        if (location != null) post.setLocation(location);
 
-        if (postToReply != null) post.setParent(postToReply);
-        if (inGroup != null)     post.setGroup(inGroup);
+        if (postConfig.postToReply != null) post.setParent(postConfig.postToReply);
+        if (inGroup != null)                post.setGroup(inGroup);
 
         return post;
     }
