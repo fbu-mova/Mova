@@ -60,7 +60,7 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
         T item = items.get(position);
         Component component = components.get(item);
         if (component == null) component = makeComponent(item, holder);
-        component.render(holder);
+        component.render(activity, holder);
     }
 
     @Override

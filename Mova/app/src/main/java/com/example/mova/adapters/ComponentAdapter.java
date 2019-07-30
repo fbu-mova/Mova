@@ -36,7 +36,7 @@ public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.Vi
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         Component component = components.get(position);
-        component.render(holder);
+        component.render(activity, holder);
     }
 
     @Override

@@ -60,7 +60,7 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
         T item = items.get(position);
         Component component = components.get(item);
         if (component == null) component = makeComponent(item, holder);
-        component.render(holder);
+        component.render(activity, holder);
     }
 
     @Override
