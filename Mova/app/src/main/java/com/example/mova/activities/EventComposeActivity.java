@@ -160,15 +160,18 @@ public class EventComposeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Event event = new Event();
-                event.setTitle(etTitle.getText().toString());
-                event.setDescription(etDescription.getText().toString());
+                event.setTitle(etTitle.getText().toString())
+                        .setDescription(etDescription.getText().toString())
+                .setHost(user);
 
                 //set parent group if the field is valid
                 for(int i = 0; i < groupArr.length ; i++){
                     if(actvParentGroup.getText().toString().equals(groupArr[i].toString())){
-                        event.relGroup.add(groups.get(i));
-                        groups.get(i).relEvents.add(event);
-                        groups.get(i).saveInBackground();
+                        Group group = groups.get(i);
+                        event.relGroup.add(group);
+                        event.setParentGroup(group);
+                        group.relEvents.add(event);
+                        group.saveInBackground();
                     }else{
                         Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
                     }

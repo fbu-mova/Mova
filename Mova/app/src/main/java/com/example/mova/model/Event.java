@@ -1,6 +1,9 @@
 package com.example.mova.model;
 
+import com.example.mova.utils.AsyncUtils;
+import com.parse.GetCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 
@@ -18,6 +21,8 @@ public class Event extends HashableParseObject {
     public static final String KEY_TAGS = "tags";
     public static final String KEY_GROUPS = "groups";
     public static final String KEY_COMMENTS = "comments";
+    public static final String KEY_PARENT_GROUP = "parentGroup";
+    public static final String KEY_HOST_USER = "hostUser";
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
     public final RelationFrame<User> relParticipants = new RelationFrame<>(this, KEY_PARTICIPANTS);
     public final RelationFrame<Group> relGroup = new RelationFrame<>(this, KEY_GROUPS);
@@ -77,5 +82,41 @@ public class Event extends HashableParseObject {
         return this;
     }
 
+    //Parent Group
+
+    public Group getParentGroup(){
+        return  (Group) getParseObject(KEY_PARENT_GROUP);
+    }
+    public void getParentGroupName(Group group, AsyncUtils.ItemCallback<String> callback){
+
+        group.fetchIfNeededInBackground(new GetCallback<Group>() {
+            @Override
+            public void done(Group object, ParseException e) {
+                callback.call(object.getName());
+            }
+        });
+    }
+
+    public Event setParentGroup(Group g){
+        put(KEY_PARENT_GROUP, g);
+        return this;
+    }
+
+    //Host user
+    public User getHost(){
+        return (User) getParseObject(KEY_HOST_USER);
+    }
+
+    public Event setHost(User user){
+        put(KEY_HOST_USER, user);
+        return this;
+    }
+
+    public boolean isHostUser(User user){
+        if(this.getHost().equals(user)){
+            return true;
+        }
+        return false;
+    }
 
 }

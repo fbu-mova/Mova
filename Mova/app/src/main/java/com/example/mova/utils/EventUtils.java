@@ -78,4 +78,31 @@ public class EventUtils {
             }
         });
     }
+
+    public static void getUsersInvolved(Event event, AsyncUtils.ListCallback<User> callback){
+        ParseQuery<User> pqUsersInvolved = event.relParticipants.getQuery();
+        pqUsersInvolved.findInBackground(new FindCallback<User>() {
+            @Override
+            public void done(List<User> objects, ParseException e) {
+                if(e != null){
+                    Log.e("EventUtils", "Error with query comments");
+                    e.printStackTrace();
+                    return;
+                }
+                callback.call(objects);
+            }
+        });
+    }
+
+    public static void isInvolved(User user,Event event, AsyncUtils.ItemCallback<Boolean> callback){
+        getUsersInvolved(event, (participants) -> {
+            for(User participant:participants){
+                if(user.equals(participant)){
+                    callback.call(true);
+                    return;
+                }
+            }
+            callback.call(false);
+        });
+    }
 }

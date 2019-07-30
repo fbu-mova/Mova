@@ -88,7 +88,11 @@ public class EventThumbnailComponent extends Component{
         viewHolder.tvEventName.setText(event.getTitle());
         viewHolder.tvEventLocation.setText(locationsplit[1] + ", "+ state[1]);
         viewHolder.tvWhen.setText(TimeUtils.toDateString(event.getDate()));
-
+        if(event.getParentGroup() != null){
+            event.getParentGroupName(event.getParentGroup(),(name) -> {
+                viewHolder.tvGroupName.setText(name);
+            });
+        }
         ParseFile file = event.getEventPic();
         if(file != null){
             String imageUrl = file.getUrl();

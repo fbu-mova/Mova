@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import com.example.mova.components.Component;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Event;
 import com.example.mova.model.Post;
+import com.example.mova.model.User;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.TimeUtils;
@@ -34,6 +36,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,7 @@ import butterknife.ButterKnife;
 public class EventDetailsFragment extends Fragment implements OnMapReadyCallback {
 
     Event event;
+    User user;
 
     @BindView(R.id.mvEventMap)
     MapView mvEventMap;
@@ -58,6 +62,8 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
     TextView tvEventTime;
     @BindView(R.id.rvEventComments)
     RecyclerView rvEventComments;
+    @BindView(R.id.btnEventAction)
+    Button btnEventAction;
 
     protected List<Post> eventComments;
     private DataComponentAdapter<Post> eventCommentsAdapter;
@@ -115,6 +121,7 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
         initGoogleMap(savedInstanceState);
 
         event = this.getArguments().getParcelable("event");
+        user = (User) ParseUser.getCurrentUser();
         eventComments = new ArrayList<>();
 
         String location = LocationUtils.makeLocationText(getContext(),event.getLocation());
@@ -150,6 +157,39 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
             eventCommentsAdapter.notifyDataSetChanged();
             rvEventComments.scrollToPosition(0);
         });
+
+        //If host display edit, else either join or leave
+        if(event.isHostUser(user)){
+            btnEventAction.setText("EDIT EVENT");
+            btnEventAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Todo- open an edit option
+                }
+            });
+        }else{
+            EventUtils.isInvolved(user,event, (bool) -> {
+               if(bool){
+                   btnEventAction.setText("LEAVE EVENT");
+               }else{
+                   btnEventAction.setText("JOIN EVENT");
+               }
+
+               btnEventAction.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       if(bool){
+                           event.relParticipants.remove(user, () -> {
+                               btnEventAction.setText("JOIN EVENT");
+                           });
+                       }else{
+                           event.relParticipants.add(user);
+                           btnEventAction.setText("LEAVE EVENT");
+                       }
+                   }
+               });
+            });
+        }
 
 
     }
