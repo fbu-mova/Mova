@@ -264,7 +264,8 @@ public class GoalUtils {
                     .setTask(actions.get(item))
                     .setParentGoal(goal)
                     .setParentUser((User) ParseUser.getCurrentUser())
-                    .setParentSharedAction(sharedActionsList.get(item));
+                    .setParentSharedAction(sharedActionsList.get(item))
+                    .setIsConnectedToParent(true);
 
             actionsList.add(action);
 
@@ -388,10 +389,14 @@ public class GoalUtils {
         });
     }
 
-    public static void loadGoalActions(Goal goal, AsyncUtils.ListCallback<Action> callback, boolean showOwn) {
+    public static void loadGoalActions(Goal goal, AsyncUtils.ListCallback<Action> callback) {
         // make query calls to get the user's actions for a goal
         ParseQuery<Action> actionQuery = goal.relActions.getQuery();
-        if (showOwn) actionQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
+        actionQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
+
+//            actionQuery.whereEqualTo(KEY_PARENT_USER, goal.getAuthor());
+            // fixme -- ideally shows social progress (make a SocialGoalCardComponent?)
+
         // fixme -- if showOwn == true then can't see actions of goals i'm not a part of
         // fixme -- but if showOwn == false then since querying actions, get duplicate actions
             // fixme -- possible solution: if user not involved w/ goal, have diff format and show SharedActions?
@@ -405,6 +410,25 @@ public class GoalUtils {
                 else {
                     Log.e(TAG, "query for actions failed", e);
                 }
+            }
+        });
+    }
+
+    public static void checkIfUserInvolved(Goal goal, User user, AsyncUtils.ItemCallback<Boolean> callback) {
+        ParseQuery<Goal> goalQuery = user.relGoals.getQuery().whereEqualTo("objectId", goal.getObjectId());
+        goalQuery.findInBackground(new FindCallback<Goal>() {
+            @Override
+            public void done(List<Goal> objects, ParseException e) {
+                boolean check = false;
+                if (e == null) {
+                    if (objects.size() == 1 && objects.get(0).equals(goal)) {
+                        check = true;
+                    }
+                }
+                else {
+                    Log.e(TAG, "error querying for goal");
+                }
+                callback.call(check);
             }
         });
     }
