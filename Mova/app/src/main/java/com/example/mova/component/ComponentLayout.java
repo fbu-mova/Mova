@@ -33,10 +33,10 @@ public class ComponentLayout extends FrameLayout {
      * @param activity The activity to which the layout belongs.
      * @param component The component to inflate.
      */
-    public void inflateComponent(DelegatedResultActivity activity, Component component) {
-        component.makeViewHolder(activity, this, true);
-        ViewUtils.setMargins(component.getView(), marginLeft, marginTop, marginRight, marginBottom);
-        component.render();
+    public void inflateComponent(DelegatedResultActivity activity, Component component, Component.Inflater inflater) {
+        Component.ViewHolder holder = inflater.inflate(activity, this, true);
+        ViewUtils.setMargins(holder.getView(), marginLeft, marginTop, marginRight, marginBottom);
+        component.render(holder);
     }
 
     /**
