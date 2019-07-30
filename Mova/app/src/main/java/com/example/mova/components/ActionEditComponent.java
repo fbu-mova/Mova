@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Action;
+import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.GoalUtils;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
@@ -78,26 +80,11 @@ public class ActionEditComponent extends Component {
             public void onClick(View v) {
                 // update this action with new text
                 String new_action = viewHolder.etAction.getText().toString();
-                saveAction(action, new_action);
+                GoalUtils.saveAction(action, new_action, (item) -> {
+                    Toast.makeText(activity, "Updated action", Toast.LENGTH_SHORT).show();
+                });
 
                 componentManager.swap("ActionViewComponent");
-            }
-        });
-    }
-
-    private void saveAction(Action action, String new_action) {
-        action.setTask(new_action);
-
-        action.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "action saved successfully");
-                    Toast.makeText(activity, "Updated action", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.e(TAG, "action failed saving", e);
-                }
             }
         });
     }

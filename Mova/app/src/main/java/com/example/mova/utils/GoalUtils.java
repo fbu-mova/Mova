@@ -368,4 +368,21 @@ public class GoalUtils {
 
     }
 
+    public static void saveAction(Action action, String new_action, AsyncUtils.ItemCallback<Action> callback) {
+        action.setTask(new_action);
+
+        action.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "action saved successfully");
+                    callback.call(action);
+                }
+                else {
+                    Log.e(TAG, "action failed saving", e);
+                }
+            }
+        });
+    }
+
 }
