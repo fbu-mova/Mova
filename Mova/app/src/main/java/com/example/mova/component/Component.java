@@ -53,12 +53,12 @@ public abstract class Component {
      * Responsible for creating all elements necessary for the creation of a component.
      * If any logic is required to determine which kind of layout to use, etc., it should be done here.
      */
-    public static abstract class Factory {
+    public static abstract class Inflater {
         /**
          * Inflates the component's layout into the given activity.
          * @param activity The Activity into which to inflate the component.
          * @param parent The ViewGroup into which to inflate the component.
          */
-        public abstract ViewHolder makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
+        public abstract ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
     }
 }

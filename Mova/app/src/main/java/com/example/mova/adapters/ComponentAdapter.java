@@ -29,8 +29,8 @@ public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.Vi
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Component component = components.get(viewType);
-        Component.Factory factory = makeFactory(component);
-        return factory.makeViewHolder(activity, parent, false);
+        Component.Inflater inflater = makeInflater(component);
+        return inflater.inflate(activity, parent, false);
     }
 
     @Override
@@ -49,5 +49,5 @@ public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.Vi
         notifyDataSetChanged();
     }
 
-    protected abstract Component.Factory makeFactory(Component component);
+    protected abstract Component.Inflater makeInflater(Component component);
 }

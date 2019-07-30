@@ -41,7 +41,7 @@ public class ActionComponent extends Component {
         viewHolder = new ActionViewHolder(view);
         this.activity = activity;
 
-        // for ActionComponent, makeViewHolder should only be called once so it's not redundant
+        // for ActionComponent, inflate should only be called once so it's not redundant
         setManager(new ComponentManager() {
             @Override
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {

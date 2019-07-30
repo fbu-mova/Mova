@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
-import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
 
 public abstract class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
@@ -30,8 +29,8 @@ public abstract class PrioritizedComponentAdapter extends RecyclerView.Adapter<C
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         PrioritizedComponent pComponent = components.get(viewType);
-        Component.Factory factory = makeFactory(pComponent);
-        return factory.makeViewHolder(activity, parent, false);
+        Component.Inflater inflater = makeInflater(pComponent);
+        return inflater.inflate(activity, parent, false);
     }
 
     @Override
@@ -50,5 +49,5 @@ public abstract class PrioritizedComponentAdapter extends RecyclerView.Adapter<C
         notifyDataSetChanged();
     }
 
-    protected abstract Component.Factory makeFactory(PrioritizedComponent prioritizedComponent);
+    protected abstract Component.Inflater makeInflater(PrioritizedComponent prioritizedComponent);
 }
