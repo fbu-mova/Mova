@@ -1,7 +1,9 @@
 package com.example.mova.activities;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.location.Address;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -13,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mova.R;
@@ -42,6 +45,7 @@ public class EventComposeActivity extends AppCompatActivity {
     private List<String> tags;
     private List<Group> groups;
     String[] groupArr;
+    Address address;
 
 
     @BindView(R.id.ibEventImage)
@@ -193,5 +197,18 @@ public class EventComposeActivity extends AppCompatActivity {
             tags.remove(tag);
         }
         TextUtils.writeCommaSeparated(tags, "No tags", tvTags, (str) -> str);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                address = data.getParcelableExtra("address");
+                if(address != null){
+                    etLocation.setText(address.getAddressLine(0));
+                }
+            }
+        }
     }
 }
