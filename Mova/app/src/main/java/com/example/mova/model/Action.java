@@ -50,11 +50,11 @@ public class Action extends HashableParseObject {
 
     // Is Connected to Parent
 
-    private Boolean getIsConnectedToParent(){
+    public Boolean getIsConnectedToParent(){
         return getBoolean(KEY_IS_CONNECTED_PARENT);
     }
 
-    private Action setIsConnectedToParent(Boolean bool){
+    public Action setIsConnectedToParent(Boolean bool){
         put(KEY_IS_CONNECTED_PARENT, bool);
         return this;
     }
