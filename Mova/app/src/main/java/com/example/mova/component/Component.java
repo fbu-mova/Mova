@@ -39,15 +39,20 @@ public abstract class Component {
     public abstract void render(DelegatedResultActivity activity, ViewHolder holder);
 
     public static abstract class ViewHolder extends RecyclerView.ViewHolder {
+        protected View view;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            this.view = itemView;
         }
 
         /**
          * Returns the View created when making the ViewHolder.
          * @return The View. Null if not yet inflated.
          */
-        public abstract View getView();
+        public View getView() {
+            return view;
+        }
     }
 
     /**
