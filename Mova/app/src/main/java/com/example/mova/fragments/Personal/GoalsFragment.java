@@ -24,9 +24,12 @@ import com.example.mova.components.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.model.Goal;
+import com.example.mova.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.mova.activities.GoalComposeActivity.KEY_COMPOSED_GOAL;
+import static com.example.mova.model.Goal.KEY_FROM_GROUP;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -147,26 +151,31 @@ public class GoalsFragment extends Fragment {
         // todo -- create an algorithm that decides which posts will be featured here
             // todo -- possible querying in Goal model class
             // fixme -- for now, just do normal loadAllGoals
-        Log.d(TAG, "in loadThumbNailGoals");
-        Goal.Query allGoalsQuery = new Goal.Query();
-        allGoalsQuery.getTop()
-                .withGroup()
-                .fromCurrentUser();
+
+        ParseQuery<Goal> allGoalsQuery = ((User) ParseUser.getCurrentUser())
+                .relGoals
+                .getQuery()
+                .setLimit(5)
+                .include(KEY_FROM_GROUP);
 
         updateAdapter(allGoalsQuery, thumbnailGoals, thumbnailGoalsAdapter, rvThumbnailGoals);
     }
 
     private void loadAllGoals() {
-        Log.d(TAG, "in loadAllGoals");
-        Goal.Query allGoalsQuery = new Goal.Query();
-        allGoalsQuery.getTop()
-                .withGroup()
-                .fromCurrentUser();
+//        Goal.Query allGoalsQuery = new Goal.Query();
+//        allGoalsQuery.getTop()
+//                .withGroup()
+//                .fromCurrentUser();
+
+        ParseQuery<Goal> allGoalsQuery = ((User) ParseUser.getCurrentUser())
+                .relGoals
+                .getQuery()
+                .include(KEY_FROM_GROUP);
 
         updateAdapter(allGoalsQuery, allGoals, allGoalsAdapter, rvAllGoals);
     }
 
-    private void updateAdapter(Goal.Query goalsQuery, ArrayList<Goal> goals, DataComponentAdapter<Goal> goalsAdapter, RecyclerView rvGoals) {
+    private void updateAdapter(ParseQuery<Goal> goalsQuery, ArrayList<Goal> goals, DataComponentAdapter<Goal> goalsAdapter, RecyclerView rvGoals) {
         // todo -- add refresh/loading capabilities
 
         Log.d(TAG, "in updateAdapter");

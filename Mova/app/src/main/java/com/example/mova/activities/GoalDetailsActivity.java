@@ -65,7 +65,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         goal = getIntent().getParcelableExtra("goal");
 
         tvGoalName.setText(goal.getTitle());
-        tvFromGroup.setText(goal.getGroupName());
+//        tvFromGroup.setText(goal.getGroupName());
         tvDescription.setText(goal.getDescription());
 
         ivShare.setOnClickListener(new View.OnClickListener() {
