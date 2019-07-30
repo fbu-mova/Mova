@@ -162,10 +162,6 @@ public class GoalsFragment extends Fragment {
     }
 
     private void loadAllGoals() {
-//        Goal.Query allGoalsQuery = new Goal.Query();
-//        allGoalsQuery.getTop()
-//                .withGroup()
-//                .fromCurrentUser();
 
         ParseQuery<Goal> allGoalsQuery = ((User) ParseUser.getCurrentUser())
                 .relGoals
@@ -217,19 +213,14 @@ public class GoalsFragment extends Fragment {
                 Goal goal = data.getParcelableExtra(KEY_COMPOSED_GOAL);
 
                 // update recyclerviews
-                Log.d(TAG, "updating allGoals with intent");
                 allGoals.add(0, goal);
-                Log.d(TAG, "updating allGoalsAdapter with intent");
                 allGoalsAdapter.notifyItemInserted(0);
 
-                Log.d(TAG, "updating thumbnailGoals with intent");
                 thumbnailGoals.add(0, goal);
-                Log.d(TAG, "updating thumbnailGoalsAdapter with intent");
                 thumbnailGoalsAdapter.notifyItemInserted(0);
 
                 rvAllGoals.scrollToPosition(0);
                 rvThumbnailGoals.scrollToPosition(0);
-                Log.d(TAG, "finished onActivityResult");
             }
         }
     }

@@ -156,7 +156,10 @@ public class GoalCardComponent extends Component {
 
         GoalUtils.loadGoalActions(item, (objects) -> {
             updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
-        });
+        }, false);
+
+        // FIXME -- for social goal, want to be able to see goals/their actions but can't check/alter.
+        //  need to pass info on when to restrict permissions of a goal ??? see loadGoalActions
     }
 
     private void updateAdapter(List<Action> objects, ArrayList<Action> actions, DataComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {

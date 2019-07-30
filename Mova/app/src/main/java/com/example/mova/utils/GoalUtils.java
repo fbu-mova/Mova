@@ -388,15 +388,18 @@ public class GoalUtils {
         });
     }
 
-    public static void loadGoalActions(Goal goal, AsyncUtils.ListCallback<Action> callback) {
+    public static void loadGoalActions(Goal goal, AsyncUtils.ListCallback<Action> callback, boolean showOwn) {
         // make query calls to get the user's actions for a goal
         ParseQuery<Action> actionQuery = goal.relActions.getQuery();
-        actionQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
+        if (showOwn) actionQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
+        // fixme -- if showOwn == true then can't see actions of goals i'm not a part of
+        // fixme -- but if showOwn == false then since querying actions, get duplicate actions
+            // fixme -- possible solution: if user not involved w/ goal, have diff format and show SharedActions?
         actionQuery.findInBackground(new FindCallback<Action>() {
             @Override
             public void done(List<Action> objects, ParseException e) {
                 if (e == null) {
-                    Log.d(TAG, "query for actions successful");
+                    Log.d(TAG, "action query success w/ size " + objects.size());
                     callback.call(objects);
                 }
                 else {
