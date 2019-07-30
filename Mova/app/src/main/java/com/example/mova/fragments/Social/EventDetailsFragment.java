@@ -1,6 +1,7 @@
 package com.example.mova.fragments.Social;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.EventComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.PostComponent;
@@ -164,7 +166,9 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
             btnEventAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Todo- open an edit option
+                    Intent intent = new Intent(getContext(), EventComposeActivity.class);
+                    intent.putExtra("event", event);
+                    startActivity(intent);
                 }
             });
         }else{

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.model.Event;
 import com.example.mova.model.Group;
@@ -25,8 +26,11 @@ import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.TextUtils;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +49,9 @@ public class EventComposeActivity extends AppCompatActivity {
     private List<Group> groups;
     String[] groupArr;
     Address address;
+    Event event;
+    Boolean boolChangedLocation;
+    Boolean boolChangeDate;
 
 
     @BindView(R.id.ibEventImage)
@@ -82,12 +89,46 @@ public class EventComposeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_compose);
         ButterKnife.bind(this);
         user = (User) ParseUser.getCurrentUser();
         tags = new ArrayList<>();
         groups = new ArrayList<>();
+
+        //Intialize
+        Intent intent = getIntent();
+        boolChangedLocation = false;
+        boolChangeDate = false;
+
+        if(intent.getParcelableExtra("event") == null){
+            event = new Event();
+        }else{
+            event = intent.getParcelableExtra("event");
+
+            //Add Image
+            ParseFile file = event.getEventPic();
+            if(file != null){
+                String imageUrl = file.getUrl();
+                Glide.with(EventComposeActivity.this)
+                        .load(imageUrl)
+                        .into(ibEventImage);
+            }
+
+            //Add Title
+            etTitle.setText(event.getTitle());
+
+            //Add Parent Group
+            event.getParentGroupName(event.getParentGroup(), (name) -> {
+                actvParentGroup.setText(name);
+            });
+
+//            etDate.setText(event.getDate().toString());
+
+            etDescription.setText(event.getDescription());
+
+        }
 
         //Parent Group
         GroupUtils.getUserGroups(user, (userGroups) -> {
@@ -111,6 +152,7 @@ public class EventComposeActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
                 // TODO Auto-generated method stub
+                boolChangeDate = true;
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -123,6 +165,7 @@ public class EventComposeActivity extends AppCompatActivity {
         btnOpenMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolChangedLocation = true;
                 Intent intent = new Intent(EventComposeActivity.this, MapsActivity.class);
                 startActivityForResult(intent, 2);
             }
@@ -159,7 +202,6 @@ public class EventComposeActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Event event = new Event();
                 event.setTitle(etTitle.getText().toString())
                         .setDescription(etDescription.getText().toString())
                 .setHost(user);
@@ -191,17 +233,24 @@ public class EventComposeActivity extends AppCompatActivity {
 
                 //Set Date
                 //event.setDate(new Date(etDate.toString()));
-                event.setDate(myCalendar.getTime());
+                if(boolChangeDate) {
+                    event.setDate(myCalendar.getTime());
+                }
 
                 //Set Location
-                if(address != null) {
+                if(address != null && boolChangedLocation) {
                     ParseGeoPoint geoPoint = new ParseGeoPoint(address.getLatitude(), address.getLongitude());
                     event.setLocation(geoPoint);
                 }
-                event.saveInBackground();
+                event.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        finish();
+                    }
+                });
 //                Intent intent = new Intent(EventComposeActivity.this, SocialFragment.class);
 //                onActivityResult(1, RESULT_OK, intent);
-                finish();
+
             }
         });
     }
