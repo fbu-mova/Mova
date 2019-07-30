@@ -141,5 +141,15 @@ public class Goal extends HashableParseObject {
             return this;
         }
     }
+
+    public static class GoalData {
+        public Goal goal;
+        public boolean userIsInvolved;
+
+        public GoalData(Goal goal, boolean userIsInvolved) {
+            this.goal = goal;
+            this.userIsInvolved = userIsInvolved;
+        }
+    }
 }
 

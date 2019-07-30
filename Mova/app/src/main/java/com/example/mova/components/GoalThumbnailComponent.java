@@ -38,14 +38,16 @@ public class GoalThumbnailComponent extends Component {
 
     private Goal goal;
     private View view;
+    private boolean userIsInvolved;
     private GoalThumbnailViewHolder viewHolder;
     private DelegatedResultActivity activity;
 
     private ComponentManager componentManager;
 
-    public GoalThumbnailComponent(Goal goal) {
+    public GoalThumbnailComponent(Goal.GoalData bundle) {
         super();
-        this.goal = goal;
+        this.goal = bundle.goal;
+        this.userIsInvolved = bundle.userIsInvolved;
     }
 
     @Override

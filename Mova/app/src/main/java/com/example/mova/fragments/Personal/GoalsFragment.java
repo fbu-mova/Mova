@@ -25,6 +25,8 @@ import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.GoalUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -59,13 +61,13 @@ public class GoalsFragment extends Fragment {
 
     // thumbnail recyclerview
     @BindView(R.id.rvThumbnailGoals)    protected RecyclerView rvThumbnailGoals;
-    private ArrayList<Goal> thumbnailGoals;
-    private DataComponentAdapter<Goal> thumbnailGoalsAdapter;
+    private ArrayList<Goal.GoalData> thumbnailGoals;
+    private DataComponentAdapter<Goal.GoalData> thumbnailGoalsAdapter;
 
     // allGoals recyclerview
     @BindView(R.id.rvAllGoals)          protected RecyclerView rvAllGoals;
-    private ArrayList<Goal> allGoals;
-    private DataComponentAdapter<Goal> allGoalsAdapter;
+    private ArrayList<Goal.GoalData> allGoals;
+    private DataComponentAdapter<Goal.GoalData> allGoalsAdapter;
 
     public GoalsFragment() {
         // Required empty public constructor
@@ -111,9 +113,9 @@ public class GoalsFragment extends Fragment {
         thumbnailGoals = new ArrayList<>();
 
         // assigns the adapter w/ anonymous class
-        thumbnailGoalsAdapter = new DataComponentAdapter<Goal>(activity, thumbnailGoals) {
+        thumbnailGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(activity, thumbnailGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal.GoalData item) {
                 Component component = new GoalThumbnailComponent(item);
                 return component;
             }
@@ -132,9 +134,9 @@ public class GoalsFragment extends Fragment {
         // allGoals
         allGoals = new ArrayList<>();
 
-        allGoalsAdapter = new DataComponentAdapter<Goal>(activity, allGoals) {
+        allGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(activity, allGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal.GoalData item) {
                 Component component = new GoalCardComponent(item);
                 return component;
             }
@@ -171,7 +173,7 @@ public class GoalsFragment extends Fragment {
         updateAdapter(allGoalsQuery, allGoals, allGoalsAdapter, rvAllGoals);
     }
 
-    private void updateAdapter(ParseQuery<Goal> goalsQuery, ArrayList<Goal> goals, DataComponentAdapter<Goal> goalsAdapter, RecyclerView rvGoals) {
+    private void updateAdapter(ParseQuery<Goal> goalsQuery, ArrayList<Goal.GoalData> goals, DataComponentAdapter<Goal.GoalData> goalsAdapter, RecyclerView rvGoals) {
         // todo -- add refresh/loading capabilities
 
         Log.d(TAG, "in updateAdapter");
@@ -182,18 +184,20 @@ public class GoalsFragment extends Fragment {
                     Log.d(TAG, "Goal query succeeded!");
                     Log.d(TAG, String.format("object size: %s", objects.size()));
 
-                    for (int i = 0; i < objects.size(); i++) {
+                    for (Goal goal : objects) {
                         // load into recyclerview
-                        Goal goal = objects.get(i);
-                        goals.add(0, goal); // fixme: order of goals preserved?
+                        // FIXME: Insert an object that stores the goal + the async boolean
+                        // FIXME: (alt) Update userIsInvolved on User object
+                        Goal.GoalData data = new Goal.GoalData(goal, true);
+                        // for personal goal fragment, querying means user involved with all resulting goals
+                        goals.add(0, data);
                         goalsAdapter.notifyItemInserted(0);
+
+                        rvGoals.scrollToPosition(0);
                     }
 
-                    rvGoals.scrollToPosition(0);
-                }
-                else {
-                    Toast.makeText(activity, "Querying for goals failed :(", Toast.LENGTH_LONG).show();
-                    Log.e(TAG, "Goal query failed", e);
+                } else {
+                    Log.e(TAG, "goal query failed", e);
                 }
             }
         });
@@ -212,11 +216,14 @@ public class GoalsFragment extends Fragment {
             if (requestCode == REQUEST_COMPOSE_GOAL) {
                 Goal goal = data.getParcelableExtra(KEY_COMPOSED_GOAL);
 
+                // since user just composed, goal should be in its relGoals
+                Goal.GoalData wrap = new Goal.GoalData(goal, true);
+
                 // update recyclerviews
-                allGoals.add(0, goal);
+                allGoals.add(0, wrap);
                 allGoalsAdapter.notifyItemInserted(0);
 
-                thumbnailGoals.add(0, goal);
+                thumbnailGoals.add(0, wrap);
                 thumbnailGoalsAdapter.notifyItemInserted(0);
 
                 rvAllGoals.scrollToPosition(0);
@@ -280,5 +287,6 @@ public class GoalsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }
 

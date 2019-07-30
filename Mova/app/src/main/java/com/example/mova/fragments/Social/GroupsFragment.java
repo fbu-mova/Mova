@@ -24,6 +24,7 @@ import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseUser;
@@ -58,8 +59,8 @@ public class GroupsFragment extends Fragment {
     private DataComponentAdapter<Group> groupAdapter;
 
     @BindView(R.id.rvActiveGoals) RecyclerView rvActiveGoals;
-    protected List<Goal> userActiveSocialGoals;
-    private DataComponentAdapter<Goal> activeGoalAdaper;
+    protected List<Goal.GoalData> userActiveSocialGoals;
+    private DataComponentAdapter<Goal.GoalData> activeGoalAdaper;
 
 
 
@@ -103,9 +104,9 @@ public class GroupsFragment extends Fragment {
             }
         };
 
-        activeGoalAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), userActiveSocialGoals) {
+        activeGoalAdaper = new DataComponentAdapter<Goal.GoalData>((DelegatedResultActivity) getActivity(), userActiveSocialGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal.GoalData item) {
                 Component component = new GoalCardComponent(item);
                 return component;
             }
@@ -131,13 +132,21 @@ public class GroupsFragment extends Fragment {
         });
 
         GoalUtils.queryGoals(user, (goals) -> {
-            for(Goal goal:goals){
-                if(!goal.getIsPersonal()){
-                    userActiveSocialGoals.add(0, goal);
-                    activeGoalAdaper.notifyItemInserted(0);
-                }
-            }
-            rvActiveGoals.scrollToPosition(0);
+
+            AsyncUtils.executeMany(goals.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+               Goal goal = goals.get(item);
+
+               if(!goal.getIsPersonal()) {
+                   GoalUtils.checkIfUserInvolved(goal, (User) ParseUser.getCurrentUser(), (check) -> {
+                       Goal.GoalData data = new Goal.GoalData(goal, check);
+                       userActiveSocialGoals.add(0, data);
+                       activeGoalAdaper.notifyItemInserted(0);
+                   });
+               }
+            }, () -> {
+                rvActiveGoals.scrollToPosition(0);
+            });
+
         });
     }
 }

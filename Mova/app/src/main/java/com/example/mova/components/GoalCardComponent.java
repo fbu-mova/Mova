@@ -20,6 +20,7 @@ import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
@@ -54,11 +55,19 @@ public class GoalCardComponent extends Component {
     private ArrayList<Action> actions;
     private DataComponentAdapter<Action> actionsAdapter;
 
+    private ArrayList<SharedAction> sharedActions;
+    private DataComponentAdapter<SharedAction> sharedActionsAdapter;
+
     private ComponentManager componentManager;
 
-    public GoalCardComponent(Goal item) {
+    private boolean isUserInvolved;
+    private boolean isPersonal;
+
+    public GoalCardComponent(Goal.GoalData bundle) {
         super();
-        this.item = item;
+        this.item = bundle.goal;
+        this.isUserInvolved = bundle.userIsInvolved;
+        this.isPersonal = item.getIsPersonal();
     }
 
     @Override
@@ -156,13 +165,13 @@ public class GoalCardComponent extends Component {
 
         GoalUtils.loadGoalActions(item, (objects) -> {
             updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
-        }, false);
+        });
 
         // FIXME -- for social goal, want to be able to see goals/their actions but can't check/alter.
         //  need to pass info on when to restrict permissions of a goal ??? see loadGoalActions
     }
 
-    private void updateAdapter(List<Action> objects, ArrayList<Action> actions, DataComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {
+    private void updateAdapter(List<Action> objects, ArrayList<Action> actions, DataComponentAdapter actionsAdapter, RecyclerView rvActions) {
 
         for (int i = 0; i < objects.size(); i++) {
             // load into recyclerview
