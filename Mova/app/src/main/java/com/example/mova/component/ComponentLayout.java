@@ -36,7 +36,7 @@ public class ComponentLayout extends FrameLayout {
     public void inflateComponent(DelegatedResultActivity activity, Component component, Component.Inflater inflater) {
         Component.ViewHolder holder = inflater.inflate(activity, this, true);
         ViewUtils.setMargins(holder.getView(), marginLeft, marginTop, marginRight, marginBottom);
-        component.render(holder);
+        component.render(activity, holder);
     }
 
     /**
