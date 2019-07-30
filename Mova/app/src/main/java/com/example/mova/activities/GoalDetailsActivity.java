@@ -82,7 +82,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             }
             else {
                 // save social goal as a personal goal
-                GoalUtils.saveSocialGoal(goal, (User) ParseUser.getCurrentUser());
+                GoalUtils.saveSocialGoal(goal);
             }
         });
 

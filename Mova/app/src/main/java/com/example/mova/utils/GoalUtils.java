@@ -12,6 +12,8 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.json.JSONObject;
 
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class GoalUtils {
+
+    private static final String TAG = "GoalUtils";
 
     public static void getActionList(AsyncUtils.ListCallback<Action> callback, Goal goal, User user){
         ParseQuery<Action> pqAction = goal.relActions.getQuery();
@@ -181,6 +185,149 @@ public class GoalUtils {
     public static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
         action.setIsDone(!action.getIsDone());
         action.saveInBackground((e) -> callback.call(e));
+    }
+
+    public static void submitGoal(String goalName, String goalDescription, List<String> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+        // todo -- include image choosing for goal image + color
+        // todo -- update to also encompass Social functionality ? can share w/ group if not on personal feed
+
+        Goal goal = new Goal()
+                .setAuthor((User) ParseUser.getCurrentUser())
+                .setTitle(goalName)
+                .setDescription(goalDescription);
+
+        goal.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "Initial goal save successful");
+
+                    saveSharedAction(actions, goal, created, finalCallback);
+                }
+                else {
+                    Log.e(TAG, "Initial goal save unsuccessful", e);
+                }
+            }
+        });
+    }
+
+    private static void saveSharedAction(List<String> actions, Goal goal, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+
+        List<SharedAction> sharedActionsList = new ArrayList<>();
+
+        // create a SharedAction for each action in actions
+
+        AsyncUtils.executeMany(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+            // the iteration in the for loop
+
+            SharedAction sharedAction = new SharedAction()
+                    .setTask(actions.get(item))
+                    .setGoal(goal)
+                    .setUsersDone(0);
+
+            sharedActionsList.add(sharedAction);
+
+            // save sharedAction
+            sharedAction.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "Saved SharedAction successfully");
+                    } else {
+                        Log.e(TAG, "SharedAction failed saving", e);
+                    }
+                    callback.call(e);
+                }
+            });
+        }, (e) -> {
+            // when whole for-loop has run though -- save goal
+            Log.d(TAG, "in saveSharedAction final callback");
+
+            // go to create and save actions
+            saveAction(actions, goal, sharedActionsList, created, finalCallback);
+        });
+
+    }
+
+    private static void saveAction(List<String> actions, Goal goal, List<SharedAction> sharedActionsList, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+
+        List<Action> actionsList = new ArrayList<>();
+
+        AsyncUtils.executeMany(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+            // the iteration in the for loop
+
+            // save the Action
+            Action action = new Action()
+                    .setTask(actions.get(item))
+                    .setParentGoal(goal)
+                    .setParentUser((User) ParseUser.getCurrentUser())
+                    .setParentSharedAction(sharedActionsList.get(item));
+
+            actionsList.add(action);
+
+            // save action
+            action.saveInBackground((ParseException e) -> {
+                if (e == null) {
+                    Log.d(TAG, "Saved Action successfully");
+
+                    // add to specific sharedAction's relation
+                    sharedActionsList.get(item).relChildActions.add(action);
+                    sharedActionsList.get(item).saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.d(TAG, "sharedAction added child action rel");
+                            }
+                            else {
+                                Log.e(TAG, "sharedAction failed to add child action rel", e);
+                            }
+                            callback.call(e);
+                        }
+                    });
+                }
+                else {
+                    Log.e(TAG, "Action failed saving", e);
+                    callback.call(e);
+                }
+            });
+        }, (e) -> {
+            // when whole for-loop has run though -- save goal
+            Log.d(TAG, "in saveAction final callback");
+
+            updateGoalRels(sharedActionsList, actionsList, goal, created, finalCallback);
+        });
+    }
+
+    private static void updateGoalRels(List<SharedAction> sharedActionsList, List<Action> actionsList, Goal goal, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+
+        AsyncUtils.executeMany(sharedActionsList.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+            // the iteration in the for loop
+
+            if (created) goal.relSharedActions.add(sharedActionsList.get(item));
+            goal.relActions.add(actionsList.get(item)); // has same length as sharedActionsList
+            callback.call(null);
+        }, (e) -> {
+
+            goal.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "finished final goal update");
+
+                        // finally add whole goal to user's goal relation
+                        saveGoalToUser(goal, finalCallback);
+                    }
+                    else {
+                        Log.e(TAG, "failed to finish final goal update", e);
+                    }
+                }
+            });
+        });
+    }
+
+    private static void saveGoalToUser(Goal goal, AsyncUtils.ItemCallback<Goal> finalCallback) {
+
+        ((User) ParseUser.getCurrentUser()).relGoals.add(goal, finalCallback);
     }
 
 
