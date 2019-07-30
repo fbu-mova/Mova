@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,7 +49,8 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.tvDescription)   protected TextView tvDescription;
     @BindView(R.id.rvActions)       protected RecyclerView rvActions;
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
-    @BindView(R.id.btShare)         protected Button btShare;
+    @BindView(R.id.ivShare)         protected ImageView ivShare;
+    @BindView(R.id.ivSave)          protected ImageView ivSave;
 
     // recyclerview
     private List<Action> actions;
@@ -63,19 +65,24 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         goal = getIntent().getParcelableExtra("goal");
 
         tvGoalName.setText(goal.getTitle());
-//        tvFromGroup.setText(goal.getGroupName());
+        tvFromGroup.setText(goal.getGroupName());
         tvDescription.setText(goal.getDescription());
 
-        btShare.setOnClickListener(new View.OnClickListener() {
+        ivShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // todo -- create pop-up to confirm
-                    // ask which group to share it in (or just friends)
-                    // ask if want to include a description (need to create the post as well, with embedded media)
-                    // include top toolbar in pop-up to confirm
-
                 confirmShare();
+            }
+        });
+
+        ivSave.setOnClickListener((v) -> {
+            if (goal.getIsPersonal()) {
+                // fixme -- what if not in same group as this goal? can still see in first place? ( ~this case)
+                Toast.makeText(GoalDetailsActivity.this, "You can't save someone else's personal goal!", Toast.LENGTH_LONG).show();
+            }
+            else {
+                // save social goal as a personal goal
+                GoalUtils.saveSocialGoal(goal, (User) ParseUser.getCurrentUser());
             }
         });
 
@@ -118,6 +125,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
     }
 
+    // FIXME -- going back + refresh not happening issues
     @Override
     public void onBackPressed() {
         super.onBackPressed();

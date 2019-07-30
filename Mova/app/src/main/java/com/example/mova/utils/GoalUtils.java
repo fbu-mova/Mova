@@ -183,4 +183,19 @@ public class GoalUtils {
         action.saveInBackground((e) -> callback.call(e));
     }
 
+
+    public static void saveSocialGoal(Goal goal, User user) {
+        /* TO save a social goal as a personal goal:
+        1. add the social goal to the relation of the User's goals
+        2. for each shared action in the goal, create a new action pointing to that shared action
+        3. make the new action point to the user
+        4. add User to the usersInvolved relation of the goal
+        5. add all actions to the actions relation of a goal (fixme - w/ many actions, easier to save to user instead of goal)
+
+        being edited: goal's usersInvolved, actions
+                        each sharedAction's actions
+                        User's goals
+         */
+    }
+
 }
