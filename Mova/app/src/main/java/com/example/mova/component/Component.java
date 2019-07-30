@@ -85,6 +85,14 @@ public abstract class Component {
     protected abstract void onRender(ViewHolder holder);
 
     /**
+     * Destroys the component, performing any necessary cleanup in the process.
+     */
+    public void destroy() {
+        onDestroy();
+        activity = null;
+    }
+
+    /**
      * Fires when the component should be destroyed before deactivation.
      * Should perform any cleanup required on the resources the component used while active.
      */
