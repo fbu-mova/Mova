@@ -33,9 +33,10 @@ public abstract class Component {
 
     /**
      * Renders any relevant data or events to the component's ViewHolder.
-     * @param holder The ViewHolder with which to render the component.
+     * @param activity The activity in which to render the component.
+     * @param holder   The ViewHolder with which to render the component.
      */
-    public abstract void render(ViewHolder holder);
+    public abstract void render(DelegatedResultActivity activity, ViewHolder holder);
 
     public static abstract class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(@NonNull View itemView) {
