@@ -78,4 +78,19 @@ public class GroupUtils {
             }
         });
     }
+
+    public static void getUserGroups(User user, AsyncUtils.ListCallback<Group> callback){
+        ParseQuery<Group> pqGroups = user.relGroups.getQuery();
+        pqGroups.findInBackground(new FindCallback<Group>() {
+            @Override
+            public void done(List<Group> objects, ParseException e) {
+                if(e != null){
+                    Log.e("GoalUtils", "Error with query");
+                    e.printStackTrace();
+                    return;
+                }
+                callback.call(objects);
+            }
+        });
+    }
 }

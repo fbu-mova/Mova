@@ -36,6 +36,7 @@ import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,6 +55,16 @@ public abstract class ComposeMediaComponent extends Component {
     private DataComponentAdapter<Post> scrapbookAdapter;
     private List<Post> scrapbookPosts;
     private Preview preview;
+
+    private boolean imagesOnly;
+
+    public ComposeMediaComponent() {
+        this.imagesOnly = false;
+    }
+
+    public ComposeMediaComponent(boolean imagesOnly) {
+        this.imagesOnly = imagesOnly;
+    }
 
     @Override
     public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
@@ -85,8 +96,15 @@ public abstract class ComposeMediaComponent extends Component {
 
     @Override
     public void render() {
-        holder.ivBack.setOnClickListener((view) -> onBack());
-        holder.ivClose.setOnClickListener((view) -> onCancel());
+        holder.ivBack.setOnClickListener((view) -> {
+            endCamera();
+            onBack();
+        });
+
+        holder.ivClose.setOnClickListener((view) -> {
+            endCamera();
+            onCancel();
+        });
 
         holder.cvGallery.setOnClickListener((view) -> {
             ImageUtils.chooseFromGallery(activity, (int requestCode, int resultCode, Intent data) -> {
@@ -94,9 +112,8 @@ public abstract class ComposeMediaComponent extends Component {
                     Uri photoUri = data.getData();
                     try {
                         Bitmap fromGallery = ImageUtils.uriToBitmapFromGallery(activity, photoUri);
-                         Media.fromImage(fromGallery, (media, e) -> {
-                             returnMedia(media);
-                         });
+                        fromGallery = ImageUtils.resizeImage(fromGallery, 300);
+                        Media.fromImage(fromGallery, (media, e) -> returnMedia(media));
                     } catch (IOException e) {
                         Log.e("ComposeMediaComponent", "Failed to retrieve image from library", e);
                         Toast.makeText(activity, "Failed to retrieve image from library", Toast.LENGTH_LONG).show();
@@ -108,10 +125,9 @@ public abstract class ComposeMediaComponent extends Component {
         holder.cvCamera.setOnClickListener((view) -> {
             ImageUtils.launchCamera(activity, (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == ImageUtils.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                    Bitmap bmp = ImageUtils.getStoredBitmap(activity);
-                    Media.fromImage(bmp, (media, e) -> {
-                        returnMedia(media);
-                    });
+                    Bitmap fromCamera = ImageUtils.getStoredBitmap(activity);
+                    fromCamera = ImageUtils.resizeImage(fromCamera, 300);
+                    Media.fromImage(fromCamera, (media, e) -> returnMedia(media));
                 }
             });
         });
@@ -125,32 +141,34 @@ public abstract class ComposeMediaComponent extends Component {
         };
 
         holder.llScrapbook.setVisibility(View.GONE);
-        holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
-            @Override
-            public void load() {
-                loadScrapbookPosts();
-            }
+        if (!imagesOnly) {
+            holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
+                @Override
+                public void load() {
+                    loadScrapbookPosts();
+                }
 
-            @Override
-            public void loadMore() {
-                loadMoreScrapbookPosts();
-            }
+                @Override
+                public void loadMore() {
+                    loadMoreScrapbookPosts();
+                }
 
-            @Override
-            public RecyclerView.Adapter<Component.ViewHolder> getAdapter() {
-                return scrapbookAdapter;
-            }
+                @Override
+                public RecyclerView.Adapter<Component.ViewHolder> getAdapter() {
+                    return scrapbookAdapter;
+                }
 
-            @Override
-            public RecyclerView.LayoutManager getLayoutManager() {
-                return new LinearLayoutManager(activity);
-            }
+                @Override
+                public RecyclerView.LayoutManager getLayoutManager() {
+                    return new LinearLayoutManager(activity);
+                }
 
-            @Override
-            public int[] getColorScheme() {
-                return EndlessScrollRefreshLayout.getDefaultColorScheme();
-            }
-        });
+                @Override
+                public int[] getColorScheme() {
+                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                }
+            });
+        }
 
         launchEmbeddedCamera();
     }
@@ -161,7 +179,8 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     private void loadMoreScrapbookPosts() {
-        ParseQuery<Post> query = ((User) User.getCurrentUser()).relScrapbook.getQuery();
+        User user = (User) ParseUser.getCurrentUser();
+        ParseQuery<Post> query = user.relScrapbook.getQuery();
         query.setLimit(20);
         query.orderByDescending(Post.KEY_CREATED_AT);
         if (scrapbookPosts.size() > 0) {
@@ -240,9 +259,13 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     private void returnMedia(Media media) {
+        endCamera();
+        onSelectMedia(media);
+    }
+
+    private void endCamera() {
         preview.removePreviewOutputListener();
         CameraX.unbind(preview);
-        onSelectMedia(media);
     }
 
     public abstract void onSelectMedia(Media media);

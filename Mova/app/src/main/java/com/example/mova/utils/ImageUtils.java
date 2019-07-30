@@ -310,8 +310,8 @@ public class ImageUtils {
     }
 
     // resize image to fit Parse more; may not use
-    public static void resizeImage() {
-
+    public static Bitmap resizeImage(Bitmap rawImage, int width) {
+        return BitmapScaler.scaleToFitWidth(rawImage, width);
     }
 
 }
