@@ -19,15 +19,19 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalCheckInComponent extends Component {
 
@@ -53,7 +57,9 @@ public class GoalCheckInComponent extends Component {
     }
 
     public void loadData(AsyncUtils.ItemCallback<Throwable> callback) {
+
         ParseQuery<Action> actionsQuery = goal.relActions.getQuery();
+        actionsQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
         actionsQuery.findInBackground((actions, e) -> {
             this.goalActions = actions;
             callback.call(e);
