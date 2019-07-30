@@ -83,7 +83,7 @@ public abstract class ComposePostDialog {
         mediaComponent.setManager(manager);
         manager.launch(mediaComponent.getName(), mediaComponent);
 
-        composeComponent = new ComposePostComponent(mediaComponent.getName()) {
+        composeComponent = new ComposePostComponent(mediaComponent.getName(), postConfig) {
             @Override
             protected void onCancel() {
                 dialog.cancel();

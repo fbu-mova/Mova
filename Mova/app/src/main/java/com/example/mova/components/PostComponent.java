@@ -157,8 +157,16 @@ public class PostComponent extends Component {
         }
     }
 
-    private void configureButtons() {
+    public void showButtons() {
         holder.llButtons.setVisibility(View.VISIBLE);
+    }
+
+    public void hideButtons() {
+        holder.llButtons.setVisibility(View.GONE);
+    }
+
+    private void configureButtons() {
+        showButtons();
 
         holder.ivRepost.setOnClickListener((view) -> {
             PostConfig config = new PostConfig();
@@ -176,6 +184,8 @@ public class PostComponent extends Component {
                     config.savePost((savedPost) -> {});
                 }
             };
+
+            dialog.show();
         });
 
         holder.ivReply.setOnClickListener((view) -> {
@@ -193,6 +203,8 @@ public class PostComponent extends Component {
                     config.savePost((savedPost) -> {});
                 }
             };
+
+            dialog.show();
         });
 
         holder.ivSave.setOnClickListener((view) -> {

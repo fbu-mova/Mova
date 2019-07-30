@@ -107,7 +107,9 @@ public abstract class ComposePostComponent extends Component {
         } else {
             PostComponent postComponent = new PostComponent(postConfig.postToReply);
             holder.flReplyContent.setVisibility(View.VISIBLE);
+            holder.clPostToReply.setMargin(32);
             holder.clPostToReply.inflateComponent(activity, postComponent);
+            postComponent.hideButtons();
         }
     }
 

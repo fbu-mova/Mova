@@ -124,6 +124,8 @@ public class ScrapbookFragment extends Fragment {
         });
 
         esrlScrapbook.addItemDecoration(new EdgeDecorator(32));
+
+        loadPosts();
     }
 
     private void loadPosts() {
