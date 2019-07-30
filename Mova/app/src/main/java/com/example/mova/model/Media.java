@@ -29,6 +29,7 @@ public class Media extends HashableParseObject {
     public static final String KEY_ACTION = "contentAction";
     public static final String KEY_TEXT = "contentText";
     public static final String KEY_IMAGE = "contentImage";
+    public static final String KEY_CREATED_AT = "createdAt";
 
     public Media() { }
 

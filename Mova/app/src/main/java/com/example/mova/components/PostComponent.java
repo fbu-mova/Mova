@@ -170,8 +170,7 @@ public class PostComponent extends Component {
 
         holder.ivRepost.setOnClickListener((view) -> {
             PostConfig config = new PostConfig();
-            Media postMedia = new Media(post);
-            config.media = postMedia;
+            config.media = new Media(post);
 
             ComposePostDialog dialog = new ComposePostDialog(activity, config) {
                 @Override
