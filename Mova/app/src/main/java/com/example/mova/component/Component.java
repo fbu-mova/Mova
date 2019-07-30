@@ -15,7 +15,11 @@ public abstract class Component {
 
     protected ViewHolder holder;
 
-    public Component(ViewHolder holder) {
+    /**
+     * Launches the component with the given ViewHolder.
+     * @param holder The ViewHolder to use for the component.
+     */
+    public void launch(ViewHolder holder) {
         this.holder = holder;
     }
 
@@ -67,6 +71,6 @@ public abstract class Component {
          * @param activity The Activity into which to inflate the component.
          * @param parent The ViewGroup into which to inflate the component.
          */
-        public abstract void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
+        public abstract ViewHolder makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
     }
 }

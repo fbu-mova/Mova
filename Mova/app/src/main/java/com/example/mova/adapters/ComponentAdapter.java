@@ -10,7 +10,7 @@ import com.example.mova.component.Component;
 
 import java.util.List;
 
-public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
+public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
     private List<Component> components;
 
@@ -29,13 +29,14 @@ public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder>
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Component component = components.get(viewType);
-        component.makeViewHolder(activity, parent, false);
-        return component.getViewHolder();
+        Component.Factory factory = makeComponentFactory(component);
+        return factory.makeViewHolder(activity, parent, false);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         Component component = components.get(position);
+        component.launch(holder);
         component.render();
     }
 
@@ -48,4 +49,6 @@ public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder>
         this.components = newSource;
         notifyDataSetChanged();
     }
+
+    protected abstract Component.Factory makeComponentFactory(Component component);
 }
