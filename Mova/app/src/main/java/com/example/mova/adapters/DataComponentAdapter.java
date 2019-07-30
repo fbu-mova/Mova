@@ -33,6 +33,11 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
      */
     protected abstract Component makeComponent(T item, Component.ViewHolder holder);
 
+    /**
+     * Serves as a factory for the type of component inflater that should be used.
+     * @param item The item to use as data for the component inflater.
+     * @return The inflater with which to inflate the component's view.
+     */
     protected abstract Component.Inflater makeInflater(T item);
 
     @Override
@@ -54,9 +59,7 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
         Component component = components.get(item);
-        if (component == null) {
-            component = makeComponent(item, holder);
-        }
+        if (component == null) component = makeComponent(item, holder);
         component.render(holder);
     }
 
