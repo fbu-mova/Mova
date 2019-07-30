@@ -196,6 +196,11 @@ public class GoalUtils {
                         each sharedAction's actions
                         User's goals
          */
+
+        // first update + save user
+        user.relGoals.add(goal, (item -> {
+            // second create each action per sharedAction
+        }));
     }
 
 }

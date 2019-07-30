@@ -24,6 +24,7 @@ import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.GoalUtils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -41,8 +42,6 @@ public class GoalComposeActivity extends AppCompatActivity {
     public static final int REQUEST_GOAL_DETAILS = 19;
 
     // todo : currently most basic (and only personal). features to add:
-        // can add 'infinite' number of actions (dynamically create editTexts?)
-            // using modal overlay/dialog fragment
         // add image (plus resizing) at some point
         // add tags
         // add icons for actions
@@ -80,7 +79,7 @@ public class GoalComposeActivity extends AppCompatActivity {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
 
-                submitPersonalGoal(goalName, goalDescription, actions);
+                submitGoal(goalName, goalDescription, actions, true, (goal) -> endActivity(goal));
             }
         });
 
@@ -104,7 +103,15 @@ public class GoalComposeActivity extends AppCompatActivity {
         });
     }
 
-    private void submitPersonalGoal(String goalName, String goalDescription, List<String> actions) {
+    private void endActivity(Goal goal) {
+        // go to general goal fragment page (or details page?)
+        getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
+        // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
+        setResult(RESULT_OK, getIntent());
+        finish();
+    }
+
+    private void submitGoal(String goalName, String goalDescription, List<String> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
         // todo -- include image choosing for goal image + color
         // todo -- update to also encompass Social functionality ?
 
@@ -119,7 +126,7 @@ public class GoalComposeActivity extends AppCompatActivity {
                 if (e == null) {
                     Log.d(TAG, "Initial goal save successful");
 
-                    saveSharedAction(actions, goal);
+                    saveSharedAction(actions, goal, created, finalCallback);
                 }
                 else {
                     Log.e(TAG, "Initial goal save unsuccessful", e);
@@ -128,7 +135,7 @@ public class GoalComposeActivity extends AppCompatActivity {
         });
     }
 
-    private void saveSharedAction(List<String> actions, Goal goal) {
+    private void saveSharedAction(List<String> actions, Goal goal, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
         // create a SharedAction for each action in actions
 
@@ -159,12 +166,12 @@ public class GoalComposeActivity extends AppCompatActivity {
             Log.d(TAG, "in saveSharedAction final callback");
 
             // go to create and save actions
-            saveAction(actions, goal, sharedActionsList);
+            saveAction(actions, goal, sharedActionsList, created, finalCallback);
         });
 
     }
 
-    private void saveAction(List<String> actions, Goal goal, List<SharedAction> sharedActionsList) {
+    private void saveAction(List<String> actions, Goal goal, List<SharedAction> sharedActionsList, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
         AsyncUtils.executeMany(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
             // the iteration in the for loop
@@ -207,16 +214,16 @@ public class GoalComposeActivity extends AppCompatActivity {
             // when whole for-loop has run though -- save goal
             Log.d(TAG, "in saveAction final callback");
 
-            updateGoalRels(sharedActionsList, actionsList, goal);
+            updateGoalRels(sharedActionsList, actionsList, goal, created, finalCallback);
         });
     }
 
-    private void updateGoalRels(List<SharedAction> sharedActionsList, List<Action> actionsList, Goal goal) {
+    private void updateGoalRels(List<SharedAction> sharedActionsList, List<Action> actionsList, Goal goal, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
         AsyncUtils.executeMany(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
             // the iteration in the for loop
 
-            goal.relSharedActions.add(sharedActionsList.get(item)); // fixme (?) need an execute many callback ?
+            if (created) goal.relSharedActions.add(sharedActionsList.get(item));
             goal.relActions.add(actionsList.get(item)); // has same length as sharedActionsList
             callback.call(null);
         }, (e) -> {
@@ -228,7 +235,7 @@ public class GoalComposeActivity extends AppCompatActivity {
                         Log.d(TAG, "finished final goal update");
 
                         // finally add whole goal to user's goal relation
-                        saveGoalToUser(goal);
+                        saveGoalToUser(goal, finalCallback);
                     }
                     else {
                         Log.e(TAG, "failed to finish final goal update", e);
@@ -238,14 +245,8 @@ public class GoalComposeActivity extends AppCompatActivity {
         });
     }
 
-    private void saveGoalToUser(Goal goal) {
+    private void saveGoalToUser(Goal goal, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
-        ((User) ParseUser.getCurrentUser()).relGoals.add(goal, (item) -> {
-            // go to general goal fragment page (or details page?)
-            getIntent().putExtra(KEY_COMPOSED_GOAL, goal);
-            // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
-            setResult(RESULT_OK, getIntent());
-            finish();
-        });
+        ((User) ParseUser.getCurrentUser()).relGoals.add(goal, finalCallback);
     }
 }
