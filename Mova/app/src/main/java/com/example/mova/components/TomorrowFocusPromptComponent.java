@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -104,7 +105,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
                         Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"), true,
                         (o) -> o.getTitle(), (o) -> false) { // fixme - made goals always not done
                     @Override
-                    public void onClick(View view) {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         // TODO: Prevent more than three goals from being selected at any given time
                     }
                 };

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -101,7 +102,7 @@ public class GoalCheckInComponent extends Component {
                         Color.parseColor("#999999"), Color.parseColor("#222222"), false,
                         (action) -> action.getTask(), (action) -> action.getIsDone()) {
                     @Override
-                    public void onClick(View view) {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         GoalUtils.toggleDone(item, (e) -> {
                             if (e != null) {
                                 Log.e("GoalCheckInComponent", "Failed to toggle action done", e);

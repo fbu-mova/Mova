@@ -1,10 +1,12 @@
 package com.example.mova.components;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public abstract class ChecklistItemComponent<T> extends Component {
+
+    protected final String TAG = "checklistItemComp";
 
     protected T item;
     protected int checkedColor, uncheckedColor;
@@ -51,7 +55,11 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     @Override
     public ViewHolder getViewHolder() {
-        return holder;
+        if (holder != null) {
+            return holder;
+        }
+        Log.e(TAG, "holder null in getViewHolder");
+        return null;
     }
 
     @Override
@@ -62,14 +70,15 @@ public abstract class ChecklistItemComponent<T> extends Component {
     @Override
     public void render() {
         holder.cbItem.setText(getTitle.call(item));
-        holder.cbItem.setOnClickListener((view) -> onClick(view));
+        holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
+                onCheckedChanged(buttonView, isChecked));
         holder.cbItem.setTextColor(uncheckedColor);
         holder.cbItem.setChecked(getDone.call(item));
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }
 
-    public abstract void onClick(View view);
+    public abstract void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
 
     public static class ViewHolder extends Component.ViewHolder {
 
