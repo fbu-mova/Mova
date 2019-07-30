@@ -13,24 +13,19 @@ import com.example.mova.activities.DelegatedResultActivity;
  */
 public abstract class Component {
 
-    /**
-     * Inflates the component's layout into the given activity.
-     * @param activity The Activity into which to inflate the component.
-     * @param parent The ViewGroup into which to inflate the component.
-     */
-    public abstract void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
+    protected ViewHolder holder;
+
+    public Component(ViewHolder holder) {
+        this.holder = holder;
+    }
 
     /**
-     * Returns the ViewHolder that the component has created once inflated.
-     * @return The ViewHolder. Null if not yet inflated.
+     * Returns the component's ViewHolder.
+     * @return The ViewHolder.
      */
-    public abstract ViewHolder getViewHolder();
-
-    /**
-     * Returns the View created when making the ViewHolder.
-     * @return The View. Null if not yet inflated.
-     */
-    public abstract View getView();
+    public ViewHolder getViewHolder() {
+        return holder;
+    }
 
     /**
      * Returns a string representation of the component.
@@ -54,5 +49,24 @@ public abstract class Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }
+
+        /**
+         * Returns the View created when making the ViewHolder.
+         * @return The View. Null if not yet inflated.
+         */
+        public abstract View getView();
+    }
+
+    /**
+     * Responsible for creating all elements necessary for the creation of a component.
+     * If any logic is required to determine which kind of layout to use, etc., it should be done here.
+     */
+    public static abstract class Factory {
+        /**
+         * Inflates the component's layout into the given activity.
+         * @param activity The Activity into which to inflate the component.
+         * @param parent The ViewGroup into which to inflate the component.
+         */
+        public abstract void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
     }
 }
