@@ -26,7 +26,6 @@ public class Post extends HashableParseObject {
     public static final String KEY_LOCATION = "location";
     public static final String KEY_BODY = "body";
     public static final String KEY_MOOD = "mood";
-    public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_MEDIA = "media";
     public static final String KEY_PARENT_POST = "parentPost";
@@ -103,16 +102,6 @@ public class Post extends HashableParseObject {
 
     public Post removeMood() {
         put(KEY_MOOD, JSONObject.NULL);
-        return this;
-    }
-
-    //Image
-    public ParseFile getImage(){
-        return getParseFile(KEY_IMAGE);
-    }
-
-    public Post setImage(ParseFile file){
-        put(KEY_IMAGE, file);
         return this;
     }
 

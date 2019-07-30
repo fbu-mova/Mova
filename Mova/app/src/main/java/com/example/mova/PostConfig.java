@@ -12,12 +12,14 @@ public class PostConfig {
     public Post post, postToReply;
     public List<Tag> tags;
     public Media media;
+    public boolean isPersonal;
 
     public PostConfig() {
         this.post = null;
         this.postToReply = null;
         this.tags = new ArrayList<>();
         this.media = null;
+        this.isPersonal = false;
     }
 
     public PostConfig(Post post) {
@@ -25,9 +27,11 @@ public class PostConfig {
         this.postToReply = null;
         this.tags = new ArrayList<>();
         this.media = null;
+        this.isPersonal = false;
     }
 
     public void savePost(AsyncUtils.ItemCallback<Post> callback) {
+        post.setIsPersonal(isPersonal);
         post.savePost(this, callback);
     }
 }
