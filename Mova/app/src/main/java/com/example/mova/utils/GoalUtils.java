@@ -184,7 +184,7 @@ public class GoalUtils {
     }
 
 
-    public static void saveSocialGoal(Goal goal, User user) {
+    public static void saveSocialGoal(Goal goal) {
         /* TO save a social goal as a personal goal:
         1. add the social goal to the relation of the User's goals
         2. for each shared action in the goal, create a new action pointing to that shared action
@@ -197,10 +197,13 @@ public class GoalUtils {
                         User's goals
          */
 
-        // first update + save user
-        user.relGoals.add(goal, (item -> {
-            // second create each action per sharedAction
-        }));
+        // first create each action per sharedAction:
+        // 1) get List<SharedAction> and List<String> actions (to use saveAction in GoalCompose)
+        //        calling saveAction does 2. 3. 5. 1. in that order
+        // do step 4
+
+        // not extracted nicely, but does the job i guess
+
     }
 
 }
