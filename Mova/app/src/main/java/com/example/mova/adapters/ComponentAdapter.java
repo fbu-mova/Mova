@@ -29,15 +29,14 @@ public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.Vi
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Component component = components.get(viewType);
-        Component.Factory factory = makeComponentFactory(component);
+        Component.Factory factory = makeFactory(component);
         return factory.makeViewHolder(activity, parent, false);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         Component component = components.get(position);
-        component.launch(holder);
-        component.render();
+        component.render(holder);
     }
 
     @Override
@@ -50,5 +49,5 @@ public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.Vi
         notifyDataSetChanged();
     }
 
-    protected abstract Component.Factory makeComponentFactory(Component component);
+    protected abstract Component.Factory makeFactory(Component component);
 }

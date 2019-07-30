@@ -13,23 +13,11 @@ import com.example.mova.activities.DelegatedResultActivity;
  */
 public abstract class Component {
 
-    protected ViewHolder holder;
-
     /**
-     * Launches the component with the given ViewHolder.
-     * @param holder The ViewHolder to use for the component.
-     */
-    public void launch(ViewHolder holder) {
-        this.holder = holder;
-    }
-
-    /**
-     * Returns the component's ViewHolder.
+     * Returns the component's most recently used ViewHolder.
      * @return The ViewHolder.
      */
-    public ViewHolder getViewHolder() {
-        return holder;
-    }
+    public abstract ViewHolder getViewHolder();
 
     /**
      * Returns a string representation of the component.
@@ -45,9 +33,9 @@ public abstract class Component {
 
     /**
      * Renders any relevant data or events to the component's ViewHolder.
-     * Does nothing if not yet inflated.
+     * @param holder The ViewHolder with which to render the component.
      */
-    public abstract void render();
+    public abstract void render(ViewHolder holder);
 
     public static abstract class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(@NonNull View itemView) {

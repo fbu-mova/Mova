@@ -11,7 +11,7 @@ import com.example.mova.component.Component;
 import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
 
-public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
+public abstract class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
     private SortedList<PrioritizedComponent> components;
 
@@ -29,15 +29,15 @@ public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.
     @NonNull
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Prioritized<Component> pComponent = components.get(viewType);
-        pComponent.item.makeViewHolder(activity, parent, false);
-        return pComponent.item.getViewHolder();
+        PrioritizedComponent pComponent = components.get(viewType);
+        Component.Factory factory = makeFactory(pComponent);
+        return factory.makeViewHolder(activity, parent, false);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         PrioritizedComponent pComponent = components.get(position);
-        pComponent.item.render();
+        pComponent.item.render(holder);
     }
 
     @Override
@@ -49,4 +49,6 @@ public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.
         this.components = newSource;
         notifyDataSetChanged();
     }
+
+    protected abstract Component.Factory makeFactory(PrioritizedComponent prioritizedComponent);
 }
