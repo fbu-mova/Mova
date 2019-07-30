@@ -43,9 +43,7 @@ public abstract class ComposePostComponent extends Component {
     private PostConfig postConfig;
     private Group inGroup;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
 
     private ComponentManager manager;
     private String managerMediaKey;
@@ -61,21 +59,8 @@ public abstract class ComposePostComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_compose_post, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -89,11 +74,21 @@ public abstract class ComposePostComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
         displayToReplyTo();
         displayPostType();
         displayMedia();
         configureClickEvents();
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public void setMedia(Media media) {
@@ -109,7 +104,7 @@ public abstract class ComposePostComponent extends Component {
             PostComponent postComponent = new PostComponent(postConfig.postToReply);
             holder.flReplyContent.setVisibility(View.VISIBLE);
             holder.clPostToReply.setMargin(32);
-            holder.clPostToReply.inflateComponent(activity, postComponent);
+            holder.clPostToReply.inflateComponent(getActivity(), postComponent, new PostComponent.Inflater());
             postComponent.hideButtons();
         }
     }
@@ -177,12 +172,13 @@ public abstract class ComposePostComponent extends Component {
     private void displayMedia() {
         // FIXME: Should media be fetched in background if needed?
         Component mediaComponent = (postConfig.media == null) ? null : postConfig.media.makeComponent();
-        if (mediaComponent == null) {
+        Component.Inflater mediaInflater = (postConfig.media == null) ? null : postConfig.media.makeComponentInflater();
+        if (mediaComponent == null || mediaInflater == null) {
             holder.llAddMedia.setVisibility(View.VISIBLE);
             holder.clMedia.clear();
         } else {
             holder.llAddMedia.setVisibility(View.GONE);
-            holder.clMedia.inflateComponent(activity, mediaComponent);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent, mediaInflater);
         }
     }
 
@@ -209,7 +205,7 @@ public abstract class ComposePostComponent extends Component {
         String body = holder.etBody.getText().toString();
 
         if (body.equals("")) {
-            Toast.makeText(activity, "Write a message before posting!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Write a message before posting!", Toast.LENGTH_SHORT).show();
             return null;
         }
 
@@ -247,6 +243,15 @@ public abstract class ComposePostComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_compose_post, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

@@ -28,10 +28,8 @@ public abstract class ChecklistItemComponent<T> extends Component {
     protected AsyncUtils.ItemReturnCallback<T, String> getTitle;
     protected AsyncUtils.ItemReturnCallback<T, Boolean> getDone;
 
-    protected DelegatedResultActivity activity;
     protected static int viewLayoutRes = R.layout.item_checklist;
     protected ViewHolder holder;
-    protected View view;
 
     protected ComponentManager componentManager;
 

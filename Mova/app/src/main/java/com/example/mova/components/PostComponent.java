@@ -30,15 +30,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PostComponent extends Component {
-    //Todo - edit this file
-
 
     private Post post;
     private String subheader;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager componentManager;
 
     public PostComponent(Post post) {
@@ -52,21 +48,8 @@ public class PostComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_post, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -80,16 +63,30 @@ public class PostComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         // Basic info
-        holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
-        holder.tvBody.setText(post.getBody());
+        this.holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
+        this.holder.tvBody.setText(post.getBody());
+
         displayUser();
         configureButtons();
         configurePostClick();
         displayMedia();
         displayGroup();
         displaySubheader();
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     private void displayUser() {
@@ -114,11 +111,12 @@ public class PostComponent extends Component {
     private void displayMedia() {
         Media media = post.getMedia();
         Component mediaComponent = (media == null) ? null : media.makeComponent();
-        if (mediaComponent == null) {
+        Component.Inflater mediaInflater = (media == null) ? null : media.makeComponentInflater();
+        if (mediaComponent == null || mediaInflater == null) {
             holder.clMedia.setVisibility(View.GONE);
         } else {
             holder.clMedia.setVisibility(View.VISIBLE);
-            holder.clMedia.inflateComponent(activity, mediaComponent);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent, mediaInflater);
         }
     }
 
@@ -171,7 +169,7 @@ public class PostComponent extends Component {
             PostConfig config = new PostConfig();
             config.media = new Media(post);
 
-            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
+            ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
                 @Override
                 protected void onCancel() {
 
@@ -190,7 +188,7 @@ public class PostComponent extends Component {
             PostConfig config = new PostConfig();
             config.postToReply = post;
 
-            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
+            ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
                 @Override
                 protected void onCancel() {
 
@@ -211,15 +209,15 @@ public class PostComponent extends Component {
             query.findInBackground((posts, e) -> {
                 if (e != null) {
                     Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
-                    Toast.makeText(activity, "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
                 } else if (posts.size() == 0) {
                     User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
-                        Toast.makeText(activity, "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
                         // TODO: Update icon
                     });
                 } else {
                     User.getCurrentUser().relScrapbook.remove(post, () -> {
-                        Toast.makeText(activity, "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
                         // TODO: Update icon
                     });
                 }
@@ -263,6 +261,16 @@ public class PostComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_post, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

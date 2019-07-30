@@ -48,9 +48,7 @@ import butterknife.ButterKnife;
 
 public abstract class ComposeMediaComponent extends Component {
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager manager;
 
     private DataComponentAdapter<Post> scrapbookAdapter;
@@ -68,21 +66,8 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_compose_media, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -96,7 +81,28 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
+        configureNavButtonClicks();
+        configureImageButtonClicks();
+        configureScrapbook();
+
+        launchEmbeddedCamera();
+    }
+
+    @Override
+    protected void onDestroy() {
+        endCamera();
+    }
+
+    private void configureNavButtonClicks() {
         holder.ivBack.setOnClickListener((view) -> {
             endCamera();
             onBack();
@@ -106,44 +112,53 @@ public abstract class ComposeMediaComponent extends Component {
             endCamera();
             onCancel();
         });
+    }
 
+    private void configureImageButtonClicks() {
         holder.cvGallery.setOnClickListener((view) -> {
-            ImageUtils.chooseFromGallery(activity, (int requestCode, int resultCode, Intent data) -> {
+            ImageUtils.chooseFromGallery(getActivity(), (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == ImageUtils.PICK_PHOTO_CODE && resultCode == Activity.RESULT_OK) {
                     Uri photoUri = data.getData();
                     try {
-                        Bitmap fromGallery = ImageUtils.uriToBitmapFromGallery(activity, photoUri);
+                        Bitmap fromGallery = ImageUtils.uriToBitmapFromGallery(getActivity(), photoUri);
                         fromGallery = ImageUtils.resizeImage(fromGallery, 300);
                         Media.fromImage(fromGallery, (media, e) -> returnMedia(media));
                     } catch (IOException e) {
                         Log.e("ComposeMediaComponent", "Failed to retrieve image from library", e);
-                        Toast.makeText(activity, "Failed to retrieve image from library", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Failed to retrieve image from library", Toast.LENGTH_LONG).show();
                     }
                 }
             });
         });
 
         holder.cvCamera.setOnClickListener((view) -> {
-            ImageUtils.launchCamera(activity, (int requestCode, int resultCode, Intent data) -> {
+            ImageUtils.launchCamera(getActivity(), (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == ImageUtils.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                    Bitmap fromCamera = ImageUtils.getStoredBitmap(activity);
+                    Bitmap fromCamera = ImageUtils.getStoredBitmap(getActivity());
                     fromCamera = ImageUtils.resizeImage(fromCamera, 300);
                     Media.fromImage(fromCamera, (media, e) -> returnMedia(media));
                 }
             });
         });
+    }
 
+    private void configureScrapbook() {
         scrapbookPosts = new ArrayList<>();
-        scrapbookAdapter = new DataComponentAdapter<Post>(activity, scrapbookPosts) {
+        scrapbookAdapter = new DataComponentAdapter<Post>(getActivity(), scrapbookPosts) {
             @Override
-            public Component makeComponent(Post item) {
+            protected Component makeComponent(Post item, Component.ViewHolder holder) {
                 return new PostComponent(item);
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new Inflater();
             }
         };
 
-        holder.llScrapbook.setVisibility(View.GONE);
+        this.holder.llScrapbook.setVisibility(View.GONE);
         if (!imagesOnly) {
-            holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
+            this.holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
                 @Override
                 public void load() {
                     loadScrapbookPosts();
@@ -161,7 +176,7 @@ public abstract class ComposeMediaComponent extends Component {
 
                 @Override
                 public RecyclerView.LayoutManager getLayoutManager() {
-                    return new LinearLayoutManager(activity);
+                    return new LinearLayoutManager(getActivity());
                 }
 
                 @Override
@@ -170,8 +185,6 @@ public abstract class ComposeMediaComponent extends Component {
                 }
             });
         }
-
-        launchEmbeddedCamera();
     }
 
     private void loadScrapbookPosts() {
@@ -202,7 +215,7 @@ public abstract class ComposeMediaComponent extends Component {
 
     private void launchEmbeddedCamera() {
         // pull the metrics from our TextureView
-        DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+        DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
         // define the screen size
         Size screenSize = new Size(metrics.widthPixels, metrics.heightPixels);
         Rational screenAspectRatio = new Rational(metrics.widthPixels, metrics.heightPixels);
@@ -224,7 +237,7 @@ public abstract class ComposeMediaComponent extends Component {
             updateCameraTransform();
         });
 
-        CameraX.bindToLifecycle(activity, preview);
+        CameraX.bindToLifecycle(getActivity(), preview);
     }
 
     /** @source https://medium.com/simform-engineering/camerax-getting-started-guide-8fda21a750f7 */
@@ -260,7 +273,7 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     private void returnMedia(Media media) {
-        endCamera();
+        destroy();
         onSelectMedia(media);
     }
 
@@ -290,6 +303,16 @@ public abstract class ComposeMediaComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_compose_media, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

@@ -51,7 +51,7 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
             }
             else {
                 Log.e(TAG, "toggled action failed", e);
-                Toast.makeText(activity, "Toggling action failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Toggling action failed", Toast.LENGTH_LONG).show();
             }
         });
     }
