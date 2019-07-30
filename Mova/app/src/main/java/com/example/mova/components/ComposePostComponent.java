@@ -53,7 +53,7 @@ public abstract class ComposePostComponent extends Component {
     public ComposePostComponent(String managerMediaKey, PostConfig postConfig) {
         this.managerMediaKey = managerMediaKey;
         this.postConfig = postConfig;
-        this.inGroup = postConfig.post.getGroup();
+        this.inGroup = (postConfig.post == null) ? null : postConfig.post.getGroup();
     }
 
     @Override
@@ -201,6 +201,7 @@ public abstract class ComposePostComponent extends Component {
         Post post = new Post();
         post.setBody(body);
         post.setAuthor(User.getCurrentUser());
+        post.setIsPersonal(postConfig.isPersonal);
 
         // TODO: Handle location
 
