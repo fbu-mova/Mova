@@ -19,19 +19,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mova.R;
-import com.example.mova.fragments.SocialFragment;
 import com.example.mova.model.Event;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.TextUtils;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -163,23 +162,43 @@ public class EventComposeActivity extends AppCompatActivity {
                 Event event = new Event();
                 event.setTitle(etTitle.getText().toString());
                 event.setDescription(etDescription.getText().toString());
+
                 //set parent group if the field is valid
                 for(int i = 0; i < groupArr.length ; i++){
-                    if(actvParentGroup.getText().toString().equals(groupArr[i])){
+                    if(actvParentGroup.getText().toString().equals(groupArr[i].toString())){
                         event.relGroup.add(groups.get(i));
+                        groups.get(i).relEvents.add(event);
+                        groups.get(i).saveInBackground();
                     }else{
                         Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
                     }
                 }
-                for(String tag: tags){
-                    event.relTags.add(new Tag(tag));
-                }
-                event.relParticipants.add(user);
-                event.setDate(new Date(etDate.toString()));
-                //Todo- Add location
 
-                Intent intent = new Intent(EventComposeActivity.this, SocialFragment.class);
-                onActivityResult(1, RESULT_OK, intent);
+                //Add tags
+                for(String tagString: tags){
+                    Tag tag = new Tag(tagString);
+                    event.relTags.add(tag);
+                    tag.relEvents.add(event);
+                    tag.saveInBackground();
+                }
+
+                //Add Participants
+                event.relParticipants.add(user);
+                user.relEvents.add(event);
+
+                //Set Date
+                //event.setDate(new Date(etDate.toString()));
+                event.setDate(myCalendar.getTime());
+
+                //Set Location
+                if(address != null) {
+                    ParseGeoPoint geoPoint = new ParseGeoPoint(address.getLatitude(), address.getLongitude());
+                    event.setLocation(geoPoint);
+                }
+                event.saveInBackground();
+//                Intent intent = new Intent(EventComposeActivity.this, SocialFragment.class);
+//                onActivityResult(1, RESULT_OK, intent);
+                finish();
             }
         });
     }
