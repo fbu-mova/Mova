@@ -21,7 +21,7 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ImageComponent extends Component {
+public class MediaImageComponent extends Component {
 
     private Bitmap bmp;
     private ParseFile parseFile;
@@ -31,15 +31,15 @@ public class ImageComponent extends Component {
     private View view;
     private ComponentManager manager;
 
-    public ImageComponent(Bitmap bmp) {
+    public MediaImageComponent(Bitmap bmp) {
         this.bmp = bmp;
     }
 
-    public ImageComponent(File imageFile) {
+    public MediaImageComponent(File imageFile) {
         this.bmp = ImageUtils.fileToBitmap(imageFile);
     }
 
-    public ImageComponent(ParseFile parseFile) {
+    public MediaImageComponent(ParseFile parseFile) {
         this.parseFile = parseFile;
     }
 
