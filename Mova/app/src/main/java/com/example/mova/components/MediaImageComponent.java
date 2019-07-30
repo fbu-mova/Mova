@@ -27,7 +27,6 @@ public class MediaImageComponent extends Component {
     private ParseFile parseFile;
 
     private ViewHolder holder;
-    private View view;
     private ComponentManager manager;
 
     public MediaImageComponent(Bitmap bmp) {
@@ -58,17 +57,25 @@ public class MediaImageComponent extends Component {
     }
 
     @Override
-    public void render(DelegatedResultActivity activity, Component.ViewHolder holder) {
-        if (!(holder instanceof ViewHolder)) {
-            throw new ClassCastException("Provided ViewHolder is of invalid type. Expected " + ViewHolder.class.getCanonicalName() + ", received " + holder.getClass().getCanonicalName());
-        }
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
         if (parseFile == null) {
-            Glide.with(activity).load(bmp).into(this.holder.iv);
+            Glide.with(getActivity()).load(bmp).into(this.holder.iv);
         } else {
-            Glide.with(activity).load(parseFile.getUrl()).into(this.holder.iv);
+            Glide.with(getActivity()).load(parseFile.getUrl()).into(this.holder.iv);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ViewHolder extends Component.ViewHolder {
