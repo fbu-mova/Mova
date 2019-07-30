@@ -60,7 +60,7 @@ public class RelationFrame<T extends ParseObject> {
     public T remove(T object, AsyncUtils.EmptyCallback callback) {
         ParseRelation<T> relation = parseObject.getRelation(key);
         relation.remove(object);
-        parseObject.deleteInBackground((ParseException e) -> {
+        parseObject.saveInBackground((ParseException e) -> {
             if (e != null) {
                 Log.e("RelationFrame", "Error deleting object", e);
             } else {
