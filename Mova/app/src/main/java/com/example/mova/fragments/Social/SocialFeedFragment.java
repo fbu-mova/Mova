@@ -25,6 +25,7 @@ import com.example.mova.components.PostComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -145,6 +146,8 @@ public class SocialFeedFragment extends Fragment {
                 return EndlessScrollRefreshLayout.getDefaultColorScheme();
             }
         });
+
+        esrlPosts.addItemDecoration(new EdgeDecorator(32));
 
         loadPosts();
     }
