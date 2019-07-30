@@ -154,39 +154,22 @@ public class GoalCardComponent extends Component {
         viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
         viewHolder.rvActions.setAdapter(actionsAdapter);
 
-        loadGoalActions();
-    }
-
-    private void loadGoalActions() {
-        // make query calls to get the user's actions for a goal
-        ParseQuery<Action> actionQuery = item.relActions.getQuery();
-        actionQuery.whereEqualTo("parentUser", (User) ParseUser.getCurrentUser());
-        updateAdapter(actionQuery, actions, actionsAdapter, viewHolder.rvActions);
-    }
-
-    private void updateAdapter(ParseQuery<Action> actionQuery, ArrayList<Action> actions, DataComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {
-
-        actionQuery.findInBackground(new FindCallback<Action>() {
-            @Override
-            public void done(List<Action> objects, ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "query for actions successful!");
-
-                    for (int i = 0; i < objects.size(); i++) {
-                        // load into recyclerview
-                        Action action = objects.get(i);
-                        actions.add(0, action);
-                        actionsAdapter.notifyItemInserted(0);
-                    }
-
-                    rvActions.scrollToPosition(0);
-                }
-                else {
-                    Log.e(TAG, "query for actions failed", e);
-                    Toast.makeText(activity, "Query for actions of your goal failed", Toast.LENGTH_LONG).show();
-                }
-            }
+        GoalUtils.loadGoalActions(item, (objects) -> {
+            updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
         });
+    }
+
+    private void updateAdapter(List<Action> objects, ArrayList<Action> actions, DataComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {
+
+        for (int i = 0; i < objects.size(); i++) {
+            // load into recyclerview
+            Action action = objects.get(i);
+            actions.add(0, action);
+            actionsAdapter.notifyItemInserted(0);
+        }
+
+        rvActions.scrollToPosition(0);
+
     }
 
     public static class GoalCardViewHolder extends Component.ViewHolder {

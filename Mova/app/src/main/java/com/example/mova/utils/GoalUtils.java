@@ -1,6 +1,7 @@
 package com.example.mova.utils;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mova.feed.Prioritized;
 import com.example.mova.model.Action;
@@ -22,6 +23,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
+
+import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalUtils {
 
@@ -380,6 +383,24 @@ public class GoalUtils {
                 }
                 else {
                     Log.e(TAG, "action failed saving", e);
+                }
+            }
+        });
+    }
+
+    public static void loadGoalActions(Goal goal, AsyncUtils.ListCallback<Action> callback) {
+        // make query calls to get the user's actions for a goal
+        ParseQuery<Action> actionQuery = goal.relActions.getQuery();
+        actionQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
+        actionQuery.findInBackground(new FindCallback<Action>() {
+            @Override
+            public void done(List<Action> objects, ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "query for actions successful");
+                    callback.call(objects);
+                }
+                else {
+                    Log.e(TAG, "query for actions failed", e);
                 }
             }
         });
