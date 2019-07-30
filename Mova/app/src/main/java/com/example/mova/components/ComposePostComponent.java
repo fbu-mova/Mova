@@ -123,14 +123,20 @@ public abstract class ComposePostComponent extends Component {
         if (postConfig.postToReply != null) {
             asyncActions.add((i, cb) ->
                 postConfig.postToReply.getAuthor().fetchIfNeededInBackground((parseObject, e) -> {
+                    Throwable errResult = e;
                     if (e != null) {
                         Log.e("ComposePostDialog", "Failed to get reply to author", e);
                     } else if (!(parseObject instanceof User)) {
                         Log.e("ComposePostDialog", "Failed to coerce author to User");
+                        errResult = new ClassCastException("Failed to coerce author to User");
                     } else {
                         User author = (User) parseObject;
-                        type.item += "Replying to " + author.getUsername();
+                        type.item += "Replying to "
+                                + (author.equals(User.getCurrentUser())
+                                    ? "yourself"
+                                    : author.getUsername());
                     }
+                    cb.call(errResult);
             }));
         } else {
             type.item += "Posting ";
@@ -139,14 +145,17 @@ public abstract class ComposePostComponent extends Component {
         if (inGroup != null) {
             asyncActions.add((i, cb) ->
                 inGroup.fetchIfNeededInBackground((parseObject, e) -> {
+                    Throwable errResult = e;
                     if (e != null) {
                         Log.e("ComposePostDialog", "Failed to get in group", e);
                     } else if (!(parseObject instanceof Group)) {
                         Log.e("ComposePostDialog", "Failed to coerce in group to Group");
+                        errResult = new ClassCastException("Failed to coerce in group to Group");
                     } else {
                         Group group = (Group) parseObject;
                         type.item += " in " + group.getName();
                     }
+                    cb.call(errResult);
             }));
         } else if (postConfig.postToReply == null) {
             type.item += "to friends";
@@ -154,7 +163,7 @@ public abstract class ComposePostComponent extends Component {
 
         AsyncUtils.waterfall(asyncActions, (e) -> {
             if (e != null) {
-                Log.e("ComposePostDialog", "Failed to generate text");
+                Log.e("ComposePostDialog", "Failed to generate text", e);
                 holder.llTypeIndicator.setVisibility(View.GONE);
             } else {
                 holder.llTypeIndicator.setVisibility(View.VISIBLE);
