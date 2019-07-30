@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.GoalUtils;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -98,10 +100,10 @@ public class GoalCheckInComponent extends Component {
             public Component makeComponent(Action item) {
                 return new ChecklistItemComponent<Action>(item,
                         Color.parseColor("#999999"), Color.parseColor("#222222"), false,
-                        (action) -> action.getTask()) {
+                        (action) -> action.getTask(), (action) -> action.getIsDone()) {
                     @Override
-                    public void onClick(View view) {
-                        toggleDone(item, (e) -> {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        GoalUtils.toggleDone(item, (e) -> {
                             if (e != null) {
                                 Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
                                 Toast.makeText(activity, "Failed to toggle action done", Toast.LENGTH_LONG).show();
@@ -117,35 +119,9 @@ public class GoalCheckInComponent extends Component {
         holder.rvChecklist.setAdapter(adapter);
 
         // Display progress
-        holder.pbProgress.setProgress(getProgressPercent(goalActions));
+        holder.pbProgress.setProgress(GoalUtils.getProgressPercent(goalActions));
 
         // TODO: Add onclick listener for whole card to open the goal detail view for the associated goal
-    }
-
-
-    // TODO: Merge this functionality with functionality in GoalUtils
-    private static int numActionsComplete(List<Action> actions) {
-        int completed = 0;
-        for (Action action : actions) {
-            completed += (action.getIsDone()) ? 1 : 0;
-        }
-        return completed;
-    }
-
-    // TODO: Merge this functionality with functionality in GoalUtils
-    private static int getProgressPercent(List<Action> actions) {
-        int numComplete = numActionsComplete(actions);
-        int percent = (int) Math.floor(100
-                * (   ((double) numComplete)
-                    / ((double) actions.size())
-                  ));
-        return percent;
-    }
-
-    // TODO: Merge this functionality with functionality in GoalUtils
-    private static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
-        action.setIsDone(!action.getIsDone());
-        action.saveInBackground((e) -> callback.call(e));
     }
 
     public static class ViewHolder extends Component.ViewHolder {

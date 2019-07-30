@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,7 +59,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
     }
 
     private void loadGoals() {
-        ParseQuery<Goal> query = ((User) User.getCurrentUser()).relGoals.getQuery();
+        ParseQuery<Goal> query = User.getCurrentUser().relGoals.getQuery();
         query.orderByDescending(Goal.KEY_CREATED_AT);
         query.setLimit(maxGoals);
         query.findInBackground((goals, e) -> {
@@ -102,9 +103,9 @@ public abstract class TomorrowFocusPromptComponent extends Component {
             public Component makeComponent(Goal item) {
                 return new ChecklistItemComponent<Goal>(item,
                         Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"), true,
-                        (o) -> o.getTitle()) {
+                        (o) -> o.getTitle(), (o) -> false) { // fixme - made goals always not done
                     @Override
-                    public void onClick(View view) {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         // TODO: Prevent more than three goals from being selected at any given time
                     }
                 };

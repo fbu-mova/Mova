@@ -1,27 +1,37 @@
 package com.example.mova.fragments.Social;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.ComposePostDialog;
+import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.ComponentLayout;
-import com.example.mova.components.ComposePostComponent;
-import com.example.mova.model.Media;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.components.Component;
+import com.example.mova.components.PostComponent;
+import com.example.mova.model.Group;
 import com.example.mova.model.Post;
-import com.example.mova.model.Tag;
+import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.scrolling.EndlessScrollRefreshLayout;
+import com.example.mova.scrolling.ScrollLoadHandler;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,7 +49,11 @@ public class SocialFeedFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @BindView(R.id.button) protected Button button; // a very temporary button for testing
+    @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
+    @BindView(R.id.esrlPosts)  protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlPosts;
+
+    List<Post> posts;
+    DataComponentAdapter<Post> adapter;
 
     public SocialFeedFragment() {
         // Required empty public constructor
@@ -79,8 +93,8 @@ public class SocialFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        // Temporary button press for testing ComposePostComponent
-        button.setOnClickListener((v) -> {
+        // Temporary fabCompose press for testing ComposePostComponent
+        fabCompose.setOnClickListener((v) -> {
             ComposePostDialog dialog = new ComposePostDialog((DelegatedResultActivity) getActivity()) {
                 @Override
                 protected void onCancel() {
@@ -88,13 +102,125 @@ public class SocialFeedFragment extends Fragment {
                 }
 
                 @Override
-                protected void onPost(Post post, List<Tag> tags, Media media, Post postToReply) {
-                    post.savePost(postToReply, tags, media, (savedPost) -> {
+                protected void onPost(PostConfig config) {
+                    config.post.savePost(config, (savedPost) -> {
 
                     });
                 }
             };
             dialog.show();
+        });
+
+        posts = new ArrayList<>();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        adapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), posts) {
+            @Override
+            public Component makeComponent(Post item) {
+                return new PostComponent(item);
+            }
+        };
+
+        esrlPosts.init(new ScrollLoadHandler<Component.ViewHolder>() {
+            @Override
+            public void load() {
+                loadPosts();
+            }
+
+            @Override
+            public void loadMore() {
+                loadMorePosts();
+            }
+
+            @Override
+            public RecyclerView.Adapter<Component.ViewHolder> getAdapter() {
+                return adapter;
+            }
+
+            @Override
+            public RecyclerView.LayoutManager getLayoutManager() {
+                return layoutManager;
+            }
+
+            @Override
+            public int[] getColorScheme() {
+                return EndlessScrollRefreshLayout.getDefaultColorScheme();
+            }
+        });
+
+        esrlPosts.addItemDecoration(new EdgeDecorator(32));
+
+        loadPosts();
+    }
+
+    private void loadPosts() {
+        posts.clear();
+        adapter.notifyDataSetChanged();
+        loadMorePosts();
+    }
+
+    private void loadMorePosts() {
+        // Find the user's friends to retrieve their posts
+        ParseQuery<User> friendsQuery = User.getCurrentUser().relFriends.getQuery();
+        friendsQuery.findInBackground((friends, e) -> {
+            if (e != null) {
+                Log.e("SocialFeedFragment", "Failed to load friends for feed loading", e);
+                Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
+                esrlPosts.setRefreshing(false);
+                return;
+            }
+
+            // Find the user's groups to retrieve their posts
+            ParseQuery<Group> groupsQuery = User.getCurrentUser().relGroups.getQuery();
+            groupsQuery.findInBackground((groups, e1) -> {
+                if (e1 != null) {
+                    Log.e("SocialFeedFragment", "Failed to load groups for feed loading", e1);
+                    Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
+                    esrlPosts.setRefreshing(false);
+                    return;
+                }
+
+                // Make query for user's and friends' posts
+                friends.add(User.getCurrentUser());
+                ParseQuery<Post> userPostQuery = new ParseQuery<>(Post.class);
+                userPostQuery.whereContainedIn(Post.KEY_AUTHOR, friends);
+
+                // Make query for groups' posts
+                ParseQuery<Post> groupPostQuery = new ParseQuery<>(Post.class);
+                groupPostQuery.whereContainedIn(Post.KEY_GROUP, groups);
+
+                // Combine queries
+                ArrayList<ParseQuery<Post>> queries = new ArrayList<>();
+                queries.add(userPostQuery);
+                queries.add(groupPostQuery);
+                ParseQuery<Post> compoundQuery = ParseQuery.or(queries);
+
+                compoundQuery.include(Post.KEY_MEDIA);
+                compoundQuery.include(Post.KEY_GROUP);
+                compoundQuery.include(Post.KEY_AUTHOR);
+                compoundQuery.include(Post.KEY_PARENT_POST);
+
+                compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false);
+                compoundQuery.setLimit(50); // Arbitrarily higher limit for now because longer loading time to get to this point
+
+                if (posts.size() > 0) {
+                    // Posts older than the oldest post currently loaded
+                    compoundQuery.whereLessThan(Post.KEY_CREATED_AT, posts.get(posts.size() - 1));
+                }
+
+                compoundQuery.findInBackground((fetchedPosts, e2) -> {
+                    if (e2 != null) {
+                        Log.e("SocialFeedFragment", "Failed to load posts from compound query", e2);
+                        Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
+                        esrlPosts.setRefreshing(false);
+                        return;
+                    }
+
+                    int endPos = posts.size();
+                    posts.addAll(fetchedPosts);
+                    adapter.notifyItemRangeInserted(endPos, posts.size());
+                    esrlPosts.setRefreshing(false);
+                });
+            });
         });
     }
 

@@ -1,57 +1,38 @@
 package com.example.mova.components;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.model.Action;
+import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ActionViewComponent extends Component {
+public class ActionViewComponent extends ChecklistItemComponent<Action> {
+        // needs a separate name for getName component manager, and to implement icons...
 
-    private static final int viewLayoutRes = R.layout.item_action_view;
     private static final String TAG = "action view comp";
-
-    private Action action;
-    private View view;
-    private ActionViewViewHolder viewHolder;
-    private DelegatedResultActivity activity;
 
     private ComponentManager componentManager;
 
     public ActionViewComponent(Action action, ComponentManager componentManager) {
-        super();
-        this.action = action;
+        super(action, Color.parseColor("#999999"), Color.parseColor("#222222"),
+                false, (item) -> item.getTask(),
+                (item) -> (item.getIsDone()));
+        this.item = action;
         setManager(componentManager);
-    }
-
-    @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
-        viewHolder = new ActionViewViewHolder(view);
-        this.activity = activity;
-    }
-
-    @Override
-    public ViewHolder getViewHolder() {
-        if (viewHolder != null) {
-            return viewHolder;
-        }
-        Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
-        return null;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -66,19 +47,22 @@ public class ActionViewComponent extends Component {
 
     @Override
     public void render() {
-        viewHolder.tvAction.setText(action.getTask());
+        super.render();
 
         // todo -- implement icons
     }
 
-    public static class ActionViewViewHolder extends Component.ViewHolder {
-
-        @BindView(R.id.tvAction)        protected TextView tvAction;
-        @BindView(R.id.ivIcon)          protected ImageView ivIcon;
-
-        public ActionViewViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        GoalUtils.toggleDone(item, (e) -> {
+            if (e == null) {
+                Log.d(TAG, "toggled action done");
+            }
+            else {
+                Log.e(TAG, "toggled action failed", e);
+                Toast.makeText(activity, "Toggling action failed", Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
 }

@@ -108,7 +108,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        user = (User) ParseUser.getCurrentUser();
+        user = User.getCurrentUser();
         userGroups = new ArrayList<>();
         userFriends = new ArrayList<>();
         userPosts = new ArrayList<>();

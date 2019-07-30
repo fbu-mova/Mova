@@ -92,7 +92,7 @@ public class EventsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        user = (User) ParseUser.getCurrentUser();
+        user = User.getCurrentUser();
         yourEvents = new ArrayList<>();
 
         nearYouEvents = new ArrayList<>();

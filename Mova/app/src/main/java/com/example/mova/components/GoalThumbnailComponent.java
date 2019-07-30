@@ -111,7 +111,7 @@ public class GoalThumbnailComponent extends Component {
                 .placeholder(R.color.colorAccent)
                 .into(viewHolder.ivPhoto);
 
-        GoalUtils.getNumActionsComplete(goal, (User) ParseUser.getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });

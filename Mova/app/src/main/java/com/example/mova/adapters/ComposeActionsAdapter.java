@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
@@ -20,8 +21,6 @@ import butterknife.ButterKnife;
 
 public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAdapter.ViewHolder> {
 
-    // no longer used
-
     private List<String> actions;
     Context context;
 
@@ -35,7 +34,7 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View actionView = inflater.inflate(R.layout.item_compose_action, parent, false);
+        View actionView = inflater.inflate(R.layout.item_checklist, parent, false);
         return new ViewHolder(actionView);
     }
 
@@ -43,7 +42,7 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
     public void onBindViewHolder(@NonNull ComposeActionsAdapter.ViewHolder holder, int position) {
         String action = actions.get(position);
 
-        holder.rbAction.setText(action);
+        holder.cbItem.setText(action);
 
     }
 
@@ -59,7 +58,7 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.rbAction)    public RadioButton rbAction;
+        @BindView(R.id.cbItem)    public CheckBox cbItem;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

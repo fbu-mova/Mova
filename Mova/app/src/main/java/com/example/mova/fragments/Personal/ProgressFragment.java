@@ -115,7 +115,7 @@ public class ProgressFragment extends Fragment {
         badGoals = new ArrayList<>();
         //prioGoals = new TreeSet<>();
         goalUtils = new GoalUtils();
-        journal = new Journal((User) ParseUser.getCurrentUser());
+        journal = new Journal(User.getCurrentUser());
 
         //create the adapter
 
@@ -171,7 +171,7 @@ public class ProgressFragment extends Fragment {
             //Log.e("ProgressFragment", "Were not in boys");
 
             //organize goals and create adapter
-            goalUtils.sortGoals(mGoals, length, (User) ParseUser.getCurrentUser(), (tsGoals) -> {
+            goalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
                 Log.e("ProgressFragment", "Were in boys");
                 //Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
                 for(int i = 0; i < mGoals.size(); i++){
@@ -233,7 +233,7 @@ public class ProgressFragment extends Fragment {
     private void setGraph(AsyncUtils.EmptyCallback callback){
         AsyncUtils.executeMany(mGoals.size(), (i,cb) -> {
            Goal goal = mGoals.get(i);
-            goalUtils.getDataForGraph(goal, (User) ParseUser.getCurrentUser(), length , (series) -> {
+            goalUtils.getDataForGraph(goal, User.getCurrentUser(), length , (series) -> {
                 series.setTitle(goal.getTitle());
                 if(goal.getColor() != null){
                     series.setColor(Color.parseColor(goal.getColor()));
@@ -249,7 +249,7 @@ public class ProgressFragment extends Fragment {
 
 
     public void queryGoals(AsyncUtils.EmptyCallback callback){
-        User user = (User) ParseUser.getCurrentUser();
+        User user = User.getCurrentUser();
         ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
         goalQuery.whereEqualTo("usersInvolved", user);
         //Log.d("ProgressFragment", "About to query");

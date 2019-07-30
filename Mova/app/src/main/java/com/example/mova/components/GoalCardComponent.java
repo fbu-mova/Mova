@@ -130,7 +130,7 @@ public class GoalCardComponent extends Component {
         viewHolder.tvDescription.setText(item.getDescription());
         Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
-        GoalUtils.getNumActionsComplete(item, (User) ParseUser.getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
@@ -160,7 +160,7 @@ public class GoalCardComponent extends Component {
     private void loadGoalActions() {
         // make query calls to get the user's actions for a goal
         ParseQuery<Action> actionQuery = item.relActions.getQuery();
-        actionQuery.whereEqualTo("parentUser", (User) ParseUser.getCurrentUser());
+        actionQuery.whereEqualTo("parentUser", User.getCurrentUser());
         updateAdapter(actionQuery, actions, actionsAdapter, viewHolder.rvActions);
     }
 

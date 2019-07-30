@@ -4,6 +4,7 @@ package com.example.mova.model;
 import android.util.Log;
 
 import com.example.mova.Mood;
+import com.example.mova.PostConfig;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -25,10 +26,10 @@ public class Post extends HashableParseObject {
     public static final String KEY_LOCATION = "location";
     public static final String KEY_BODY = "body";
     public static final String KEY_MOOD = "mood";
-    public static final String KEY_IMAGE = "embeddedImage";
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_MEDIA = "media";
     public static final String KEY_PARENT_POST = "parentPost";
+    public static final String KEY_ID = "objectId";
 
     //Relations
     public static final String KEY_COMMENTS = "comments";
@@ -104,16 +105,6 @@ public class Post extends HashableParseObject {
         return this;
     }
 
-    //Image
-    public ParseFile getImage(){
-        return getParseFile(KEY_IMAGE);
-    }
-
-    public Post setImage(ParseFile file){
-        put(KEY_IMAGE, file);
-        return this;
-    }
-
     // Media
     public Media getMedia() {
         return (Media) getParseObject(KEY_MEDIA);
@@ -146,19 +137,15 @@ public class Post extends HashableParseObject {
 
     // Saving posts
     public void savePost(AsyncUtils.ItemCallback<Post> callback) {
-        savePost(new ArrayList<>(), null, callback);
+        savePost(new PostConfig(this), callback);
     }
 
-    public void savePost(List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
-        savePost(tags, null, callback);
-    }
-
-    public void savePost(List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
+    public void savePost(PostConfig config, AsyncUtils.ItemCallback<Post> callback) {
         // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
         AsyncUtils.executeMany(
-                tags.size(),
+                config.tags.size(),
                 (position, cb) -> {
-                    Tag tag = tags.get(position);
+                    Tag tag = config.tags.get(position);
                     Tag.getTag(tag.getName(), (tagFromDB) -> {
                         if (tagFromDB == null) {
                             tag.saveInBackground((e) -> {
@@ -178,18 +165,19 @@ public class Post extends HashableParseObject {
                         if (e != null) {
                             Log.e("User", "Failed to save entry", e);
                         } else {
+                            if (config.postToReply != null) this.setParent(config.postToReply);
                             callback.call(this);
                         }
                     });
 
                     // Save media if it exists
-                    if (media != null) {
-                        media.setParent(this);
-                        media.saveInBackground((e) -> {
+                    if (config.media != null) {
+                        config.media.setParent(this);
+                        config.media.saveInBackground((e) -> {
                             if (e != null) {
                                 Log.e("User", "Failed to create media", e);
                             } else {
-                                this.setMedia(media);
+                                this.setMedia(config.media);
                                 doSavePost.call();
                             }
                         });
@@ -198,18 +186,5 @@ public class Post extends HashableParseObject {
                     }
                 }
         );
-    }
-
-    public void savePost(Post toReply, AsyncUtils.ItemCallback<Post> callback) {
-        savePost(toReply, new ArrayList<>(), null, callback);
-    }
-
-    public void savePost(Post toReply, List<Tag> tags, AsyncUtils.ItemCallback<Post> callback) {
-        savePost(toReply, tags, null, callback);
-    }
-
-    public void savePost(Post toReply, List<Tag> tags, Media media, AsyncUtils.ItemCallback<Post> callback) {
-        this.setParent(toReply);
-        this.savePost(tags, media, callback);
     }
 }
