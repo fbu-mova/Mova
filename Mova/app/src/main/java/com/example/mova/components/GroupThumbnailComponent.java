@@ -1,6 +1,7 @@
 package com.example.mova.components;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -33,10 +34,9 @@ public class GroupThumbnailComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_group_thumbnail;
 
     private Group group;
-    private View view;
     private GroupThumbnailViewHolder viewHolder;
-    private DelegatedResultActivity activity;
     public static FragmentManager manager;
+    private ComponentManager componentManager;
 
     public GroupThumbnailComponent(Group item){
         super();
@@ -44,24 +44,13 @@ public class GroupThumbnailComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
-        this.activity = activity;
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new GroupThumbnailViewHolder(view);
+//        viewHolder = new GroupThumbnailViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
         Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
         return null;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -71,21 +60,29 @@ public class GroupThumbnailComponent extends Component {
 
     @Override
     public void setManager(ComponentManager manager) {
+        this.componentManager = manager;
+    }
+
+    @Override
+    protected void onLaunch() {
 
     }
 
     @Override
-    public void render() {
-        if (viewHolder == null) {
-            Log.e(TAG, "not inflating views to viewHolder, in render");
-            return;
-        }
+    protected void onRender(ViewHolder holder) {
+        checkViewHolderClass(holder, GroupThumbnailComponent.class);
+        viewHolder = (GroupThumbnailViewHolder) holder;
+
+//        if (viewHolder == null) {
+//            Log.e(TAG, "not inflating views to viewHolder, in render");
+//            return;
+//        }
 
         viewHolder.tvGroupName.setText(group.getName());
         ParseFile file = group.getGroupPic();
         if(file != null){
             String imageUrl = file.getUrl();
-            Glide.with(activity)
+            Glide.with(getActivity())
                     .load(imageUrl)
                     .transform(new CenterCrop(), new RoundedCorners(150))
                     .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
@@ -97,9 +94,9 @@ public class GroupThumbnailComponent extends Component {
             @Override
             public void onClick(View v) {
                 Fragment frag = GroupDetailsFragment.newInstance(group);
-                manager = ((AppCompatActivity)activity)
+                manager = ((AppCompatActivity)getActivity())
                         .getSupportFragmentManager();
-                FrameLayout fl = activity.findViewById(R.id.flSocialContainer);
+                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
                 //fl.removeAllViews();
                 FragmentTransaction ft = manager
                         .beginTransaction();
@@ -109,6 +106,10 @@ public class GroupThumbnailComponent extends Component {
                 ft.commit();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
 
     }
 
@@ -120,6 +121,16 @@ public class GroupThumbnailComponent extends Component {
         public GroupThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new GroupThumbnailViewHolder(view);
         }
     }
 }

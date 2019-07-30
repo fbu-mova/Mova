@@ -25,9 +25,7 @@ public class DatePickerComponent extends Component {
     private Date date;
     private OnItemClickListener clickListener;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager manager;
 
     public DatePickerComponent(Date date, OnItemClickListener clickListener) {
@@ -36,21 +34,8 @@ public class DatePickerComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.item_date_picker, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -64,16 +49,29 @@ public class DatePickerComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         SimpleDateFormat monthFmt = new SimpleDateFormat("MMM", Locale.US);
         SimpleDateFormat dayFmt = new SimpleDateFormat("d", Locale.US);
 
         String month = monthFmt.format(date);
         String day = dayFmt.format(date);
 
-        holder.tvMonth.setText(month);
-        holder.tvDay.setText(day);
-        holder.llDateButton.setOnClickListener((clickedView) -> clickListener.call(clickedView, date));
+        this.holder.tvMonth.setText(month);
+        this.holder.tvDay.setText(day);
+        this.holder.llDateButton.setOnClickListener((clickedView) -> clickListener.call(clickedView, date));
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -85,6 +83,16 @@ public class DatePickerComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.item_date_picker, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 
