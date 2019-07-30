@@ -137,6 +137,7 @@ public class ScrapbookFragment extends Fragment {
     private void loadMorePosts() {
         ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
         query.setLimit(20);
+        query.orderByDescending(Post.KEY_CREATED_AT);
         if (posts.size() > 0) {
             // Older than oldest fetched post
             query.whereLessThan(Post.KEY_CREATED_AT, posts.get(posts.size() - 1));

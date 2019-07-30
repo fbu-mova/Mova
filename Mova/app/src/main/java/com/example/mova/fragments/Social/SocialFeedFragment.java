@@ -104,7 +104,9 @@ public class SocialFeedFragment extends Fragment {
                 @Override
                 protected void onPost(PostConfig config) {
                     config.post.savePost(config, (savedPost) -> {
-
+                        // FIXME: Enable once posts are fixed
+//                        posts.add(0, savedPost);
+//                        adapter.notifyItemInserted(0);
                     });
                 }
             };
@@ -200,6 +202,7 @@ public class SocialFeedFragment extends Fragment {
                 compoundQuery.include(Post.KEY_PARENT_POST);
 
                 compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false);
+                compoundQuery.orderByDescending(Post.KEY_CREATED_AT);
                 compoundQuery.setLimit(50); // Arbitrarily higher limit for now because longer loading time to get to this point
 
                 if (posts.size() > 0) {
