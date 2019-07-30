@@ -32,7 +32,6 @@ public class User extends ParseUser {
     public static final String KEY_POSTS = "posts";
     public static final String KEY_LOCATION = "Location";
 
-
     public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
     public final RelationFrame<User> relFriends = new RelationFrame<>(this, KEY_FRIENDS);
     public final RelationFrame<Event> relEvents = new RelationFrame<>(this, KEY_EVENTS);

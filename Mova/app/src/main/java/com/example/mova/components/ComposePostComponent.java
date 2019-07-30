@@ -23,8 +23,11 @@ import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.Wrapper;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -203,7 +206,8 @@ public abstract class ComposePostComponent extends Component {
         post.setAuthor(User.getCurrentUser());
         post.setIsPersonal(postConfig.isPersonal);
 
-        // TODO: Handle location
+        ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
+        if (location != null) post.setLocation(location);
 
         if (postConfig.postToReply != null) post.setParent(postConfig.postToReply);
         if (inGroup != null)                post.setGroup(inGroup);
