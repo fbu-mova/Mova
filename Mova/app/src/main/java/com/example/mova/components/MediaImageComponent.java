@@ -26,7 +26,6 @@ public class MediaImageComponent extends Component {
     private Bitmap bmp;
     private ParseFile parseFile;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
     private View view;
     private ComponentManager manager;
@@ -44,21 +43,8 @@ public class MediaImageComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_image, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -72,11 +58,16 @@ public class MediaImageComponent extends Component {
     }
 
     @Override
-    public void render() {
+    public void render(DelegatedResultActivity activity, Component.ViewHolder holder) {
+        if (!(holder instanceof ViewHolder)) {
+            throw new ClassCastException("Provided ViewHolder is of invalid type. Expected " + ViewHolder.class.getCanonicalName() + ", received " + holder.getClass().getCanonicalName());
+        }
+        this.holder = (ViewHolder) holder;
+
         if (parseFile == null) {
-            Glide.with(activity).load(bmp).into(holder.iv);
+            Glide.with(activity).load(bmp).into(this.holder.iv);
         } else {
-            Glide.with(activity).load(parseFile.getUrl()).into(holder.iv);
+            Glide.with(activity).load(parseFile.getUrl()).into(this.holder.iv);
         }
     }
 
@@ -87,6 +78,17 @@ public class MediaImageComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.view = itemView;
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_image, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }
