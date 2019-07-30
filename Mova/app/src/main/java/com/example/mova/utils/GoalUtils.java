@@ -351,6 +351,21 @@ public class GoalUtils {
 
         // not extracted nicely, but does the job i guess
 
+        // extract List<SharedAction> sharedActionsList and List<String> actionsList
+
+        goal.relSharedActions.getList((sharedActions) -> {
+
+            List<String> actionsList = new ArrayList<>();
+            for (SharedAction sharedAction : sharedActions) {
+                actionsList.add(sharedAction.getTask());
+            }
+
+            saveAction(actionsList, goal, sharedActions, false, (item) -> {
+                // add User to usersInvolved relation of goal + save goal
+                goal.relUsersInvolved.add((User) ParseUser.getCurrentUser(), (user) -> {});
+            });
+        });
+
     }
 
 }
