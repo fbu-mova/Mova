@@ -118,6 +118,7 @@ public class SocialFeedFragment extends Fragment {
                 return new PostComponent(item);
             }
         };
+
         esrlPosts.init(new ScrollLoadHandler<Component.ViewHolder>() {
             @Override
             public void load() {
@@ -144,6 +145,8 @@ public class SocialFeedFragment extends Fragment {
                 return EndlessScrollRefreshLayout.getDefaultColorScheme();
             }
         });
+
+        loadPosts();
     }
 
     private void loadPosts() {
@@ -159,6 +162,7 @@ public class SocialFeedFragment extends Fragment {
             if (e != null) {
                 Log.e("SocialFeedFragment", "Failed to load friends for feed loading", e);
                 Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
+                esrlPosts.setRefreshing(false);
                 return;
             }
 
@@ -168,6 +172,7 @@ public class SocialFeedFragment extends Fragment {
                 if (e1 != null) {
                     Log.e("SocialFeedFragment", "Failed to load groups for feed loading", e1);
                     Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
+                    esrlPosts.setRefreshing(false);
                     return;
                 }
 
@@ -185,21 +190,32 @@ public class SocialFeedFragment extends Fragment {
                 queries.add(userPostQuery);
                 queries.add(groupPostQuery);
                 ParseQuery<Post> compoundQuery = ParseQuery.or(queries);
+
+                compoundQuery.include(Post.KEY_MEDIA);
+                compoundQuery.include(Post.KEY_GROUP);
+                compoundQuery.include(Post.KEY_AUTHOR);
+                compoundQuery.include(Post.KEY_PARENT_POST);
+
+                compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false);
                 compoundQuery.setLimit(50); // Arbitrarily higher limit for now because longer loading time to get to this point
+
                 if (posts.size() > 0) {
                     // Posts older than the oldest post currently loaded
                     compoundQuery.whereLessThan(Post.KEY_CREATED_AT, posts.get(posts.size() - 1));
                 }
+
                 compoundQuery.findInBackground((fetchedPosts, e2) -> {
                     if (e2 != null) {
                         Log.e("SocialFeedFragment", "Failed to load posts from compound query", e2);
                         Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
+                        esrlPosts.setRefreshing(false);
                         return;
                     }
 
                     int endPos = posts.size();
                     posts.addAll(fetchedPosts);
                     adapter.notifyItemRangeInserted(endPos, posts.size());
+                    esrlPosts.setRefreshing(false);
                 });
             });
         });
