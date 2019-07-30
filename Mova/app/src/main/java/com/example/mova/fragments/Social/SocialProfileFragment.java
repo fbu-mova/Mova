@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.ProfileFriendComponent;
 import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.components.ProfileShowMoreGroupsComponent;
@@ -34,7 +34,6 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;

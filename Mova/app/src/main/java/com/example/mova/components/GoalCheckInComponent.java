@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.utils.AsyncUtils;

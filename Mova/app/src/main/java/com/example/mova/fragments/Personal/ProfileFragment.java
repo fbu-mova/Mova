@@ -23,7 +23,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.LoginActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.ProfileFriendComponent;
 import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.components.ProfileShowMoreGroupsComponent;

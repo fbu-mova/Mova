@@ -119,13 +119,13 @@
                 android:textColor="#222"
                 android:textSize="18dp" />
 
-            <com.example.mova.components.ComponentLayout
+            <com.example.mova.component.ComponentLayout
                 android:id="@+id/clMedia"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp">
 
-            </com.example.mova.components.ComponentLayout>
+            </com.example.mova.component.ComponentLayout>
 
             <LinearLayout
                 android:id="@+id/llButtons"

@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.model.Goal;
@@ -26,7 +26,6 @@ import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;

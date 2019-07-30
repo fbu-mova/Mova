@@ -18,6 +18,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.fragments.Social.GroupDetailsFragment;
 import com.example.mova.model.Group;
 import com.parse.ParseFile;

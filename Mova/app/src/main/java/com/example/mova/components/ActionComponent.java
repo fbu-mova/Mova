@@ -1,20 +1,17 @@
 package com.example.mova.components;
 
-import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
-import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

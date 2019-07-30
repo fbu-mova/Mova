@@ -17,15 +17,16 @@ import androidx.cardview.widget.CardView;
 import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
-import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.Wrapper;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 

@@ -4,11 +4,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
-import com.example.mova.model.Post;
+import com.example.mova.component.Component;
 
 import java.util.List;
 

@@ -78,13 +78,13 @@
 
             </LinearLayout>
 
-            <com.example.mova.components.ComponentLayout
+            <com.example.mova.component.ComponentLayout
                 android:id="@+id/clMedia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:clipChildren="false"
-                android:measureAllChildren="false"></com.example.mova.components.ComponentLayout>
+                android:measureAllChildren="false"></com.example.mova.component.ComponentLayout>
 
             <EditText
                 android:id="@+id/etBody"

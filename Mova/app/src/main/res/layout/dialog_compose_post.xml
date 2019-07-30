@@ -21,13 +21,13 @@ xmlns:tools="http://schemas.android.com/tools"
             android:layout_height="wrap_content"
             android:background="#eee">
 
-            <com.example.mova.components.ComponentLayout
+            <com.example.mova.component.ComponentLayout
                 android:id="@+id/clPostToReply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp">
 
-            </com.example.mova.components.ComponentLayout>
+            </com.example.mova.component.ComponentLayout>
         </FrameLayout>
 
         <LinearLayout
@@ -72,14 +72,14 @@ xmlns:tools="http://schemas.android.com/tools"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp">
 
-                <com.example.mova.components.ComponentLayout
+                <com.example.mova.component.ComponentLayout
                     android:id="@+id/clMedia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#e6e6e6"
                     android:minHeight="44dp">
 
-                </com.example.mova.components.ComponentLayout>
+                </com.example.mova.component.ComponentLayout>
 
                 <LinearLayout
                     android:id="@+id/llAddMedia"

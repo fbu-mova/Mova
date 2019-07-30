@@ -1,6 +1,5 @@
 package com.example.mova.adapters;
 
-import android.app.Activity;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -8,10 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Adapts items to a sorted list of components, which are then displayed.

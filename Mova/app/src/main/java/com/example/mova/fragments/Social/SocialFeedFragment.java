@@ -20,7 +20,7 @@ import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;

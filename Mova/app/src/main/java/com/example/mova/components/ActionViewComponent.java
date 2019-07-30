@@ -2,23 +2,12 @@ package com.example.mova.components;
 
 import android.graphics.Color;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.example.mova.R;
-import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.utils.GoalUtils;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class ActionViewComponent extends ChecklistItemComponent<Action> {
         // needs a separate name for getName component manager, and to implement icons...

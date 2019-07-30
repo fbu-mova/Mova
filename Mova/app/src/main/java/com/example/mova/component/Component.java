@@ -1,4 +1,4 @@
-package com.example.mova.components;
+package com.example.mova.component;
 
 import android.view.View;
 import android.view.ViewGroup;

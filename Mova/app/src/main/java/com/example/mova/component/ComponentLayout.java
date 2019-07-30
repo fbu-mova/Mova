@@ -1,14 +1,12 @@
-package com.example.mova.components;
+package com.example.mova.component;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.utils.ViewUtils;
 

@@ -11,11 +11,13 @@ import androidx.annotation.NonNull;
 import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProgressGridMoodComponent extends Component{
+public class ProgressGridMoodComponent extends Component {
 
     private static final String TAG = "ProgressMoodComponent";
     private static final int viewLayoutRes = R.layout.item_grid_mood;

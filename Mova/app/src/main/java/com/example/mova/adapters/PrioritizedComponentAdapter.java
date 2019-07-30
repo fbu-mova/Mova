@@ -7,11 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.feed.Prioritized;
 import com.example.mova.feed.PrioritizedComponent;
-
-import java.util.List;
 
 public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;

@@ -16,7 +16,7 @@ import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.ActionComponent;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;

@@ -1,6 +1,5 @@
 package com.example.mova.components;
 
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,8 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.utils.AsyncUtils;
 
 import butterknife.BindView;

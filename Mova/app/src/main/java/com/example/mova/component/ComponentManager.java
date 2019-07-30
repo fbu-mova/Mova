@@ -1,4 +1,4 @@
-package com.example.mova.components;
+package com.example.mova.component;
 
 import java.util.HashMap;
 

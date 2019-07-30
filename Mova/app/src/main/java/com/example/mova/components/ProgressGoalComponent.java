@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Goal;
 
 import butterknife.BindView;

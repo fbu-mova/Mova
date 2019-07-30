@@ -3,14 +3,15 @@ package com.example.mova.components;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.utils.TimeUtils;

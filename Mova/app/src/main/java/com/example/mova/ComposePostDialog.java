@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
-import com.example.mova.components.ComponentLayout;
-import com.example.mova.components.ComponentManager;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.components.ComposeMediaComponent;
 import com.example.mova.components.ComposePostComponent;
 import com.example.mova.model.Media;

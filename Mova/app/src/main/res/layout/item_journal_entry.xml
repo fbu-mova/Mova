@@ -53,12 +53,12 @@
             android:text="Mood" />
     </LinearLayout>
 
-    <com.example.mova.components.ComponentLayout
+    <com.example.mova.component.ComponentLayout
         android:id="@+id/clMedia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </com.example.mova.components.ComponentLayout>
+    </com.example.mova.component.ComponentLayout>
 
     <TextView
         android:id="@+id/tvBody"

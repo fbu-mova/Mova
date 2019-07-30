@@ -1,28 +1,25 @@
 package com.example.mova.components;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
-import com.parse.ParseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

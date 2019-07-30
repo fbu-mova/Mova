@@ -16,6 +16,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.fragments.Social.EventDetailsFragment;
 import com.example.mova.model.Event;
 import com.example.mova.utils.LocationUtils;
@@ -25,7 +27,7 @@ import com.parse.ParseFile;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EventThumbnailComponent extends Component{
+public class EventThumbnailComponent extends Component {
 
     private static final String TAG = "eventThumbnailComp";
     private static final int viewLayoutRes = R.layout.item_event_thumbnail;

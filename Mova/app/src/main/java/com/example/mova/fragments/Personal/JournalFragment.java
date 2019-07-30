@@ -21,7 +21,7 @@ import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.SortedDataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.DatePickerComponent;
 import com.example.mova.components.JournalEntryComponent;
 import com.example.mova.model.Journal;

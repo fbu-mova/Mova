@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 
 import java.util.HashMap;
 import java.util.List;

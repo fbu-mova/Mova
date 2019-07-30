@@ -20,7 +20,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.model.Goal;

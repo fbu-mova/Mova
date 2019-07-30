@@ -16,16 +16,15 @@ import com.example.mova.ComposePostDialog;
 import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
-import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.TimeUtils;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

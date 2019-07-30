@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +17,8 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
@@ -25,18 +26,14 @@ import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-import static android.app.Activity.RESULT_OK;
 import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
-import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
 
 public class GoalCardComponent extends Component {
 
