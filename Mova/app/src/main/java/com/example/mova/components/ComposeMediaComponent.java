@@ -174,6 +174,7 @@ public abstract class ComposeMediaComponent extends Component {
 
     private void loadScrapbookPosts() {
         scrapbookPosts.clear();
+        scrapbookAdapter.notifyDataSetChanged();
         loadMoreScrapbookPosts();
     }
 
