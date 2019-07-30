@@ -1,5 +1,6 @@
 package com.example.mova.fragments.Social;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.EventComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.components.Component;
 import com.example.mova.components.EventThumbnailComponent;
@@ -23,6 +25,7 @@ import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
@@ -46,6 +49,9 @@ public class EventsFragment extends Fragment {
 
     @BindView(R.id.svEvents)
     SearchView svEvents;
+
+    @BindView(R.id.fabAdd)
+    FloatingActionButton fabAdd;
 
     @BindView(R.id.rvYourEvents) RecyclerView rvYourEvents;
     protected List<Event> yourEvents;
@@ -93,6 +99,14 @@ public class EventsFragment extends Fragment {
 
        LocationUtils.saveCurrentUserLocation(getContext());
         ParseGeoPoint userLocation = LocationUtils.getCurrentUserLocation();
+
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EventComposeActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
 
         yourEventsAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(),yourEvents) {
             @Override
