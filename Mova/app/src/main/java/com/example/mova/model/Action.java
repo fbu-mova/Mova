@@ -112,6 +112,4 @@ public class Action extends HashableParseObject {
         put(KEY_PARENT_USER, user);
         return this;
     }
-
-
 }

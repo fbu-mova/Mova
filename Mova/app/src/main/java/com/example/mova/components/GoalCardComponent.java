@@ -148,27 +148,37 @@ public class GoalCardComponent extends Component {
         viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
         viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
 
-        // get and render the actions
+        // get and render the actions -- use bool isPersonal and bool isUserInvolved
+        // fixme -- jank casework
+        if (isPersonal && (item.getAuthor() == (User) ParseUser.getCurrentUser())) {
+            // a personal goal that only the creator can see, should always be the case
 
-        actions = new ArrayList<>();
+            actions = new ArrayList<>();
 
-        actionsAdapter = new DataComponentAdapter<Action>(activity, actions) {
-            @Override
-            public Component makeComponent(Action item) {
-                Component component = new ActionComponent(item);
-                return component;
-            }
-        };
+            actionsAdapter = new DataComponentAdapter<Action>(activity, actions) {
+                @Override
+                public Component makeComponent(Action item) {
+                    Component component = new ActionComponent(item);
+                    return component;
+                }
+            };
 
-        viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
-        viewHolder.rvActions.setAdapter(actionsAdapter);
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
+            viewHolder.rvActions.setAdapter(actionsAdapter);
 
-        GoalUtils.loadGoalActions(item, (objects) -> {
-            updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
-        });
+            GoalUtils.loadGoalActions(item, (objects) -> {
+                updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
+            });
+        }
+        else if (!isPersonal && isUserInvolved) {
+            // a social goal that the user is involved in
+        }
+        else if (!isPersonal && !isUserInvolved) {
+            // a social goal the user is not involved in
+        }
+
 
         // FIXME -- for social goal, want to be able to see goals/their actions but can't check/alter.
-        //  need to pass info on when to restrict permissions of a goal ??? see loadGoalActions
     }
 
     private void updateAdapter(List<Action> objects, ArrayList<Action> actions, DataComponentAdapter actionsAdapter, RecyclerView rvActions) {
