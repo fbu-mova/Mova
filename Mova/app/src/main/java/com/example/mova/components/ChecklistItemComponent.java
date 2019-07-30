@@ -47,14 +47,6 @@ public abstract class ChecklistItemComponent<T> extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         if (holder != null) {
             return holder;
@@ -64,22 +56,40 @@ public abstract class ChecklistItemComponent<T> extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    protected void onLaunch() {
+
     }
 
     @Override
-    public void render() {
-        holder.cbItem.setText(getTitle.call(item));
-        holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
+        this.holder.cbItem.setText(getTitle.call(item));
+        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
                 onCheckedChanged(buttonView, isChecked));
-        holder.cbItem.setTextColor(uncheckedColor);
-        holder.cbItem.setChecked(getDone.call(item));
+        this.holder.cbItem.setTextColor(uncheckedColor);
+        this.holder.cbItem.setChecked(getDone.call(item));
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }
 
+    @Override
+    protected void onDestroy() {
+
+    }
+
     public abstract void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
+
+    @Override
+    public String getName() {
+        return "ChecklistItemComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
+    }
 
     public static class ViewHolder extends Component.ViewHolder {
 
@@ -91,13 +101,13 @@ public abstract class ChecklistItemComponent<T> extends Component {
         }
     }
 
-    @Override
-    public String getName() {
-        return "ChecklistItemComponent";
-    }
+    public static class Inflater extends Component.Inflater {
 
-    @Override
-    public void setManager(ComponentManager manager) {
-        componentManager = manager;
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new ViewHolder(view);
+        }
     }
 }

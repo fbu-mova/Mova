@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.utils.GoalUtils;
@@ -35,9 +36,10 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
     }
 
     @Override
-    public void render() {
-        super.render();
+    protected void onRender(Component.ViewHolder holder) {
+        super.onRender(holder);
 
+        // FIXME: Will this ever be called, given polymorphic structure? (adapters call the most generic component possible, I think)
         // todo -- implement icons
     }
 
