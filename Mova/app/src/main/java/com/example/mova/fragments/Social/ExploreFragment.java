@@ -7,9 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.PostComponent;
+import com.example.mova.model.Post;
+import com.parse.ParseQuery;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,16 +30,10 @@ import com.example.mova.R;
  * create an instance of this fragment.
  */
 public class ExploreFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    @BindView(R.id.clTest) protected ComponentLayout clTest;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -38,17 +42,12 @@ public class ExploreFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ExploreFragment.
      */
-    // TODO: Rename and change types and count of parameters
     public static ExploreFragment newInstance(String param1, String param2) {
         ExploreFragment fragment = new ExploreFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        // TODO: Add args
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,8 +56,7 @@ public class ExploreFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            // TODO: Add args
         }
     }
 
@@ -69,11 +67,23 @@ public class ExploreFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_explore, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+        ParseQuery<Post> query = new ParseQuery<>(Post.class);
+        query.setLimit(2);
+        query.orderByAscending(Post.KEY_CREATED_AT);
+        Post.includeAllPointers(query);
+
+        query.findInBackground((posts, e) -> {
+            PostComponent outer = new PostComponent(posts.get(0));
+            PostComponent inner = new PostComponent(posts.get(1));
+
+            clTest.inflateComponent((DelegatedResultActivity) getActivity(), outer);
+            outer.getViewHolder().clMedia.inflateComponent((DelegatedResultActivity) getActivity(), inner);
+        });
     }
 
     @Override

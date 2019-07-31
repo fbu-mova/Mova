@@ -205,12 +205,7 @@ public class SocialFeedFragment extends Fragment {
                 queries.add(userPostQuery);
                 queries.add(groupPostQuery);
                 ParseQuery<Post> compoundQuery = ParseQuery.or(queries);
-
-                compoundQuery.include(Post.KEY_MEDIA);
-                compoundQuery.include(Post.KEY_GROUP);
-                compoundQuery.include(Post.KEY_AUTHOR);
-                compoundQuery.include(Post.KEY_PARENT_POST);
-
+                Post.includeAllPointers(compoundQuery);
                 compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false);
                 compoundQuery.orderByDescending(Post.KEY_CREATED_AT);
                 compoundQuery.setLimit(50); // Arbitrarily higher limit for now because longer loading time to get to this point

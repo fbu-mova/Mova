@@ -249,7 +249,6 @@ public class PostComponent extends Component {
             holder.card.setOnClickListener((view) -> {
                 PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
                 FragmentManager manager = getActivity().getSupportFragmentManager();
-                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
                 FragmentTransaction ft = manager.beginTransaction();
                 ft.add(R.id.flSocialContainer, frag);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

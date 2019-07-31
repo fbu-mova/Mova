@@ -10,6 +10,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.json.JSONObject;
 import org.w3c.dom.Comment;
@@ -198,5 +199,14 @@ public class Post extends HashableParseObject {
                     }
                 }
         );
+    }
+
+    // Querying
+    public static void includeAllPointers(ParseQuery<Post> query) {
+        query.include(Post.KEY_AUTHOR);
+        query.include(Post.KEY_GROUP);
+        query.include(Post.KEY_MEDIA);
+        query.include(Post.KEY_PARENT_POST);
+        query.include(Post.KEY_LOCATION);
     }
 }
