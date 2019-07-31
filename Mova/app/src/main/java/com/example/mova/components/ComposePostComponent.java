@@ -85,6 +85,9 @@ public abstract class ComposePostComponent extends Component {
 
     @Override
     protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         displayToReplyTo();
         displayPostType();
         displayMedia();
