@@ -24,6 +24,7 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Post;
+import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.scrolling.EndlessScrollLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
 import com.parse.ParseQuery;
@@ -157,6 +158,10 @@ public class PostDetailsFragment extends Fragment {
                 return getDefaultColorScheme();
             }
         });
+
+        eslComments.addItemDecoration(new EdgeDecorator(32));
+
+        loadComments();
     }
 
     private void loadComments() {

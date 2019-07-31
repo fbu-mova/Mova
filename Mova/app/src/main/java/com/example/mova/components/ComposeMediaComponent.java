@@ -283,7 +283,7 @@ public abstract class ComposeMediaComponent extends Component {
     }
 
     private void returnMedia(Media media) {
-        destroy();
+        endCamera();
         onSelectMedia(media);
     }
 
