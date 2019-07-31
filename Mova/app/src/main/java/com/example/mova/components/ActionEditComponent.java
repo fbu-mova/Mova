@@ -80,7 +80,10 @@ public class ActionEditComponent extends Component {
             public void onClick(View v) {
                 // update this action with new text
                 String new_action = viewHolder.etAction.getText().toString();
-                GoalUtils.saveAction(action, new_action, (item) -> {
+
+                // fixme -- add case where editing personal version of a social goal,
+                //  so action saved, connected to SharedAction set to false, sharedAction not changed
+                GoalUtils.saveSharedAndAction(action, new_action, (item) -> {
                     Toast.makeText(activity, "Updated action", Toast.LENGTH_SHORT).show();
                 });
 

@@ -171,12 +171,37 @@ public class GoalCardComponent extends Component {
             });
         }
         else if (!isPersonal && isUserInvolved) {
-            // a social goal that the user is involved in
+            // a social goal that the user is involved in BUT user is not author
+
+            // fixme -- for now, social goals can't be edited from the cards.
+            // todo -- make it so creator can edit via goal details page ?
+
+            sharedActions = new ArrayList<>();
+
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction>(activity, sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction item) {
+                    // todo -- make component from sharedAction tasks
+                    return null;
+                }
+            };
+
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
+            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
         }
         else if (!isPersonal && !isUserInvolved) {
             // a social goal the user is not involved in
-        }
 
+            sharedActions = new ArrayList<>();
+
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction>(activity, sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction item) {
+                    // todo -- make component from sharedAction tasks but no checkbox
+                    return null;
+                }
+            };
+        }
 
         // FIXME -- for social goal, want to be able to see goals/their actions but can't check/alter.
     }

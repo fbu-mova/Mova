@@ -372,7 +372,13 @@ public class GoalUtils {
 
     }
 
-    public static void saveAction(Action action, String new_action, AsyncUtils.ItemCallback<Action> callback) {
+    /**
+     * Saves the action as well as updates the parent sharedAction.
+     * @param action Action
+     * @param new_action String
+     * @param callback
+     */
+    public static void saveSharedAndAction(Action action, String new_action, AsyncUtils.ItemCallback<Action> callback) {
         action.setTask(new_action);
 
         action.saveInBackground(new SaveCallback() {
@@ -380,7 +386,20 @@ public class GoalUtils {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "action saved successfully");
-                    callback.call(action);
+
+                    SharedAction sharedAction = action.getParentSharedAction();
+                    sharedAction.setTask(new_action).saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.d(TAG, "shared action saved");
+                                callback.call(action);
+                            }
+                            else {
+                                Log.e(TAG, "shared action failed saving", e);
+                            }
+                        }
+                    });
                 }
                 else {
                     Log.e(TAG, "action failed saving", e);
