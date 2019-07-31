@@ -124,7 +124,7 @@ public class ScrapbookFragment extends Fragment {
 
             @Override
             public int[] getColorScheme() {
-                return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                return getDefaultColorScheme();
             }
         });
 

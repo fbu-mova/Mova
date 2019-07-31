@@ -197,7 +197,7 @@ public class JournalFragment extends Fragment {
 
                 @Override
                 public int[] getColorScheme() {
-                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                    return ScrollLoadHandler.getDefaultColorScheme();
                 }
              }
         );
@@ -228,7 +228,7 @@ public class JournalFragment extends Fragment {
 
                 @Override
                 public int[] getColorScheme() {
-                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                    return getDefaultColorScheme();
                 }
             }
         );

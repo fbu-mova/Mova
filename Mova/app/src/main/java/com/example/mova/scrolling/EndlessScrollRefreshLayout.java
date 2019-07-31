@@ -96,6 +96,10 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         rvItems.setAdapter(handler.getAdapter());
     }
 
+    public void setNestedScrollingEnabled(boolean enabled) {
+        rvItems.setNestedScrollingEnabled(enabled);
+    }
+
     private int makeLayout(LayoutConfig config) {
         // FIXME: wrap_content doesn't work at all, and not because of the if statement
         int layoutId;
@@ -118,15 +122,6 @@ public class EndlessScrollRefreshLayout<VH extends RecyclerView.ViewHolder> exte
         }
 
         return layoutId;
-    }
-
-    public static int[] getDefaultColorScheme() {
-        return new int[] {
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light
-        };
     }
 
     public static class LayoutConfig {

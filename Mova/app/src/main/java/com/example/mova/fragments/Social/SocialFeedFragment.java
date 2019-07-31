@@ -150,7 +150,7 @@ public class SocialFeedFragment extends Fragment {
 
             @Override
             public int[] getColorScheme() {
-                return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                return getDefaultColorScheme();
             }
         });
 
