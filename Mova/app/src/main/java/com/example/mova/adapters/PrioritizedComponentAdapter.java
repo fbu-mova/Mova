@@ -10,7 +10,7 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.feed.PrioritizedComponent;
 
-public abstract class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
+public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
     private SortedList<PrioritizedComponent> components;
 
@@ -49,5 +49,7 @@ public abstract class PrioritizedComponentAdapter extends RecyclerView.Adapter<C
         notifyDataSetChanged();
     }
 
-    protected abstract Component.Inflater makeInflater(PrioritizedComponent prioritizedComponent);
+    protected Component.Inflater makeInflater(PrioritizedComponent prioritizedComponent) {
+        return prioritizedComponent.item.makeInflater();
+    }
 }

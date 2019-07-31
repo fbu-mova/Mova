@@ -10,7 +10,7 @@ import com.example.mova.component.Component;
 
 import java.util.List;
 
-public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
+public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
     private List<Component> components;
 
@@ -49,5 +49,7 @@ public abstract class ComponentAdapter extends RecyclerView.Adapter<Component.Vi
         notifyDataSetChanged();
     }
 
-    protected abstract Component.Inflater makeInflater(Component component);
+    protected Component.Inflater makeInflater(Component component) {
+        return component.makeInflater();
+    }
 }
