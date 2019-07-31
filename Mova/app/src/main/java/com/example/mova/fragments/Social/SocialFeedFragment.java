@@ -118,6 +118,11 @@ public class SocialFeedFragment extends Fragment {
         adapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), posts) {
             @Override
             public Component makeComponent(Post item, Component.ViewHolder holder) {
+                PostComponent.Config config = new PostComponent.Config();
+                config.onRepost = (savedPost) -> {
+                    posts.add(savedPost);
+                    adapter.notifyItemInserted(posts.size() - 1);
+                };
                 return new PostComponent(item);
             }
 

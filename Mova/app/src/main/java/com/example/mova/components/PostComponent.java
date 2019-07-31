@@ -30,6 +30,7 @@ import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseQuery;
 
@@ -189,6 +190,7 @@ public class PostComponent extends Component {
                     @Override
                     protected void onPost(PostConfig config) {
                         config.savePost((savedPost) -> {
+                            PostComponent.this.config.onRepost.call(savedPost);
                         });
                     }
                 };
@@ -209,6 +211,7 @@ public class PostComponent extends Component {
                     @Override
                     protected void onPost(PostConfig config) {
                         config.savePost((savedPost) -> {
+                            PostComponent.this.config.onReply.call(savedPost);
                         });
                     }
                 };
@@ -303,6 +306,7 @@ public class PostComponent extends Component {
         public String subheader = null;
         public boolean showButtons = true;
         public boolean allowDetailsClick = true;
+        public AsyncUtils.ItemCallback<Post> onReply, onRepost;
 
         public Config() { }
 

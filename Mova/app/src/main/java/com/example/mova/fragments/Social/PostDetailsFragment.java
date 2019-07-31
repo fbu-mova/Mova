@@ -122,6 +122,11 @@ public class PostDetailsFragment extends Fragment {
         adapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), comments) {
             @Override
             protected Component makeComponent(Post item, Component.ViewHolder holder) {
+                PostComponent.Config config = new PostComponent.Config();
+                config.onReply = (savedPost) -> {
+                    comments.add(savedPost);
+                    adapter.notifyItemInserted(comments.size() - 1);
+                };
                 return new PostComponent(item);
             }
 
