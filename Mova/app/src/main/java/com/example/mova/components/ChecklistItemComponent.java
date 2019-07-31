@@ -54,6 +54,11 @@ public abstract class ChecklistItemComponent<T> extends Component {
     }
 
     @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
     protected void onLaunch() {
 
     }

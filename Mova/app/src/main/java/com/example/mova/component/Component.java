@@ -129,7 +129,9 @@ public abstract class Component {
 
     /**
      * Responsible for creating all elements necessary for the creation of a component.
-     * If any logic is required to determine which kind of layout to use, etc., it should be done here.
+     * If any logic is required to determine which kind of layout to use, etc., it should be done
+     * here, ideally in a constructor or factory method. As a result, classes wrapping generic
+     * components should request inflater factories (see adapters for an example).
      */
     public static abstract class Inflater {
         /**

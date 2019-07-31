@@ -46,6 +46,11 @@ public class ProgressGridMoodComponent extends Component {
     }
 
     @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
     public String getName() {
         return "ProgressGridMoodComponent";
     }

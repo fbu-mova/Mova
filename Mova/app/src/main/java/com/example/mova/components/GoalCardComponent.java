@@ -68,6 +68,11 @@ public class GoalCardComponent extends Component {
     }
 
     @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
     public String getName() {
         return "GoalCardComponent";
     }

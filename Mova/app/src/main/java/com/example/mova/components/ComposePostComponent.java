@@ -64,6 +64,11 @@ public abstract class ComposePostComponent extends Component {
     }
 
     @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
     public String getName() {
         return "ComposePostDialog";
     }

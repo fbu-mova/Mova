@@ -54,6 +54,11 @@ public class ProfileFriendComponent extends Component{
     }
 
     @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
     public String getName() {
         return "ProfileFriendComponent";
     }

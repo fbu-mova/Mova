@@ -94,6 +94,11 @@ public abstract class TomorrowFocusPromptComponent extends Component {
     }
 
     @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
     protected void onLaunch() {
 
     }

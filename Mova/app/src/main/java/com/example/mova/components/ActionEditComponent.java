@@ -60,6 +60,11 @@ public class ActionEditComponent extends Component {
     }
 
     @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
     protected void onLaunch() {
 
     }
