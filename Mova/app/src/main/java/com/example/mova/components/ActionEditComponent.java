@@ -28,9 +28,7 @@ public class ActionEditComponent extends Component {
     private static final String TAG = "action edit comp";
 
     private Action action;
-    private View view;
     private ActionEditViewHolder viewHolder;
-    private DelegatedResultActivity activity;
 
     private ComponentManager componentManager;
 
@@ -101,7 +99,7 @@ public class ActionEditComponent extends Component {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "action saved successfully");
-                    Toast.makeText(activity, "Updated action", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Log.e(TAG, "action failed saving", e);

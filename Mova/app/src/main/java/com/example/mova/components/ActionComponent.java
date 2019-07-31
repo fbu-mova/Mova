@@ -23,9 +23,7 @@ public class ActionComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_action;
 
     private Action item;
-    private View view;
     private ViewHolder viewHolder;
-    private DelegatedResultActivity activity;
 
     private ActionViewComponent viewComponent;
     private ActionEditComponent editComponent;
@@ -67,7 +65,7 @@ public class ActionComponent extends Component {
             @Override
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
                 viewHolder.component.clear();
-                viewHolder.component.inflateComponent(activity, toComponent);
+                viewHolder.component.inflateComponent(getActivity(), toComponent);
 
                 if (toKey.equals(editComponent.getName())) {
                     ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
@@ -88,7 +86,7 @@ public class ActionComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.viewHolder = (ViewHolder) holder;
 
-        viewHolder.component.inflateComponent(activity, viewComponent);
+        viewHolder.component.inflateComponent(getActivity(), viewComponent);
 
         viewHolder.component.setOnClickListener(new View.OnClickListener() {
             @Override
