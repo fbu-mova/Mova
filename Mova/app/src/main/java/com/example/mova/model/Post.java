@@ -141,10 +141,6 @@ public class Post extends HashableParseObject {
     }
 
     public void savePost(PostConfig config, AsyncUtils.ItemCallback<Post> callback) {
-        if (!this.equals(config.post)) {
-            throw new IllegalArgumentException("The provided PostConfig must be on the same post as that which is being saved.");
-        }
-
         // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
         AsyncUtils.executeMany(
                 config.tags.size(),
