@@ -44,6 +44,13 @@ public abstract class Component {
     public abstract void setManager(ComponentManager manager);
 
     /**
+     * Serves as a factory for creating correctly typed inflaters.
+     * Should return the same inflater otherwise statically created.
+     * @return The correctly typed inflater for the component.
+     */
+    public abstract Inflater makeInflater();
+
+    /**
      * Runs any activity-related setup required for a component to be rendered.
      * @param activity The activity in which to set up the component.
      */

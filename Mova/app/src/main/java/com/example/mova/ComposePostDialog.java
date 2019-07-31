@@ -50,7 +50,7 @@ public abstract class ComposePostDialog {
             @Override
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
                 container.clear();
-                container.inflateComponent(activity, toComponent);
+                container.inflateComponent(activity, toComponent, toComponent.makeInflater());
 
                 // Pass media to compose component if any media exists
                 if (toKey.equals(composeComponent.getName()) && postConfig.media != null) {
