@@ -172,11 +172,19 @@ public class PostDetailsFragment extends Fragment {
 
     private void loadMoreComments() {
         ParseQuery<Post> query = post.relComments.getQuery();
+
+        query.include(Post.KEY_MEDIA);
+        query.include(Post.KEY_PARENT_POST);
+        query.include(Post.KEY_AUTHOR);
+        query.include(Post.KEY_GROUP);
+        query.include(Post.KEY_LOCATION);
+
         query.orderByDescending(Post.KEY_CREATED_AT);
         query.setLimit(20);
         if (comments.size() > 0) {
             query.whereLessThan(Post.KEY_CREATED_AT, comments.get(comments.size() - 1));
         }
+
         query.findInBackground((queriedComments, e) -> {
             if (e != null) {
                 hideComments();

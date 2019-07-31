@@ -191,7 +191,7 @@ public abstract class ComposeMediaComponent extends Component {
                 }
             });
 
-            holder.esrlScrapbook.addItemDecoration(new EdgeDecorator(32));
+            holder.esrlScrapbook.addItemDecoration(new EdgeDecorator(32, 0, 32, 32));
         }
 
         loadScrapbookPosts();
