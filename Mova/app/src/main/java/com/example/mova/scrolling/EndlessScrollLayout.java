@@ -81,6 +81,10 @@ public class EndlessScrollLayout<VH extends RecyclerView.ViewHolder> extends Fra
         rvItems.setNestedScrollingEnabled(enabled);
     }
 
+    public void scrollToPosition(int position) {
+        rvItems.scrollToPosition(position);
+    }
+
     private int makeLayout(LayoutConfig config) {
         // FIXME: wrap_content doesn't work at all, and not because of the if statement
         int layoutId;

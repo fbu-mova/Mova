@@ -74,7 +74,7 @@ public class ExploreFragment extends Fragment {
 
         ParseQuery<Post> query = new ParseQuery<>(Post.class);
         query.setLimit(2);
-        query.orderByAscending(Post.KEY_CREATED_AT);
+        query.orderByDescending(Post.KEY_CREATED_AT);
         Post.includeAllPointers(query);
 
         query.findInBackground((posts, e) -> {

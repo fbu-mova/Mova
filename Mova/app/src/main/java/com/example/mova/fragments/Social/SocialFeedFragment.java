@@ -103,11 +103,7 @@ public class SocialFeedFragment extends Fragment {
 
                 @Override
                 protected void onPost(PostConfig config) {
-                    config.post.savePost(config, (savedPost) -> {
-                        // FIXME: Enable once posts are fixed
-//                        posts.add(0, savedPost);
-//                        adapter.notifyItemInserted(0);
-                    });
+                    config.post.savePost(config, (savedPost) -> addPost(savedPost));
                 }
             };
             dialog.show();
@@ -119,10 +115,7 @@ public class SocialFeedFragment extends Fragment {
             @Override
             public Component makeComponent(Post item, Component.ViewHolder holder) {
                 PostComponent.Config config = new PostComponent.Config();
-                config.onRepost = (savedPost) -> {
-                    posts.add(savedPost);
-                    adapter.notifyItemInserted(posts.size() - 1);
-                };
+                config.onRepost = (savedPost) -> addPost(savedPost);
                 return new PostComponent(item);
             }
 
@@ -162,6 +155,12 @@ public class SocialFeedFragment extends Fragment {
         esrlPosts.addItemDecoration(new EdgeDecorator(32));
 
         loadPosts();
+    }
+
+    private void addPost(Post post) {
+        posts.add(0, post);
+        adapter.notifyItemInserted(0);
+        esrlPosts.scrollToPosition(0);
     }
 
     private void loadPosts() {
