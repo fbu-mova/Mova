@@ -1,7 +1,9 @@
 package com.example.mova.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
@@ -87,6 +89,9 @@ public class EventComposeActivity extends AppCompatActivity {
     @BindView(R.id.btnOpenMap)
     Button btnOpenMap;
 
+    @BindView(R.id.btnDeleteEvent)
+    Button btnDeleteEvent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -101,12 +106,37 @@ public class EventComposeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         boolChangedLocation = false;
         boolChangeDate = false;
+        btnDeleteEvent.setVisibility(View.GONE);
 
         if(intent.getParcelableExtra("event") == null){
             event = new Event();
         }else{
             event = intent.getParcelableExtra("event");
+            btnDeleteEvent.setVisibility(View.VISIBLE);
 
+            btnDeleteEvent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EventComposeActivity.this);
+                    builder.setMessage("Are you sure you want to delete this event?")
+                    .setTitle("Delete")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            event.deleteInBackground();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+            });
             //Add Image
             ParseFile file = event.getEventPic();
             if(file != null){
