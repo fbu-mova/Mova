@@ -142,7 +142,14 @@ public abstract class Component {
         public abstract ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot);
     }
 
-    protected static void checkViewHolderClass(ViewHolder holder, Class klass) throws ClassCastException {
+    /**
+     * Checks whether the provided holder is of the correct ViewHolder class.
+     * If not, throws an exception.
+     * @param holder The ViewHolder to check.
+     * @param klass  The correct ViewHolder class.
+     * @throws ClassCastException Throws if the holder is not of the correct class.
+     */
+    public static void checkViewHolderClass(ViewHolder holder, Class klass) throws ClassCastException {
         if (holder.getClass() != klass) {
             throw new ClassCastException("Provided ViewHolder is of invalid type. Expected " + MediaImageComponent.ViewHolder.class.getCanonicalName() + ", received " + holder.getClass().getCanonicalName());
         }

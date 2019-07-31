@@ -91,8 +91,13 @@ public class ScrapbookFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         adapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), posts) {
             @Override
-            public Component makeComponent(Post item) {
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
                 return new PostComponent(item);
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new PostComponent.Inflater();
             }
         };
 

@@ -142,18 +142,28 @@ public class JournalFragment extends Fragment {
         // On date click, display only the entries for that date
         dateAdapter = new SortedDataComponentAdapter<Date>((DelegatedResultActivity) getActivity(), journal.getDates()) {
             @Override
-            public Component makeComponent(Date item) {
+            public Component makeComponent(Date item, Component.ViewHolder holder) {
                 return new DatePickerComponent(item, (view, date) -> {
                     currDate = date;
                     displayEntries(currDate);
                 });
             }
+
+            @Override
+            protected Component.Inflater makeInflater(Date item) {
+                return new DatePickerComponent.Inflater();
+            }
         };
 
         entryAdapter = new SortedDataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate)) {
             @Override
-            public Component makeComponent(Post item) {
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
                 return new JournalEntryComponent(item);
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new JournalEntryComponent.Inflater();
             }
         };
 

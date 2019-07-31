@@ -204,19 +204,6 @@ public class Media extends HashableParseObject {
         }
     }
 
-    public Component.Inflater makeComponentInflater() {
-        switch (getType()) {
-            case Text:
-                return new MediaImageComponent.Inflater();
-            case Image:
-                return new MediaTextComponent.Inflater();
-            case Post:
-                return new PostComponent.Inflater();
-            default:
-                return null;
-        }
-    }
-
     public static enum ContentType {
         Text(0),
         Post(1),

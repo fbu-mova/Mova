@@ -120,24 +120,39 @@ public class ProgressFragment extends Fragment {
 
         goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new ProgressGoalComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new ProgressGoalComponent.Inflater();
             }
         };
         goalsWorkAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new ProgressGoalComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new ProgressGoalComponent.Inflater();
             }
         };
 
         gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
             @Override
-            public Component makeComponent(Mood.Status item) {
+            public Component makeComponent(Mood.Status item, Component.ViewHolder holder) {
                 Component component = new ProgressGridMoodComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Mood.Status item) {
+                return new ProgressGridMoodComponent.Inflater();
             }
         };
 

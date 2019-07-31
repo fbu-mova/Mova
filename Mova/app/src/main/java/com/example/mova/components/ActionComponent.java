@@ -67,7 +67,7 @@ public class ActionComponent extends Component {
             @Override
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
                 viewHolder.component.clear();
-                viewHolder.component.inflateComponent(activity, toComponent, new Inflater());
+                viewHolder.component.inflateComponent(activity, toComponent);
 
                 if (toKey.equals(editComponent.getName())) {
                     ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
@@ -88,7 +88,7 @@ public class ActionComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.viewHolder = (ViewHolder) holder;
 
-        viewHolder.component.inflateComponent(activity, viewComponent, new Inflater());
+        viewHolder.component.inflateComponent(activity, viewComponent);
 
         viewHolder.component.setOnClickListener(new View.OnClickListener() {
             @Override

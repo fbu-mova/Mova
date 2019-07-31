@@ -106,9 +106,14 @@ public class EventDetailsFragment extends Fragment {
 
         eventCommentsAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), eventComments) {
             @Override
-            public Component makeComponent(Post item) {
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
                 Component component = new PostComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new PostComponent.Inflater();
             }
         };
 

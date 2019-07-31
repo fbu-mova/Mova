@@ -109,7 +109,7 @@ public abstract class ComposePostComponent extends Component {
             PostComponent postComponent = new PostComponent(postConfig.postToReply);
             holder.flReplyContent.setVisibility(View.VISIBLE);
             holder.clPostToReply.setMargin(32);
-            holder.clPostToReply.inflateComponent(getActivity(), postComponent, new PostComponent.Inflater());
+            holder.clPostToReply.inflateComponent(getActivity(), postComponent);
             postComponent.hideButtons();
         }
     }
@@ -177,13 +177,12 @@ public abstract class ComposePostComponent extends Component {
     private void displayMedia() {
         // FIXME: Should media be fetched in background if needed?
         Component mediaComponent = (postConfig.media == null) ? null : postConfig.media.makeComponent();
-        Component.Inflater mediaInflater = (postConfig.media == null) ? null : postConfig.media.makeComponentInflater();
-        if (mediaComponent == null || mediaInflater == null) {
+        if (mediaComponent == null) {
             holder.llAddMedia.setVisibility(View.VISIBLE);
             holder.clMedia.clear();
         } else {
             holder.llAddMedia.setVisibility(View.GONE);
-            holder.clMedia.inflateComponent(getActivity(), mediaComponent, mediaInflater);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         }
     }
 

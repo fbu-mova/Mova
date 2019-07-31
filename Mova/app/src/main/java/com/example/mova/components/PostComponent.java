@@ -116,12 +116,11 @@ public class PostComponent extends Component {
     private void displayMedia() {
         Media media = post.getMedia();
         Component mediaComponent = (media == null) ? null : media.makeComponent();
-        Component.Inflater mediaInflater = (media == null) ? null : media.makeComponentInflater();
-        if (mediaComponent == null || mediaInflater == null) {
+        if (mediaComponent == null) {
             holder.clMedia.setVisibility(View.GONE);
         } else {
             holder.clMedia.setVisibility(View.VISIBLE);
-            holder.clMedia.inflateComponent(getActivity(), mediaComponent, mediaInflater);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         }
     }
 

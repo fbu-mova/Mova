@@ -100,11 +100,10 @@ public class JournalEntryComponent extends Component {
     private void displayMedia() {
         Media media = entry.getMedia();
         Component mediaComponent = (media == null) ? null : media.makeComponent();
-        Component.Inflater mediaInflater = (media == null) ? null : media.makeComponentInflater();
         holder.clMedia.clear();
         if (mediaComponent != null) {
             holder.clMedia.setMarginTop(16).setMarginBottom(16);
-            holder.clMedia.inflateComponent(getActivity(), mediaComponent, mediaInflater);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         }
     }
 

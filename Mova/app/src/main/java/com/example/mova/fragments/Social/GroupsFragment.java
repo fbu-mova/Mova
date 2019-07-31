@@ -93,20 +93,29 @@ public class GroupsFragment extends Fragment {
         userGroups = new ArrayList<>();
         userActiveSocialGoals = new ArrayList<>();
 
-
         groupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
-            public Component makeComponent(Group item) {
+            public Component makeComponent(Group item, Component.ViewHolder holder) {
                 Component component = new GroupThumbnailComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Group item) {
+                return new GroupThumbnailComponent.Inflater();
             }
         };
 
         activeGoalAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), userActiveSocialGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new GoalCardComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new GoalCardComponent.Inflater();
             }
         };
 

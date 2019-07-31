@@ -97,10 +97,14 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
         actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
             @Override
-            public Component makeComponent(Action item) {
-
+            public Component makeComponent(Action item, Component.ViewHolder holder) {
                 Component component = new ActionComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Action item) {
+                return new ActionComponent.Inflater();
             }
         };
 

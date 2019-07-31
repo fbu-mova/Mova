@@ -142,25 +142,40 @@ public class ProfileFragment extends Fragment {
 
         userGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
-            public Component makeComponent(Group item) {
+            public Component makeComponent(Group item, Component.ViewHolder holder) {
                 Component component = new ProfileGroupComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Group item) {
+                return new ProfileGroupComponent.Inflater();
             }
         };
 
         userFriendAdapter = new DataComponentAdapter<User>((DelegatedResultActivity) getActivity(), userFriends) {
             @Override
-            public Component makeComponent(User item) {
+            public Component makeComponent(User item, Component.ViewHolder holder) {
                 Component component = new ProfileFriendComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(User item) {
+                return new ProfileFriendComponent.Inflater();
             }
         };
 
         showMoreGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
-            public Component makeComponent(Group item) {
+            public Component makeComponent(Group item, Component.ViewHolder holder) {
                 Component component = new ProfileShowMoreGroupsComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Group item) {
+                return new ProfileShowMoreGroupsComponent.Inflater();
             }
         };
 
