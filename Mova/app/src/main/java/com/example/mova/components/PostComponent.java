@@ -306,7 +306,8 @@ public class PostComponent extends Component {
         public String subheader = null;
         public boolean showButtons = true;
         public boolean allowDetailsClick = true;
-        public AsyncUtils.ItemCallback<Post> onReply, onRepost;
+        public AsyncUtils.ItemCallback<Post> onReply = (post) -> {};
+        public AsyncUtils.ItemCallback<Post> onRepost = (post) -> {};
 
         public Config() { }
 
