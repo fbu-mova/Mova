@@ -34,6 +34,7 @@ import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
+import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
 import com.example.mova.utils.ImageUtils;
@@ -152,7 +153,7 @@ public abstract class ComposeMediaComponent extends Component {
         scrapbookAdapter = new DataComponentAdapter<Post>(getActivity(), scrapbookPosts) {
             @Override
             protected Component makeComponent(Post item, Component.ViewHolder holder) {
-                return new PostComponent(item);
+                return new PostComponent(item, false);
             }
 
             @Override
@@ -161,9 +162,9 @@ public abstract class ComposeMediaComponent extends Component {
             }
         };
 
-        this.holder.llScrapbook.setVisibility(View.GONE);
+        holder.llScrapbook.setVisibility(View.GONE);
         if (!imagesOnly) {
-            this.holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
+            holder.esrlScrapbook.init(new ScrollLoadHandler<Component.ViewHolder>() {
                 @Override
                 public void load() {
                     loadScrapbookPosts();
@@ -189,7 +190,11 @@ public abstract class ComposeMediaComponent extends Component {
                     return EndlessScrollRefreshLayout.getDefaultColorScheme();
                 }
             });
+
+            holder.esrlScrapbook.addItemDecoration(new EdgeDecorator(32));
         }
+
+        loadScrapbookPosts();
     }
 
     private void loadScrapbookPosts() {

@@ -33,18 +33,27 @@ public class PostComponent extends Component {
 
     private Post post;
     private String subheader;
+    private boolean showButtons;
 
     private ViewHolder holder;
     private ComponentManager componentManager;
 
     public PostComponent(Post post) {
-        this.post = post;
-        this.subheader = null;
+        this(post, null, true);
     }
 
     public PostComponent(Post post, String subheader) {
+        this(post, subheader, true);
+    }
+
+    public PostComponent(Post post, boolean showButtons) {
+        this(post, null, showButtons);
+    }
+
+    public PostComponent(Post post, String subheader, boolean showButtons) {
         this.post = post;
         this.subheader = subheader;
+        this.showButtons = showButtons;
     }
 
     @Override
@@ -158,75 +167,81 @@ public class PostComponent extends Component {
         }
     }
 
-    public void showButtons() {
+    private void showButtons() {
         holder.llButtons.setVisibility(View.VISIBLE);
     }
 
-    public void hideButtons() {
+    private void hideButtons() {
         holder.llButtons.setVisibility(View.GONE);
     }
 
     private void configureButtons() {
-        showButtons();
+        if (showButtons) {
+            showButtons();
 
-        holder.ivRepost.setOnClickListener((view) -> {
-            PostConfig config = new PostConfig();
-            config.media = new Media(post);
+            holder.ivRepost.setOnClickListener((view) -> {
+                PostConfig config = new PostConfig();
+                config.media = new Media(post);
 
-            ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
-                @Override
-                protected void onCancel() {
+                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
+                    @Override
+                    protected void onCancel() {
 
-                }
+                    }
 
-                @Override
-                protected void onPost(PostConfig config) {
-                    config.savePost((savedPost) -> {});
-                }
-            };
+                    @Override
+                    protected void onPost(PostConfig config) {
+                        config.savePost((savedPost) -> {
+                        });
+                    }
+                };
 
-            dialog.show();
-        });
-
-        holder.ivReply.setOnClickListener((view) -> {
-            PostConfig config = new PostConfig();
-            config.postToReply = post;
-
-            ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
-                @Override
-                protected void onCancel() {
-
-                }
-
-                @Override
-                protected void onPost(PostConfig config) {
-                    config.savePost((savedPost) -> {});
-                }
-            };
-
-            dialog.show();
-        });
-
-        holder.ivSave.setOnClickListener((view) -> {
-            ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
-            query.whereEqualTo(Post.KEY_ID, post.getObjectId());
-            query.findInBackground((posts, e) -> {
-                if (e != null) {
-                    Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
-                    Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
-                } else if (posts.size() == 0) {
-                    User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
-                        Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
-                        // TODO: Update icon
-                    });
-                } else {
-                    User.getCurrentUser().relScrapbook.remove(post, () -> {
-                        Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
-                        // TODO: Update icon
-                    });
-                }
+                dialog.show();
             });
-        });
+
+            holder.ivReply.setOnClickListener((view) -> {
+                PostConfig config = new PostConfig();
+                config.postToReply = post;
+
+                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
+                    @Override
+                    protected void onCancel() {
+
+                    }
+
+                    @Override
+                    protected void onPost(PostConfig config) {
+                        config.savePost((savedPost) -> {
+                        });
+                    }
+                };
+
+                dialog.show();
+            });
+
+            holder.ivSave.setOnClickListener((view) -> {
+                ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
+                query.whereEqualTo(Post.KEY_ID, post.getObjectId());
+                query.findInBackground((posts, e) -> {
+                    if (e != null) {
+                        Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
+                        Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
+                    } else if (posts.size() == 0) {
+                        User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
+                            Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
+                            // TODO: Update icon
+                        });
+                    } else {
+                        User.getCurrentUser().relScrapbook.remove(post, () -> {
+                            Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
+                            // TODO: Update icon
+                        });
+                    }
+                });
+            });
+        } else {
+            hideButtons();
+        }
     }
 
     private void configurePostClick() {
