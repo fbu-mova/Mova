@@ -153,7 +153,7 @@ public abstract class ComposeMediaComponent extends Component {
         scrapbookAdapter = new DataComponentAdapter<Post>(getActivity(), scrapbookPosts) {
             @Override
             protected Component makeComponent(Post item, Component.ViewHolder holder) {
-                return new PostComponent(item, false);
+                return new PostComponent(item, new PostComponent.Config(null, false, true));
             }
 
             @Override
@@ -187,7 +187,7 @@ public abstract class ComposeMediaComponent extends Component {
 
                 @Override
                 public int[] getColorScheme() {
-                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                    return ScrollLoadHandler.getDefaultColorScheme();
                 }
             });
 

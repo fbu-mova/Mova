@@ -4,13 +4,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mova.ComposePostDialog;
 import com.example.mova.PostConfig;
@@ -19,6 +24,8 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.fragments.Social.PostDetailsFragment;
+import com.example.mova.fragments.Social.SocialProfileFragment;
 import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
@@ -32,28 +39,18 @@ import butterknife.ButterKnife;
 public class PostComponent extends Component {
 
     private Post post;
-    private String subheader;
-    private boolean showButtons;
+    private Config config;
 
     private ViewHolder holder;
     private ComponentManager componentManager;
 
     public PostComponent(Post post) {
-        this(post, null, true);
+        this(post, new Config());
     }
 
-    public PostComponent(Post post, String subheader) {
-        this(post, subheader, true);
-    }
-
-    public PostComponent(Post post, boolean showButtons) {
-        this(post, null, showButtons);
-    }
-
-    public PostComponent(Post post, String subheader, boolean showButtons) {
+    public PostComponent(Post post, Config config) {
         this.post = post;
-        this.subheader = subheader;
-        this.showButtons = showButtons;
+        this.config = config;
     }
 
     @Override
@@ -159,11 +156,11 @@ public class PostComponent extends Component {
 
     private void displaySubheader() {
         // TODO: Maybe a more extensive check for whether subheader is all whitespace?
-        if (subheader == null || subheader.equals("")) {
+        if (config.subheader == null || config.subheader.equals("")) {
             holder.tvSubheader.setVisibility(View.GONE);
         } else {
             holder.tvSubheader.setVisibility(View.VISIBLE);
-            holder.tvSubheader.setText(subheader);
+            holder.tvSubheader.setText(config.subheader);
         }
     }
 
@@ -176,7 +173,7 @@ public class PostComponent extends Component {
     }
 
     private void configureButtons() {
-        if (showButtons) {
+        if (config.showButtons) {
             showButtons();
 
             holder.ivRepost.setOnClickListener((view) -> {
@@ -245,9 +242,18 @@ public class PostComponent extends Component {
     }
 
     private void configurePostClick() {
-        holder.card.setOnClickListener((view) -> {
-            // TODO: Go to details view
-        });
+        if (config.allowDetailsClick) {
+            holder.card.setOnClickListener((view) -> {
+                PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+                FragmentTransaction ft = manager.beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            });
+        }
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -290,6 +296,20 @@ public class PostComponent extends Component {
             LayoutInflater inflater = activity.getLayoutInflater();
             View view = inflater.inflate(R.layout.component_post, parent, attachToRoot);
             return new ViewHolder(view);
+        }
+    }
+
+    public static class Config {
+        public String subheader = null;
+        public boolean showButtons = true;
+        public boolean allowDetailsClick = true;
+
+        public Config() { }
+
+        public Config(String subheader, boolean showButtons, boolean allowDetailsClick) {
+            this.subheader = subheader;
+            this.showButtons = showButtons;
+            this.allowDetailsClick = allowDetailsClick;
         }
     }
 }
