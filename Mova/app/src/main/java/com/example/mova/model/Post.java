@@ -141,6 +141,10 @@ public class Post extends HashableParseObject {
     }
 
     public void savePost(PostConfig config, AsyncUtils.ItemCallback<Post> callback) {
+        if (!this.equals(config.post)) {
+            throw new IllegalArgumentException("The provided PostConfig must be on the same post as that which is being saved.");
+        }
+
         // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
         AsyncUtils.executeMany(
                 config.tags.size(),
@@ -165,8 +169,20 @@ public class Post extends HashableParseObject {
                         if (e != null) {
                             Log.e("User", "Failed to save entry", e);
                         } else {
-                            if (config.postToReply != null) this.setParent(config.postToReply);
-                            callback.call(this);
+                            // Save as reply if reply
+                            if (config.postToReply != null) {
+                                this.setParent(config.postToReply);
+                                config.postToReply.relComments.add(this);
+                                config.postToReply.saveInBackground((e1) -> {
+                                    if (e1 != null) {
+                                        Log.e("User", "Failed to save postToReply", e);
+                                    } else {
+                                        callback.call(this);
+                                    }
+                                });
+                            } else {
+                                callback.call(this);
+                            }
                         }
                     });
 
