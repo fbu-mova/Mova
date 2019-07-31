@@ -67,7 +67,7 @@ public class ProgressGridMoodComponent extends Component {
 
     @Override
     protected void onRender(ViewHolder holder) {
-        checkViewHolderClass(holder, ProgressGridMoodComponent.class);
+        checkViewHolderClass(holder, ProgressGridViewHolder.class);
         viewHolder = (ProgressGridViewHolder) holder;
 
 //        if(viewHolder == null){

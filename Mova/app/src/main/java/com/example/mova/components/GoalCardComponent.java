@@ -150,7 +150,7 @@ public class GoalCardComponent extends Component {
 
             @Override
             protected Component.Inflater makeInflater(Action item) {
-                return new Inflater();
+                return new ActionComponent.Inflater();
             }
         };
 

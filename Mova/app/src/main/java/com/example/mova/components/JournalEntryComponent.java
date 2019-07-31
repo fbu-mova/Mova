@@ -153,7 +153,7 @@ public class JournalEntryComponent extends Component {
 
                     @Override
                     protected Component.Inflater makeInflater(Post item) {
-                        return new Inflater();
+                        return new JournalResponseComponent.Inflater();
                     }
                 };
 

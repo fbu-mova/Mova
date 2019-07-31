@@ -123,7 +123,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
 
             @Override
             protected Component.Inflater makeInflater(Goal item) {
-                return null;
+                return new ChecklistItemComponent.Inflater();
             }
         };
         this.holder.rvGoals.setAdapter(adapter);

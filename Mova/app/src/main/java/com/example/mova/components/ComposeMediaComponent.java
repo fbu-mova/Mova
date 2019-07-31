@@ -157,7 +157,7 @@ public abstract class ComposeMediaComponent extends Component {
 
             @Override
             protected Component.Inflater makeInflater(Post item) {
-                return new Inflater();
+                return new PostComponent.Inflater();
             }
         };
 

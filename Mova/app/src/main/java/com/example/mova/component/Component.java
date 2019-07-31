@@ -56,7 +56,7 @@ public abstract class Component {
      */
     public void launch(DelegatedResultActivity activity) {
         // Destroy component on active activity if activities differ
-        if (!this.activity.equals(activity)) {
+        if (this.activity != null && !this.activity.equals(activity)) {
             onDestroy();
             isActive = false;
         }
@@ -151,7 +151,7 @@ public abstract class Component {
      */
     public static void checkViewHolderClass(ViewHolder holder, Class klass) throws ClassCastException {
         if (holder.getClass() != klass) {
-            throw new ClassCastException("Provided ViewHolder is of invalid type. Expected " + MediaImageComponent.ViewHolder.class.getCanonicalName() + ", received " + holder.getClass().getCanonicalName());
+            throw new ClassCastException("Provided ViewHolder is of invalid type. Expected " + klass.getCanonicalName() + ", received " + holder.getClass().getCanonicalName() + ".");
         }
     }
 }
