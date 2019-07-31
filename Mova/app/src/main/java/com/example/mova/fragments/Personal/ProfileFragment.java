@@ -50,6 +50,7 @@ import butterknife.ButterKnife;
 public class ProfileFragment extends Fragment {
 
     @BindView(R.id.btnLogout) protected Button btnLogout;
+    @BindView(R.id.btnEditProfile) protected Button btnEditProfile;
     @BindView(R.id.tvUsername) protected TextView tvUsername;
     @BindView(R.id.tvDescription) protected TextView tvDesciption;
     @BindView(R.id.tvShowGroups) protected TextView tvShowGroups;
@@ -139,6 +140,15 @@ public class ProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
+        //Todo - implement profile edit
+
+//        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                EditProfileDialog dialog = new EditProfileDialog();
+//                dialog.show();
+//            }
+//        });
 
         userGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
