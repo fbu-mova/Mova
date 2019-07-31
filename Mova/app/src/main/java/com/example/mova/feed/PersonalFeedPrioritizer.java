@@ -123,7 +123,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                 }
         }));
 
-        if (true) { // now.compareTo(eveningStart) >= 0) {
+        if (now.compareTo(eveningStart) >= 0) {
             asyncActions.add((i, cb) -> {
                 TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent(0, 5) {
                     @Override

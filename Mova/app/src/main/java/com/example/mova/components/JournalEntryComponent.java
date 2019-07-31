@@ -160,11 +160,13 @@ public class JournalEntryComponent extends Component {
                 holder.rvComments.setLayoutManager(new LinearLayoutManager(getActivity()));
                 holder.rvComments.setAdapter(commentAdapter);
 
-                showCommentsToggle();
-                holder.sComments.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-                    if (isChecked) showComments();
-                    else           hideComments();
-                });
+                if (comments.size() > 0) {
+                    showCommentsToggle();
+                    holder.sComments.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+                        if (isChecked) showComments();
+                        else hideComments();
+                    });
+                }
             }
         });
     }
