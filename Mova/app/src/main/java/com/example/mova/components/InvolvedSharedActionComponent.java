@@ -5,7 +5,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,9 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static com.example.mova.model.Action.KEY_PARENT_USER;
 
@@ -54,7 +59,18 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
 
     @Override
     public void render() {
+        holder.cbItem.setText(sharedAction.getTask());
 
+        int complete = sharedAction.getUsersDone();
+
+        sharedAction.relChildActions.getSize((total) -> {
+            holder.tvNumDone.setText(complete + "/" + total + " done!");
+        });
+
+        holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
+                onCheckedChanged(buttonView, isChecked));
+        holder.cbItem.setTextColor(uncheckedColor);
+        holder.cbItem.setChecked(getDone.call(item));
     }
 
     @Override
@@ -98,8 +114,12 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
 
     public static class InvolvedViewHolder extends ChecklistItemComponent.ViewHolder {
 
+        @BindView(R.id.cbItem)      protected CheckBox cbItem;
+        @BindView(R.id.tvNumDone)   protected TextView tvNumDone;
+
         public InvolvedViewHolder(@NonNull View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }
