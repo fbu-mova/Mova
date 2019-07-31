@@ -7,11 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
-import com.example.mova.feed.Prioritized;
+import com.example.mova.component.Component;
 import com.example.mova.feed.PrioritizedComponent;
-
-import java.util.List;
 
 public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder> {
     private DelegatedResultActivity activity;
@@ -31,15 +28,15 @@ public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.
     @NonNull
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Prioritized<Component> pComponent = components.get(viewType);
-        pComponent.item.makeViewHolder(activity, parent, false);
-        return pComponent.item.getViewHolder();
+        PrioritizedComponent pComponent = components.get(viewType);
+        Component.Inflater inflater = makeInflater(pComponent);
+        return inflater.inflate(activity, parent, false);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         PrioritizedComponent pComponent = components.get(position);
-        pComponent.item.render();
+        pComponent.item.render(activity, holder);
     }
 
     @Override
@@ -50,5 +47,9 @@ public class PrioritizedComponentAdapter extends RecyclerView.Adapter<Component.
     public void changeSource(SortedList<PrioritizedComponent> newSource) {
         this.components = newSource;
         notifyDataSetChanged();
+    }
+
+    protected Component.Inflater makeInflater(PrioritizedComponent prioritizedComponent) {
+        return prioritizedComponent.item.makeInflater();
     }
 }

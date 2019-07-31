@@ -2,7 +2,6 @@ package com.example.mova.components;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -17,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
@@ -35,21 +36,11 @@ public class JournalEntryComponent extends Component {
     private Post entry;
     private DataComponentAdapter<Post> commentAdapter;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager manager;
 
     public JournalEntryComponent(Post entry) {
         this.entry = entry;
-    }
-
-    @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.item_journal_entry, parent, attachToRoot);
-        holder = new ViewHolder(view);
     }
 
     @Override
@@ -58,8 +49,8 @@ public class JournalEntryComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -73,22 +64,50 @@ public class JournalEntryComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
+        displayBasicInfo();
+        displayMood();
+        displayMedia();
+        displayTags();
+        displayComments();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+    }
+
+    private void displayBasicInfo() {
         holder.tvTime.setText(TimeUtils.toTimeString(entry.getCreatedAt()));
         holder.tvBody.setText(entry.getBody());
-        holder.tvLocation.setText(LocationUtils.makeLocationText(activity, entry.getLocation()));
+        holder.tvLocation.setText(LocationUtils.makeLocationText(getActivity(), entry.getLocation()));
+    }
 
+    private void displayMood() {
         Mood.Status mood = entry.getMood();
-        holder.tvMood.setText((mood == null) ? "" : mood.toString()); // TODO: Hide mood image, etc.
+        holder.tvMood.setText((mood == null) ? "" : mood.toString());
+        // TODO: Hide mood image, etc.
+    }
 
+    private void displayMedia() {
         Media media = entry.getMedia();
         Component mediaComponent = (media == null) ? null : media.makeComponent();
         holder.clMedia.clear();
         if (mediaComponent != null) {
             holder.clMedia.setMarginTop(16).setMarginBottom(16);
-            holder.clMedia.inflateComponent(activity, mediaComponent);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         }
+    }
 
+    private void displayTags() {
         ParseQuery<Tag> tagQuery = entry.relTags.getQuery();
         tagQuery.findInBackground((tags, e) -> {
             if (e != null) {
@@ -96,33 +115,6 @@ public class JournalEntryComponent extends Component {
                 holder.tvTags.setText("Failed to load");
             } else {
                 TextUtils.writeCommaSeparated(tags, "No tags", holder.tvTags, (tag) -> tag.getName());
-            }
-        });
-
-        hideCommentsToggle();
-        hideComments();
-        ParseQuery<Post> commentsQuery = entry.relComments.getQuery();
-        commentsQuery.include("author");
-        commentsQuery.include("media");
-        commentsQuery.findInBackground((comments, e) -> {
-            if (e != null) {
-                Log.e("JournalEntryComponent", "Failed to load comments on journal entry", e);
-            } else {
-                commentAdapter = new DataComponentAdapter<Post>(activity, comments) {
-                    @Override
-                    public Component makeComponent(Post item) {
-                        return new JournalResponseComponent(item);
-                    }
-                };
-
-                holder.rvComments.setLayoutManager(new LinearLayoutManager(activity));
-                holder.rvComments.setAdapter(commentAdapter);
-
-                showCommentsToggle();
-                holder.sComments.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-                    if (isChecked) showComments();
-                    else           hideComments();
-                });
             }
         });
     }
@@ -143,6 +135,42 @@ public class JournalEntryComponent extends Component {
         holder.sComments.setVisibility(View.VISIBLE);
     }
 
+    private void displayComments() {
+        hideCommentsToggle();
+        hideComments();
+        ParseQuery<Post> commentsQuery = entry.relComments.getQuery();
+        commentsQuery.include("author");
+        commentsQuery.include("media");
+        commentsQuery.findInBackground((comments, e) -> {
+            if (e != null) {
+                Log.e("JournalEntryComponent", "Failed to load comments on journal entry", e);
+            } else {
+                commentAdapter = new DataComponentAdapter<Post>(getActivity(), comments) {
+                    @Override
+                    protected Component makeComponent(Post item, Component.ViewHolder holder) {
+                        return new JournalResponseComponent(item);
+                    }
+
+                    @Override
+                    protected Component.Inflater makeInflater(Post item) {
+                        return new JournalResponseComponent.Inflater();
+                    }
+                };
+
+                holder.rvComments.setLayoutManager(new LinearLayoutManager(getActivity()));
+                holder.rvComments.setAdapter(commentAdapter);
+
+                if (comments.size() > 0) {
+                    showCommentsToggle();
+                    holder.sComments.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+                        if (isChecked) showComments();
+                        else hideComments();
+                    });
+                }
+            }
+        });
+    }
+
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.tvTime)     public TextView tvTime;
@@ -161,6 +189,16 @@ public class JournalEntryComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.item_journal_entry, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

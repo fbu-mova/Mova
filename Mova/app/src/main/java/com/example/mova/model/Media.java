@@ -1,21 +1,16 @@
 package com.example.mova.model;
 
 import android.graphics.Bitmap;
-import android.media.Image;
 
-import com.example.mova.components.Component;
-import com.example.mova.components.ImageComponent;
+import com.example.mova.component.Component;
+import com.example.mova.components.MediaImageComponent;
 import com.example.mova.components.MediaTextComponent;
 import com.example.mova.components.PostComponent;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.SaveCallback;
-
-import java.io.File;
 
 @ParseClassName("Media")
 public class Media extends HashableParseObject {
@@ -29,6 +24,7 @@ public class Media extends HashableParseObject {
     public static final String KEY_ACTION = "contentAction";
     public static final String KEY_TEXT = "contentText";
     public static final String KEY_IMAGE = "contentImage";
+    public static final String KEY_CREATED_AT = "createdAt";
 
     public Media() { }
 
@@ -200,7 +196,7 @@ public class Media extends HashableParseObject {
             case Text:
                 return new MediaTextComponent(this);
             case Image:
-                return new ImageComponent(getContentImage());
+                return new MediaImageComponent(getContentImage());
             case Post:
                 return new PostComponent(getContentPost());
             default:

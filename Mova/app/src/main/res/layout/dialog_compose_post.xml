@@ -6,122 +6,129 @@ xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/llMain"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
-            android:id="@+id/flReplyContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#eee">
-
-            <com.example.mova.components.ComponentLayout
-                android:id="@+id/clPostToReply"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp">
-
-            </com.example.mova.components.ComponentLayout>
-        </FrameLayout>
-
         <LinearLayout
+            android:id="@+id/llMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/llTypeIndicator"
+            <FrameLayout
+                android:id="@+id/flReplyContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal">
+                android:background="#eee">
 
-                <ImageView
-                    android:id="@+id/ivTypeIndicator"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="0"
-                    android:scaleType="fitCenter"
-                    tools:srcCompat="@color/colorPrimary" />
-
-                <TextView
-                    android:id="@+id/tvTypeIndicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    android:text="Verbing to What"
-                    android:textColor="#bbb"
-                    android:textSize="14dp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvAddMedia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
-
-                <com.example.mova.components.ComponentLayout
-                    android:id="@+id/clMedia"
+                <com.example.mova.component.ComponentLayout
+                    android:id="@+id/clPostToReply"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#e6e6e6"
-                    android:minHeight="44dp">
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp">
 
-                </com.example.mova.components.ComponentLayout>
+                </com.example.mova.component.ComponentLayout>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/llAddMedia"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/llTypeIndicator"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/ivMediaIcon"
+                        android:id="@+id/ivTypeIndicator"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginRight="8dp"
                         android:layout_weight="0"
-                        android:foregroundGravity="center_vertical"
+                        android:scaleType="fitCenter"
                         tools:srcCompat="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/tvMediaPrompt"
+                        android:id="@+id/tvTypeIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:text="Add media"
-                        android:textColor="#ababab"
+                        android:text="Verbing to What"
+                        android:textColor="#bbb"
+                        android:textSize="14dp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvAddMedia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
 
-            <EditText
-                android:id="@+id/etBody"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="start|top"
-                android:hint="What's on your mind?"
-                android:inputType="textMultiLine"
-                android:textSize="14dp" />
+                    <com.example.mova.component.ComponentLayout
+                        android:id="@+id/clMedia"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#e6e6e6"
+                        android:minHeight="44dp">
+
+                    </com.example.mova.component.ComponentLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llAddMedia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/ivMediaIcon"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_weight="0"
+                            android:foregroundGravity="center_vertical"
+                            tools:srcCompat="@color/colorPrimary" />
+
+                        <TextView
+                            android:id="@+id/tvMediaPrompt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:text="Add media"
+                            android:textColor="#ababab"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <EditText
+                    android:id="@+id/etBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="What's on your mind?"
+                    android:inputType="textMultiLine"
+                    android:textSize="14dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <ImageView
         android:id="@+id/ivClose"
@@ -138,13 +145,14 @@ xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/fabPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="160dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
         app:backgroundTint="#8295F4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llMain" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

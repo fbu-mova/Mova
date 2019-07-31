@@ -2,6 +2,7 @@ package com.example.mova.components;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -17,6 +18,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.fragments.Social.GroupDetailsFragment;
 import com.example.mova.model.Group;
 import com.parse.ParseFile;
@@ -30,9 +33,7 @@ public class ProfileGroupComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_profile_group;
 
     private Group group;
-    private View view;
     private ProfileGroupViewHolder viewHolder;
-    private Activity activity;
     public static FragmentManager manager;
 
     private ComponentManager componentManager;
@@ -43,14 +44,8 @@ public class ProfileGroupComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
-        this.activity = activity;
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ProfileGroupViewHolder(view);
+//        viewHolder = new ProfileGroupViewHolder(view);
         if(viewHolder != null){
             return viewHolder;
         }
@@ -59,8 +54,8 @@ public class ProfileGroupComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -74,17 +69,25 @@ public class ProfileGroupComponent extends Component {
     }
 
     @Override
-    public void render() {
-        if(viewHolder == null){
-            Log.e(TAG, "Not inflating views in render");
-            return;
-        }
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(ViewHolder holder) {
+        checkViewHolderClass(holder, ProfileGroupViewHolder.class);
+        viewHolder = (ProfileGroupViewHolder) holder;
+
+//        if(viewHolder == null){
+//            Log.e(TAG, "Not inflating views in render");
+//            return;
+//        }
 
         viewHolder.tvName.setText(group.getName());
         ParseFile file = group.getGroupPic();
         if(file != null){
             String imageUrl = file.getUrl();
-            Glide.with(activity)
+            Glide.with(getActivity())
                     .load(imageUrl)
                     .into(viewHolder.ivGroupPic);
         }
@@ -93,9 +96,9 @@ public class ProfileGroupComponent extends Component {
             @Override
             public void onClick(View v) {
                 Fragment frag = GroupDetailsFragment.newInstance(group);
-                manager = ((AppCompatActivity)activity)
+                manager = ((AppCompatActivity)getActivity())
                         .getSupportFragmentManager();
-                FrameLayout fl = activity.findViewById(R.id.flPersonalContainer);
+                FrameLayout fl = getActivity().findViewById(R.id.flPersonalContainer);
                 //fl.removeAllViews();
                 FragmentTransaction ft = manager
                         .beginTransaction();
@@ -105,6 +108,11 @@ public class ProfileGroupComponent extends Component {
                 ft.commit();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ProfileGroupViewHolder extends Component.ViewHolder{
@@ -117,6 +125,16 @@ public class ProfileGroupComponent extends Component {
         public ProfileGroupViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new ProfileGroupViewHolder(view);
         }
     }
 }

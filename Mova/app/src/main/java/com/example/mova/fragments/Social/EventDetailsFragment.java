@@ -23,7 +23,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.EventComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Event;
 import com.example.mova.model.Post;
@@ -144,9 +144,14 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
 
         eventCommentsAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), eventComments) {
             @Override
-            public Component makeComponent(Post item) {
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
                 Component component = new PostComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new PostComponent.Inflater();
             }
         };
 

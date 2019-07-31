@@ -3,14 +3,15 @@ package com.example.mova.components;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.utils.TimeUtils;
@@ -22,21 +23,11 @@ public class JournalResponseComponent extends Component {
 
     private Post post;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager componentManager;
 
     public JournalResponseComponent(Post post) {
         this.post = post;
-    }
-
-    @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_journal_response, parent, attachToRoot);
-        holder = new ViewHolder(view);
     }
 
     @Override
@@ -45,8 +36,8 @@ public class JournalResponseComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -60,10 +51,23 @@ public class JournalResponseComponent extends Component {
     }
 
     @Override
-    public void render() {
-        holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
-        holder.tvBody.setText(post.getBody());
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
+        this.holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
+        this.holder.tvBody.setText(post.getBody());
         displayMedia();
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     private void displayMedia() {
@@ -73,7 +77,7 @@ public class JournalResponseComponent extends Component {
             holder.clMedia.setVisibility(View.GONE);
         } else {
             holder.clMedia.setVisibility(View.VISIBLE);
-            holder.clMedia.inflateComponent(activity, mediaComponent);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         }
     }
 
@@ -86,6 +90,16 @@ public class JournalResponseComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_journal_response, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

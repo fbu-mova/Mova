@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.parse.ParseQuery;
@@ -36,9 +38,7 @@ public abstract class TomorrowFocusPromptComponent extends Component {
         }
     }
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private DataComponentAdapter<Goal> adapter;
     private List<Goal> goals;
     private int minGoals, maxGoals;
@@ -79,11 +79,13 @@ public abstract class TomorrowFocusPromptComponent extends Component {
     public abstract void onLoadGoals(Throwable e);
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_tomorrow_focus_prompt, parent, attachToRoot);
-        holder = new ViewHolder(view);
+    public String getName() {
+        return "TomorrowFocusPromptComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
     }
 
     @Override
@@ -92,15 +94,23 @@ public abstract class TomorrowFocusPromptComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
-    public void render() {
-        adapter = new DataComponentAdapter<Goal>(activity, goals) {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
+        adapter = new DataComponentAdapter<Goal>(getActivity(), goals) {
             @Override
-            public Component makeComponent(Goal item) {
+            protected Component makeComponent(Goal item, Component.ViewHolder holder) {
                 return new ChecklistItemComponent<Goal>(item,
                         Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"), true,
                         (o) -> o.getTitle(), (o) -> false) { // fixme - made goals always not done
@@ -110,9 +120,19 @@ public abstract class TomorrowFocusPromptComponent extends Component {
                     }
                 };
             }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new ChecklistItemComponent.Inflater();
+            }
         };
-        holder.rvGoals.setAdapter(adapter);
-        holder.rvGoals.setLayoutManager(new LinearLayoutManager(activity));
+        this.holder.rvGoals.setAdapter(adapter);
+        this.holder.rvGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -127,13 +147,13 @@ public abstract class TomorrowFocusPromptComponent extends Component {
         }
     }
 
-    @Override
-    public String getName() {
-        return "TomorrowFocusPromptComponent";
-    }
+    public static class Inflater extends Component.Inflater {
 
-    @Override
-    public void setManager(ComponentManager manager) {
-        componentManager = manager;
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_tomorrow_focus_prompt, parent, attachToRoot);
+            return new ViewHolder(view);
+        }
     }
 }

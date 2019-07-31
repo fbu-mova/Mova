@@ -30,13 +30,13 @@
             android:layout_marginBottom="16dp"
             android:orientation="vertical">
 
-            <com.example.mova.components.ComponentLayout
+            <com.example.mova.component.ComponentLayout
                 android:id="@+id/clMedia"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="8dp">
 
-            </com.example.mova.components.ComponentLayout>
+            </com.example.mova.component.ComponentLayout>
 
             <TextView
                 android:id="@+id/tvBody"

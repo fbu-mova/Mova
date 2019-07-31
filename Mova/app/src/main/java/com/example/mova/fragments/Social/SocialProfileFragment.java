@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.ProfileFriendComponent;
 import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.components.ProfileShowMoreGroupsComponent;
@@ -34,7 +34,6 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -155,25 +154,40 @@ public class SocialProfileFragment extends Fragment {
 
         userGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
-            public Component makeComponent(Group item) {
+            public Component makeComponent(Group item, Component.ViewHolder holder) {
                 Component component = new ProfileGroupComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Group item) {
+                return new ProfileGroupComponent.Inflater();
             }
         };
 
         userFriendAdapter = new DataComponentAdapter<User>((DelegatedResultActivity) getActivity(), userFriends) {
             @Override
-            public Component makeComponent(User item) {
+            public Component makeComponent(User item, Component.ViewHolder holder) {
                 Component component = new ProfileFriendComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(User item) {
+                return new ProfileFriendComponent.Inflater();
             }
         };
 
         showMoreGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
-            public Component makeComponent(Group item) {
+            public Component makeComponent(Group item, Component.ViewHolder holder) {
                 Component component = new ProfileShowMoreGroupsComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Group item) {
+                return new ProfileShowMoreGroupsComponent.Inflater();
             }
         };
 

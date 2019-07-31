@@ -2,9 +2,9 @@ package com.example.mova.components;
 
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +18,8 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
@@ -25,18 +27,14 @@ import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-import static android.app.Activity.RESULT_OK;
 import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
-import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
 
 public class GoalCardComponent extends Component {
 
@@ -46,9 +44,7 @@ public class GoalCardComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_goal_card;
 
     private Goal item;
-    private View view;
     private GoalCardViewHolder viewHolder;
-    private DelegatedResultActivity activity;
 
     // for action recyclerview in the card
     private ArrayList<Action> actions;
@@ -62,14 +58,8 @@ public class GoalCardComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
-        this.activity = activity;
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new GoalCardViewHolder(view);
+//        viewHolder = new GoalCardViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -78,8 +68,8 @@ public class GoalCardComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -93,23 +83,31 @@ public class GoalCardComponent extends Component {
     }
 
     @Override
-    public void render() {
-        if (viewHolder == null) {
-            Log.e(TAG, "not inflating views to viewHolder, in render");
-            return;
-        }
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(ViewHolder holder) {
+        checkViewHolderClass(holder, GoalCardViewHolder.class);
+        viewHolder = (GoalCardViewHolder) holder;
+
+//        if (viewHolder == null) {
+//            Log.e(TAG, "not inflating views to viewHolder, in render");
+//            return;
+//        }
 
         Log.d(TAG, "in render function");
 
         viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, GoalDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
                 intent.putExtra("goal", item);
 
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 
-                activity.startActivity(intent);
+                getActivity().startActivity(intent);
 
 //                activity.startActivityForDelegatedResult(intent, REQUEST_GOAL_DETAILS, new DelegatedResultActivity.ActivityResultCallback() {
 //                    @Override
@@ -143,18 +141,28 @@ public class GoalCardComponent extends Component {
 
         actions = new ArrayList<>();
 
-        actionsAdapter = new DataComponentAdapter<Action>(activity, actions) {
+        actionsAdapter = new DataComponentAdapter<Action>(getActivity(), actions) {
+
             @Override
-            public Component makeComponent(Action item) {
-                Component component = new ActionComponent(item);
-                return component;
+            protected Component makeComponent(Action item, ViewHolder holder) {
+                return new ActionComponent(item);
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Action item) {
+                return new ActionComponent.Inflater();
             }
         };
 
-        viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
+        viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
         viewHolder.rvActions.setAdapter(actionsAdapter);
 
         loadGoalActions();
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     private void loadGoalActions() {
@@ -183,7 +191,7 @@ public class GoalCardComponent extends Component {
                 }
                 else {
                     Log.e(TAG, "query for actions failed", e);
-                    Toast.makeText(activity, "Query for actions of your goal failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Query for actions of your goal failed", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -204,6 +212,16 @@ public class GoalCardComponent extends Component {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new GoalCardViewHolder(view);
         }
     }
 }

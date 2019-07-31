@@ -20,7 +20,7 @@ public class EndlessScrollLayout<VH extends RecyclerView.ViewHolder> extends Fra
     protected EndlessRecyclerViewScrollListener scrollListener;
 
     protected LayoutConfig config;
-    protected Handler handler;
+    protected ScrollLoadHandler<VH> handler;
 
     @BindView(R.id.rvItems) protected RecyclerView rvItems;
 
@@ -36,7 +36,11 @@ public class EndlessScrollLayout<VH extends RecyclerView.ViewHolder> extends Fra
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(LayoutConfig config, Handler<VH> handler) {
+    public void init(ScrollLoadHandler<VH> handler) {
+        init(new LayoutConfig(), handler);
+    }
+
+    public void init(LayoutConfig config, ScrollLoadHandler<VH> handler) {
         int layoutId = makeLayout(config);
         inflate(getContext(), layoutId, this);
         ButterKnife.bind(this, this);
@@ -73,6 +77,14 @@ public class EndlessScrollLayout<VH extends RecyclerView.ViewHolder> extends Fra
         rvItems.setAdapter(handler.getAdapter());
     }
 
+    public void setNestedScrollingEnabled(boolean enabled) {
+        rvItems.setNestedScrollingEnabled(enabled);
+    }
+
+    public void scrollToPosition(int position) {
+        rvItems.scrollToPosition(position);
+    }
+
     private int makeLayout(LayoutConfig config) {
         // FIXME: wrap_content doesn't work at all, and not because of the if statement
         int layoutId;
@@ -87,16 +99,6 @@ public class EndlessScrollLayout<VH extends RecyclerView.ViewHolder> extends Fra
         else /* xwc && ywc */ layoutId = R.layout.layout_esl_xwc_ywc;
 
         return layoutId;
-    }
-
-    public static abstract class Handler<VH extends RecyclerView.ViewHolder> {
-        public abstract void load();
-        public abstract void loadMore();
-
-        public abstract RecyclerView.Adapter<VH> getAdapter();
-        public abstract RecyclerView.LayoutManager getLayoutManager();
-
-        public abstract int[] getColorScheme();
     }
 
     public static class LayoutConfig {

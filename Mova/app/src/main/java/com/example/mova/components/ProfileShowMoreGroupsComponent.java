@@ -2,6 +2,7 @@ package com.example.mova.components;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,6 +13,8 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Group;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseFile;
@@ -25,9 +28,7 @@ public class ProfileShowMoreGroupsComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_profile_show_more;
 
     private Group group;
-    private View view;
     private ProfileShowMoreGroupsViewHolder viewHolder;
-    private Activity activity;
 
     private ComponentManager componentManager;
 
@@ -37,14 +38,8 @@ public class ProfileShowMoreGroupsComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
-        this.activity = activity;
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ProfileShowMoreGroupsViewHolder(view);
+//        viewHolder = new ProfileShowMoreGroupsViewHolder(view);
         if(viewHolder != null){
             return viewHolder;
         }
@@ -53,8 +48,8 @@ public class ProfileShowMoreGroupsComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -68,24 +63,36 @@ public class ProfileShowMoreGroupsComponent extends Component {
     }
 
     @Override
-    public void render() {
-        if(viewHolder == null){
-            Log.e(TAG, "Not inflating views in render");
-            return;
-        }
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(ViewHolder holder) {
+        checkViewHolderClass(holder, ProfileShowMoreGroupsViewHolder.class);
+        viewHolder = (ProfileShowMoreGroupsViewHolder) holder;
+
+//        if(viewHolder == null){
+//            Log.e(TAG, "Not inflating views in render");
+//            return;
+//        }
 
         viewHolder.tvName.setText(group.getName());
         viewHolder.tvDescription.setText(group.getDescription());
         ParseFile file = group.getGroupPic();
         if(file != null){
             String imageUrl = file.getUrl();
-            Glide.with(activity)
+            Glide.with(getActivity())
                     .load(imageUrl)
                     .into(viewHolder.ivPic);
         }
         GroupUtils.getUserList(group, (listUsers) -> {
             viewHolder.tvCount.setText(listUsers.size() + " members");
         });
+    }
+
+    @Override
+    protected void onDestroy() {
 
     }
 
@@ -99,6 +106,16 @@ public class ProfileShowMoreGroupsComponent extends Component {
         public ProfileShowMoreGroupsViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new ProfileShowMoreGroupsViewHolder(view);
         }
     }
 }

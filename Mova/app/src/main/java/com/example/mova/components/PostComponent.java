@@ -4,60 +4,54 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mova.ComposePostDialog;
 import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
+import com.example.mova.fragments.Social.PostDetailsFragment;
+import com.example.mova.fragments.Social.SocialProfileFragment;
 import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
-import com.example.mova.model.Tag;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PostComponent extends Component {
-    //Todo - edit this file
-
 
     private Post post;
-    private String subheader;
+    private Config config;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager componentManager;
 
     public PostComponent(Post post) {
-        this.post = post;
-        this.subheader = null;
+        this(post, new Config());
     }
 
-    public PostComponent(Post post, String subheader) {
+    public PostComponent(Post post, Config config) {
         this.post = post;
-        this.subheader = subheader;
-    }
-
-    @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_post, parent, attachToRoot);
-        holder = new ViewHolder(view);
+        this.config = config;
     }
 
     @Override
@@ -66,8 +60,8 @@ public class PostComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -81,16 +75,30 @@ public class PostComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         // Basic info
-        holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
-        holder.tvBody.setText(post.getBody());
+        this.holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
+        this.holder.tvBody.setText(post.getBody());
+
         displayUser();
         configureButtons();
         configurePostClick();
         displayMedia();
         displayGroup();
         displaySubheader();
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     private void displayUser() {
@@ -119,7 +127,7 @@ public class PostComponent extends Component {
             holder.clMedia.setVisibility(View.GONE);
         } else {
             holder.clMedia.setVisibility(View.VISIBLE);
-            holder.clMedia.inflateComponent(activity, mediaComponent);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         }
     }
 
@@ -149,78 +157,105 @@ public class PostComponent extends Component {
 
     private void displaySubheader() {
         // TODO: Maybe a more extensive check for whether subheader is all whitespace?
-        if (subheader == null || subheader.equals("")) {
+        if (config.subheader == null || config.subheader.equals("")) {
             holder.tvSubheader.setVisibility(View.GONE);
         } else {
             holder.tvSubheader.setVisibility(View.VISIBLE);
-            holder.tvSubheader.setText(subheader);
+            holder.tvSubheader.setText(config.subheader);
         }
     }
 
-    private void configureButtons() {
+    private void showButtons() {
         holder.llButtons.setVisibility(View.VISIBLE);
+    }
 
-        holder.ivRepost.setOnClickListener((view) -> {
-            PostConfig config = new PostConfig();
-            Media postMedia = new Media(post);
-            config.media = postMedia;
+    private void hideButtons() {
+        holder.llButtons.setVisibility(View.GONE);
+    }
 
-            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
-                @Override
-                protected void onCancel() {
+    private void configureButtons() {
+        if (config.showButtons) {
+            showButtons();
 
-                }
+            holder.ivRepost.setOnClickListener((view) -> {
+                PostConfig config = new PostConfig();
+                config.media = new Media(post);
 
-                @Override
-                protected void onPost(PostConfig config) {
-                    config.savePost((savedPost) -> {});
-                }
-            };
-        });
+                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
+                    @Override
+                    protected void onCancel() {
 
-        holder.ivReply.setOnClickListener((view) -> {
-            PostConfig config = new PostConfig();
-            config.postToReply = post;
+                    }
 
-            ComposePostDialog dialog = new ComposePostDialog(activity, config) {
-                @Override
-                protected void onCancel() {
+                    @Override
+                    protected void onPost(PostConfig config) {
+                        config.savePost((savedPost) -> {
+                            PostComponent.this.config.onRepost.call(savedPost);
+                        });
+                    }
+                };
 
-                }
-
-                @Override
-                protected void onPost(PostConfig config) {
-                    config.savePost((savedPost) -> {});
-                }
-            };
-        });
-
-        holder.ivSave.setOnClickListener((view) -> {
-            ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
-            query.whereEqualTo(Post.KEY_ID, post.getObjectId());
-            query.findInBackground((posts, e) -> {
-                if (e != null) {
-                    Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
-                    Toast.makeText(activity, "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
-                } else if (posts.size() == 0) {
-                    User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
-                        Toast.makeText(activity, "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
-                        // TODO: Update icon
-                    });
-                } else {
-                    User.getCurrentUser().relScrapbook.remove(post, () -> {
-                        Toast.makeText(activity, "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
-                        // TODO: Update icon
-                    });
-                }
+                dialog.show();
             });
-        });
+
+            holder.ivReply.setOnClickListener((view) -> {
+                PostConfig config = new PostConfig();
+                config.postToReply = post;
+
+                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
+                    @Override
+                    protected void onCancel() {
+
+                    }
+
+                    @Override
+                    protected void onPost(PostConfig config) {
+                        config.savePost((savedPost) -> {
+                            PostComponent.this.config.onReply.call(savedPost);
+                        });
+                    }
+                };
+
+                dialog.show();
+            });
+
+            holder.ivSave.setOnClickListener((view) -> {
+                ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
+                query.whereEqualTo(Post.KEY_ID, post.getObjectId());
+                query.findInBackground((posts, e) -> {
+                    if (e != null) {
+                        Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
+                        Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
+                    } else if (posts.size() == 0) {
+                        User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
+                            Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
+                            // TODO: Update icon
+                        });
+                    } else {
+                        User.getCurrentUser().relScrapbook.remove(post, () -> {
+                            Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
+                            // TODO: Update icon
+                        });
+                    }
+                });
+            });
+        } else {
+            hideButtons();
+        }
     }
 
     private void configurePostClick() {
-        holder.card.setOnClickListener((view) -> {
-            // TODO: Go to details view
-        });
+        if (config.allowDetailsClick) {
+            holder.card.setOnClickListener((view) -> {
+                PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = manager.beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            });
+        }
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -253,6 +288,32 @@ public class PostComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_post, parent, attachToRoot);
+            return new ViewHolder(view);
+        }
+    }
+
+    public static class Config {
+        public String subheader = null;
+        public boolean showButtons = true;
+        public boolean allowDetailsClick = true;
+        public AsyncUtils.ItemCallback<Post> onReply = (post) -> {};
+        public AsyncUtils.ItemCallback<Post> onRepost = (post) -> {};
+
+        public Config() { }
+
+        public Config(String subheader, boolean showButtons, boolean allowDetailsClick) {
+            this.subheader = subheader;
+            this.showButtons = showButtons;
+            this.allowDetailsClick = allowDetailsClick;
         }
     }
 }

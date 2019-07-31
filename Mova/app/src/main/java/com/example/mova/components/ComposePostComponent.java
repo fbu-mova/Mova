@@ -17,15 +17,16 @@ import androidx.cardview.widget.CardView;
 import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
-import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.Wrapper;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 
@@ -42,9 +43,7 @@ public abstract class ComposePostComponent extends Component {
     private PostConfig postConfig;
     private Group inGroup;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
 
     private ComponentManager manager;
     private String managerMediaKey;
@@ -60,21 +59,13 @@ public abstract class ComposePostComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_compose_post, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -88,11 +79,24 @@ public abstract class ComposePostComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         displayToReplyTo();
         displayPostType();
         displayMedia();
         configureClickEvents();
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public void setMedia(Media media) {
@@ -105,9 +109,10 @@ public abstract class ComposePostComponent extends Component {
         if (postConfig.postToReply == null) {
             holder.flReplyContent.setVisibility(View.GONE);
         } else {
-            PostComponent postComponent = new PostComponent(postConfig.postToReply);
+            PostComponent postComponent = new PostComponent(postConfig.postToReply, new PostComponent.Config(null, false, true));
             holder.flReplyContent.setVisibility(View.VISIBLE);
-            holder.clPostToReply.inflateComponent(activity, postComponent);
+            holder.clPostToReply.setMargin(32);
+            holder.clPostToReply.inflateComponent(getActivity(), postComponent);
         }
     }
 
@@ -121,14 +126,20 @@ public abstract class ComposePostComponent extends Component {
         if (postConfig.postToReply != null) {
             asyncActions.add((i, cb) ->
                 postConfig.postToReply.getAuthor().fetchIfNeededInBackground((parseObject, e) -> {
+                    Throwable errResult = e;
                     if (e != null) {
                         Log.e("ComposePostDialog", "Failed to get reply to author", e);
                     } else if (!(parseObject instanceof User)) {
                         Log.e("ComposePostDialog", "Failed to coerce author to User");
+                        errResult = new ClassCastException("Failed to coerce author to User");
                     } else {
                         User author = (User) parseObject;
-                        type.item += "Replying to " + author.getUsername();
+                        type.item += "Replying to "
+                                + (author.equals(User.getCurrentUser())
+                                    ? "yourself"
+                                    : author.getUsername());
                     }
+                    cb.call(errResult);
             }));
         } else {
             type.item += "Posting ";
@@ -137,14 +148,17 @@ public abstract class ComposePostComponent extends Component {
         if (inGroup != null) {
             asyncActions.add((i, cb) ->
                 inGroup.fetchIfNeededInBackground((parseObject, e) -> {
+                    Throwable errResult = e;
                     if (e != null) {
                         Log.e("ComposePostDialog", "Failed to get in group", e);
                     } else if (!(parseObject instanceof Group)) {
                         Log.e("ComposePostDialog", "Failed to coerce in group to Group");
+                        errResult = new ClassCastException("Failed to coerce in group to Group");
                     } else {
                         Group group = (Group) parseObject;
                         type.item += " in " + group.getName();
                     }
+                    cb.call(errResult);
             }));
         } else if (postConfig.postToReply == null) {
             type.item += "to friends";
@@ -152,7 +166,7 @@ public abstract class ComposePostComponent extends Component {
 
         AsyncUtils.waterfall(asyncActions, (e) -> {
             if (e != null) {
-                Log.e("ComposePostDialog", "Failed to generate text");
+                Log.e("ComposePostDialog", "Failed to generate text", e);
                 holder.llTypeIndicator.setVisibility(View.GONE);
             } else {
                 holder.llTypeIndicator.setVisibility(View.VISIBLE);
@@ -170,7 +184,7 @@ public abstract class ComposePostComponent extends Component {
             holder.clMedia.clear();
         } else {
             holder.llAddMedia.setVisibility(View.GONE);
-            holder.clMedia.inflateComponent(activity, mediaComponent);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         }
     }
 
@@ -197,7 +211,7 @@ public abstract class ComposePostComponent extends Component {
         String body = holder.etBody.getText().toString();
 
         if (body.equals("")) {
-            Toast.makeText(activity, "Write a message before posting!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Write a message before posting!", Toast.LENGTH_SHORT).show();
             return null;
         }
 
@@ -235,6 +249,15 @@ public abstract class ComposePostComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_compose_post, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }
