@@ -29,9 +29,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class JournalPromptComponent extends Component {
-    protected DelegatedResultActivity activity;
+
     protected ViewHolder holder;
-    protected View view;
     protected AsyncUtils.ItemCallback<Post> onPostJournalEntry;
 
     protected ComponentManager componentManager;
@@ -47,21 +46,8 @@ public class JournalPromptComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_journal_prompt, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return holder.card;
     }
 
     @Override
@@ -75,13 +61,21 @@ public class JournalPromptComponent extends Component {
     }
 
     @Override
-    public void render() {
-        holder.bCompose.setOnClickListener((view) -> {
-            Mood.Status mood = holder.moodSelector.getSelectedItem();
-            Intent intent = new Intent(activity, JournalComposeActivity.class);
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
+        this.holder.bCompose.setOnClickListener((view) -> {
+            Mood.Status mood = this.holder.moodSelector.getSelectedItem();
+            Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
             intent.putExtra(JournalComposeActivity.KEY_MOOD, mood.toString());
 
-            activity.startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE,
+            getActivity().startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE,
                 (int requestCode, int resultCode, Intent data) -> {
                     if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                         Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
@@ -92,8 +86,13 @@ public class JournalPromptComponent extends Component {
 
                         User.getCurrentUser().postJournalEntry(config, onPostJournalEntry);
                     }
-                });
+            });
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -106,6 +105,16 @@ public class JournalPromptComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_journal_prompt, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

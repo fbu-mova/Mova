@@ -23,9 +23,7 @@ public class JournalResponseComponent extends Component {
 
     private Post post;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager componentManager;
 
     public JournalResponseComponent(Post post) {
@@ -33,21 +31,8 @@ public class JournalResponseComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_journal_response, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -61,20 +46,34 @@ public class JournalResponseComponent extends Component {
     }
 
     @Override
-    public void render() {
-        holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
-        holder.tvBody.setText(post.getBody());
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
+        this.holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
+        this.holder.tvBody.setText(post.getBody());
         displayMedia();
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     private void displayMedia() {
         Media media = post.getMedia();
         Component mediaComponent = (media == null) ? null : media.makeComponent();
+        Component.Inflater mediaInflater = (media == null) ? null : media.makeComponentInflater();
         if (mediaComponent == null) {
             holder.clMedia.setVisibility(View.GONE);
         } else {
             holder.clMedia.setVisibility(View.VISIBLE);
-            holder.clMedia.inflateComponent(activity, mediaComponent);
+            holder.clMedia.inflateComponent(getActivity(), mediaComponent, mediaInflater);
         }
     }
 
@@ -87,6 +86,16 @@ public class JournalResponseComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_journal_response, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

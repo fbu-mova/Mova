@@ -2,6 +2,7 @@ package com.example.mova.components;
 
 import android.graphics.Color;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,9 +25,7 @@ public class ProgressGoalComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_progress_goal;
 
     private Goal goal;
-    private View view;
     private ProgressGoalViewHolder viewHolder;
-    private DelegatedResultActivity activity;
 
     private ComponentManager componentManager;
 
@@ -36,26 +35,13 @@ public class ProgressGoalComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, false);
-        this.activity = activity;
-    }
-
-
-
-    @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new ProgressGoalViewHolder(view);
+//        viewHolder = new ProgressGoalViewHolder(view);
         if(viewHolder != null){
             return viewHolder;
         }
         Log.e(TAG, "viewholder not inflating");
         return null;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -69,16 +55,29 @@ public class ProgressGoalComponent extends Component {
     }
 
     @Override
-    public void render() {
-        if(viewHolder == null){
-            Log.e(TAG, "Not inflating views in render");
-            return;
-        }
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(ViewHolder holder) {
+        checkViewHolderClass(holder, ProgressGoalViewHolder.class);
+        viewHolder = (ProgressGoalViewHolder) holder;
+
+//        if(viewHolder == null){
+//            Log.e(TAG, "Not inflating views in render");
+//            return;
+//        }
 
         if(goal.getColor() != null){
             viewHolder.ivGoalColor.setColorFilter(Color.parseColor(goal.getColor()));
         }
         viewHolder.tvGoalTitle.setText(goal.getTitle());
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ProgressGoalViewHolder extends Component.ViewHolder{
@@ -89,6 +88,16 @@ public class ProgressGoalComponent extends Component {
         public ProgressGoalViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new ProgressGoalViewHolder(view);
         }
     }
 }
