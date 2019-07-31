@@ -55,8 +55,8 @@ public class GoalCardComponent extends Component {
     private ArrayList<Action> actions;
     private DataComponentAdapter<Action> actionsAdapter;
 
-    private ArrayList<SharedAction> sharedActions;
-    private DataComponentAdapter<SharedAction> sharedActionsAdapter;
+    private ArrayList<SharedAction.Data> sharedActions;
+    private DataComponentAdapter<SharedAction.Data> sharedActionsAdapter;
 
     private ComponentManager componentManager;
 
@@ -178,25 +178,27 @@ public class GoalCardComponent extends Component {
 
             sharedActions = new ArrayList<>();
 
-            sharedActionsAdapter = new DataComponentAdapter<SharedAction>(activity, sharedActions) {
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(activity, sharedActions) {
                 @Override
-                public Component makeComponent(SharedAction item) {
-                    // todo -- make component from sharedAction tasks
-                    return null;
+                public Component makeComponent(SharedAction.Data item) {
+                    Component component = new InvolvedSharedActionComponent(item);
+                    return component;
                 }
             };
 
             viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+
+            // todo : need to upload to adapter and actually get the userIsDone info
         }
         else if (!isPersonal && !isUserInvolved) {
             // a social goal the user is not involved in
 
             sharedActions = new ArrayList<>();
 
-            sharedActionsAdapter = new DataComponentAdapter<SharedAction>(activity, sharedActions) {
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(activity, sharedActions) {
                 @Override
-                public Component makeComponent(SharedAction item) {
+                public Component makeComponent(SharedAction.Data item) {
                     // todo -- make component from sharedAction tasks but no checkbox
                     return null;
                 }
