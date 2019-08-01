@@ -6,18 +6,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?android:windowBackground"
-    tools:context=".fragments.JournalFragment">
+    tools:context=".fragments.Personal.JournalFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="@dimen/outerMargin"
+        android:layout_marginTop="@dimen/outerMargin"
+        android:layout_marginEnd="@dimen/outerMargin"
+        android:layout_marginBottom="@dimen/outerMargin"
+        android:clipChildren="false"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,33 +27,30 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/innerMargin"
+            android:fontFamily="@font/lato_bold"
             android:text="Journal"
-            android:textSize="18sp" />
+            android:textColor="@color/textMain"
+            android:textSize="@dimen/textSizeTitle" />
 
-        <com.example.mova.scrolling.EndlessScrollRefreshLayout
-            android:id="@+id/esrlDates"
+        <com.example.mova.scrolling.EndlessScrollLayout
+            android:id="@+id/eslDates"
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="0">
+            android:layout_marginBottom="@dimen/innerMargin"
+            android:layout_weight="0"
+            android:clipChildren="false">
 
-        </com.example.mova.scrolling.EndlessScrollRefreshLayout>
-
-        <!--<androidx.recyclerview.widget.RecyclerView-->
-            <!--android:id="@+id/rvDates"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_weight="0">-->
-        <!--</androidx.recyclerview.widget.RecyclerView>-->
+        </com.example.mova.scrolling.EndlessScrollLayout>
 
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Date" />
+            android:layout_marginBottom="@dimen/innerMargin"
+            android:text="Date"
+            android:textColor="@color/textLight"
+            android:textSize="@dimen/textSizeBody" />
 
         <com.example.mova.scrolling.EndlessScrollRefreshLayout
             android:id="@+id/esrlEntries"
@@ -65,19 +61,18 @@
         </com.example.mova.scrolling.EndlessScrollRefreshLayout>
 
         <!--<androidx.recyclerview.widget.RecyclerView-->
-            <!--android:id="@+id/rvEntries"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:layout_weight="100" />-->
+        <!--android:id="@+id/rvEntries"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="100" />-->
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCompose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginRight="@dimen/outerMargin"
+        android:layout_marginBottom="@dimen/outerMargin"
         android:clickable="true"
         android:src="@android:color/white"
         app:backgroundTint="@android:color/white"

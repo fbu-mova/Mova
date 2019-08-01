@@ -39,6 +39,12 @@ public class RelationFrame<T extends ParseObject> {
         });
     }
 
+    public void getSize(AsyncUtils.ItemCallback<Integer> callback) {
+        getList((objects) -> {
+            callback.call(objects.size());
+        });
+    }
+
     // only adds the object to the relation w/o saving in background
     public void add(T object) {
         ParseRelation<T> relation = parseObject.getRelation(key);

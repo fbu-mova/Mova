@@ -22,11 +22,14 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
+import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
+import static com.example.mova.model.Action.KEY_PARENT_USER;
+import static com.example.mova.model.User.getCurrentUser;
 
 public class GoalCardComponent extends Component {
 
@@ -50,11 +56,19 @@ public class GoalCardComponent extends Component {
     private ArrayList<Action> actions;
     private DataComponentAdapter<Action> actionsAdapter;
 
+    private ArrayList<SharedAction.Data> sharedActions;
+    private DataComponentAdapter<SharedAction.Data> sharedActionsAdapter;
+
     private ComponentManager componentManager;
 
-    public GoalCardComponent(Goal item) {
+    private boolean isUserInvolved;
+    private boolean isPersonal;
+
+    public GoalCardComponent(Goal.GoalData bundle) {
         super();
-        this.item = item;
+        this.item = bundle.goal;
+        this.isUserInvolved = bundle.userIsInvolved;
+        this.isPersonal = item.getIsPersonal();
     }
 
     @Override
@@ -128,7 +142,7 @@ public class GoalCardComponent extends Component {
         viewHolder.tvDescription.setText(item.getDescription());
         Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
-        GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(item, getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
@@ -137,9 +151,12 @@ public class GoalCardComponent extends Component {
         viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
         viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
 
-        // get and render the actions
+        // get and render the actions -- use bool isPersonal and bool isUserInvolved
+        // fixme -- jank casework
+        if (isPersonal && (item.getAuthor() == (User) ParseUser.getCurrentUser())) {
+            // a personal goal that only the creator can see, should always be the case
 
-        actions = new ArrayList<>();
+            actions = new ArrayList<>();
 
         actionsAdapter = new DataComponentAdapter<Action>(getActivity(), actions) {
 
@@ -157,7 +174,64 @@ public class GoalCardComponent extends Component {
         viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
         viewHolder.rvActions.setAdapter(actionsAdapter);
 
-        loadGoalActions();
+            GoalUtils.loadGoalActions(item, (objects) -> {
+                updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
+            });
+        }
+        else if (!isPersonal && isUserInvolved) {
+            // a social goal that the user is involved in BUT user is not author
+                // for now, user sees official social goal
+
+            // fixme -- for now, social goals can't be edited from the cards.
+            // todo -- make it so creator can edit via goal details page ?
+
+            sharedActions = new ArrayList<>();
+
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
+                    Component component = new InvolvedSharedActionComponent(item);
+                    return component;
+                }
+
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new InvolvedSharedActionComponent.Inflater();
+                }
+            };
+
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+
+            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+            });
+        }
+        else if (!isPersonal && !isUserInvolved) {
+            // a social goal the user is not involved in
+
+            sharedActions = new ArrayList<>();
+
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction.Data item, ViewHolder holder) {
+                    Component component = new UninvolvedSharedActionComponent(item);
+                    return component;
+                }
+
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new UninvolvedSharedActionComponent.Inflater();
+                }
+            };
+
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+
+            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+            });
+        }
     }
 
     @Override
@@ -165,36 +239,56 @@ public class GoalCardComponent extends Component {
 
     }
 
-    private void loadGoalActions() {
-        // make query calls to get the user's actions for a goal
-        ParseQuery<Action> actionQuery = item.relActions.getQuery();
-        actionQuery.whereEqualTo("parentUser", User.getCurrentUser());
-        updateAdapter(actionQuery, actions, actionsAdapter, viewHolder.rvActions);
+    private void updateSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
+        // fixme -- similar to updateAdapter in GoalFragments; merge with that or the generic-typed updateAdapter?
+
+        /* first need to find SharedAction.Data isUserDone boolean:
+                1. for each sharedAction, query to find user's action in it
+                2. check isDone and isConnectedToParentSharedAction boolean
+                3. if (true, true) -> true. everything else false
+          */
+
+        AsyncUtils.executeMany(objects.size(), (Integer number, AsyncUtils.ItemCallback<Throwable> callback) -> {
+            // iteration in the for loop
+
+            SharedAction sharedAction = objects.get(number);
+            sharedAction.relChildActions.getQuery()
+                    .whereEqualTo(KEY_PARENT_USER, getCurrentUser())
+                    .findInBackground(new FindCallback<Action>() {
+                        @Override
+                        public void done(List<Action> objects, ParseException e) {
+                            if (e == null && objects.size() == 1) {
+                                Log.d(TAG, "found child action");
+
+                                Action action = objects.get(0);
+                                boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
+                                SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
+                                sharedActions.add(0, data);
+                                sharedActionsAdapter.notifyItemInserted(0);
+
+                            }
+                            else {
+                                Log.e(TAG, "either size(actions) wrong or error", e);
+                            }
+                            callback.call(e);
+                        }
+                    });
+        }, () -> {
+            rvActions.scrollToPosition(0);
+        });
     }
 
-    private void updateAdapter(ParseQuery<Action> actionQuery, ArrayList<Action> actions, DataComponentAdapter<Action> actionsAdapter, RecyclerView rvActions) {
+    private < E > void updateAdapter(List< E > objects, ArrayList< E > actions, DataComponentAdapter< E > actionsAdapter, RecyclerView rvActions) {
 
-        actionQuery.findInBackground(new FindCallback<Action>() {
-            @Override
-            public void done(List<Action> objects, ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "query for actions successful!");
+        for (int i = 0; i < objects.size(); i++) {
+            // load into recyclerview
+            E action = objects.get(i);
+            actions.add(0, action);
+            actionsAdapter.notifyItemInserted(0);
+        }
 
-                    for (int i = 0; i < objects.size(); i++) {
-                        // load into recyclerview
-                        Action action = objects.get(i);
-                        actions.add(0, action);
-                        actionsAdapter.notifyItemInserted(0);
-                    }
+        rvActions.scrollToPosition(0);
 
-                    rvActions.scrollToPosition(0);
-                }
-                else {
-                    Log.e(TAG, "query for actions failed", e);
-                    Toast.makeText(getActivity(), "Query for actions of your goal failed", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
     }
 
     public static class GoalCardViewHolder extends Component.ViewHolder {

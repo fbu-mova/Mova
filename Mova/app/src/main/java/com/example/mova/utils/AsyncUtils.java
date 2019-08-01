@@ -2,6 +2,7 @@ package com.example.mova.utils;
 
 import android.util.Log;
 
+import com.example.mova.R;
 import com.example.mova.model.RelationFrame;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -34,6 +35,8 @@ public class AsyncUtils {
     public interface ItemReturnCallback<T, R> {
         R call(T item);
     }
+
+    public interface ListReturnCallback<T> extends ItemReturnCallback<List<T>, R> { }
 
     public interface TwoItemCallback<T1, T2> {
         void call(T1 item1, T2 item2);
