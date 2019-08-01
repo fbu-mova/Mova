@@ -129,13 +129,13 @@ public class GroupDetailsFragment extends Fragment {
 
         groupGoalAdapter = new DataComponentAdapter<Goal.GoalData>((DelegatedResultActivity) getActivity(), groupGoals) {
             @Override
-            public Component makeComponent(Goal.GoalData item) {
+            public Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
                 Component component = new GoalCardComponent(item);
                 return component;
             }
 
             @Override
-            protected Component.Inflater makeInflater(Goal item) {
+            protected Component.Inflater makeInflater(Goal.GoalData item) {
                 return new GoalCardComponent.Inflater();
             }
         };

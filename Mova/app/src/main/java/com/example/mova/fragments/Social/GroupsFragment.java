@@ -109,13 +109,13 @@ public class GroupsFragment extends Fragment {
 
         activeGoalAdaper = new DataComponentAdapter<Goal.GoalData>((DelegatedResultActivity) getActivity(), userActiveSocialGoals) {
             @Override
-            public Component makeComponent(Goal.GoalData item) {
+            public Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
                 Component component = new GoalCardComponent(item);
                 return component;
             }
 
             @Override
-            protected Component.Inflater makeInflater(Goal item) {
+            protected Component.Inflater makeInflater(Goal.GoalData item) {
                 return new GoalCardComponent.Inflater();
             }
         };
@@ -145,7 +145,7 @@ public class GroupsFragment extends Fragment {
                Goal goal = goals.get(item);
 
                if(!goal.getIsPersonal()) {
-                   GoalUtils.checkIfUserInvolved(goal, (User) ParseUser.getCurrentUser(), (check) -> {
+                   GoalUtils.checkIfUserInvolved(goal, User.getCurrentUser(), (check) -> {
                        Goal.GoalData data = new Goal.GoalData(goal, check);
                        userActiveSocialGoals.add(0, data);
                        activeGoalAdaper.notifyItemInserted(0);

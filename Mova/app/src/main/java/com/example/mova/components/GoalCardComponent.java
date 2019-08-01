@@ -29,6 +29,7 @@ import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ import butterknife.ButterKnife;
 import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
 import static com.example.mova.model.Action.KEY_PARENT_USER;
+import static com.example.mova.model.User.getCurrentUser;
 
 public class GoalCardComponent extends Component {
 
@@ -140,7 +142,7 @@ public class GoalCardComponent extends Component {
         viewHolder.tvDescription.setText(item.getDescription());
         Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
-        GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(item, getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
@@ -185,15 +187,20 @@ public class GoalCardComponent extends Component {
 
             sharedActions = new ArrayList<>();
 
-            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(activity, sharedActions) {
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
                 @Override
-                public Component makeComponent(SharedAction.Data item) {
+                public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
                     Component component = new InvolvedSharedActionComponent(item);
                     return component;
                 }
+
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new InvolvedSharedActionComponent.Inflater();
+                }
             };
 
-            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(item, (objects) -> {
@@ -205,21 +212,31 @@ public class GoalCardComponent extends Component {
 
             sharedActions = new ArrayList<>();
 
-            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(activity, sharedActions) {
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
                 @Override
-                public Component makeComponent(SharedAction.Data item) {
+                public Component makeComponent(SharedAction.Data item, ViewHolder holder) {
                     Component component = new UninvolvedSharedActionComponent(item);
                     return component;
                 }
+
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new UninvolvedSharedActionComponent.Inflater();
+                }
             };
 
-            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(item, (objects) -> {
                 updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     private void updateSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
@@ -236,7 +253,7 @@ public class GoalCardComponent extends Component {
 
             SharedAction sharedAction = objects.get(number);
             sharedAction.relChildActions.getQuery()
-                    .whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser())
+                    .whereEqualTo(KEY_PARENT_USER, getCurrentUser())
                     .findInBackground(new FindCallback<Action>() {
                         @Override
                         public void done(List<Action> objects, ParseException e) {

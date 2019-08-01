@@ -115,13 +115,13 @@ public class GoalsFragment extends Fragment {
         // assigns the adapter w/ anonymous class
         thumbnailGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(activity, thumbnailGoals) {
             @Override
-            public Component makeComponent(Goal.GoalData item) {
+            public Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
                 Component component = new GoalThumbnailComponent(item);
                 return component;
             }
 
             @Override
-            protected Component.Inflater makeInflater(Goal item) {
+            protected Component.Inflater makeInflater(Goal.GoalData item) {
                 return new GoalThumbnailComponent.Inflater();
             }
         };
@@ -141,13 +141,13 @@ public class GoalsFragment extends Fragment {
 
         allGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(activity, allGoals) {
             @Override
-            public Component makeComponent(Goal.GoalData item) {
+            public Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
                 Component component = new GoalCardComponent(item);
                 return component;
             }
 
             @Override
-            protected Component.Inflater makeInflater(Goal item) {
+            protected Component.Inflater makeInflater(Goal.GoalData item) {
                 return new GoalCardComponent.Inflater();
             }
         };
@@ -164,7 +164,7 @@ public class GoalsFragment extends Fragment {
             // todo -- possible querying in Goal model class
             // fixme -- for now, just do normal loadAllGoals
 
-        ParseQuery<Goal> allGoalsQuery = ((User) ParseUser.getCurrentUser())
+        ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
                 .setLimit(5)
@@ -175,7 +175,7 @@ public class GoalsFragment extends Fragment {
 
     private void loadAllGoals() {
 
-        ParseQuery<Goal> allGoalsQuery = ((User) ParseUser.getCurrentUser())
+        ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
                 .include(KEY_FROM_GROUP);

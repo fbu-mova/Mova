@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
 import com.example.mova.model.Action;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
@@ -50,27 +51,23 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(viewLayoutRes, parent, attachToRoot); // want the new xml layout
-        holder = new InvolvedViewHolder(view);
-    }
+    protected void onRender(Component.ViewHolder holder) {
 
-    @Override
-    public void render() {
-        holder.cbItem.setText(sharedAction.getTask());
+        checkViewHolderClass(holder, InvolvedViewHolder.class);
+        this.holder = (InvolvedViewHolder) holder;
+
+        this.holder.cbItem.setText(sharedAction.getTask());
 
         int complete = sharedAction.getUsersDone();
 
         sharedAction.relChildActions.getSize((total) -> {
-            holder.tvNumDone.setText(complete + "/" + total + " done!");
+            this.holder.tvNumDone.setText(complete + "/" + total + " done!");
         });
 
-        holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
+        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
                 onCheckedChanged(buttonView, isChecked));
-        holder.cbItem.setTextColor(uncheckedColor);
-        holder.cbItem.setChecked(getDone.call(item));
+        this.holder.cbItem.setTextColor(uncheckedColor);
+        this.holder.cbItem.setChecked(getDone.call(item));
     }
 
     @Override
@@ -84,7 +81,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
                 }
                 else {
                     Log.e(TAG, "toggled action failed", e);
-                    Toast.makeText(activity, "Toggling action failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Toggling action failed", Toast.LENGTH_LONG).show();
                 }
             });
         });
@@ -93,7 +90,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
 
     private static void findUsersAction(SharedAction sharedAction, AsyncUtils.ItemCallback<Action> callback) {
         sharedAction.relChildActions.getQuery()
-                .whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser())
+                .whereEqualTo(KEY_PARENT_USER, User.getCurrentUser())
                 .findInBackground(new FindCallback<Action>() {
                     @Override
                     public void done(List<Action> objects, ParseException e) {
@@ -112,7 +109,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
                 });
     }
 
-    public static class InvolvedViewHolder extends ChecklistItemComponent.ViewHolder {
+    public static class InvolvedViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.cbItem)      protected CheckBox cbItem;
         @BindView(R.id.tvNumDone)   protected TextView tvNumDone;
@@ -120,6 +117,16 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
         public InvolvedViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new InvolvedViewHolder(view);
         }
     }
 }

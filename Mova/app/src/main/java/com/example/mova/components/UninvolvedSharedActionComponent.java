@@ -28,8 +28,6 @@ public class UninvolvedSharedActionComponent extends Component {
     protected static int viewLayoutRes = R.layout.item_uninvolved_shared_action;
 
     protected UninvolvedViewHolder holder;
-    protected View view;
-    protected DelegatedResultActivity activity;
 
     protected ComponentManager componentManager;
 
@@ -40,21 +38,8 @@ public class UninvolvedSharedActionComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
-        holder = new UninvolvedViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -68,17 +53,36 @@ public class UninvolvedSharedActionComponent extends Component {
     }
 
     @Override
-    public void render() {
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(ViewHolder holder) {
 
         // todo -- have a better icon for ivIcon
         // todo -- should GoalCardComp add "saveSocialGoal" button if in this case?
 
+        checkViewHolderClass(holder, UninvolvedViewHolder.class);
+        this.holder = (UninvolvedViewHolder) holder;
+
         int complete = sharedAction.getUsersDone();
         sharedAction.relChildActions.getSize((total) -> {
-            holder.tvNumDone.setText(complete + "/" + total + " done!");
+            this.holder.tvNumDone.setText(complete + "/" + total + " done!");
         });
 
-        holder.tvTask.setText(sharedAction.getTask());
+        this.holder.tvTask.setText(sharedAction.getTask());
+
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class UninvolvedViewHolder extends Component.ViewHolder {
@@ -90,6 +94,16 @@ public class UninvolvedSharedActionComponent extends Component {
         public UninvolvedViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new UninvolvedViewHolder(view);
         }
     }
 }

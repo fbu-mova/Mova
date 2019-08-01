@@ -85,7 +85,7 @@ public class ActionEditComponent extends Component {
                 // fixme -- add case where editing personal version of a social goal,
                 //  so action saved, connected to SharedAction set to false, sharedAction not changed
                 GoalUtils.saveSharedAndAction(action, new_action, (item) -> {
-                    Toast.makeText(activity, "Updated action", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
                 });
 
                 componentManager.swap("ActionViewComponent");
