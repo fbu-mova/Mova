@@ -176,7 +176,6 @@ public class GoalsFragment extends Fragment {
     private void updateAdapter(ParseQuery<Goal> goalsQuery, ArrayList<Goal.GoalData> goals, DataComponentAdapter<Goal.GoalData> goalsAdapter, RecyclerView rvGoals) {
         // todo -- add refresh/loading capabilities
 
-        Log.d(TAG, "in updateAdapter");
         goalsQuery.findInBackground(new FindCallback<Goal>() {
             @Override
             public void done(List<Goal> objects, ParseException e) {
