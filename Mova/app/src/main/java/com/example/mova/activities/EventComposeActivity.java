@@ -232,6 +232,7 @@ public class EventComposeActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                event.saveInBackground();
                 event.setTitle(etTitle.getText().toString())
                         .setDescription(etDescription.getText().toString())
                 .setHost(user);
@@ -260,6 +261,7 @@ public class EventComposeActivity extends AppCompatActivity {
                 //Add Participants
                 event.relParticipants.add(user);
                 user.relEvents.add(event);
+                user.saveInBackground();
 
                 //Set Date
                 //event.setDate(new Date(etDate.toString()));

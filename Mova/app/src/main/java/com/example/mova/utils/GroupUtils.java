@@ -66,6 +66,7 @@ public class GroupUtils {
 
     public static void getGroupPosts(Group group, AsyncUtils.ListCallback<Post> callback){
         ParseQuery<Post> pqPosts = group.relPosts.getQuery();
+        Post.includeAllPointers(pqPosts);
         pqPosts.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
