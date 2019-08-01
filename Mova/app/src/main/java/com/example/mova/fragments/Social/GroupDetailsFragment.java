@@ -221,24 +221,17 @@ public class GroupDetailsFragment extends Fragment {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
-                    case R.id.action_group_goals:
-                        GroupUtils.getGroupGoals(group, (goals) -> {
-                            // need to figure out which of these goals the user is involved in
-
-                            AsyncUtils.executeMany(goals.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
-                                // in for loop
-                                GoalUtils.checkIfUserInvolved(goals.get(item), (User) ParseUser.getCurrentUser(), (check) -> {
-                                    Goal.GoalData data = new Goal.GoalData(goals.get(item), check);
-                                    groupGoals.add(0, data);
-                                    groupGoalAdapter.notifyItemInserted(0);
-                                });
-                            }, () -> {
-//                                rvGroupGoals.scrollToPosition(0);
-                                rvGroupPosts.scrollToPosition(0);
-                                rvGroupPosts.swapAdapter(groupGoalAdapter, false);
-                            });
-
-                        });
+//                    case R.id.action_group_goals:
+//                        GroupUtils.getGroupGoals(group, (goals) -> {
+//                            for(Goal goal:goals){
+//                                groupGoals.add(new Goal.GoalData())
+//                            }
+//                            groupGoals.addAll(goals);
+//                            groupGoalAdapter.notifyDataSetChanged();
+//                            rvGroupPosts.scrollToPosition(0);
+//                            rvGroupPosts.swapAdapter(groupGoalAdapter, true);
+//                            // need to figure out which of these goals the user is involved in
+//                        });
 
 
 
@@ -251,7 +244,7 @@ public class GroupDetailsFragment extends Fragment {
                             groupPosts.addAll(posts);
                             groupPostAdapter.notifyDataSetChanged();
                             rvGroupPosts.scrollToPosition(0);
-                            rvGroupPosts.swapAdapter(groupPostAdapter, false);
+                            rvGroupPosts.swapAdapter(groupPostAdapter, true);
                         });
 
 
@@ -264,7 +257,7 @@ public class GroupDetailsFragment extends Fragment {
                             groupEvents.addAll(events);
                             groupEventAdapter.notifyDataSetChanged();
                             rvGroupPosts.scrollToPosition(0);
-                            rvGroupPosts.swapAdapter(groupEventAdapter, false);
+                            rvGroupPosts.swapAdapter(groupEventAdapter, true);
                         });
 
 

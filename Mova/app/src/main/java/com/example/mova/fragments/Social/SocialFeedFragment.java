@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -53,6 +54,7 @@ public class SocialFeedFragment extends Fragment {
 
     @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
     @BindView(R.id.esrlPosts)  protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlPosts;
+    @BindView(R.id.ibSearch) protected ImageButton ibSearch;
 
     List<Post> posts;
     DataComponentAdapter<Post> adapter;

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,11 +50,11 @@ public class GroupsFragment extends Fragment {
 
     User user;
 
+    @BindView(R.id.ibSearch)
+    ImageButton ibSearch;
+
     @BindView(R.id.nsvGroups)
     NestedScrollView nsvGroups;
-
-    @BindView(R.id.svGroups)
-    SearchView svGroups;
 
     @BindView(R.id.fabCreateGroup)
     FloatingActionButton fabCreateGroup;

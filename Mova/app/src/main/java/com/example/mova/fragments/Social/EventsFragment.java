@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,8 +46,8 @@ public class EventsFragment extends Fragment {
 
     User user;
 
-    @BindView(R.id.svEvents)
-    SearchView svEvents;
+    @BindView(R.id.ibSearch)
+    ImageButton ibSearch;
 
     @BindView(R.id.fabAdd)
     FloatingActionButton fabAdd;
