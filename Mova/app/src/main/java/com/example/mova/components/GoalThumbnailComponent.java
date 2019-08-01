@@ -35,13 +35,15 @@ public class GoalThumbnailComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_goal_thumbnail_card;
 
     private Goal goal;
+    private boolean userIsInvolved;
     private GoalThumbnailViewHolder viewHolder;
 
     private ComponentManager componentManager;
 
-    public GoalThumbnailComponent(Goal goal) {
+    public GoalThumbnailComponent(Goal.GoalData bundle) {
         super();
-        this.goal = goal;
+        this.goal = bundle.goal;
+        this.userIsInvolved = bundle.userIsInvolved;
     }
 
     @Override

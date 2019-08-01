@@ -27,10 +27,15 @@ import com.example.mova.model.Event;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
+import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.EventUtils;
+import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.Parse;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,12 +66,12 @@ public class GroupDetailsFragment extends Fragment {
     TextView tvGroupName;
 
     protected List<Post> groupPosts;
-    protected List<Goal> groupGoals;
+    protected List<Goal.GoalData> groupGoals;
     protected List<Event> groupEvents;
 
 
     private DataComponentAdapter<Post> groupPostAdapter;
-    private DataComponentAdapter<Goal> groupGoalAdapter;
+    private DataComponentAdapter<Goal.GoalData> groupGoalAdapter;
     private DataComponentAdapter<Event> groupEventAdapter;
 
 //    @BindView(R.id.rvGroupGoals)
@@ -122,9 +127,9 @@ public class GroupDetailsFragment extends Fragment {
 //        rvGroupGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvGroupPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        groupGoalAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), groupGoals) {
+        groupGoalAdapter = new DataComponentAdapter<Goal.GoalData>((DelegatedResultActivity) getActivity(), groupGoals) {
             @Override
-            public Component makeComponent(Goal item, Component.ViewHolder holder) {
+            public Component makeComponent(Goal.GoalData item) {
                 Component component = new GoalCardComponent(item);
                 return component;
             }
@@ -173,11 +178,21 @@ public class GroupDetailsFragment extends Fragment {
                 switch (menuItem.getItemId()){
                     case R.id.action_group_goals:
                         GroupUtils.getGroupGoals(group, (goals) -> {
-                            groupGoals.addAll(goals);
-                            groupGoalAdapter.notifyDataSetChanged();
-//                          rvGroupGoals.scrollToPosition(0);
-                            rvGroupPosts.scrollToPosition(0);
-                            rvGroupPosts.swapAdapter(groupGoalAdapter, false);
+                            // need to figure out which of these goals the user is involved in
+
+                            AsyncUtils.executeMany(goals.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+                                // in for loop
+                                GoalUtils.checkIfUserInvolved(goals.get(item), (User) ParseUser.getCurrentUser(), (check) -> {
+                                    Goal.GoalData data = new Goal.GoalData(goals.get(item), check);
+                                    groupGoals.add(0, data);
+                                    groupGoalAdapter.notifyItemInserted(0);
+                                });
+                            }, () -> {
+//                                rvGroupGoals.scrollToPosition(0);
+                                rvGroupPosts.scrollToPosition(0);
+                                rvGroupPosts.swapAdapter(groupGoalAdapter, false);
+                            });
+
                         });
 
 

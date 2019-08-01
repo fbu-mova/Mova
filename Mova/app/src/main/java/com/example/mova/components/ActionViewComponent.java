@@ -21,7 +21,6 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
         super(action, Color.parseColor("#999999"), Color.parseColor("#222222"),
                 false, (item) -> item.getTask(),
                 (item) -> (item.getIsDone()));
-        this.item = action;
         setManager(componentManager);
     }
 

@@ -47,4 +47,14 @@ public class SharedAction extends HashableParseObject {
         put(KEY_USERS_DONE, done);
         return this;
     }
+
+    public static class Data {
+        public SharedAction sharedAction;
+        public boolean isUserDone;
+
+        public Data(SharedAction sharedAction, boolean isUserDone) {
+            this.sharedAction = sharedAction;
+            this.isUserDone = isUserDone;
+        }
+    }
 }
