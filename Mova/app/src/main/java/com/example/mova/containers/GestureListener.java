@@ -40,11 +40,11 @@ public abstract class GestureListener extends GestureDetector.SimpleOnGestureLis
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         List<Direction> directions = new ArrayList<>();
 
-        if (e1.getX() < e2.getX())      directions.add(Direction.Left);
-        else if (e1.getX() > e2.getX()) directions.add(Direction.Right);
+        if (e2.getX() - e1.getX() > minMove)      directions.add(Direction.Left);
+        else if (e1.getX() - e2.getX() > minMove) directions.add(Direction.Right);
 
-        if (e1.getY() < e2.getY())      directions.add(Direction.Up);
-        else if (e1.getY() > e2.getY()) directions.add(Direction.Down);
+        if (e2.getY() - e1.getY() > minMove)      directions.add(Direction.Up);
+        else if (e1.getY() - e2.getY() > minMove) directions.add(Direction.Down);
 
         if (directions.size() > 0) return onSwipe(directions);
         return onTouch();
