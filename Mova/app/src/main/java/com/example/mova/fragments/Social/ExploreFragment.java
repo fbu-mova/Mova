@@ -12,13 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mova.R;
-import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Post;
 import com.parse.ParseQuery;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -33,7 +30,7 @@ public class ExploreFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @BindView(R.id.clTest) protected ComponentLayout clTest;
+    //@BindView(R.id.clTest) protected ComponentLayout clTest;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -81,8 +78,8 @@ public class ExploreFragment extends Fragment {
             PostComponent outer = new PostComponent(posts.get(0));
             PostComponent inner = new PostComponent(posts.get(1));
 
-            clTest.inflateComponent((DelegatedResultActivity) getActivity(), outer);
-            outer.getViewHolder().clMedia.inflateComponent((DelegatedResultActivity) getActivity(), inner);
+            //clTest.inflateComponent((DelegatedResultActivity) getActivity(), outer);
+            //outer.getViewHolder().clMedia.inflateComponent((DelegatedResultActivity) getActivity(), inner);
         });
     }
 

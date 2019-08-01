@@ -1,10 +1,12 @@
 package com.example.mova.fragments.Social;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.GroupComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
@@ -33,7 +36,6 @@ import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.Parse;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -55,6 +57,7 @@ public class GroupDetailsFragment extends Fragment {
     //Todo - fix this
 
     Group group;
+    User user;
 
     @BindView(R.id.bottom_navigation_groups)
     BottomNavigationView bottomNavigationView;
@@ -64,6 +67,8 @@ public class GroupDetailsFragment extends Fragment {
     ImageView ivGroupDetailsPic;
     @BindView(R.id.tvGroupName)
     TextView tvGroupName;
+    @BindView(R.id.btnJoinGroup)
+    Button btnJoinGroup;
 
     protected List<Post> groupPosts;
     protected List<Goal.GoalData> groupGoals;
@@ -109,10 +114,50 @@ public class GroupDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        user = User.getCurrentUser();
         group = this.getArguments().getParcelable("group");
         groupGoals = new ArrayList<>();
         groupPosts = new ArrayList<>();
         groupEvents = new ArrayList<>();
+
+        GroupUtils.getIsAdmin(user, group, (isAdmin) -> {
+            if(isAdmin) {
+                btnJoinGroup.setText("EDIT GROUP");
+                btnJoinGroup.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), GroupComposeActivity.class);
+                        intent.putExtra("group", group);
+                        startActivity(intent);
+                    }
+                });
+            }else{
+                GroupUtils.getIsMember(user,group, (isMember) -> {
+                    if(isMember){
+                        btnJoinGroup.setText("LEAVE GROUP");
+                    }else{
+                        btnJoinGroup.setText("JOIN GROUP");
+                    }
+
+                    btnJoinGroup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(isMember){
+                                group.relUsers.remove(user, () -> {
+                                    btnJoinGroup.setText("JOIN GROUP");
+                                    user.relGroups.remove(group, () -> {});
+                                });
+                            }else{
+                                group.relUsers.add(user);
+                                btnJoinGroup.setText("LEAVE GROUP");
+                                user.relGroups.add(group);
+                            }
+                        }
+                    });
+                });
+            }
+
+        });
 
         tvGroupName.setText(group.getName());
         ParseFile file = group.getGroupPic();

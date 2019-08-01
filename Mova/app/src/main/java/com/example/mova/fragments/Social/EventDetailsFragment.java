@@ -190,10 +190,12 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
                        if(bool){
                            event.relParticipants.remove(user, () -> {
                                btnEventAction.setText("JOIN EVENT");
+                               user.relEvents.remove(event, () -> {});
                            });
                        }else{
                            event.relParticipants.add(user);
                            btnEventAction.setText("LEAVE EVENT");
+                           user.relEvents.add(event);
                        }
                    }
                });

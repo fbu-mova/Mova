@@ -1,5 +1,8 @@
 package com.example.mova.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,12 +13,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.mova.R;
+import com.example.mova.fragments.SocialFragment;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
+import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.TextUtils;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -29,6 +36,7 @@ public class GroupComposeActivity extends AppCompatActivity {
     User user;
     Group group;
     private List<String> tags;
+    List<Tag> listtags;
 
     @BindView(R.id.ibGroupImage)
     ImageButton ibGroupImage;
@@ -51,6 +59,9 @@ public class GroupComposeActivity extends AppCompatActivity {
     @BindView(R.id.btnSave)
     Button btnSave;
 
+    @BindView(R.id.btnDeleteGroup)
+    Button btnDeleteGroup;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +69,70 @@ public class GroupComposeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         user = User.getCurrentUser();
-        group = new Group();
+
         tags = new ArrayList<>();
+        listtags = new ArrayList<>();
+
+        Intent intent = getIntent();
+
+        btnDeleteGroup.setVisibility(View.GONE);
+
+        if(intent.getParcelableExtra("group") == null){
+            group = new Group();
+        }else{
+            group = intent.getParcelableExtra("group");
+
+            //Show the delete button
+            btnDeleteGroup.setVisibility(View.VISIBLE);
+
+            //Allow the group to be deleted
+            btnDeleteGroup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupComposeActivity.this);
+                    builder.setMessage("Are you sure you want to delete this group?")
+                            .setTitle("Confirm")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    group.deleteInBackground();
+                                    user.relGroups.remove(group, () -> {});
+                                    Intent intent1 = new Intent(GroupComposeActivity.this, SocialFragment.class);
+                                    startActivity(intent1);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+
+            //Fill in the image
+            ParseFile file = group.getGroupPic();
+            if(file != null){
+                String imageUrl = file.getUrl();
+                Glide.with(GroupComposeActivity.this)
+                        .load(imageUrl)
+                        .into(ibGroupImage);
+            }
+
+            //Fill in the text feilds
+            etGroupName.setText(group.getName());
+            etGroupDesctiption.setText(group.getDescription());
+
+
+            //Fill in the tag feild
+            GroupUtils.getTags(group, (oldTagList) -> {
+                for(Tag tag: oldTagList){
+                    updateTags(tag.getName(), true);
+                }
+            });
+        }
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,14 +153,14 @@ public class GroupComposeActivity extends AppCompatActivity {
                 group.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        //Add tags
-                        for(String tagString: tags){
-                            Tag tag = new Tag(tagString);
+                        for(int i = 0; i < tags.size() ; i++){
+                            listtags.add(new Tag(tags.get(i)));
+                        }
+                        Tag.saveTags(listtags, (tag, cb) -> {
                             group.relTags.add(tag);
                             tag.relGroups.add(group);
                             tag.saveInBackground();
-                        }
-
+                        }, (error) -> {});
                         user.saveInBackground();
                         group.saveInBackground(new SaveCallback() {
                             @Override

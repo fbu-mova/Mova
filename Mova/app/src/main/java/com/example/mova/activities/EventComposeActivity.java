@@ -22,10 +22,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
+import com.example.mova.fragments.SocialFragment;
 import com.example.mova.model.Event;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
+import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.TextUtils;
 import com.parse.ParseException;
@@ -119,11 +121,15 @@ public class EventComposeActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EventComposeActivity.this);
                     builder.setMessage("Are you sure you want to delete this event?")
-                    .setTitle("Delete")
+                    .setTitle("Confirm")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             event.deleteInBackground();
+                            user.relEvents.remove(event, () -> {});
+                            finish();
+                            Intent intent1 = new Intent(EventComposeActivity.this, SocialFragment.class);
+                            startActivity(intent1);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -157,6 +163,12 @@ public class EventComposeActivity extends AppCompatActivity {
 //            etDate.setText(event.getDate().toString());
 
             etDescription.setText(event.getDescription());
+
+            EventUtils.getTags(event, (oldTagList) -> {
+                for(Tag tag: oldTagList){
+                    updateTags(tag.getName(), true);
+                }
+            });
 
         }
 
