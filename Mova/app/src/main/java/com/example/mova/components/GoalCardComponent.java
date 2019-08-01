@@ -103,15 +103,9 @@ public class GoalCardComponent extends Component {
 
     @Override
     protected void onRender(ViewHolder holder) {
+
         checkViewHolderClass(holder, GoalCardViewHolder.class);
         viewHolder = (GoalCardViewHolder) holder;
-
-//        if (viewHolder == null) {
-//            Log.e(TAG, "not inflating views to viewHolder, in render");
-//            return;
-//        }
-
-        Log.d(TAG, "in render function");
 
         viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,25 +116,11 @@ public class GoalCardComponent extends Component {
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 
                 getActivity().startActivity(intent);
-
-//                activity.startActivityForDelegatedResult(intent, REQUEST_GOAL_DETAILS, new DelegatedResultActivity.ActivityResultCallback() {
-//                    @Override
-//                    public void call(int requestCode, int resultCode, Intent data) {
-//                        if (resultCode == RESULT_OK) {
-//                            if (requestCode == REQUEST_GOAL_DETAILS) {
-//
-//                            }
-//                        }
-//                    }
-//                });
             }
         });
 
         viewHolder.tvName.setText(item.getTitle());
-        Log.d(TAG, String.format("tvName of this viewholder: %s", viewHolder.tvName.getText().toString()));
-
         viewHolder.tvDescription.setText(item.getDescription());
-        Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
         GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
@@ -152,13 +132,14 @@ public class GoalCardComponent extends Component {
         viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
 
         // get and render the actions -- use bool isPersonal and bool isUserInvolved
+
         // fixme -- jank casework
         if (isPersonal) {
             // a personal goal that only the creator can see, should always be the case
 
             actions = new ArrayList<>();
 
-        actionsAdapter = new DataComponentAdapter<Action>(getActivity(), actions) {
+            actionsAdapter = new DataComponentAdapter<Action>(getActivity(), actions) {
 
             @Override
             protected Component makeComponent(Action item, ViewHolder holder) {

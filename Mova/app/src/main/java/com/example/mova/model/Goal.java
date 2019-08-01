@@ -1,10 +1,17 @@
 package com.example.mova.model;
 
+import android.util.Log;
+
+import com.example.mova.utils.AsyncUtils;
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 @ParseClassName("Goal")
 public class Goal extends HashableParseObject {
@@ -17,6 +24,7 @@ public class Goal extends HashableParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_FROM_GROUP = "fromGroup";
     public static final String KEY_CREATED_AT = "createdAt";
+    public static final String KEY_OBJECT_ID = "objectId";
 
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_ACTIONS = "actions";
@@ -41,9 +49,24 @@ public class Goal extends HashableParseObject {
     }
 
     //Author
-
-    public User getAuthor(){
+    public User getAuthor() {
         return (User) getParseUser(KEY_AUTHOR);
+    }
+
+    public void getAuthor(Goal goal, AsyncUtils.ItemCallback<User> callback){
+        ParseQuery<User> query = ParseQuery.getQuery("_User");
+        query.whereEqualTo(KEY_OBJECT_ID, goal.getParseUser(KEY_AUTHOR).getObjectId())
+                .findInBackground(new FindCallback<User>() {
+                    @Override
+                    public void done(List<User> objects, ParseException e) {
+                        if (e == null && objects.size() == 1) {
+                            callback.call(objects.get(0));
+                        }
+                        else {
+                            Log.e("goal model", "something wrong in get author", e);
+                        }
+                    }
+                });
     }
 
     public Goal setAuthor(User user){
@@ -130,14 +153,18 @@ public class Goal extends HashableParseObject {
             return this;
         }
 
-
         public Query withGroup() {
             include(KEY_FROM_GROUP);
             return this;
         }
 
         public Query fromCurrentUser() {
-            whereEqualTo(KEY_AUTHOR, ParseUser.getCurrentUser());
+            whereEqualTo(KEY_AUTHOR, User.getCurrentUser());
+            return this;
+        }
+
+        public Query withUser() {
+            include(KEY_AUTHOR);
             return this;
         }
     }
