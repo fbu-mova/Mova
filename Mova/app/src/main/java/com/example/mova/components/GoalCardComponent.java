@@ -22,6 +22,7 @@ import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -38,6 +39,7 @@ import butterknife.OnClick;
 import static android.app.Activity.RESULT_OK;
 import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
+import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalCardComponent extends Component {
 
@@ -172,6 +174,7 @@ public class GoalCardComponent extends Component {
         }
         else if (!isPersonal && isUserInvolved) {
             // a social goal that the user is involved in BUT user is not author
+                // for now, user sees official social goal
 
             // fixme -- for now, social goals can't be edited from the cards.
             // todo -- make it so creator can edit via goal details page ?
@@ -189,7 +192,9 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
-            // todo : need to upload to adapter and actually get the userIsDone info
+            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+            });
         }
         else if (!isPersonal && !isUserInvolved) {
             // a social goal the user is not involved in
@@ -206,6 +211,45 @@ public class GoalCardComponent extends Component {
         }
 
         // FIXME -- for social goal, want to be able to see goals/their actions but can't check/alter.
+    }
+
+    private void updateSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
+        // fixme -- similar to updateAdapter in GoalFragments; merge with that or the generic-typed updateAdapter?
+
+        /* first need to find SharedAction.Data isUserDone boolean:
+                1. for each sharedAction, query to find user's action in it
+                2. check isDone and isConnectedToParentSharedAction boolean
+                3. if (true, true) -> true. everything else false
+          */
+
+        AsyncUtils.executeMany(objects.size(), (Integer number, AsyncUtils.ItemCallback<Throwable> callback) -> {
+            // iteration in the for loop
+
+            SharedAction sharedAction = objects.get(number);
+            sharedAction.relChildActions.getQuery()
+                    .whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser())
+                    .findInBackground(new FindCallback<Action>() {
+                        @Override
+                        public void done(List<Action> objects, ParseException e) {
+                            if (e == null && objects.size() == 1) {
+                                Log.d(TAG, "found child action");
+
+                                Action action = objects.get(0);
+                                boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
+                                SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
+                                sharedActions.add(0, data);
+                                sharedActionsAdapter.notifyItemInserted(0);
+
+                            }
+                            else {
+                                Log.e(TAG, "either size(actions) wrong or error", e);
+                            }
+                            callback.call(e);
+                        }
+                    });
+        }, () -> {
+            rvActions.scrollToPosition(0);
+        });
     }
 
     private < E > void updateAdapter(List< E > objects, ArrayList< E > actions, DataComponentAdapter< E > actionsAdapter, RecyclerView rvActions) {
