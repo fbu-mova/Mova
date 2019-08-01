@@ -66,6 +66,44 @@ public class Journal {
     }
 
     /**
+     * Gets the date after the given date.
+     * If the date does not exist or there is no date after the given date, returns the given date.
+     * @param date The date to compare to.
+     * @return The next date.
+     */
+    public Date getNextDate(Date date) {
+        int index = dates.indexOf(date);
+        if (index < 0) return date;
+
+        Date plusOne = date, minusOne = date;
+        if (index + 1 < dates.size()) plusOne = dates.get(index + 1);
+        if (index - 1 >= 0)           minusOne = dates.get(index - 1);
+
+        if      (date.compareTo(plusOne) < 0)  return plusOne;
+        else if (date.compareTo(minusOne) < 0) return minusOne;
+        else                                   return date;
+    }
+
+    /**
+     * Gets the date before the given date.
+     * If the date does not exist or there is no date after the given date, returns the given date.
+     * @param date The date to compare to.
+     * @return The previous date.
+     */
+    public Date getPrevDate(Date date) {
+        int index = dates.indexOf(date);
+        if (index < 0) return date;
+
+        Date plusOne = date, minusOne = date;
+        if (index + 1 < dates.size()) plusOne = dates.get(index + 1);
+        if (index - 1 >= 0)           minusOne = dates.get(index - 1);
+
+        if      (date.compareTo(plusOne) > 0)  return plusOne;
+        else if (date.compareTo(minusOne) > 0) return minusOne;
+        else                                   return date;
+    }
+
+    /**
      * Adds an entry to the list for a specific date.
      * If no list yet exists, creates the list first, and handles date creation.
      * @param date

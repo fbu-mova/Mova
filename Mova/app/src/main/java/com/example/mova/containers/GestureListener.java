@@ -16,7 +16,6 @@ public abstract class GestureListener extends GestureDetector.SimpleOnGestureLis
     }
 
     /**
-     *
      * @param view
      * @param minMove The minimum amount of movement that must occur for a fling to be considered a swipe. Acts as a measure of inverted sensitivity.
      */

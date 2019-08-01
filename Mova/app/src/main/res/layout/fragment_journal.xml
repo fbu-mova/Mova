@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.mova.containers.GestureLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/glRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:windowBackground"
@@ -9,81 +10,88 @@
     android:orientation="vertical"
     tools:context=".fragments.Personal.JournalFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/outerMargin"
-        android:layout_marginTop="@dimen/outerMargin"
-        android:layout_marginEnd="@dimen/outerMargin"
-        android:layout_marginBottom="@dimen/outerMargin"
-        android:clipChildren="false"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/innerMargin"
-            android:fontFamily="@font/lato_bold"
-            android:text="Journal"
-            android:textColor="@color/textMain"
-            android:textSize="@dimen/textSizeTitle" />
-
-        <com.example.mova.containers.EndlessScrollLayout
-            android:id="@+id/eslDates"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginBottom="@dimen/innerMargin"
-            android:layout_weight="0"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/outerMargin"
+            android:layout_marginTop="@dimen/outerMargin"
+            android:layout_marginEnd="@dimen/outerMargin"
+            android:layout_marginBottom="@dimen/outerMargin"
             android:clipChildren="false"
-            android:requiresFadingEdge="horizontal">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        </com.example.mova.containers.EndlessScrollLayout>
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/innerMargin"
+                android:fontFamily="@font/lato_bold"
+                android:text="Journal"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeTitle" />
 
-        <TextView
-            android:id="@+id/tvDate"
+            <com.example.mova.containers.EndlessScrollLayout
+                android:id="@+id/eslDates"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginBottom="@dimen/innerMargin"
+                android:layout_weight="0"
+                android:clipChildren="false"
+                android:requiresFadingEdge="horizontal">
+
+            </com.example.mova.containers.EndlessScrollLayout>
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/innerMargin"
+                android:text="Date"
+                android:textColor="@color/textLight"
+                android:textSize="@dimen/textSizeBody" />
+
+            <com.example.mova.containers.EndlessScrollRefreshLayout
+                android:id="@+id/esrlEntries"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="100"
+                android:clipChildren="true"
+                android:fadeScrollbars="true"
+                android:fadingEdgeLength="@dimen/outerMargin"
+                android:requiresFadingEdge="vertical">
+
+            </com.example.mova.containers.EndlessScrollRefreshLayout>
+
+            <!--<androidx.recyclerview.widget.RecyclerView-->
+            <!--android:id="@+id/rvEntries"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="100" />-->
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabCompose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/innerMargin"
-            android:text="Date"
-            android:textColor="@color/textLight"
-            android:textSize="@dimen/textSizeBody" />
+            android:layout_marginRight="@dimen/outerMargin"
+            android:layout_marginBottom="@dimen/outerMargin"
+            android:clickable="true"
+            android:src="@android:color/white"
+            app:backgroundTint="@android:color/white"
+            app:elevation="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.example.mova.containers.EndlessScrollRefreshLayout
-            android:id="@+id/esrlEntries"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="100"
-            android:clipChildren="true"
-            android:fadeScrollbars="true"
-            android:fadingEdgeLength="@dimen/outerMargin"
-            android:requiresFadingEdge="vertical">
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </com.example.mova.containers.EndlessScrollRefreshLayout>
-
-        <!--<androidx.recyclerview.widget.RecyclerView-->
-        <!--android:id="@+id/rvEntries"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="100" />-->
-    </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCompose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/outerMargin"
-        android:layout_marginBottom="@dimen/outerMargin"
-        android:clickable="true"
-        android:src="@android:color/white"
-        app:backgroundTint="@android:color/white"
-        app:elevation="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.example.mova.containers.GestureLayout>
