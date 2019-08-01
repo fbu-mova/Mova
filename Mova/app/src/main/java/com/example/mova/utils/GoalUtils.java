@@ -265,7 +265,8 @@ public class GoalUtils {
                     .setParentGoal(goal)
                     .setParentUser((User) ParseUser.getCurrentUser())
                     .setParentSharedAction(sharedActionsList.get(item))
-                    .setIsConnectedToParent(true);
+                    .setIsConnectedToParent(true)
+                    .setIsDone(false);
 
             actionsList.add(action);
 
@@ -445,7 +446,6 @@ public class GoalUtils {
                         Log.e(TAG, "query for sharedActions failed", e);
                     }
                 });
-
     }
 
     public static void checkIfUserInvolved(Goal goal, User user, AsyncUtils.ItemCallback<Boolean> callback) {
