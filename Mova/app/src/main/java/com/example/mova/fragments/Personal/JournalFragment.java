@@ -234,6 +234,8 @@ public class JournalFragment extends Fragment {
             }
         );
 
+        int elementMargin = (int) getResources().getDimension(R.dimen.elementMargin);
+        eslDates.addItemDecoration(new EdgeDecorator(elementMargin, 0, elementMargin, 0, EdgeDecorator.Orientation.Horizontal, EdgeDecorator.Start.Reverse));
         esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 64));
 
         // On fab click, open compose activity
