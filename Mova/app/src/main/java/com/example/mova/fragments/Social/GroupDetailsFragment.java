@@ -221,17 +221,8 @@ public class GroupDetailsFragment extends Fragment {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
-//                    case R.id.action_group_goals:
-//                        GroupUtils.getGroupGoals(group, (goals) -> {
-//                            for(Goal goal:goals){
-//                                groupGoals.add(new Goal.GoalData())
-//                            }
-//                            groupGoals.addAll(goals);
-//                            groupGoalAdapter.notifyDataSetChanged();
-//                            rvGroupPosts.scrollToPosition(0);
-//                            rvGroupPosts.swapAdapter(groupGoalAdapter, true);
-//                            // need to figure out which of these goals the user is involved in
-//                        });
+                    case R.id.action_group_goals:
+                        GroupUtils.getGroupGoals(group, (goals) -> {
 
                             AsyncUtils.executeMany(goals.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
                                 // in for loop
@@ -245,6 +236,7 @@ public class GroupDetailsFragment extends Fragment {
                                 rvGroupPosts.scrollToPosition(0);
                                 rvGroupPosts.swapAdapter(groupGoalAdapter, true);
                             });
+                        });
 
 
 //                        rvGroupGoals.setVisibility(View.VISIBLE);
