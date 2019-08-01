@@ -433,6 +433,21 @@ public class GoalUtils {
         });
     }
 
+    public static void loadGoalSharedActions(Goal goal, AsyncUtils.ListCallback<SharedAction> callback) {
+
+        goal.relSharedActions.getQuery()
+                .findInBackground((objects, e) -> {
+                    if (e == null) {
+                        Log.d(TAG, "sharedAction query success w/ size " + objects.size());
+                        callback.call(objects);
+                    }
+                    else {
+                        Log.e(TAG, "query for sharedActions failed", e);
+                    }
+                });
+
+    }
+
     public static void checkIfUserInvolved(Goal goal, User user, AsyncUtils.ItemCallback<Boolean> callback) {
         ParseQuery<Goal> goalQuery = user.relGoals.getQuery().whereEqualTo("objectId", goal.getObjectId());
         goalQuery.findInBackground(new FindCallback<Goal>() {
