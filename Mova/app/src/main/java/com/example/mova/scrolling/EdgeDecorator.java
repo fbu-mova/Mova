@@ -15,19 +15,36 @@ import androidx.recyclerview.widget.RecyclerView;
 public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
     private final int topMargin, bottomMargin, leftMargin, rightMargin;
+    private final Orientation orientation;
+    private final Start start;
 
     public EdgeDecorator(int margin) {
-        topMargin = margin;
-        bottomMargin = margin;
-        leftMargin = margin;
-        rightMargin = margin;
+        this(margin, Orientation.Vertical);
+    }
+
+    public EdgeDecorator(int margin, Orientation orientation) {
+        this(margin, orientation, Start.Natural);
+    }
+
+    public EdgeDecorator(int margin, Orientation orientation, Start start) {
+        this(margin, margin, margin, margin, orientation, start);
     }
 
     public EdgeDecorator(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+        this(leftMargin, topMargin, rightMargin, bottomMargin, Orientation.Vertical);
+    }
+
+    public EdgeDecorator(int leftMargin, int topMargin, int rightMargin, int bottomMargin, Orientation orientation) {
+        this(leftMargin, topMargin, rightMargin, bottomMargin, orientation, Start.Natural);
+    }
+
+    public EdgeDecorator(int leftMargin, int topMargin, int rightMargin, int bottomMargin, Orientation orientation, Start start) {
         this.topMargin = topMargin;
         this.bottomMargin = bottomMargin;
         this.leftMargin = leftMargin;
         this.rightMargin = rightMargin;
+        this.orientation = orientation;
+        this.start = start;
     }
 
     @Override
@@ -43,17 +60,37 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
             return;
         }
 
-        // first item (bottom and top padding)
+        // first item (start and end padding)
         if (itemPosition == 0) {
             outRect.set(view.getPaddingLeft() + leftMargin, view.getPaddingTop() + topMargin, view.getPaddingRight() + rightMargin, view.getPaddingBottom() + bottomMargin);
         }
-        // last item
-//        else if (itemPosition == itemCount - 1) {
-//            outRect.set(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom() + edgePadding);
-//        }
-        // every other item (only top padding)
+        // every other item (only end padding)
         else {
-            outRect.set(view.getPaddingLeft() + leftMargin, view.getPaddingTop(), view.getPaddingRight() + rightMargin, view.getPaddingBottom() + bottomMargin);
+            // Remove the correct start padding based on start and orientation
+            int left = view.getPaddingLeft() + leftMargin;
+            int top = view.getPaddingTop() + topMargin;
+            int right = view.getPaddingRight() + rightMargin;
+            int bottom = view.getPaddingBottom() + bottomMargin;
+
+            if (orientation == Orientation.Vertical) {
+                if (start == Start.Natural) top -= topMargin;
+                else                        bottom -= bottomMargin;
+            } else {
+                if (start == Start.Natural) left -= leftMargin;
+                else                        right -= rightMargin;
+            }
+
+            outRect.set(left, top, right, bottom);
         }
+    }
+
+    public enum Orientation {
+        Vertical,
+        Horizontal
+    }
+
+    public enum Start {
+        Natural,
+        Reverse
     }
 }

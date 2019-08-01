@@ -28,8 +28,10 @@ import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.scrolling.EndlessScrollLayout;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
+import com.example.mova.utils.DataEvent;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.model.Post;
@@ -55,9 +57,11 @@ public class JournalFragment extends Fragment {
     private Journal journal;
     private Date currDate;
 
+    private DataEvent<Date> dateSelectEvent;
+
     @BindView(R.id.tvTitle)     protected TextView tvTitle;
     @BindView(R.id.tvDate)      protected TextView tvDate;
-    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlDates;
+    @BindView(R.id.eslDates)    protected EndlessScrollLayout<Component.ViewHolder> eslDates;
     @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
     @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
 
@@ -97,6 +101,7 @@ public class JournalFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         currDate = TimeUtils.getToday();
+        dateSelectEvent = new DataEvent<>();
 
         journal = new Journal(
                 User.getCurrentUser(),
@@ -143,7 +148,7 @@ public class JournalFragment extends Fragment {
         dateAdapter = new SortedDataComponentAdapter<Date>((DelegatedResultActivity) getActivity(), journal.getDates()) {
             @Override
             public Component makeComponent(Date item, Component.ViewHolder holder) {
-                return new DatePickerComponent(item, (view, date) -> {
+                return new DatePickerComponent(item, dateSelectEvent, (view, date) -> {
                     currDate = date;
                     displayEntries(currDate);
                 });
@@ -170,10 +175,10 @@ public class JournalFragment extends Fragment {
         LinearLayoutManager dateLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true);
         LinearLayoutManager entryLayoutManager = new LinearLayoutManager(getActivity());
 
-        esrlDates.init(
-            new EndlessScrollRefreshLayout.LayoutConfig()
-                    .setHeightSize(EndlessScrollRefreshLayout.LayoutConfig.Size.wrap_content)
-                    .setOrientation(EndlessScrollRefreshLayout.LayoutConfig.Orientation.Horizontal),
+        eslDates.init(
+            new EndlessScrollLayout.LayoutConfig()
+                    .setHeightSize(EndlessScrollLayout.LayoutConfig.Size.wrap_content)
+                    .setOrientation(EndlessScrollLayout.LayoutConfig.Orientation.Horizontal),
             new ScrollLoadHandler<Component.ViewHolder>() {
                 @Override
                 public void load() {
@@ -233,6 +238,8 @@ public class JournalFragment extends Fragment {
             }
         );
 
+        int elementMargin = (int) getResources().getDimension(R.dimen.elementMargin);
+        eslDates.addItemDecoration(new EdgeDecorator(elementMargin, 0, 0, 0, EdgeDecorator.Orientation.Horizontal, EdgeDecorator.Start.Reverse));
         esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 64));
 
         // On fab click, open compose activity
@@ -269,11 +276,12 @@ public class JournalFragment extends Fragment {
     }
 
     private void displayEntries(Date date) {
-        // TODO: Possibly add indicator of date being selected in date picker
+        // Change the displayed date in the date picker and the subheader text
         tvDate.setText(TimeUtils.toDateString(date));
-        SortedList<Post> entriesFromDate = journal.getEntriesByDate(date);
+        dateSelectEvent.fire(date);
 
         // Change the source of the entries--important to reattach the adapter each time the source is changed
+        SortedList<Post> entriesFromDate = journal.getEntriesByDate(date);
         entryAdapter.changeSource(entriesFromDate);
         esrlEntries.reattachAdapter();
         entryAdapter.notifyDataSetChanged();
@@ -283,7 +291,6 @@ public class JournalFragment extends Fragment {
         journal.loadEntries((e) -> {
             displayEntries(currDate);
             esrlEntries.setRefreshing(false);
-            esrlDates.setRefreshing(false);
         });
     }
 
@@ -291,7 +298,6 @@ public class JournalFragment extends Fragment {
         journal.loadMoreEntries((e) -> {
             displayEntries(currDate);
             esrlEntries.setRefreshing(false);
-            esrlDates.setRefreshing(false);
         });
     }
 }

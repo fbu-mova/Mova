@@ -197,7 +197,7 @@ public class JournalEntryComponent extends Component {
         @Override
         public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
             LayoutInflater inflater = activity.getLayoutInflater();
-            View view = inflater.inflate(R.layout.item_journal_entry, parent, attachToRoot);
+            View view = inflater.inflate(R.layout.component_journal_entry, parent, attachToRoot);
             return new ViewHolder(view);
         }
     }
