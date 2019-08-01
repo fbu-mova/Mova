@@ -2,23 +2,13 @@ package com.example.mova.components;
 
 import android.graphics.Color;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.example.mova.R;
-import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.utils.GoalUtils;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class ActionViewComponent extends ChecklistItemComponent<Action> {
         // needs a separate name for getName component manager, and to implement icons...
@@ -46,9 +36,10 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
     }
 
     @Override
-    public void render() {
-        super.render();
+    protected void onRender(Component.ViewHolder holder) {
+        super.onRender(holder);
 
+        // FIXME: Will this ever be called, given polymorphic structure? (adapters call the most generic component possible, I think)
         // todo -- implement icons
     }
 
@@ -60,7 +51,7 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
             }
             else {
                 Log.e(TAG, "toggled action failed", e);
-                Toast.makeText(activity, "Toggling action failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Toggling action failed", Toast.LENGTH_LONG).show();
             }
         });
     }

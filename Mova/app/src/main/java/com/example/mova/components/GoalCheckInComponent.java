@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.utils.AsyncUtils;
@@ -37,9 +39,7 @@ public class GoalCheckInComponent extends Component {
     // Async data
     private List<Action> goalActions;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
 
     private DataComponentAdapter<Action> adapter;
 
@@ -61,21 +61,13 @@ public class GoalCheckInComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_goal_check_in, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -89,39 +81,58 @@ public class GoalCheckInComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         // Display goal title and message
-        holder.tvGoalTitle.setText(goal.getTitle());
-        holder.tvSubheader.setText(message);
+        this.holder.tvGoalTitle.setText(goal.getTitle());
+        this.holder.tvSubheader.setText(message);
 
         // Set up actions checklist
-        adapter = new DataComponentAdapter<Action>(activity, goalActions) {
+        adapter = new DataComponentAdapter<Action>(getActivity(), goalActions) {
+
             @Override
-            public Component makeComponent(Action item) {
+            protected Component makeComponent(Action item, Component.ViewHolder holder) {
                 return new ChecklistItemComponent<Action>(item,
-                        Color.parseColor("#999999"), Color.parseColor("#222222"), false,
-                        (action) -> action.getTask(), (action) -> action.getIsDone()) {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        GoalUtils.toggleDone(item, (e) -> {
-                            if (e != null) {
-                                Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
-                                Toast.makeText(activity, "Failed to toggle action done", Toast.LENGTH_LONG).show();
-                            } else {
-                                Log.i("GoalCheckInComponent", "Toggled action done");
-                            }
-                        });
-                    }
+                    Color.parseColor("#999999"), Color.parseColor("#222222"), false,
+                    (action) -> action.getTask(), (action) -> action.getIsDone()) {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            GoalUtils.toggleDone(item, (e) -> {
+                                if (e != null) {
+                                    Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
+                                    Toast.makeText(getActivity(), "Failed to toggle action done", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Log.i("GoalCheckInComponent", "Toggled action done");
+                                }
+                            });
+                        }
                 };
             }
+
+            @Override
+            protected Component.Inflater makeInflater(Action item) {
+                return new ChecklistItemComponent.Inflater();
+            }
         };
-        holder.rvChecklist.setLayoutManager(new LinearLayoutManager(activity));
-        holder.rvChecklist.setAdapter(adapter);
+        this.holder.rvChecklist.setLayoutManager(new LinearLayoutManager(getActivity()));
+        this.holder.rvChecklist.setAdapter(adapter);
 
         // Display progress
-        holder.pbProgress.setProgress(GoalUtils.getProgressPercent(goalActions));
+        this.holder.pbProgress.setProgress(GoalUtils.getProgressPercent(goalActions));
 
         // TODO: Add onclick listener for whole card to open the goal detail view for the associated goal
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -134,6 +145,16 @@ public class GoalCheckInComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_goal_check_in, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

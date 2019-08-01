@@ -19,7 +19,7 @@ import com.example.mova.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.model.Goal;
@@ -35,7 +35,6 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -121,24 +120,39 @@ public class ProgressFragment extends Fragment {
 
         goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new ProgressGoalComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new ProgressGoalComponent.Inflater();
             }
         };
         goalsWorkAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new ProgressGoalComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new ProgressGoalComponent.Inflater();
             }
         };
 
         gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
             @Override
-            public Component makeComponent(Mood.Status item) {
+            public Component makeComponent(Mood.Status item, Component.ViewHolder holder) {
                 Component component = new ProgressGridMoodComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Mood.Status item) {
+                return new ProgressGridMoodComponent.Inflater();
             }
         };
 

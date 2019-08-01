@@ -21,7 +21,7 @@ import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.SortedDataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.DatePickerComponent;
 import com.example.mova.components.JournalEntryComponent;
 import com.example.mova.model.Journal;
@@ -142,18 +142,28 @@ public class JournalFragment extends Fragment {
         // On date click, display only the entries for that date
         dateAdapter = new SortedDataComponentAdapter<Date>((DelegatedResultActivity) getActivity(), journal.getDates()) {
             @Override
-            public Component makeComponent(Date item) {
+            public Component makeComponent(Date item, Component.ViewHolder holder) {
                 return new DatePickerComponent(item, (view, date) -> {
                     currDate = date;
                     displayEntries(currDate);
                 });
             }
+
+            @Override
+            protected Component.Inflater makeInflater(Date item) {
+                return new DatePickerComponent.Inflater();
+            }
         };
 
         entryAdapter = new SortedDataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), journal.getEntriesByDate(currDate)) {
             @Override
-            public Component makeComponent(Post item) {
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
                 return new JournalEntryComponent(item);
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new JournalEntryComponent.Inflater();
             }
         };
 
@@ -187,7 +197,7 @@ public class JournalFragment extends Fragment {
 
                 @Override
                 public int[] getColorScheme() {
-                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                    return ScrollLoadHandler.getDefaultColorScheme();
                 }
              }
         );
@@ -218,7 +228,7 @@ public class JournalFragment extends Fragment {
 
                 @Override
                 public int[] getColorScheme() {
-                    return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                    return getDefaultColorScheme();
                 }
             }
         );

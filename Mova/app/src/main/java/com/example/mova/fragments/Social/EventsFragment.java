@@ -18,7 +18,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.EventComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.model.Event;
 import com.example.mova.model.User;
@@ -27,7 +27,6 @@ import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,9 +109,14 @@ public class EventsFragment extends Fragment {
 
         yourEventsAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(),yourEvents) {
             @Override
-            public Component makeComponent(Event item) {
+            public Component makeComponent(Event item, Component.ViewHolder holder) {
                 Component component = new EventThumbnailComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Event item) {
+                return new EventThumbnailComponent.Inflater();
             }
         };
 
@@ -120,9 +124,14 @@ public class EventsFragment extends Fragment {
 
         nearYouAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), nearYouEvents) {
             @Override
-            public Component makeComponent(Event item) {
+            public Component makeComponent(Event item, Component.ViewHolder holder) {
                 Component component = new EventThumbnailComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Event item) {
+                return new EventThumbnailComponent.Inflater();
             }
         };
 

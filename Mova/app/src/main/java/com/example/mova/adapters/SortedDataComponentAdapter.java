@@ -1,6 +1,5 @@
 package com.example.mova.adapters;
 
-import android.app.Activity;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -8,10 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Adapts items to a sorted list of components, which are then displayed.
@@ -33,7 +31,14 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
      * @param item The item to use as data for the component.
      * @return The component to display.
      */
-    public abstract Component makeComponent(T item);
+    protected abstract Component makeComponent(T item, Component.ViewHolder holder);
+
+    /**
+     * Serves as a factory for the type of component inflater that should be used.
+     * @param item The item to use as data for the component inflater.
+     * @return The inflater with which to inflate the component's view.
+     */
+    protected abstract Component.Inflater makeInflater(T item);
 
     @Override
     public int getItemViewType(int position) {
@@ -46,17 +51,16 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         T item = items.get(viewType);
-        Component component = makeComponent(item);
-        components.put(item, component); // FIXME: Make sure that this overrides the last value
-        component.makeViewHolder(activity, parent, false);
-        return component.getViewHolder();
+        Component.Inflater inflater = makeInflater(item);
+        return inflater.inflate(activity, parent, false);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
         Component component = components.get(item);
-        component.render();
+        if (component == null) component = makeComponent(item, holder);
+        component.render(activity, holder);
     }
 
     @Override

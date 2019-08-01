@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +20,9 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
     private List<T> items;
     private HashMap<T, Component> components;
 
-    public DataComponentAdapter(DelegatedResultActivity activity, List<T> items) {
+    public DataComponentAdapter(@NonNull DelegatedResultActivity activity, @NonNull List<T> items) {
         this.activity = activity;
-        this.items = items; // TODO: If null, instantiate
+        this.items = items;
         this.components = new HashMap<>();
     }
 
@@ -31,7 +31,14 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
      * @param item The item to use as data for the component.
      * @return The component to display.
      */
-    public abstract Component makeComponent(T item);
+    protected abstract Component makeComponent(T item, Component.ViewHolder holder);
+
+    /**
+     * Serves as a factory for the type of component inflater that should be used.
+     * @param item The item to use as data for the component inflater.
+     * @return The inflater with which to inflate the component's view.
+     */
+    protected abstract Component.Inflater makeInflater(T item);
 
     @Override
     public int getItemViewType(int position) {
@@ -44,25 +51,20 @@ public abstract class DataComponentAdapter<T> extends RecyclerView.Adapter<Compo
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         T item = items.get(viewType);
-        Component component = makeComponent(item);
-        components.put(item, component); // FIXME: Make sure that this overrides the last value
-        component.makeViewHolder(activity, parent, false);
-        return component.getViewHolder();
+        Component.Inflater inflater = makeInflater(item);
+        return inflater.inflate(activity, parent, false);
     }
 
-    // FIXME: Is holder null when bind is called before create?
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         T item = items.get(position);
-        Component component = components.get(item); // FIXME: Refactor--create a component constructor that takes in a ViewHolder, and make the creation of ViewHolders static instead
-        component.render();
+        Component component = components.get(item);
+        if (component == null) component = makeComponent(item, holder);
+        component.render(activity, holder);
     }
 
     @Override
     public int getItemCount() {
-        if (items == null) { // FIXME: When is this used?
-            return 0;
-        }
         return items.size();
     }
 

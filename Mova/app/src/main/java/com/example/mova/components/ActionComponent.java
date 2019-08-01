@@ -1,20 +1,18 @@
 package com.example.mova.components;
 
-import android.graphics.Color;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
-import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,9 +23,7 @@ public class ActionComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_action;
 
     private Action item;
-    private View view;
-    private ActionViewHolder viewHolder;
-    private DelegatedResultActivity activity;
+    private ViewHolder viewHolder;
 
     private ActionViewComponent viewComponent;
     private ActionEditComponent editComponent;
@@ -38,18 +34,38 @@ public class ActionComponent extends Component {
         this.item = item;
     }
 
+    // overrides bc type of viewHolder is different from type of holder in checklistItemComp
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
-        viewHolder = new ActionViewHolder(view);
-        this.activity = activity;
+    public Component.ViewHolder getViewHolder() {
+        if (viewHolder != null) {
+            return viewHolder;
+        }
+        Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
+        return null;
+    }
 
-        // for ActionComponent, makeViewHolder should only be called once so it's not redundant
+    @Override
+    public String getName() {
+        return "ActionComponent";
+    }
+
+    @Override
+    public void setManager(ComponentManager manager) {
+        componentManager = manager;
+    }
+
+    @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
+    protected void onLaunch() {
         setManager(new ComponentManager() {
             @Override
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
                 viewHolder.component.clear();
-                viewHolder.component.inflateComponent(activity, toComponent);
+                viewHolder.component.inflateComponent(getActivity(), toComponent);
 
                 if (toKey.equals(editComponent.getName())) {
                     ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
@@ -65,35 +81,12 @@ public class ActionComponent extends Component {
         componentManager.launch(editComponent.getName(), editComponent);
     }
 
-    // overrides bc type of viewHolder is different from type of holder in checklistItemComp
     @Override
-    public ViewHolder getViewHolder() {
-        if (viewHolder != null) {
-            return viewHolder;
-        }
-        Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
-        return null;
-    }
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.viewHolder = (ViewHolder) holder;
 
-    @Override
-    public View getView() {
-        return view;
-    }
-
-    @Override
-    public String getName() {
-        return "ActionComponent";
-    }
-
-    @Override
-    public void setManager(ComponentManager manager) {
-        componentManager = manager;
-    }
-
-    @Override
-    public void render() {
-
-        viewHolder.component.inflateComponent(activity, viewComponent);
+        viewHolder.component.inflateComponent(getActivity(), viewComponent);
 
         viewHolder.component.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,13 +98,28 @@ public class ActionComponent extends Component {
         // todo -- set icons later
     }
 
-    public static class ActionViewHolder extends Component.ViewHolder {
+    @Override
+    protected void onDestroy() {
+
+    }
+
+    public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.component)       protected ComponentLayout component;
 
-        public ActionViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

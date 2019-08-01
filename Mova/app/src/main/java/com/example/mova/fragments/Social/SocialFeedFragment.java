@@ -20,7 +20,7 @@ import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
@@ -30,6 +30,8 @@ import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseQuery;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,9 +105,7 @@ public class SocialFeedFragment extends Fragment {
 
                 @Override
                 protected void onPost(PostConfig config) {
-                    config.post.savePost(config, (savedPost) -> {
-
-                    });
+                    config.post.savePost(config, (savedPost) -> addPost(savedPost));
                 }
             };
             dialog.show();
@@ -115,8 +115,15 @@ public class SocialFeedFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         adapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), posts) {
             @Override
-            public Component makeComponent(Post item) {
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
+                PostComponent.Config config = new PostComponent.Config();
+                config.onRepost = (savedPost) -> addPost(savedPost);
                 return new PostComponent(item);
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new PostComponent.Inflater();
             }
         };
 
@@ -143,13 +150,19 @@ public class SocialFeedFragment extends Fragment {
 
             @Override
             public int[] getColorScheme() {
-                return EndlessScrollRefreshLayout.getDefaultColorScheme();
+                return getDefaultColorScheme();
             }
         });
 
         esrlPosts.addItemDecoration(new EdgeDecorator(32));
 
         loadPosts();
+    }
+
+    private void addPost(Post post) {
+        posts.add(0, post);
+        adapter.notifyItemInserted(0);
+        esrlPosts.scrollToPosition(0);
     }
 
     private void loadPosts() {
@@ -193,13 +206,10 @@ public class SocialFeedFragment extends Fragment {
                 queries.add(userPostQuery);
                 queries.add(groupPostQuery);
                 ParseQuery<Post> compoundQuery = ParseQuery.or(queries);
-
-                compoundQuery.include(Post.KEY_MEDIA);
-                compoundQuery.include(Post.KEY_GROUP);
-                compoundQuery.include(Post.KEY_AUTHOR);
-                compoundQuery.include(Post.KEY_PARENT_POST);
-
-                compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false);
+                Post.includeAllPointers(compoundQuery);
+                compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false); // Only social posts
+                compoundQuery.whereEqualTo(Post.KEY_PARENT_POST, JSONObject.NULL); // No replies
+                compoundQuery.orderByDescending(Post.KEY_CREATED_AT);
                 compoundQuery.setLimit(50); // Arbitrarily higher limit for now because longer loading time to get to this point
 
                 if (posts.size() > 0) {

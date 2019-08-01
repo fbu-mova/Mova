@@ -20,7 +20,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.model.Goal;
@@ -109,9 +109,14 @@ public class GoalsFragment extends Fragment {
         // assigns the adapter w/ anonymous class
         thumbnailGoalsAdapter = new DataComponentAdapter<Goal>(activity, thumbnailGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new GoalThumbnailComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new GoalThumbnailComponent.Inflater();
             }
         };
 
@@ -130,9 +135,14 @@ public class GoalsFragment extends Fragment {
 
         allGoalsAdapter = new DataComponentAdapter<Goal>(activity, allGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new GoalCardComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new GoalCardComponent.Inflater();
             }
         };
 

@@ -15,10 +15,11 @@ import com.example.mova.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.JournalComposeActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
-import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
 
@@ -34,9 +35,7 @@ public class JournalMemoryComponent extends Component {
     private Post entry;
     private AsyncUtils.ItemCallback<Post> onPost;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
 
     private static int MAX_EXCERPT_CHAR_LENGTH = 500;
 
@@ -53,21 +52,13 @@ public class JournalMemoryComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_journal_memory, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -81,21 +72,38 @@ public class JournalMemoryComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         // TODO: Update color based on mood
         // TODO: Set prompt based on mood (and eventually, other mood data patterns)
         // TODO: On tap on excerpt, go to that journal entry
 
-        holder.tvMood.setText(entry.getMood().toString().toLowerCase());
-        holder.tvExcerpt.setText(truncateEntry(entry));
-        holder.tvDate.setText(TimeUtils.toLongRelativeDateString(entry.getCreatedAt()));
+        this.holder.tvMood.setText(entry.getMood().toString().toLowerCase());
+        this.holder.tvExcerpt.setText(truncateEntry(entry));
+        this.holder.tvDate.setText(TimeUtils.toLongRelativeDateString(entry.getCreatedAt()));
 
+        configureComposeClick();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+    }
+
+    private void configureComposeClick() {
         holder.bReflect.setOnClickListener((view) -> {
             Media media = new Media();
             media.setContent(holder.tvPrompt.getText().toString());
-            Intent intent = new Intent(activity, JournalComposeActivity.class);
+            Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
             intent.putExtra(JournalComposeActivity.KEY_MEDIA, media);
-            activity.startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE, (int requestCode, int resultCode, Intent data) -> {
+            getActivity().startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE, (int requestCode, int resultCode, Intent data) -> {
                 if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                     Post reflection = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
                     ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
@@ -106,9 +114,9 @@ public class JournalMemoryComponent extends Component {
                     reflection.setParent(entry);
 
                     AsyncUtils.ItemCallback<Post> saveOnParent = (postFromCb) ->
-                        entry.relComments.add(reflection, (postFromCb2) -> {
-                            onPost.call(reflection);
-                    });
+                            entry.relComments.add(reflection, (postFromCb2) -> {
+                                onPost.call(reflection);
+                            });
 
                     PostConfig config = new PostConfig(reflection);
                     config.tags = tags;
@@ -132,6 +140,16 @@ public class JournalMemoryComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_journal_memory, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 

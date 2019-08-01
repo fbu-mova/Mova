@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseFile;
 
@@ -19,34 +21,24 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ImageComponent extends Component {
+public class MediaImageComponent extends Component {
 
     private Bitmap bmp;
     private ParseFile parseFile;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager manager;
 
-    public ImageComponent(Bitmap bmp) {
+    public MediaImageComponent(Bitmap bmp) {
         this.bmp = bmp;
     }
 
-    public ImageComponent(File imageFile) {
+    public MediaImageComponent(File imageFile) {
         this.bmp = ImageUtils.fileToBitmap(imageFile);
     }
 
-    public ImageComponent(ParseFile parseFile) {
+    public MediaImageComponent(ParseFile parseFile) {
         this.parseFile = parseFile;
-    }
-
-    @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_image, parent, attachToRoot);
-        holder = new ViewHolder(view);
     }
 
     @Override
@@ -55,8 +47,8 @@ public class ImageComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -70,12 +62,25 @@ public class ImageComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         if (parseFile == null) {
-            Glide.with(activity).load(bmp).into(holder.iv);
+            Glide.with(getActivity()).load(bmp).into(this.holder.iv);
         } else {
-            Glide.with(activity).load(parseFile.getUrl()).into(holder.iv);
+            Glide.with(getActivity()).load(parseFile.getUrl()).into(this.holder.iv);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -85,6 +90,17 @@ public class ImageComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.view = itemView;
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_image, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

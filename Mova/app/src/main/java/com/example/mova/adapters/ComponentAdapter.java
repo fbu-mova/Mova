@@ -4,11 +4,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.Component;
-import com.example.mova.model.Post;
+import com.example.mova.component.Component;
 
 import java.util.List;
 
@@ -31,14 +29,14 @@ public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder>
     @Override
     public Component.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Component component = components.get(viewType);
-        component.makeViewHolder(activity, parent, false);
-        return component.getViewHolder();
+        Component.Inflater inflater = makeInflater(component);
+        return inflater.inflate(activity, parent, false);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Component.ViewHolder holder, int position) {
         Component component = components.get(position);
-        component.render();
+        component.render(activity, holder);
     }
 
     @Override
@@ -49,5 +47,9 @@ public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder>
     public void changeSource(List<Component> newSource) {
         this.components = newSource;
         notifyDataSetChanged();
+    }
+
+    protected Component.Inflater makeInflater(Component component) {
+        return component.makeInflater();
     }
 }

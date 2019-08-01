@@ -1,6 +1,7 @@
 package com.example.mova.components;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -12,6 +13,8 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
@@ -25,9 +28,7 @@ public class ActionEditComponent extends Component {
     private static final String TAG = "action edit comp";
 
     private Action action;
-    private View view;
     private ActionEditViewHolder viewHolder;
-    private DelegatedResultActivity activity;
 
     private ComponentManager componentManager;
 
@@ -38,24 +39,12 @@ public class ActionEditComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
-        viewHolder = new ActionEditViewHolder(view);
-        this.activity = activity;
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         if (viewHolder != null) {
             return viewHolder;
         }
         Log.e(TAG, "not inflating views to viewHolder, in getViewHolder");
         return null;
-    }
-
-    @Override
-    public View getView() {
-        return view;
     }
 
     @Override
@@ -69,7 +58,19 @@ public class ActionEditComponent extends Component {
     }
 
     @Override
-    public void render() {
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    @Override
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(ViewHolder holder) {
+        checkViewHolderClass(holder, ActionEditViewHolder.class);
+        this.viewHolder = (ActionEditViewHolder) holder;
 
         // todo -- implement icons (need to update in action model)
 
@@ -85,6 +86,11 @@ public class ActionEditComponent extends Component {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+
+    }
+
     private void saveAction(Action action, String new_action) {
         action.setTask(new_action);
 
@@ -93,7 +99,7 @@ public class ActionEditComponent extends Component {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "action saved successfully");
-                    Toast.makeText(activity, "Updated action", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Log.e(TAG, "action failed saving", e);
@@ -113,6 +119,16 @@ public class ActionEditComponent extends Component {
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new ActionEditViewHolder(view);
         }
     }
 }

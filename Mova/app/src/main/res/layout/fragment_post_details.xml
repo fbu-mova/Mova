@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    tools:context=".fragments.Social.PostDetailsFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.example.mova.component.ComponentLayout
+                android:id="@+id/clPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </com.example.mova.component.ComponentLayout>
+
+            <TextView
+                android:id="@+id/tvComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Comments"
+                android:textColor="#222"
+                android:textSize="18dp" />
+
+            <com.example.mova.scrolling.EndlessScrollLayout
+                android:id="@+id/eslComments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.example.mova.scrolling.EndlessScrollLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>

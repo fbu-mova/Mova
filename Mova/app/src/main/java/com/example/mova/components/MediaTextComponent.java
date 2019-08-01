@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Media;
 
 import butterknife.BindView;
@@ -19,9 +21,7 @@ public class MediaTextComponent extends Component {
 
     private Media media;
 
-    private DelegatedResultActivity activity;
     private ViewHolder holder;
-    private View view;
     private ComponentManager manager;
 
     public MediaTextComponent(Media media) {
@@ -32,21 +32,13 @@ public class MediaTextComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        this.activity = activity;
-        LayoutInflater inflater = activity.getLayoutInflater();
-        view = inflater.inflate(R.layout.component_media_text, parent, attachToRoot);
-        holder = new ViewHolder(view);
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
         return holder;
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -61,9 +53,22 @@ public class MediaTextComponent extends Component {
     }
 
     @Override
-    public void render() {
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
+
         Log.d("MediaTextComponent", "Text: " + media.getContentText());
-        holder.tvText.setText(media.getContentText());
+        this.holder.tvText.setText(media.getContentText());
+    }
+
+    @Override
+    protected void onDestroy() {
+
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -73,6 +78,16 @@ public class MediaTextComponent extends Component {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.component_media_text, parent, attachToRoot);
+            return new ViewHolder(view);
         }
     }
 }

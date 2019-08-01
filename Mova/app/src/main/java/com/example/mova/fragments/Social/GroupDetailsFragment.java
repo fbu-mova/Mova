@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.Component;
+import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.PostComponent;
@@ -124,25 +124,40 @@ public class GroupDetailsFragment extends Fragment {
 
         groupGoalAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), groupGoals) {
             @Override
-            public Component makeComponent(Goal item) {
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
                 Component component = new GoalCardComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new GoalCardComponent.Inflater();
             }
         };
 
         groupPostAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), groupPosts) {
             @Override
-            public Component makeComponent(Post item) {
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
                 Component component = new PostComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Post item) {
+                return new PostComponent.Inflater();
             }
         };
 
         groupEventAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), groupEvents) {
             @Override
-            public Component makeComponent(Event item) {
+            public Component makeComponent(Event item, Component.ViewHolder holder) {
                 Component component = new EventThumbnailComponent(item);
                 return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Event item) {
+                return new EventThumbnailComponent.Inflater();
             }
         };
 

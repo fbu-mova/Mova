@@ -1,28 +1,26 @@
 package com.example.mova.components;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
-import com.parse.ParseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,9 +35,7 @@ public class GoalThumbnailComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_goal_thumbnail_card;
 
     private Goal goal;
-    private View view;
     private GoalThumbnailViewHolder viewHolder;
-    private DelegatedResultActivity activity;
 
     private ComponentManager componentManager;
 
@@ -49,14 +45,8 @@ public class GoalThumbnailComponent extends Component {
     }
 
     @Override
-    public void makeViewHolder(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-        view = activity.getLayoutInflater().inflate(viewLayoutRes, parent, attachToRoot);
-        this.activity = activity;
-    }
-
-    @Override
     public ViewHolder getViewHolder() {
-        viewHolder = new GoalThumbnailViewHolder(view);
+//        viewHolder = new GoalThumbnailViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -65,8 +55,8 @@ public class GoalThumbnailComponent extends Component {
     }
 
     @Override
-    public View getView() {
-        return view;
+    public Component.Inflater makeInflater() {
+        return new Inflater();
     }
 
     @Override
@@ -80,21 +70,29 @@ public class GoalThumbnailComponent extends Component {
     }
 
     @Override
-    public void render() {
-        if (viewHolder == null) {
-            Log.e(TAG, "not inflating views to viewHolder, in render");
-            return;
-        }
+    protected void onLaunch() {
+
+    }
+
+    @Override
+    protected void onRender(ViewHolder holder) {
+        checkViewHolderClass(holder, GoalThumbnailViewHolder.class);
+        viewHolder = (GoalThumbnailViewHolder) holder;
+
+//        if (viewHolder == null) {
+//            Log.e(TAG, "not inflating views to viewHolder, in render");
+//            return;
+//        }
 
         viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, GoalDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
                 intent.putExtra("goal", goal);
 
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 
-                activity.startActivity(intent);
+                getActivity().startActivity(intent);
             }
         });
 
@@ -105,7 +103,7 @@ public class GoalThumbnailComponent extends Component {
         // how to get context for binding glide images? -- made it a field
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-        Glide.with(activity)
+        Glide.with(getActivity())
                 .load(url)
                 .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
                 .placeholder(R.color.colorAccent)
@@ -115,6 +113,10 @@ public class GoalThumbnailComponent extends Component {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
+    }
+
+    @Override
+    protected void onDestroy() {
 
     }
 
@@ -129,6 +131,16 @@ public class GoalThumbnailComponent extends Component {
         public GoalThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static class Inflater extends Component.Inflater {
+
+        @Override
+        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            return new GoalThumbnailViewHolder(view);
         }
     }
 

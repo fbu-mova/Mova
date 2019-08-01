@@ -4,16 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.mova.Mood;
 import com.example.mova.R;
-import com.example.mova.components.Component;
-import com.example.mova.components.ComponentLayout;
+import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
 import com.example.mova.model.Media;
 import com.example.mova.model.Tag;
 import com.example.mova.utils.TextUtils;
@@ -21,7 +18,6 @@ import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -6,10 +6,10 @@
     android:background="?android:windowBackground"
     tools:context=".fragments.Social.ExploreFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.example.mova.component.ComponentLayout
+        android:id="@+id/clTest"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
 
+    </com.example.mova.component.ComponentLayout>
 </FrameLayout>
