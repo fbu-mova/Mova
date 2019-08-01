@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/llDateButton"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cvDateButton"
     android:layout_width="44dp"
-    android:layout_height="wrap_content"
-    android:background="#ddd"
+    android:layout_height="44dp"
     android:orientation="vertical"
-    android:padding="4dp">
+    android:padding="4dp"
+    app:cardBackgroundColor="@color/blueLight"
+    app:cardCornerRadius="@dimen/borderRadius"
+    app:cardElevation="0dp">
 
-    <TextView
-        android:id="@+id/tvMonth"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="JUL"
-        android:textSize="12sp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvDay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="16" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="JUL"
+            android:textSize="@dimen/textSizeAnnotation" />
+
+        <TextView
+            android:id="@+id/tvDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="16"
+            android:textSize="@dimen/textSizeFocus" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

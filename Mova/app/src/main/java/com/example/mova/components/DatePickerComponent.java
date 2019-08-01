@@ -3,10 +3,10 @@ package com.example.mova.components;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -71,7 +71,7 @@ public class DatePickerComponent extends Component {
 
         this.holder.tvMonth.setText(month);
         this.holder.tvDay.setText(day);
-        this.holder.llDateButton.setOnClickListener((clickedView) -> clickListener.call(clickedView, date));
+        this.holder.cvDateButton.setOnClickListener((clickedView) -> clickListener.call(clickedView, date));
     }
 
     @Override
@@ -83,7 +83,7 @@ public class DatePickerComponent extends Component {
 
         @BindView(R.id.tvMonth)      protected TextView tvMonth;
         @BindView(R.id.tvDay)        protected TextView tvDay;
-        @BindView(R.id.llDateButton) protected LinearLayout llDateButton;
+        @BindView(R.id.cvDateButton) protected CardView cvDateButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
