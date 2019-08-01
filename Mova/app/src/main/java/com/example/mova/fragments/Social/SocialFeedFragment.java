@@ -31,6 +31,8 @@ import com.example.mova.scrolling.ScrollLoadHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseQuery;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -205,7 +207,8 @@ public class SocialFeedFragment extends Fragment {
                 queries.add(groupPostQuery);
                 ParseQuery<Post> compoundQuery = ParseQuery.or(queries);
                 Post.includeAllPointers(compoundQuery);
-                compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false);
+                compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false); // Only social posts
+                compoundQuery.whereEqualTo(Post.KEY_PARENT_POST, JSONObject.NULL); // No replies
                 compoundQuery.orderByDescending(Post.KEY_CREATED_AT);
                 compoundQuery.setLimit(50); // Arbitrarily higher limit for now because longer loading time to get to this point
 

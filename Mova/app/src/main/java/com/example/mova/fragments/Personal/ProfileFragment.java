@@ -52,7 +52,6 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.btnLogout) protected Button btnLogout;
     @BindView(R.id.btnEditProfile) protected Button btnEditProfile;
     @BindView(R.id.tvUsername) protected TextView tvUsername;
-    @BindView(R.id.tvDescription) protected TextView tvDesciption;
     @BindView(R.id.tvShowGroups) protected TextView tvShowGroups;
     @BindView(R.id.tvShowFriends) protected TextView tvShowFriends;
     @BindView(R.id.ivProfilePic) protected ImageView ivProfilePic;
