@@ -208,11 +208,11 @@ public class GoalCardComponent extends Component {
         // FIXME -- for social goal, want to be able to see goals/their actions but can't check/alter.
     }
 
-    private void updateAdapter(List<Action> objects, ArrayList<Action> actions, DataComponentAdapter actionsAdapter, RecyclerView rvActions) {
+    private < E > void updateAdapter(List< E > objects, ArrayList< E > actions, DataComponentAdapter< E > actionsAdapter, RecyclerView rvActions) {
 
         for (int i = 0; i < objects.size(); i++) {
             // load into recyclerview
-            Action action = objects.get(i);
+            E action = objects.get(i);
             actions.add(0, action);
             actionsAdapter.notifyItemInserted(0);
         }
@@ -238,4 +238,5 @@ public class GoalCardComponent extends Component {
 
         }
     }
+
 }
