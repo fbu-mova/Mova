@@ -31,6 +31,7 @@ import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.scrolling.EndlessScrollLayout;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
+import com.example.mova.utils.DataEvent;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.model.Post;
@@ -55,6 +56,8 @@ public class JournalFragment extends Fragment {
 
     private Journal journal;
     private Date currDate;
+
+    private DataEvent<Date> dateSelectEvent;
 
     @BindView(R.id.tvTitle)     protected TextView tvTitle;
     @BindView(R.id.tvDate)      protected TextView tvDate;
@@ -98,6 +101,7 @@ public class JournalFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         currDate = TimeUtils.getToday();
+        dateSelectEvent = new DataEvent<>();
 
         journal = new Journal(
                 User.getCurrentUser(),
@@ -144,7 +148,7 @@ public class JournalFragment extends Fragment {
         dateAdapter = new SortedDataComponentAdapter<Date>((DelegatedResultActivity) getActivity(), journal.getDates()) {
             @Override
             public Component makeComponent(Date item, Component.ViewHolder holder) {
-                return new DatePickerComponent(item, (view, date) -> {
+                return new DatePickerComponent(item, dateSelectEvent, (view, date) -> {
                     currDate = date;
                     displayEntries(currDate);
                 });
@@ -235,7 +239,7 @@ public class JournalFragment extends Fragment {
         );
 
         int elementMargin = (int) getResources().getDimension(R.dimen.elementMargin);
-        eslDates.addItemDecoration(new EdgeDecorator(elementMargin, 0, elementMargin, 0, EdgeDecorator.Orientation.Horizontal, EdgeDecorator.Start.Reverse));
+        eslDates.addItemDecoration(new EdgeDecorator(elementMargin, 0, 0, 0, EdgeDecorator.Orientation.Horizontal, EdgeDecorator.Start.Reverse));
         esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 64));
 
         // On fab click, open compose activity
@@ -272,11 +276,12 @@ public class JournalFragment extends Fragment {
     }
 
     private void displayEntries(Date date) {
-        // TODO: Possibly add indicator of date being selected in date picker
+        // Change the displayed date in the date picker and the subheader text
         tvDate.setText(TimeUtils.toDateString(date));
-        SortedList<Post> entriesFromDate = journal.getEntriesByDate(date);
+        dateSelectEvent.fire(date);
 
         // Change the source of the entries--important to reattach the adapter each time the source is changed
+        SortedList<Post> entriesFromDate = journal.getEntriesByDate(date);
         entryAdapter.changeSource(entriesFromDate);
         esrlEntries.reattachAdapter();
         entryAdapter.notifyDataSetChanged();
