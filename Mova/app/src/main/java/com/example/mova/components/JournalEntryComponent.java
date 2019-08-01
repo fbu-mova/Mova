@@ -88,7 +88,16 @@ public class JournalEntryComponent extends Component {
     private void displayBasicInfo() {
         holder.tvTime.setText(TimeUtils.toTimeString(entry.getCreatedAt()));
         holder.tvBody.setText(entry.getBody());
-        holder.tvLocation.setText(LocationUtils.makeLocationText(getActivity(), entry.getLocation()));
+
+        String location = LocationUtils.makeLocationText(getActivity(), entry.getLocation(), false);
+        if (location.equals("")) {
+            holder.tvLocation.setVisibility(View.GONE);
+            holder.ivLocation.setVisibility(View.GONE);
+        } else {
+            holder.tvLocation.setText(location);
+            holder.tvLocation.setVisibility(View.VISIBLE);
+            holder.ivLocation.setVisibility(View.VISIBLE);
+        }
     }
 
     private void displayMood() {
@@ -174,8 +183,10 @@ public class JournalEntryComponent extends Component {
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.tvTime)     public TextView tvTime;
-        @BindView(R.id.tvLocation) public TextView tvLocation;
         @BindView(R.id.tvBody)     public TextView tvBody;
+
+        @BindView(R.id.ivLocation) public ImageView ivLocation;
+        @BindView(R.id.tvLocation) public TextView tvLocation;
 
         @BindView(R.id.ivMood)     public ImageView ivMood;
         @BindView(R.id.tvMood)     public TextView tvMood;

@@ -126,7 +126,7 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
         user = (User) ParseUser.getCurrentUser();
         eventComments = new ArrayList<>();
 
-        String location = LocationUtils.makeLocationText(getContext(),event.getLocation());
+        String location = LocationUtils.makeLocationText(getContext(),event.getLocation(), false);
 
 
 

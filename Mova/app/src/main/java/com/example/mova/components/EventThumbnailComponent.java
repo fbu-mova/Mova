@@ -82,7 +82,7 @@ public class EventThumbnailComponent extends Component {
         checkViewHolderClass(holder, EventThumbnailViewHolder.class);
         viewHolder = (EventThumbnailViewHolder) holder;
 
-        String location = LocationUtils.makeLocationText(getActivity(),event.getLocation());
+        String location = LocationUtils.makeLocationText(getActivity(),event.getLocation(), false);
         String[] locationsplit = location.split(",");
         String[] state = locationsplit[2].split(" ");
 

@@ -4,8 +4,10 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.PostConfig;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 
 import java.util.Date;
@@ -178,6 +180,9 @@ public class Journal {
             todayEntries.add(config.post);
             callback.call(null);
         };
+
+        ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
+        if (location != null) config.post.setLocation(location);
         user.postJournalEntry(config, cb);
     }
 

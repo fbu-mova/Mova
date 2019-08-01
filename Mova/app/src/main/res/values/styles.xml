@@ -8,6 +8,9 @@
         <item name="colorAccent">@color/purpleLight</item>
 
         <item name="android:fontFamily">@font/lato</item>
+
+        <item name="android:ambientShadowAlpha">0.2</item>
+        <item name="android:spotShadowAlpha">0.2</item>
     </style>
 
 </resources>
