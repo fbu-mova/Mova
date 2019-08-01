@@ -28,6 +28,7 @@ import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.scrolling.EndlessScrollLayout;
 import com.example.mova.scrolling.EndlessScrollRefreshLayout;
 import com.example.mova.scrolling.ScrollLoadHandler;
 import com.example.mova.utils.TimeUtils;
@@ -57,7 +58,7 @@ public class JournalFragment extends Fragment {
 
     @BindView(R.id.tvTitle)     protected TextView tvTitle;
     @BindView(R.id.tvDate)      protected TextView tvDate;
-    @BindView(R.id.esrlDates)   protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlDates;
+    @BindView(R.id.eslDates)    protected EndlessScrollLayout<Component.ViewHolder> eslDates;
     @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
     @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
 
@@ -170,10 +171,10 @@ public class JournalFragment extends Fragment {
         LinearLayoutManager dateLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, true);
         LinearLayoutManager entryLayoutManager = new LinearLayoutManager(getActivity());
 
-        esrlDates.init(
-            new EndlessScrollRefreshLayout.LayoutConfig()
-                    .setHeightSize(EndlessScrollRefreshLayout.LayoutConfig.Size.wrap_content)
-                    .setOrientation(EndlessScrollRefreshLayout.LayoutConfig.Orientation.Horizontal),
+        eslDates.init(
+            new EndlessScrollLayout.LayoutConfig()
+                    .setHeightSize(EndlessScrollLayout.LayoutConfig.Size.wrap_content)
+                    .setOrientation(EndlessScrollLayout.LayoutConfig.Orientation.Horizontal),
             new ScrollLoadHandler<Component.ViewHolder>() {
                 @Override
                 public void load() {
@@ -283,7 +284,6 @@ public class JournalFragment extends Fragment {
         journal.loadEntries((e) -> {
             displayEntries(currDate);
             esrlEntries.setRefreshing(false);
-            esrlDates.setRefreshing(false);
         });
     }
 
@@ -291,7 +291,6 @@ public class JournalFragment extends Fragment {
         journal.loadMoreEntries((e) -> {
             displayEntries(currDate);
             esrlEntries.setRefreshing(false);
-            esrlDates.setRefreshing(false);
         });
     }
 }
