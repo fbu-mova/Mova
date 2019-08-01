@@ -14,11 +14,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.mova.EditProfileDialog;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.LoginActivity;
@@ -52,7 +54,6 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.btnLogout) protected Button btnLogout;
     @BindView(R.id.btnEditProfile) protected Button btnEditProfile;
     @BindView(R.id.tvUsername) protected TextView tvUsername;
-    @BindView(R.id.tvDescription) protected TextView tvDesciption;
     @BindView(R.id.tvShowGroups) protected TextView tvShowGroups;
     @BindView(R.id.tvShowFriends) protected TextView tvShowFriends;
     @BindView(R.id.ivProfilePic) protected ImageView ivProfilePic;
@@ -72,6 +73,7 @@ public class ProfileFragment extends Fragment {
     private DataComponentAdapter<Post> userPostAdapter;
 
     private User user;
+    public static FragmentManager manager;
 //    private GroupUtils groupUtils;
 //    private FriendUtils friendUtils;
 
@@ -113,6 +115,7 @@ public class ProfileFragment extends Fragment {
         userGroups = new ArrayList<>();
         userFriends = new ArrayList<>();
         userPosts = new ArrayList<>();
+        manager = getFragmentManager();
 //        groupUtils = new GroupUtils();
 //        friendUtils = new FriendUtils();
 
@@ -142,13 +145,14 @@ public class ProfileFragment extends Fragment {
         });
         //Todo - implement profile edit
 
-//        btnEditProfile.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                EditProfileDialog dialog = new EditProfileDialog();
-//                dialog.show();
-//            }
-//        });
+        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditProfileDialog epdialog = EditProfileDialog.newInstance();
+//                Dialog dialog = epdialog.onCreateDialog(savedInstanceState);
+                epdialog.show(manager,"Edit_Profile" );
+            }
+        });
 
         userGroupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override
