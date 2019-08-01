@@ -233,6 +233,18 @@ public class GroupDetailsFragment extends Fragment {
 //                            // need to figure out which of these goals the user is involved in
 //                        });
 
+                            AsyncUtils.executeMany(goals.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+                                // in for loop
+                                GoalUtils.checkIfUserInvolved(goals.get(item), (User) ParseUser.getCurrentUser(), (check) -> {
+                                    Goal.GoalData data = new Goal.GoalData(goals.get(item), check);
+                                    groupGoals.add(0, data);
+                                    groupGoalAdapter.notifyItemInserted(0);
+                                });
+                            }, () -> {
+//                                rvGroupGoals.scrollToPosition(0);
+                                rvGroupPosts.scrollToPosition(0);
+                                rvGroupPosts.swapAdapter(groupGoalAdapter, true);
+                            });
 
 
 //                        rvGroupGoals.setVisibility(View.VISIBLE);
