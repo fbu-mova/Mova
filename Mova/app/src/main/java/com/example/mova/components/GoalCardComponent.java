@@ -142,7 +142,7 @@ public class GoalCardComponent extends Component {
         viewHolder.tvDescription.setText(item.getDescription());
         Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
-        GoalUtils.getNumActionsComplete(item, getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
@@ -153,7 +153,7 @@ public class GoalCardComponent extends Component {
 
         // get and render the actions -- use bool isPersonal and bool isUserInvolved
         // fixme -- jank casework
-        if (isPersonal && (item.getAuthor() == (User) ParseUser.getCurrentUser())) {
+        if (isPersonal) {
             // a personal goal that only the creator can see, should always be the case
 
             actions = new ArrayList<>();
@@ -248,7 +248,7 @@ public class GoalCardComponent extends Component {
                 3. if (true, true) -> true. everything else false
           */
 
-        AsyncUtils.executeMany(objects.size(), (Integer number, AsyncUtils.ItemCallback<Throwable> callback) -> {
+        AsyncUtils.waterfall(objects.size(), (Integer number, AsyncUtils.ItemCallback<Throwable> callback) -> {
             // iteration in the for loop
 
             SharedAction sharedAction = objects.get(number);
@@ -273,7 +273,7 @@ public class GoalCardComponent extends Component {
                             callback.call(e);
                         }
                     });
-        }, () -> {
+        }, (e) -> {
             rvActions.scrollToPosition(0);
         });
     }

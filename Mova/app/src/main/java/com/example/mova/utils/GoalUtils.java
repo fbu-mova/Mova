@@ -165,7 +165,7 @@ public class GoalUtils {
     }
 
     public static void queryGoals(User user,AsyncUtils.ListCallback<Goal> callback){
-//        User user = (User) ParseUser.getCurrentUser();
+
         List<Goal> goals = new ArrayList<>();
         ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
         goalQuery.whereEqualTo("usersInvolved", user);
@@ -197,7 +197,8 @@ public class GoalUtils {
         Goal goal = new Goal()
                 .setAuthor((User) ParseUser.getCurrentUser())
                 .setTitle(goalName)
-                .setDescription(goalDescription);
+                .setDescription(goalDescription)
+                .setIsPersonal(true); // fixme -- pass in as parameter to include Social functionality
 
         goal.saveInBackground(new SaveCallback() {
             @Override
@@ -220,7 +221,7 @@ public class GoalUtils {
 
         // create a SharedAction for each action in actions
 
-        AsyncUtils.executeMany(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+        AsyncUtils.waterfall(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
             // the iteration in the for loop
 
             SharedAction sharedAction = new SharedAction()
@@ -256,7 +257,7 @@ public class GoalUtils {
 
         List<Action> actionsList = new ArrayList<>();
 
-        AsyncUtils.executeMany(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+        AsyncUtils.waterfall(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
             // the iteration in the for loop
 
             // save the Action
@@ -332,7 +333,7 @@ public class GoalUtils {
 
     private static void saveGoalToUser(Goal goal, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
-        ((User) ParseUser.getCurrentUser()).relGoals.add(goal, finalCallback);
+        (User.getCurrentUser()).relGoals.add(goal, finalCallback);
     }
 
 
@@ -367,7 +368,7 @@ public class GoalUtils {
 
             saveAction(actionsList, goal, sharedActions, false, (item) -> {
                 // add User to usersInvolved relation of goal + save goal
-                goal.relUsersInvolved.add((User) ParseUser.getCurrentUser(), (user) -> {});
+                goal.relUsersInvolved.add(User.getCurrentUser(), (user) -> {});
             });
         });
 
@@ -412,14 +413,9 @@ public class GoalUtils {
     public static void loadGoalActions(Goal goal, AsyncUtils.ListCallback<Action> callback) {
         // make query calls to get the user's actions for a goal
         ParseQuery<Action> actionQuery = goal.relActions.getQuery();
-        actionQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
+        actionQuery.whereEqualTo(KEY_PARENT_USER, User.getCurrentUser())
+            .orderByDescending(Action.KEY_CREATED_AT);
 
-//            actionQuery.whereEqualTo(KEY_PARENT_USER, goal.getAuthor());
-            // fixme -- ideally shows social progress (make a SocialGoalCardComponent?)
-
-        // fixme -- if showOwn == true then can't see actions of goals i'm not a part of
-        // fixme -- but if showOwn == false then since querying actions, get duplicate actions
-            // fixme -- possible solution: if user not involved w/ goal, have diff format and show SharedActions?
         actionQuery.findInBackground(new FindCallback<Action>() {
             @Override
             public void done(List<Action> objects, ParseException e) {
@@ -437,6 +433,7 @@ public class GoalUtils {
     public static void loadGoalSharedActions(Goal goal, AsyncUtils.ListCallback<SharedAction> callback) {
 
         goal.relSharedActions.getQuery()
+                .orderByDescending(SharedAction.KEY_CREATED_AT)
                 .findInBackground((objects, e) -> {
                     if (e == null) {
                         Log.d(TAG, "sharedAction query success w/ size " + objects.size());
