@@ -102,8 +102,10 @@ public class JournalEntryComponent extends Component {
 
     private void displayMood() {
         Mood.Status mood = entry.getMood();
-        holder.tvMood.setText((mood == null) ? "" : mood.toString());
-        // TODO: Hide mood image, etc.
+        holder.tvMood.setText((mood == null || mood == Mood.Status.Empty) ? "" : mood.toString());
+        int color = Mood.getColor(mood);
+        holder.tvMood.setTextColor(color);
+        holder.ivMood.setColorFilter(color);
     }
 
     private void displayMedia() {
@@ -117,15 +119,26 @@ public class JournalEntryComponent extends Component {
     }
 
     private void displayTags() {
+        hideTags();
         ParseQuery<Tag> tagQuery = entry.relTags.getQuery();
         tagQuery.findInBackground((tags, e) -> {
             if (e != null) {
                 Log.e("JournalEntryComponent", "Failed to load tags on journal entry", e);
-                holder.tvTags.setText("Failed to load");
             } else {
                 TextUtils.writeCommaSeparated(tags, "No tags", holder.tvTags, (tag) -> tag.getName());
+                if (tags.size() > 0) showTags();
             }
         });
+    }
+
+    private void hideTags() {
+        holder.tvTags.setVisibility(View.GONE);
+        holder.ivTags.setVisibility(View.GONE);
+    }
+
+    private void showTags() {
+        holder.tvTags.setVisibility(View.VISIBLE);
+        holder.ivTags.setVisibility(View.VISIBLE);
     }
 
     private void hideComments() {
@@ -192,7 +205,9 @@ public class JournalEntryComponent extends Component {
         @BindView(R.id.tvMood)     public TextView tvMood;
 
         @BindView(R.id.clMedia)    public ComponentLayout clMedia;
+
         @BindView(R.id.tvTags)     public TextView tvTags;
+        @BindView(R.id.ivTags)     public ImageView ivTags;
 
         @BindView(R.id.sComments)  public Switch sComments;
         @BindView(R.id.rvComments) public RecyclerView rvComments;
