@@ -204,13 +204,18 @@ public class GoalCardComponent extends Component {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(activity, sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item) {
-                    // todo -- make component from sharedAction tasks but no checkbox
-                    return null;
+                    Component component = new UninvolvedSharedActionComponent(item);
+                    return component;
                 }
             };
-        }
 
-        // FIXME -- for social goal, want to be able to see goals/their actions but can't check/alter.
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(activity));
+            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+
+            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+            });
+        }
     }
 
     private void updateSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {

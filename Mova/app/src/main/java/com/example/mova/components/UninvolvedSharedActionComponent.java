@@ -69,6 +69,7 @@ public class UninvolvedSharedActionComponent extends Component {
     public void render() {
 
         // todo -- have a better icon for ivIcon
+        // todo -- should GoalCardComp add "saveSocialGoal" button if in this case?
 
         int complete = sharedAction.getUsersDone();
         sharedAction.relChildActions.getSize((total) -> {
