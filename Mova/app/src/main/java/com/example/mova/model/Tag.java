@@ -75,7 +75,7 @@ public class Tag extends HashableParseObject {
                             }
                         });
                     } else {
-                        onSaveTag.call(tag, () -> cb.call(null));
+                        onSaveTag.call(tagFromDB, () -> cb.call(null));
                     }
                 });
             },
