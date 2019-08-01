@@ -215,6 +215,6 @@ public class GroupDetailsFragment extends Fragment {
                 }
             }
         });
-        bottomNavigationView.setSelectedItemId(R.id.action_group_goals);
+        bottomNavigationView.setSelectedItemId(R.id.action_group_posts);
     }
 }

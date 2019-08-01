@@ -1,5 +1,6 @@
 package com.example.mova.fragments.Social;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.GroupComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
@@ -26,6 +28,7 @@ import com.example.mova.model.User;
 import com.example.mova.scrolling.EdgeDecorator;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,9 @@ public class GroupsFragment extends Fragment {
 
     @BindView(R.id.svGroups)
     SearchView svGroups;
+
+    @BindView(R.id.fabCreateGroup)
+    FloatingActionButton fabCreateGroup;
 
     @BindView(R.id.rvGroups) RecyclerView rvGroups;
     protected List<Group> userGroups;
@@ -92,6 +98,14 @@ public class GroupsFragment extends Fragment {
         user = User.getCurrentUser();
         userGroups = new ArrayList<>();
         userActiveSocialGoals = new ArrayList<>();
+
+        fabCreateGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), GroupComposeActivity.class);
+                startActivityForResult(intent, 2);
+            }
+        });
 
         groupAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), userGroups) {
             @Override

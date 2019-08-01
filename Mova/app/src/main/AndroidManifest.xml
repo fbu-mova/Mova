@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mova"
-    >
+    package="com.example.mova">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -24,8 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.EventComposeActivity"></activity>
-        <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <activity android:name=".activities.GroupComposeActivity"></activity>
+        <activity android:name=".activities.EventComposeActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         <!--
  possible FIXME: if weird crashes, it's bc authorities attr is not unique across apps (Parstagram)
                 - either need to change name or delete Parstagram from emulator

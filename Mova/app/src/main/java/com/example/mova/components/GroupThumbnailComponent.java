@@ -75,7 +75,7 @@ public class GroupThumbnailComponent extends Component {
 
     @Override
     protected void onRender(ViewHolder holder) {
-        checkViewHolderClass(holder, GroupThumbnailComponent.class);
+        checkViewHolderClass(holder, GroupThumbnailViewHolder.class);
         viewHolder = (GroupThumbnailViewHolder) holder;
 
 //        if (viewHolder == null) {
