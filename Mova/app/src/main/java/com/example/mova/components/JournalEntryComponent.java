@@ -102,6 +102,12 @@ public class JournalEntryComponent extends Component {
 
     private void displayMood() {
         Mood.Status mood = entry.getMood();
+
+        if (mood == null || mood == Mood.Status.Empty) {
+            hideMood();
+            return;
+        }
+
         holder.tvMood.setText((mood == null || mood == Mood.Status.Empty) ? "" : mood.toString());
         int color = Mood.getColor(mood);
         holder.tvMood.setTextColor(color);
@@ -129,6 +135,16 @@ public class JournalEntryComponent extends Component {
                 if (tags.size() > 0) showTags();
             }
         });
+    }
+
+    private void hideMood() {
+        holder.tvMood.setVisibility(View.GONE);
+        holder.ivMood.setVisibility(View.GONE);
+    }
+
+    private void showMood() {
+        holder.tvMood.setVisibility(View.VISIBLE);
+        holder.ivMood.setVisibility(View.VISIBLE);
     }
 
     private void hideTags() {
