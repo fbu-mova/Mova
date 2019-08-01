@@ -96,7 +96,7 @@ public class DatePickerComponent extends Component {
         @Override
         public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
             LayoutInflater inflater = activity.getLayoutInflater();
-            View view = inflater.inflate(R.layout.item_date_picker, parent, attachToRoot);
+            View view = inflater.inflate(R.layout.component_date_picker, parent, attachToRoot);
             return new ViewHolder(view);
         }
     }
