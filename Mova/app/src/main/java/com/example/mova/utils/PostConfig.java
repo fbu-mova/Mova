@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.utils;
 
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;

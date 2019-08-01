@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.example.mova.R;
 import com.example.mova.model.User;
 import com.parse.ParseFile;
 

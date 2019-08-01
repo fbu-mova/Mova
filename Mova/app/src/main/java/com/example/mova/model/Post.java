@@ -3,20 +3,13 @@ package com.example.mova.model;
 
 import android.util.Log;
 
-import com.example.mova.Mood;
-import com.example.mova.PostConfig;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
-import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONObject;
-import org.w3c.dom.Comment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ParseClassName("Post")
 public class Post extends HashableParseObject {

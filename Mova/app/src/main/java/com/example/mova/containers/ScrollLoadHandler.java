@@ -1,4 +1,4 @@
-package com.example.mova.scrolling;
+package com.example.mova.containers;
 
 import androidx.recyclerview.widget.RecyclerView;
 

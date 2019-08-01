@@ -17,13 +17,12 @@ import androidx.recyclerview.widget.SortedList;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.PrioritizedComponentAdapter;
-import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.feed.PersonalFeedPrioritizer;
 import com.example.mova.feed.PrioritizedComponent;
-import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.containers.EdgeDecorator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

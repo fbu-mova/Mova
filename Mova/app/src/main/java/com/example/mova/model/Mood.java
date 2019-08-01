@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.model;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +11,8 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.mova.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;

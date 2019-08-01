@@ -2,7 +2,7 @@ package com.example.mova.model;
 
 import androidx.recyclerview.widget.SortedList;
 
-import com.example.mova.PostConfig;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.TimeUtils;

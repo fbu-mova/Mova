@@ -34,15 +34,16 @@
             android:textColor="@color/textMain"
             android:textSize="@dimen/textSizeTitle" />
 
-        <com.example.mova.scrolling.EndlessScrollLayout
+        <com.example.mova.containers.EndlessScrollLayout
             android:id="@+id/eslDates"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginBottom="@dimen/innerMargin"
             android:layout_weight="0"
-            android:clipChildren="false">
+            android:clipChildren="false"
+            android:requiresFadingEdge="horizontal">
 
-        </com.example.mova.scrolling.EndlessScrollLayout>
+        </com.example.mova.containers.EndlessScrollLayout>
 
         <TextView
             android:id="@+id/tvDate"
@@ -53,14 +54,17 @@
             android:textColor="@color/textLight"
             android:textSize="@dimen/textSizeBody" />
 
-        <com.example.mova.scrolling.EndlessScrollRefreshLayout
+        <com.example.mova.containers.EndlessScrollRefreshLayout
             android:id="@+id/esrlEntries"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="100"
-            android:clipChildren="false">
+            android:clipChildren="true"
+            android:fadeScrollbars="true"
+            android:fadingEdgeLength="@dimen/outerMargin"
+            android:requiresFadingEdge="vertical">
 
-        </com.example.mova.scrolling.EndlessScrollRefreshLayout>
+        </com.example.mova.containers.EndlessScrollRefreshLayout>
 
         <!--<androidx.recyclerview.widget.RecyclerView-->
         <!--android:id="@+id/rvEntries"-->

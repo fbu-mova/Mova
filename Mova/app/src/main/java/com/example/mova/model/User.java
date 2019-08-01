@@ -1,10 +1,8 @@
 package com.example.mova.model;
 
-import android.util.Log;
-
 import androidx.annotation.Nullable;
 
-import com.example.mova.PostConfig;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.AsyncUtils;
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
