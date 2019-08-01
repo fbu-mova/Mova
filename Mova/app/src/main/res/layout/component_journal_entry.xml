@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="@dimen/elementMargin"
         android:orientation="horizontal">
 
         <TextView
@@ -16,33 +16,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="0:00 XM" />
+            android:fontFamily="@font/lato_bold"
+            android:text="0:00 XM"
+            android:textColor="@color/textMain"
+            android:textSize="@dimen/textSizeBody" />
 
-        <FrameLayout
-            android:id="@+id/flSeparator"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
+        <ImageView
+            android:id="@+id/ivLocation"
+            android:layout_width="@dimen/inlineIcon"
+            android:layout_height="@dimen/inlineIcon"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="3dp"
             android:layout_weight="0"
-            android:background="@android:color/black">
-
-        </FrameLayout>
+            android:scaleType="fitCenter"
+            android:tint="@color/textLight"
+            app:srcCompat="@drawable/ic_place_black_24dp" />
 
         <TextView
             android:id="@+id/tvLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Place, State, Country" />
+            android:text="Place, State, Country"
+            android:textColor="@color/textLight"
+            android:textSize="@dimen/textSizeBody" />
 
         <ImageView
             android:id="@+id/ivMood"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="6dp"
+            android:layout_width="@dimen/textSizeBody"
+            android:layout_height="@dimen/textSizeBody"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="10dp"
             android:layout_weight="0"
-            app:srcCompat="@android:color/black" />
+            android:tint="@color/blueMid"
+            app:srcCompat="@drawable/mood_circle" />
 
         <TextView
             android:id="@+id/tvMood"
@@ -50,7 +58,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_weight="0"
-            android:text="Mood" />
+            android:text="Mood"
+            android:textColor="@color/blueMid"
+            android:textSize="@dimen/textSizeBody" />
     </LinearLayout>
 
     <com.example.mova.component.ComponentLayout
@@ -64,30 +74,35 @@
         android:id="@+id/tvBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lorem ipsum body" />
+        android:text="Lorem ipsum body"
+        android:textColor="@color/textMain"
+        android:textSize="@dimen/textSizeBody" />
 
     <LinearLayout
         android:id="@+id/llTags"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/elementMargin"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvTagLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
+        <ImageView
+            android:id="@+id/ivTags"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="6dp"
             android:layout_weight="0"
-            android:text="Tags"
-            android:textStyle="bold" />
+            android:tint="@color/textLight"
+            app:srcCompat="@drawable/ic_local_offer_black_24dp" />
 
         <TextView
             android:id="@+id/tvTags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="No tags" />
+            android:text="No tags"
+            android:textColor="@color/textLight"
+            android:textSize="@dimen/textSizeBody" />
 
         <Switch
             android:id="@+id/sComments"
@@ -102,6 +117,6 @@
         android:id="@+id/rvComments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="@dimen/elementMargin" />
 
 </LinearLayout>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="outerMargin">32dp</dimen>
-    <dimen name="innerMargin">22dp</dimen>
+    <dimen name="outerMargin">24dp</dimen>
+    <dimen name="innerMargin">16dp</dimen>
+    <dimen name="elementMargin">8dp</dimen>
     <dimen name="padding">16dp</dimen>
 
     <dimen name="shallowCardElevation">4dp</dimen>
@@ -12,4 +13,6 @@
     <dimen name="textSizeBody">14dp</dimen>
     <dimen name="textSizeFocus">18dp</dimen>
     <dimen name="textSizeTitle">24dp</dimen>
+
+    <dimen name="inlineIcon">16dp</dimen>
 </resources>

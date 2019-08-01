@@ -21,4 +21,6 @@
 
     <color name="textMain">#222</color>
     <color name="textLight">#999</color>
+
+    <color name="bg">#EEE</color>
 </resources>
