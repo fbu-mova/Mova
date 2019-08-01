@@ -57,4 +57,29 @@ public class Tag extends HashableParseObject {
             }
         });
     }
+
+    public static void saveTags(List<Tag> tags, AsyncUtils.ItemCallbackWithEmptyCallback<Tag> onSaveTag, AsyncUtils.ItemCallback<Throwable> callback) {
+        AsyncUtils.executeMany(
+            tags.size(),
+            (position, cb) -> {
+                Tag tag = tags.get(position);
+                Tag.getTag(tag.getName(), (tagFromDB) -> {
+                    // If the tag doesn't exist yet, save it
+                    if (tagFromDB == null) {
+                        tag.saveInBackground((e) -> {
+                            if (e != null) {
+                                Log.e("User", "Failed to create tag " + tag.getName() + " on journal post", e);
+                                cb.call(e);
+                            } else {
+                                onSaveTag.call(tag, () -> cb.call(null));
+                            }
+                        });
+                    } else {
+                        onSaveTag.call(tag, () -> cb.call(null));
+                    }
+                });
+            },
+            callback
+        );
+    }
 }
