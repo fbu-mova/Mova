@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class Mood {
     }
 
     public static List<Status> getStatuses() {
-        List<Status> statuses = Arrays.asList(Status.values());
+        ArrayList<Status> statuses = new ArrayList<>(Arrays.asList(Status.values()));
         statuses.remove(Status.Empty);
         return statuses;
     }
