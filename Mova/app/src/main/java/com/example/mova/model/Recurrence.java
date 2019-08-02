@@ -2,6 +2,8 @@ package com.example.mova.model;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -133,6 +135,12 @@ public class Recurrence {
         } else {
             return key.toString();
         }
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null || obj.getClass() != Recurrence.class) return false;
+        return key == ((Recurrence) obj).key;
     }
 
     public enum Key {
