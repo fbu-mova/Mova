@@ -20,6 +20,15 @@ public class Action extends HashableParseObject {
     public static final String KEY_PARENT_SHARED_ACTION = "parentSharedAction";
     public static final String KEY_PARENT_USER = "parentUser";
 
+    public static final String KEY_CREATED_AT = "createdAt";
+    public static final String KEY_MANUAL_CREATED_AT = "manualCreatedAt";
+
+    public static final String KEY_ARCHIVED = "archived";
+    public static final String KEY_ARCHIVE_AT = "archiveAt";
+
+    public static final String KEY_RECURRENCE = "recurrence";
+    public static final String KEY_RECURRENCE_ID = "recurrenceId";
+
     //Task
 
     public String getTask(){
@@ -117,4 +126,45 @@ public class Action extends HashableParseObject {
         put(KEY_PARENT_USER, user);
         return this;
     }
+
+    // Created At (manual data since can't set created at directly on ParseObject);
+    @Override
+    public Date getCreatedAt() {
+        Date manual = getDate(KEY_MANUAL_CREATED_AT);
+        Date result = (manual != null) ? manual : super.getCreatedAt();
+        return result;
+    }
+
+    public Action setCreatedAt(Date date) {
+        put(KEY_MANUAL_CREATED_AT, date);
+        return this;
+    }
+
+    // Archived
+    public boolean isArchived() {
+        return getBoolean(KEY_ARCHIVED);
+    }
+
+    public Action setArchived(boolean archived) {
+        put(KEY_ARCHIVED, archived);
+        return this;
+    }
+
+    // Archive At
+    public Date getArchiveAt() {
+        return getDate(KEY_ARCHIVE_AT);
+    }
+
+    public Action setArchiveAt(Date date) {
+        put(KEY_ARCHIVE_AT, date);
+        return this;
+    }
+
+    public Action removeAutoArchive() {
+        put(KEY_ARCHIVE_AT, JSONObject.NULL);
+        return this;
+    }
+
+    // Recurrence
+    
 }
