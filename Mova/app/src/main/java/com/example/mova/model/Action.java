@@ -20,6 +20,7 @@ public class Action extends HashableParseObject {
     public static final String KEY_PARENT_GOAL = "parentGoal";
     public static final String KEY_PARENT_SHARED_ACTION = "parentSharedAction";
     public static final String KEY_PARENT_USER = "parentUser";
+    public static final String KEY_IS_PRIORITY = "isPriority";
 
     //Task
 
@@ -116,6 +117,17 @@ public class Action extends HashableParseObject {
 
     public Action setParentUser(User user){
         put(KEY_PARENT_USER, user);
+        return this;
+    }
+
+    //IsPriority
+
+    public Boolean getIsPriority() {
+        return getBoolean(KEY_IS_PRIORITY);
+    }
+
+    public Action setIsPriority(Boolean bool) {
+        put(KEY_IS_PRIORITY, bool);
         return this;
     }
 }
