@@ -29,7 +29,7 @@ import com.example.mova.components.ProfileShowMoreGroupsComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
-import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;

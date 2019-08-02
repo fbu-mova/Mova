@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mova.Mood;
+import com.example.mova.model.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -88,13 +88,30 @@ public class JournalEntryComponent extends Component {
     private void displayBasicInfo() {
         holder.tvTime.setText(TimeUtils.toTimeString(entry.getCreatedAt()));
         holder.tvBody.setText(entry.getBody());
-        holder.tvLocation.setText(LocationUtils.makeLocationText(getActivity(), entry.getLocation()));
+
+        String location = LocationUtils.makeLocationText(getActivity(), entry.getLocation(), false);
+        if (location.equals("")) {
+            holder.tvLocation.setVisibility(View.GONE);
+            holder.ivLocation.setVisibility(View.GONE);
+        } else {
+            holder.tvLocation.setText(location);
+            holder.tvLocation.setVisibility(View.VISIBLE);
+            holder.ivLocation.setVisibility(View.VISIBLE);
+        }
     }
 
     private void displayMood() {
         Mood.Status mood = entry.getMood();
-        holder.tvMood.setText((mood == null) ? "" : mood.toString());
-        // TODO: Hide mood image, etc.
+
+        if (mood == null || mood == Mood.Status.Empty) {
+            hideMood();
+            return;
+        }
+
+        holder.tvMood.setText((mood == null || mood == Mood.Status.Empty) ? "" : mood.toString());
+        int color = Mood.getColor(mood);
+        holder.tvMood.setTextColor(color);
+        holder.ivMood.setColorFilter(color);
     }
 
     private void displayMedia() {
@@ -108,15 +125,36 @@ public class JournalEntryComponent extends Component {
     }
 
     private void displayTags() {
+        hideTags();
         ParseQuery<Tag> tagQuery = entry.relTags.getQuery();
         tagQuery.findInBackground((tags, e) -> {
             if (e != null) {
                 Log.e("JournalEntryComponent", "Failed to load tags on journal entry", e);
-                holder.tvTags.setText("Failed to load");
             } else {
                 TextUtils.writeCommaSeparated(tags, "No tags", holder.tvTags, (tag) -> tag.getName());
+                if (tags.size() > 0) showTags();
             }
         });
+    }
+
+    private void hideMood() {
+        holder.tvMood.setVisibility(View.GONE);
+        holder.ivMood.setVisibility(View.GONE);
+    }
+
+    private void showMood() {
+        holder.tvMood.setVisibility(View.VISIBLE);
+        holder.ivMood.setVisibility(View.VISIBLE);
+    }
+
+    private void hideTags() {
+        holder.tvTags.setVisibility(View.GONE);
+        holder.ivTags.setVisibility(View.GONE);
+    }
+
+    private void showTags() {
+        holder.tvTags.setVisibility(View.VISIBLE);
+        holder.ivTags.setVisibility(View.VISIBLE);
     }
 
     private void hideComments() {
@@ -174,14 +212,18 @@ public class JournalEntryComponent extends Component {
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.tvTime)     public TextView tvTime;
-        @BindView(R.id.tvLocation) public TextView tvLocation;
         @BindView(R.id.tvBody)     public TextView tvBody;
+
+        @BindView(R.id.ivLocation) public ImageView ivLocation;
+        @BindView(R.id.tvLocation) public TextView tvLocation;
 
         @BindView(R.id.ivMood)     public ImageView ivMood;
         @BindView(R.id.tvMood)     public TextView tvMood;
 
         @BindView(R.id.clMedia)    public ComponentLayout clMedia;
+
         @BindView(R.id.tvTags)     public TextView tvTags;
+        @BindView(R.id.ivTags)     public ImageView ivTags;
 
         @BindView(R.id.sComments)  public Switch sComments;
         @BindView(R.id.rvComments) public RecyclerView rvComments;

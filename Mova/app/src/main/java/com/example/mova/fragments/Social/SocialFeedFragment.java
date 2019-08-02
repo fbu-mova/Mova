@@ -18,8 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mova.ComposePostDialog;
-import com.example.mova.PostConfig;
+import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.SearchActivity;
@@ -29,9 +29,9 @@ import com.example.mova.components.PostComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
-import com.example.mova.scrolling.EdgeDecorator;
-import com.example.mova.scrolling.EndlessScrollRefreshLayout;
-import com.example.mova.scrolling.ScrollLoadHandler;
+import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.containers.EndlessScrollRefreshLayout;
+import com.example.mova.containers.ScrollLoadHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseQuery;
 
