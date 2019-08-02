@@ -113,6 +113,17 @@ public class Recurrence {
         return builder.toString();
     }
 
+    public static String add(String existingRecurrence, Recurrence recurrence) {
+        String result = "";
+        if (existingRecurrence == null) existingRecurrence = "";
+
+        result += existingRecurrence;
+        if (!existingRecurrence.equals("")) result += ",";
+        result += recurrence.toString();
+
+        return result;
+    }
+
     @Override
     public String toString() {
         if (this.getClass() == MonthlyRecurrence.class) {

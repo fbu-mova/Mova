@@ -148,10 +148,15 @@ public class Action extends HashableParseObject {
 
     public Action setArchived(boolean archived) {
         put(KEY_ARCHIVED, archived);
+
+        if (getRecurrence() != null) {
+
+        }
+
         return this;
     }
 
-    // Archive At
+    // Auto Archive
     public Date getArchiveAt() {
         return getDate(KEY_ARCHIVE_AT);
     }
@@ -164,6 +169,12 @@ public class Action extends HashableParseObject {
     public Action removeAutoArchive() {
         put(KEY_ARCHIVE_AT, JSONObject.NULL);
         return this;
+    }
+
+    public boolean shouldAutoArchive() {
+        Date archiveAt = getArchiveAt();
+        Date now = new Date();
+        return archiveAt != null && now.compareTo(archiveAt) >= 0;
     }
 
     // Recurrence
@@ -179,6 +190,18 @@ public class Action extends HashableParseObject {
 
     public Action setRecurrence(List<Recurrence> recurrence) {
         put(KEY_RECURRENCE, Recurrence.toString(recurrence));
+        return this;
+    }
+
+    public Action addRecurrence(Recurrence recurrence) {
+        String existingRecurrence = getString(KEY_RECURRENCE);
+        String compounded = Recurrence.add(existingRecurrence, recurrence);
+        put(KEY_RECURRENCE, compounded);
+        return this;
+    }
+
+    public Action removeRecurrence()  {
+        put(KEY_RECURRENCE, JSONObject.NULL);
         return this;
     }
 
