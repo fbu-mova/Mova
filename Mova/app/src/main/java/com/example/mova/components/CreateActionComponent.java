@@ -4,12 +4,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.GoalComposeActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
@@ -19,26 +19,28 @@ import com.example.mova.utils.GoalUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ActionComponent extends Component {
+public class CreateActionComponent extends Component {
 
-    private static final String TAG = "action comp";
-    protected static final int viewLayoutRes = R.layout.item_action;
+    private static final String TAG = "createAction comp";
+    private static final int viewLayoutRes = R.layout.item_action; // consists only of a component layout
 
-    private Action item;
-    protected ViewHolder viewHolder;
-
-    private ActionViewComponent viewComponent;
+    private CreateActionViewComponent viewComponent;
     private ActionEditComponent editComponent;
     private ComponentManager componentManager;
 
-    public ActionComponent(Action item) {
+    private ViewHolder viewHolder;
+
+    private Action uncreatedAction;
+    private GoalComposeActivity.HandleCreateAction handler;
+
+    public CreateActionComponent(GoalComposeActivity.HandleCreateAction handler) {
         super();
-        this.item = item;
+        this.uncreatedAction = new Action();
+        this.handler = handler;
     }
 
-    // overrides bc type of viewHolder is different from type of holder in checklistItemComp
     @Override
-    public Component.ViewHolder getViewHolder() {
+    public ViewHolder getViewHolder() {
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -48,7 +50,7 @@ public class ActionComponent extends Component {
 
     @Override
     public String getName() {
-        return "ActionComponent";
+        return "CreateActionComponent";
     }
 
     @Override
@@ -57,39 +59,37 @@ public class ActionComponent extends Component {
     }
 
     @Override
-    public Component.Inflater makeInflater() {
+    public Inflater makeInflater() {
         return new Inflater();
     }
 
     @Override
     protected void onLaunch() {
+        // set up componentManager
+
         setManager(new ComponentManager() {
             @Override
             public void onSwap(String fromKey, Component fromComponent, String toKey, Component toComponent) {
                 viewHolder.component.clear();
                 viewHolder.component.inflateComponent(getActivity(), toComponent);
-
-                if (toKey.equals(editComponent.getName())) {
-                    ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
-                            .setText(item.getTask());
-                }
             }
         });
 
-        viewComponent = new ActionViewComponent(item, componentManager);
-        editComponent = new ActionEditComponent(item, componentManager, new GoalUtils.onActionEditSaveListener() {
+        viewComponent = new CreateActionViewComponent(uncreatedAction, componentManager);
+        editComponent = new ActionEditComponent(uncreatedAction, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(String task, ComponentManager manager) {
-                // update this action with new text
-                String new_action = task;
+                // todo -- want to save the string task and the updated icons logic to the unsavedAction
 
-                // fixme -- add case where editing personal version of a social goal,
-                //  so action saved, connected to SharedAction set to false, sharedAction not changed
-                GoalUtils.saveSharedAndAction(item, new_action, (item) -> {
-                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
-                });
+                Log.i(TAG, "editComp save button pressed");
 
-                manager.swap("ActionViewComponent");
+                uncreatedAction.setTask(task)
+                        .setIsConnectedToParent(true)
+                        .setIsDone(true); // fixme -- add icon logic setting
+
+                // want to pass uncreatedAction back to GoalComposeActivity for its recyclerview
+                handler.call(uncreatedAction, task);
+                manager.swap("CreateActionViewComponent");
             }
         });
 
@@ -110,8 +110,6 @@ public class ActionComponent extends Component {
                 componentManager.swap("ActionEditComponent");
             }
         });
-
-        // todo -- set icons later
     }
 
     @Override
@@ -135,7 +133,7 @@ public class ActionComponent extends Component {
         public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
             LayoutInflater inflater = activity.getLayoutInflater();
             View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
-            return new ViewHolder(view);
+            return new CreateActionComponent.ViewHolder(view);
         }
     }
 }

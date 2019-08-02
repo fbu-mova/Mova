@@ -3,6 +3,7 @@ package com.example.mova.utils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.mova.component.ComponentManager;
 import com.example.mova.feed.Prioritized;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
@@ -29,6 +30,10 @@ import static com.example.mova.model.Action.KEY_PARENT_USER;
 public class GoalUtils {
 
     private static final String TAG = "GoalUtils";
+
+    public interface onActionEditSaveListener {
+        void call(String task, ComponentManager manager);
+    }
 
     public static void getActionList(AsyncUtils.ListCallback<Action> callback, Goal goal, User user){
         ParseQuery<Action> pqAction = goal.relActions.getQuery();

@@ -21,6 +21,7 @@ import com.example.mova.R;
 import com.example.mova.adapters.ComposeActionsAdapter;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.ActionComponent;
+import com.example.mova.components.CreateActionComponent;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
@@ -63,6 +64,10 @@ public class GoalComposeActivity extends DelegatedResultActivity {
     List<SharedAction> sharedActionsList;
     List<Action> actionsList;
 
+    // TODO : current updates
+
+    List<Action> unsavedActions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +82,8 @@ public class GoalComposeActivity extends DelegatedResultActivity {
         sharedActionsList = new ArrayList<>();
         actionsList = new ArrayList<>();
 
+        unsavedActions = new ArrayList<>();
+
         btSubmit.setOnClickListener(new View.OnClickListener() { // todo -- maybe make bottom nav to help w/ jank layout ?
             @Override
             public void onClick(View v) {
@@ -87,7 +94,12 @@ public class GoalComposeActivity extends DelegatedResultActivity {
             }
         });
 
-        clAddAction.inflateComponent(GoalComposeActivity.this, new ActionComponent(new Action().setTask("Add task here")));
+        clAddAction.inflateComponent(GoalComposeActivity.this, new CreateActionComponent(new HandleCreateAction() {
+            @Override
+            public void call(Action action, String task) {
+                onSetAction(action, task);
+            }
+        }));
 
 //        // add 'enter' soft keyboard usage for etAddAction
 //        etAddAction.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -115,5 +127,19 @@ public class GoalComposeActivity extends DelegatedResultActivity {
         // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
         setResult(RESULT_OK, getIntent());
         finish();
+    }
+
+    public interface HandleCreateAction { // fixme -- for now, doesn't save it. depends on later saving logic
+        public void call(Action action, String task); // should always call onSetAction
+    }
+
+    public void onSetAction(Action action, String task) {
+        // adds the task of this action to the recyclerview, adds the action to list unsavedActions
+
+        Log.i(TAG, "passing info of action back to compose activity");
+
+        unsavedActions.add(action); // fixme -- order might be wrong. can pass unsaved actions?
+        actions.add(task);
+        actionAdapter.notifyItemInserted(actions.size() - 1);
     }
 }

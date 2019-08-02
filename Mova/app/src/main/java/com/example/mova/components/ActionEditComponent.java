@@ -33,11 +33,13 @@ public class ActionEditComponent extends Component {
     private ActionEditViewHolder viewHolder;
 
     private ComponentManager componentManager;
+    private GoalUtils.onActionEditSaveListener onActionEditSaveListener;
 
-    public ActionEditComponent(Action action, ComponentManager componentManager) {
+    public ActionEditComponent(Action action, ComponentManager componentManager, GoalUtils.onActionEditSaveListener onActionEditSaveListener) {
         super();
         this.action = action;
         setManager(componentManager);
+        this.onActionEditSaveListener = onActionEditSaveListener;
     }
 
     @Override
@@ -79,16 +81,9 @@ public class ActionEditComponent extends Component {
         viewHolder.btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // update this action with new text
-                String new_action = viewHolder.etAction.getText().toString();
 
-                // fixme -- add case where editing personal version of a social goal,
-                //  so action saved, connected to SharedAction set to false, sharedAction not changed
-                GoalUtils.saveSharedAndAction(action, new_action, (item) -> {
-                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
-                });
+                onActionEditSaveListener.call(viewHolder.etAction.getText().toString(), componentManager);
 
-                componentManager.swap("ActionViewComponent");
             }
         });
     }
