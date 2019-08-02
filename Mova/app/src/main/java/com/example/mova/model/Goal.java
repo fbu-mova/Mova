@@ -2,7 +2,6 @@ package com.example.mova.model;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -17,6 +16,7 @@ public class Goal extends HashableParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_FROM_GROUP = "fromGroup";
     public static final String KEY_CREATED_AT = "createdAt";
+    public static final String KEY_MEMBERS = "members";
 
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
     public static final String KEY_ACTIONS = "actions";
@@ -27,7 +27,8 @@ public class Goal extends HashableParseObject {
     public final RelationFrame<Action> relActions = new RelationFrame<>(this, KEY_ACTIONS);
     public final RelationFrame<SharedAction> relSharedActions = new RelationFrame<>(this, KEY_SHARED_ACTIONS);
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
-    ;
+
+
 
     //Title
 
@@ -115,6 +116,23 @@ public class Goal extends HashableParseObject {
         return this;
     }
 
+    //Members
+    public int getMemberCount(){
+        return getInt(KEY_MEMBERS);
+    }
+
+    public Goal setMemberCount(int count){
+        put(KEY_MEMBERS, count);
+        return this;
+    }
+
+    public Goal increaseMemberCount(int increase){
+        int memberCount = getMemberCount();
+        memberCount += increase;
+        put(KEY_MEMBERS, memberCount);
+        return this;
+    }
+
     public static class Query extends ParseQuery<Goal> {
 
         public Query() {
@@ -142,6 +160,7 @@ public class Goal extends HashableParseObject {
         }
     }
 
+
     public static class GoalData {
         public Goal goal;
         public boolean userIsInvolved;
@@ -151,5 +170,7 @@ public class Goal extends HashableParseObject {
             this.userIsInvolved = userIsInvolved;
         }
     }
+
+
 }
 

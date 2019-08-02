@@ -23,10 +23,13 @@ public class Event extends HashableParseObject {
     public static final String KEY_COMMENTS = "comments";
     public static final String KEY_PARENT_GROUP = "parentGroup";
     public static final String KEY_HOST_USER = "hostUser";
+    public static final String KEY_MEMBERS = "members";
+
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
     public final RelationFrame<User> relParticipants = new RelationFrame<>(this, KEY_PARTICIPANTS);
     public final RelationFrame<Group> relGroup = new RelationFrame<>(this, KEY_GROUPS);
     public final RelationFrame<Post> relComments = new RelationFrame<>(this, KEY_COMMENTS);
+
 
     //Date
     public Date getDate(){
@@ -117,6 +120,23 @@ public class Event extends HashableParseObject {
             return true;
         }
         return false;
+    }
+
+    //Members
+    public int getMemberCount(){
+        return getInt(KEY_MEMBERS);
+    }
+
+    public Event setMemberCount(int count){
+        put(KEY_MEMBERS, count);
+        return this;
+    }
+
+    public Event increaseMemberCount(int increase){
+        int memberCount = getMemberCount();
+        memberCount += increase;
+        put(KEY_MEMBERS, memberCount);
+        return this;
     }
 
 }
