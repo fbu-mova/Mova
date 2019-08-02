@@ -22,7 +22,7 @@ import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.model.Event;
 import com.example.mova.model.User;
-import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

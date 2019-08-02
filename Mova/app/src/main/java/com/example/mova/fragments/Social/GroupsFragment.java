@@ -25,7 +25,7 @@ import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.User;
-import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;

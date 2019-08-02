@@ -1,7 +1,5 @@
-package com.example.mova;
+package com.example.mova.dialogs;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,21 +17,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.mova.activities.GoalDetailsActivity;
+import com.example.mova.R;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
-import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.MediaUtils;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;

@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
-import com.example.mova.Mood;
+import com.example.mova.model.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;

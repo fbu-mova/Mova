@@ -5,8 +5,8 @@
     <dimen name="elementMargin">8dp</dimen>
     <dimen name="padding">16dp</dimen>
 
-    <dimen name="shallowCardElevation">4dp</dimen>
-    <dimen name="deepCardElevation">10dp</dimen>
+    <dimen name="shallowCardElevation">2dp</dimen>
+    <dimen name="deepCardElevation">6dp</dimen>
     <dimen name="borderRadius">8dp</dimen>
 
     <dimen name="textSizeAnnotation">10dp</dimen>

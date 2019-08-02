@@ -30,7 +30,7 @@
 
             <view
                 android:id="@+id/moodSelector"
-                class="com.example.mova.Mood$SelectorLayout"
+                class="com.example.mova.model.Mood$SelectorLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
