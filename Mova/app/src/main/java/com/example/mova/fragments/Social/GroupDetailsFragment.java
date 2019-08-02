@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,10 +80,12 @@ public class GroupDetailsFragment extends Fragment {
     private DataComponentAdapter<Goal.GoalData> groupGoalAdapter;
     private DataComponentAdapter<Event> groupEventAdapter;
 
-//    @BindView(R.id.rvGroupGoals)
-//    RecyclerView rvGroupGoals;
+    @BindView(R.id.rvGroupGoals)
+    RecyclerView rvGroupGoals;
     @BindView(R.id.rvGroupPosts)
     RecyclerView rvGroupPosts;
+    @BindView(R.id.rvGroupEvents)
+    RecyclerView rvGroupEvents;
 
     public GroupDetailsFragment() {
         // Required empty public constructor
@@ -165,12 +168,15 @@ public class GroupDetailsFragment extends Fragment {
             String imageUrl = file.getUrl();
             Glide.with(getContext())
                     .load(imageUrl)
+                    .placeholder(R.color.purpleLight)
+                    .error(R.color.purpleLight)
                     .into(ivGroupDetailsPic);
         }
 
 
-//        rvGroupGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvGroupGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvGroupPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvGroupEvents.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
         groupGoalAdapter = new DataComponentAdapter<Goal.GoalData>((DelegatedResultActivity) getActivity(), groupGoals) {
             @Override
@@ -213,8 +219,41 @@ public class GroupDetailsFragment extends Fragment {
 
         //Todo Merge the rv into one rv and use rv.swapAdapter
 
-//        rvGroupGoals.setAdapter(groupGoalAdapter);
+        rvGroupGoals.setAdapter(groupGoalAdapter);
         rvGroupPosts.setAdapter(groupPostAdapter);
+        rvGroupEvents.setAdapter(groupEventAdapter);
+
+        //Get group Goals
+        GroupUtils.getGroupGoals(group, (goals) -> {
+
+            AsyncUtils.executeMany(goals.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+                // in for loop
+                GoalUtils.checkIfUserInvolved(goals.get(item), (User) ParseUser.getCurrentUser(), (check) -> {
+                    Goal.GoalData data = new Goal.GoalData(goals.get(item), check);
+                    groupGoals.add(0, data);
+                    groupGoalAdapter.notifyItemInserted(0);
+                });
+            }, () -> {
+
+                rvGroupGoals.scrollToPosition(0);
+            });
+        });
+
+        //Get group Post
+        GroupUtils.getGroupPosts(group, (posts) -> {
+            groupPosts.addAll(posts);
+            groupPostAdapter.notifyDataSetChanged();
+            rvGroupPosts.scrollToPosition(0);
+
+        });
+
+        //Get group Events
+        EventUtils.getGroupEvents(group, (events) -> {
+            groupEvents.addAll(events);
+            groupEventAdapter.notifyDataSetChanged();
+            rvGroupEvents.scrollToPosition(0);
+
+        });
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -222,56 +261,36 @@ public class GroupDetailsFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.action_group_goals:
-                        GroupUtils.getGroupGoals(group, (goals) -> {
-
-                            AsyncUtils.executeMany(goals.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
-                                // in for loop
-                                GoalUtils.checkIfUserInvolved(goals.get(item), (User) ParseUser.getCurrentUser(), (check) -> {
-                                    Goal.GoalData data = new Goal.GoalData(goals.get(item), check);
-                                    groupGoals.add(0, data);
-                                    groupGoalAdapter.notifyItemInserted(0);
-                                });
-                            }, () -> {
-//                                rvGroupGoals.scrollToPosition(0);
-                                rvGroupPosts.scrollToPosition(0);
-                                rvGroupPosts.swapAdapter(groupGoalAdapter, true);
-                            });
-                        });
 
 
-//                        rvGroupGoals.setVisibility(View.VISIBLE);
-//                        rvGroupPosts.setVisibility(View.GONE);
+                        rvGroupGoals.setVisibility(View.VISIBLE);
+                        rvGroupPosts.setVisibility(View.GONE);
+                        rvGroupEvents.setVisibility(View.GONE);
                         return true;
+
 
                     case R.id.action_group_posts:
-                        GroupUtils.getGroupPosts(group, (posts) -> {
-                            groupPosts.addAll(posts);
-                            groupPostAdapter.notifyDataSetChanged();
-                            rvGroupPosts.scrollToPosition(0);
-                            rvGroupPosts.swapAdapter(groupPostAdapter, true);
-                        });
 
-
-
-//                        rvGroupGoals.setVisibility(View.GONE);
-//                        rvGroupPosts.setVisibility(View.VISIBLE);
+                        rvGroupGoals.setVisibility(View.GONE);
+                        rvGroupPosts.setVisibility(View.VISIBLE);
+                        rvGroupEvents.setVisibility(View.GONE);
                         return true;
+
+
                     case R.id.action_group_events:
-                        EventUtils.getGroupEvents(group, (events) -> {
-                            groupEvents.addAll(events);
-                            groupEventAdapter.notifyDataSetChanged();
-                            rvGroupPosts.scrollToPosition(0);
-                            rvGroupPosts.swapAdapter(groupEventAdapter, true);
-                        });
 
-
+                        rvGroupGoals.setVisibility(View.GONE);
+                        rvGroupPosts.setVisibility(View.GONE);
+                        rvGroupEvents.setVisibility(View.VISIBLE);
                         return true;
+
+
                         default:return true;
 
 
                 }
             }
         });
-        bottomNavigationView.setSelectedItemId(R.id.action_group_posts);
+        bottomNavigationView.setSelectedItemId(R.id.action_group_goals);
     }
 }

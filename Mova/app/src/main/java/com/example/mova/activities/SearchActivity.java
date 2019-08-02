@@ -8,7 +8,7 @@ import com.example.mova.R;
 
 public class SearchActivity extends AppCompatActivity {
 
-    @
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
