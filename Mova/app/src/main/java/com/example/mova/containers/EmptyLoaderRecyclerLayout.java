@@ -18,6 +18,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO: Refactor -> split into loader overlay and empty text in ESL/ESRL
+
 public class EmptyLoaderRecyclerLayout extends FrameLayout {
 
     public static final String DEFAULT_EMPTY_TEXT = "Empty"; // TODO: Come up with better universal empty text

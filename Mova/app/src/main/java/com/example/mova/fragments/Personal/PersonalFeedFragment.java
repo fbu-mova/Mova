@@ -130,12 +130,6 @@ public class PersonalFeedFragment extends Fragment {
                 Log.i("PersonalFeedFragment", "Loaded cards successfully!");
             }
         });
-
-        ViewGroup group = (ViewGroup) rvCards.getParent();
-        TextView tvText = new TextView(getContext());
-        tvText.setText("Hello, test");
-        group.removeView(rvCards);
-        group.addView(tvText);
     }
 
     private void insertSoloComponent(boolean toggleJournalVsTomorrow) {
