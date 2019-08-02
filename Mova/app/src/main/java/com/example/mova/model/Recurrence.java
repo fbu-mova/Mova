@@ -100,6 +100,30 @@ public class Recurrence {
         }
     }
 
+    public static String toString(List<Recurrence> recurrences) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < recurrences.size(); i++) {
+            builder.append(recurrences.get(i).toString());
+            if (i < recurrences.size() - 1) {
+                builder.append(",");
+            }
+        }
+
+        return builder.toString();
+    }
+
+    @Override
+    public String toString() {
+        if (this.getClass() == MonthlyRecurrence.class) {
+            return ((MonthlyRecurrence) this).toString();
+        } else if (this.getClass() == YearlyRecurrence.class) {
+            return ((YearlyRecurrence) this).toString();
+        } else {
+            return key.toString();
+        }
+    }
+
     public enum Key {
         Monday,
         Tuesday,
@@ -111,6 +135,24 @@ public class Recurrence {
         Month,
         Year,
         Empty;
+
+        public String toString() {
+            switch (this) {
+                case Monday: return "M";
+                case Tuesday: return "T";
+                case Wednesday: return "W";
+                case Thursday: return "Th";
+                case Friday: return "F";
+                case Saturday: return "Sa";
+                case Sunday: return "S";
+                case Month: return "Mo";
+                case Year: return "Y";
+
+                case Empty:
+                default:
+                    return "E";
+            }
+        }
 
         public static Key fromString(String str) {
             switch (str) {

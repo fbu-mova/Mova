@@ -8,4 +8,9 @@ public class MonthlyRecurrence extends Recurrence {
         super(Key.Month);
         this.day = day;
     }
+
+    @Override
+    public String toString() {
+        return key.toString() + day;
+    }
 }

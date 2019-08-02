@@ -9,4 +9,9 @@ public class YearlyRecurrence extends Recurrence {
         this.month = month;
         this.day = day;
     }
+
+    @Override
+    public String toString() {
+        return key.toString() + month + day;
+    }
 }
