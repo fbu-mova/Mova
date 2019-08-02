@@ -10,6 +10,7 @@ public class SharedAction extends HashableParseObject {
     public static final String KEY_TASK = "task";
     public static final String KEY_GOAL = "goal";
     public static final String KEY_USERS_DONE = "usersDone";
+    public static final String KEY_IS_PRIORITY = "isPriority";
 
     //Relations
     public static final String KEY_USERS_INVOLVED = "usersInvolved";
@@ -46,6 +47,17 @@ public class SharedAction extends HashableParseObject {
 
     public SharedAction setUsersDone(int done){
         put(KEY_USERS_DONE, done);
+        return this;
+    }
+
+    //IsPriority
+
+    public Boolean getIsPriority() {
+        return getBoolean(KEY_IS_PRIORITY);
+    }
+
+    public SharedAction setIsPriority(Boolean bool) {
+        put(KEY_IS_PRIORITY, bool);
         return this;
     }
 
