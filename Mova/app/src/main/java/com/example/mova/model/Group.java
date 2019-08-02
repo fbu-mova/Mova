@@ -2,7 +2,6 @@ package com.example.mova.model;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.Date;
@@ -13,6 +12,7 @@ public class Group extends HashableParseObject {
     public static final String KEY_NAME = "name";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_GROUP_PIC = "groupPic";
+    public static final String KEY_MEMBERS = "members";
 
     //Relations
     public static final String KEY_GOALS = "goals";
@@ -29,6 +29,7 @@ public class Group extends HashableParseObject {
     public final RelationFrame<Event> relEvents = new RelationFrame<>(this, KEY_EVENTS);
     public final RelationFrame<Post> relPosts = new RelationFrame<>(this, KEY_POSTS);
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
+
 
 
     //CreatedAt
@@ -63,6 +64,23 @@ public class Group extends HashableParseObject {
 
     public Group setGroupPic(ParseFile file) {
         put(KEY_GROUP_PIC, file);
+        return this;
+    }
+
+    //Members
+    public int getMemberCount(){
+        return getInt(KEY_MEMBERS);
+    }
+
+    public Group setMemberCount(int count){
+        put(KEY_MEMBERS, count);
+        return this;
+    }
+
+    public Group increaseMemberCount(int increase){
+        int memberCount = getMemberCount();
+        memberCount += increase;
+        put(KEY_MEMBERS, memberCount);
         return this;
     }
 
