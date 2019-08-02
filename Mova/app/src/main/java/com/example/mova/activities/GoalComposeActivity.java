@@ -61,12 +61,9 @@ public class GoalComposeActivity extends DelegatedResultActivity {
     ComposeActionsAdapter actionAdapter;
     List<String> actions;
 
-    List<SharedAction> sharedActionsList;
-    List<Action> actionsList;
-
     // TODO : current updates
 
-    List<Action> unsavedActions;
+    List<Action> unsavedActions; // unsaved because they're not saved to the goal yet
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,50 +72,29 @@ public class GoalComposeActivity extends DelegatedResultActivity {
         ButterKnife.bind(this);
 
         actions = new ArrayList<>();
-        actionAdapter = new ComposeActionsAdapter(actions);
+        unsavedActions = new ArrayList<>();
+        actionAdapter = new ComposeActionsAdapter(unsavedActions);
         rvComposeAction.setLayoutManager(new LinearLayoutManager(this));
         rvComposeAction.setAdapter(actionAdapter);
 
-        sharedActionsList = new ArrayList<>();
-        actionsList = new ArrayList<>();
-
-        unsavedActions = new ArrayList<>();
-
-        btSubmit.setOnClickListener(new View.OnClickListener() { // todo -- maybe make bottom nav to help w/ jank layout ?
+        btSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
 
                 GoalUtils.submitGoal(goalName, goalDescription, actions, true, (goal) -> endActivity(goal));
+                // fixme -- needs to be changed to allow icon logic to be saved from here and in general
             }
         });
 
         clAddAction.inflateComponent(GoalComposeActivity.this, new CreateActionComponent(new HandleCreateAction() {
             @Override
-            public void call(Action action, String task) {
-                onSetAction(action, task);
+            public void call(Action action) {
+                onSetAction(action);
             }
         }));
 
-//        // add 'enter' soft keyboard usage for etAddAction
-//        etAddAction.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                boolean handled = false;
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//
-//                    // save added action to the adapter, clear etAddAction
-//                    String newAction = etAddAction.getText().toString();
-//                    actions.add(newAction); // put at end rather than beginning
-//                    actionAdapter.notifyItemInserted(actions.size() - 1);
-//                    etAddAction.setText("");
-//
-//                    handled = true;
-//                }
-//                return handled;
-//            }
-//        });
     }
 
     private void endActivity(Goal goal) {
@@ -130,16 +106,15 @@ public class GoalComposeActivity extends DelegatedResultActivity {
     }
 
     public interface HandleCreateAction { // fixme -- for now, doesn't save it. depends on later saving logic
-        public void call(Action action, String task); // should always call onSetAction
+        public void call(Action action); // should always call onSetAction
     }
 
-    public void onSetAction(Action action, String task) {
+    public void onSetAction(Action action) {
         // adds the task of this action to the recyclerview, adds the action to list unsavedActions
 
         Log.i(TAG, "passing info of action back to compose activity");
 
-        unsavedActions.add(action); // fixme -- order might be wrong. can pass unsaved actions?
-        actions.add(task);
-        actionAdapter.notifyItemInserted(actions.size() - 1);
+        unsavedActions.add(action);
+        actionAdapter.notifyItemInserted(unsavedActions.size() - 1);
     }
 }

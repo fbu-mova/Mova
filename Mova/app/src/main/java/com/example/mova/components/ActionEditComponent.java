@@ -76,14 +76,38 @@ public class ActionEditComponent extends Component {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
 
-        // todo -- implement icons (need to update in action model)
-
         viewHolder.btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 onActionEditSaveListener.call(viewHolder.etAction.getText().toString(), componentManager);
 
+            }
+        });
+
+        // todo -- implement icons (need to update in action model)
+
+        viewHolder.recurring.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        viewHolder.reminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        viewHolder.priority.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // need to update the uncreatedAction with priority
+
+                action.setIsPriority(true);
+                // fixme -- want to show onClick in UI : what would user see?
             }
         });
     }
@@ -96,10 +120,10 @@ public class ActionEditComponent extends Component {
     public static class ActionEditViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.etAction)        protected EditText etAction;
-        @BindView(R.id.ivIcon1)         protected ImageView ivIcon1; // fixme -- in future, image buttons
-        @BindView(R.id.ivIcon2)         protected ImageView ivIcon2;
-        @BindView(R.id.ivIcon3)         protected ImageView ivIcon3;
-        @BindView(R.id.btSave)        protected Button btSave;
+        @BindView(R.id.ivIcon1)         protected ImageView recurring;
+        @BindView(R.id.ivIcon2)         protected ImageView reminder;
+        @BindView(R.id.ivIcon3)         protected ImageView priority;
+        @BindView(R.id.btSave)          protected Button btSave;
 
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);

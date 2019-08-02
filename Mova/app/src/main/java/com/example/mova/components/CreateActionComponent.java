@@ -15,6 +15,8 @@ import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.utils.GoalUtils;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -87,9 +89,20 @@ public class CreateActionComponent extends Component {
                         .setIsConnectedToParent(true)
                         .setIsDone(true); // fixme -- add icon logic setting
 
-                // want to pass uncreatedAction back to GoalComposeActivity for its recyclerview
-                handler.call(uncreatedAction, task);
-                manager.swap("CreateActionViewComponent");
+                uncreatedAction.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            // want to pass uncreatedAction back to GoalComposeActivity for its recyclerview
+                            handler.call(uncreatedAction);
+                            manager.swap("CreateActionViewComponent");
+                        }
+                        else {
+                            Log.d(TAG, "could not save action", e);
+                        }
+                    }
+                });
+
             }
         });
 
