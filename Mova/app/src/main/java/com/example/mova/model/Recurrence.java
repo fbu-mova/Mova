@@ -19,7 +19,7 @@ public class Recurrence {
 
     public static List<Recurrence> parse(String recurrenceStr) {
         List<Recurrence> result = new ArrayList<>();
-        String[] parts = recurrenceStr.split(",");
+        String[] parts = (recurrenceStr == null) ? new String[0] : recurrenceStr.split(",");
         for (String part : parts) {
             if (part.equals("")) continue; // Skip all empty strings
             result.add(parseIndividual(part));

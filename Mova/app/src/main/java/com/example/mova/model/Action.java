@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @ParseClassName("Action")
 public class Action extends HashableParseObject {
@@ -166,5 +167,29 @@ public class Action extends HashableParseObject {
     }
 
     // Recurrence
-    
+    public List<Recurrence> getRecurrence() {
+        String recurrenceStr = getString(KEY_RECURRENCE);
+        return Recurrence.parse(recurrenceStr);
+    }
+
+    public Action setRecurrence(Recurrence recurrence) {
+        put(KEY_RECURRENCE, recurrence.toString());
+        return this;
+    }
+
+    public Action setRecurrence(List<Recurrence> recurrence) {
+        put(KEY_RECURRENCE, Recurrence.toString(recurrence));
+        return this;
+    }
+
+    // Recurrence ID
+    // TODO: Determine what methods would be more helpful here, and put closer bounds in place for setting these
+    public String getRecurrenceId() {
+        return getString(KEY_RECURRENCE_ID);
+    }
+
+    public Action setRecurrenceId(String id) {
+        put(KEY_RECURRENCE_ID, id);
+        return this;
+    }
 }
