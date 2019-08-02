@@ -5,11 +5,15 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Recurrence {
+
+    private static final Recurrence EMPTY = new Recurrence(Key.Empty);
 
     public final Key key;
 
@@ -80,7 +84,7 @@ public class Recurrence {
     }
 
     public static Recurrence makeEmpty() {
-        return new Recurrence(Key.Empty);
+        return EMPTY;
     }
 
     private static void checkDay(Integer day) {
@@ -128,6 +132,7 @@ public class Recurrence {
 
     @Override
     public String toString() {
+        // FIXME: Are these class checks necessary given that we usually use the most generic version of Recurrence?
         if (this.getClass() == MonthlyRecurrence.class) {
             return ((MonthlyRecurrence) this).toString();
         } else if (this.getClass() == YearlyRecurrence.class) {
@@ -141,6 +146,29 @@ public class Recurrence {
     public boolean equals(@Nullable Object obj) {
         if (obj == null || obj.getClass() != Recurrence.class) return false;
         return key == ((Recurrence) obj).key;
+    }
+
+    public Date nextRelativeDate(Date prevActionDate) {
+        if (key == Key.Empty) {
+            throw new IllegalArgumentException("Empty recurrences have no relative next date.");
+        }
+        // FIXME: Are these class checks necessary given that we usually use the most generic version of Recurrence?
+        if (this.getClass() == MonthlyRecurrence.class) {
+            return ((MonthlyRecurrence) this).nextRelativeDate(prevActionDate);
+        } else if (this.getClass() == YearlyRecurrence.class) {
+            return ((YearlyRecurrence) this).nextRelativeDate(prevActionDate);
+        } else {
+            /** @source https://stackoverflow.com/questions/3463756/is-there-a-good-way-to-get-the-date-of-the-coming-wednesday */
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(prevActionDate);
+
+            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+            int diff = key.toCalendarDayOfWeek() - weekday;
+            if (diff <= 0) diff += 7;
+
+            calendar.add(Calendar.DAY_OF_MONTH, diff);
+            return calendar.getTime();
+        }
     }
 
     public enum Key {
@@ -157,15 +185,15 @@ public class Recurrence {
 
         public String toString() {
             switch (this) {
-                case Monday: return "M";
-                case Tuesday: return "T";
+                case Monday:    return "M";
+                case Tuesday:   return "T";
                 case Wednesday: return "W";
-                case Thursday: return "Th";
-                case Friday: return "F";
-                case Saturday: return "Sa";
-                case Sunday: return "S";
-                case Month: return "Mo";
-                case Year: return "Y";
+                case Thursday:  return "Th";
+                case Friday:    return "F";
+                case Saturday:  return "Sa";
+                case Sunday:    return "S";
+                case Month:     return "Mo";
+                case Year:      return "Y";
 
                 case Empty:
                 default:
@@ -175,28 +203,30 @@ public class Recurrence {
 
         public static Key fromString(String str) {
             switch (str) {
-                case "M":
-                    return Monday;
-                case "T":
-                    return Tuesday;
-                case "W":
-                    return Wednesday;
-                case "Th":
-                    return Thursday;
-                case "F":
-                    return Friday;
-                case "Sa":
-                    return Saturday;
-                case "S":
-                    return Sunday;
-                case "Mo":
-                    return Month;
-                case "Y":
-                    return Year;
-                case "E":
-                    return Empty;
-                default:
-                    throw new IllegalArgumentException("Invalid recurrence key \"" + str + "\".");
+                case "M":  return Monday;
+                case "T":  return Tuesday;
+                case "W":  return Wednesday;
+                case "Th": return Thursday;
+                case "F":  return Friday;
+                case "Sa": return Saturday;
+                case "S":  return Sunday;
+                case "Mo": return Month;
+                case "Y":  return Year;
+                case "E":  return Empty;
+                default:   throw new IllegalArgumentException("Invalid recurrence key \"" + str + "\".");
+            }
+        }
+
+        protected int toCalendarDayOfWeek() {
+            switch (this) {
+                case Monday:    return Calendar.MONDAY;
+                case Tuesday:   return Calendar.TUESDAY;
+                case Wednesday: return Calendar.WEDNESDAY;
+                case Thursday:  return Calendar.THURSDAY;
+                case Friday:    return Calendar.FRIDAY;
+                case Saturday:  return Calendar.SATURDAY;
+                case Sunday:    return Calendar.SUNDAY;
+                default:        throw new IllegalArgumentException("Key cannot be converted to calendar date; it does not represent a day of the week.");
             }
         }
     }

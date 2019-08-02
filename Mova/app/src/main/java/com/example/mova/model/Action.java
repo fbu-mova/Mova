@@ -1,11 +1,11 @@
 package com.example.mova.model;
 
 import com.example.mova.utils.AsyncUtils;
-import com.example.mova.utils.TimeUtils;
 import com.parse.ParseClassName;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -203,6 +203,61 @@ public class Action extends HashableParseObject {
     public Action removeRecurrence()  {
         put(KEY_RECURRENCE, JSONObject.NULL);
         return this;
+    }
+
+    public boolean isRecurring() {
+        List<Recurrence> recurrence = getRecurrence();
+        return recurrence.size() > 0;
+    }
+
+    /**
+     * Determines whether or not the action's next recurrence(s) should be created and added to the DB.
+     * @return The recurrences for which the action should be duplicated.
+     */
+    public List<Recurrence> shouldAddRecur() {
+        List<Recurrence> recurrence = getRecurrence();
+        Date now = new Date();
+
+        List<Recurrence> result = new ArrayList<>();
+
+        // Check for no recurrence or empty recurrence
+        if (recurrence.size() == 0
+            || recurrence.contains(Recurrence.makeEmpty())) return result;
+
+        for (Recurrence r : recurrence) {
+            // If the next relative date has already happened, then true
+            Date nextDate = r.nextRelativeDate(getCreatedAt());
+            if (now.compareTo(nextDate) >= 0) {
+                result.add(r);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Creates and adds the next recurring action if the action is recurring.
+     * Adds empty to the recurrence of the current action to deprecate it.
+     * @return The new action. Null if no action was created.
+     */
+    public List<Action> addRecur() {
+        List<Recurrence> toAdd = shouldAddRecur();
+        if (toAdd.size() == 0) return null;
+
+        List<Action> actions = new ArrayList<>();
+
+        for (Recurrence r : toAdd) {
+            Date manual = r.nextRelativeDate(getCreatedAt());
+            Action action = new Action();
+            action.setCreatedAt(manual);
+            action.setTask(getTask());
+            action.setParentGoal(getParentGoal());
+            // TODO: Migrate all functions to SharedAction.
+            actions.add(action);
+        }
+
+        // FIXME: This may need to be async.
+        return actions;
     }
 
     // Recurrence ID
