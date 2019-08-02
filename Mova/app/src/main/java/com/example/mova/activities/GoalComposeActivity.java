@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.adapters.ComposeActionsAdapter;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.ActionComponent;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
@@ -35,7 +37,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GoalComposeActivity extends AppCompatActivity {
+public class GoalComposeActivity extends DelegatedResultActivity {
 
     private static final String TAG = "Goal Compose Activity";
     public static final String KEY_COMPOSED_GOAL = "composed goal";
@@ -46,17 +48,14 @@ public class GoalComposeActivity extends AppCompatActivity {
     // add tags
     // add icons for actions
 
-    @BindView(R.id.etGoalName)
-    protected EditText etGoalName;
-    @BindView(R.id.etGoalDescription)
-    protected EditText etGoalDescription;
+    @BindView(R.id.etGoalName)          protected EditText etGoalName;
+    @BindView(R.id.etGoalDescription)   protected EditText etGoalDescription;
     //    @BindView(R.id.etAction)                protected EditText etAction;
-    @BindView(R.id.btSubmit)
-    protected Button btSubmit;
-    @BindView(R.id.rvComposeAction)
-    protected RecyclerView rvComposeAction;
-    @BindView(R.id.etAddAction)
-    protected EditText etAddAction;
+    @BindView(R.id.btSubmit)            protected Button btSubmit;
+    @BindView(R.id.rvComposeAction)     protected RecyclerView rvComposeAction;
+//    @BindView(R.id.etAddAction)         protected EditText etAddAction;
+// FIXME: save button of action currently assumes goal already saved
+    @BindView(R.id.clAddAction)         protected ComponentLayout clAddAction;
 
     ComposeActionsAdapter actionAdapter;
     List<String> actions;
@@ -88,24 +87,26 @@ public class GoalComposeActivity extends AppCompatActivity {
             }
         });
 
-        // add 'enter' soft keyboard usage for etAddAction
-        etAddAction.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+        clAddAction.inflateComponent(GoalComposeActivity.this, new ActionComponent(new Action().setTask("Add task here")));
 
-                    // save added action to the adapter, clear etAddAction
-                    String newAction = etAddAction.getText().toString();
-                    actions.add(newAction); // put at end rather than beginning
-                    actionAdapter.notifyItemInserted(actions.size() - 1);
-                    etAddAction.setText("");
-
-                    handled = true;
-                }
-                return handled;
-            }
-        });
+//        // add 'enter' soft keyboard usage for etAddAction
+//        etAddAction.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                boolean handled = false;
+//                if (actionId == EditorInfo.IME_ACTION_DONE) {
+//
+//                    // save added action to the adapter, clear etAddAction
+//                    String newAction = etAddAction.getText().toString();
+//                    actions.add(newAction); // put at end rather than beginning
+//                    actionAdapter.notifyItemInserted(actions.size() - 1);
+//                    etAddAction.setText("");
+//
+//                    handled = true;
+//                }
+//                return handled;
+//            }
+//        });
     }
 
     private void endActivity(Goal goal) {
