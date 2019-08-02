@@ -314,7 +314,7 @@ public class JournalFragment extends Fragment {
         gestureDetector = new GestureDetector(getActivity(), new GestureListener(glRoot) {
             @Override
             public boolean onTouch() {
-                return true;
+                return false;
             }
 
             @Override
@@ -327,7 +327,7 @@ public class JournalFragment extends Fragment {
                     date = journal.getNextDate(currDate);
                 }
 
-                if (date == currDate) return true;
+                if (date == currDate) return false;
 
                 currDate = date;
                 displayEntries(currDate);
