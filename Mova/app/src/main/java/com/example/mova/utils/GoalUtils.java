@@ -440,6 +440,8 @@ public class GoalUtils {
         });
     }
 
+    // todo : change query so priority actions show first
+
     public static void loadGoalActions(Goal goal, AsyncUtils.ListCallback<Action> callback) {
         // make query calls to get the user's actions for a goal
         ParseQuery<Action> actionQuery = goal.relActions.getQuery();
@@ -451,7 +453,22 @@ public class GoalUtils {
             public void done(List<Action> objects, ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "action query success w/ size " + objects.size());
-                    callback.call(objects);
+
+                    List<Action> actions = new ArrayList<>();
+                    int counter = 0;
+
+                    for (Action object : objects) {
+                        // fixme -- order might be flipped, should be consistent tho
+                        //       assumes objects goes newest to oldest per orderByDescending
+                        if (object.getIsPriority()) {
+                            actions.add(counter, object);
+                            counter++;
+                        }
+                        else {
+                            actions.add(object);
+                        }
+                    }
+                    callback.call(actions);
                 }
                 else {
                     Log.e(TAG, "query for actions failed", e);
@@ -467,7 +484,20 @@ public class GoalUtils {
                 .findInBackground((objects, e) -> {
                     if (e == null) {
                         Log.d(TAG, "sharedAction query success w/ size " + objects.size());
-                        callback.call(objects);
+
+                        List<SharedAction> sharedActions = new ArrayList<>();
+                        int counter = 0;
+
+                        for (SharedAction object : objects) { // fixme -- same as loadGoalActions
+                            if (object.getIsPriority()) {
+                                sharedActions.add(counter, object);
+                                counter++;
+                            }
+                            else {
+                                sharedActions.add(object);
+                            }
+                        }
+                        callback.call(sharedActions);
                     }
                     else {
                         Log.e(TAG, "query for sharedActions failed", e);

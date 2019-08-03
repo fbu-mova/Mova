@@ -12,6 +12,7 @@ import com.example.mova.utils.GoalUtils;
 
 public class ActionViewComponent extends ChecklistItemComponent<Action> {
         // needs a separate name for getName component manager, and to implement icons...
+        // fixme -- needs diff viewLayoutRes to implement icons
 
     private static final String TAG = "action view comp";
 
