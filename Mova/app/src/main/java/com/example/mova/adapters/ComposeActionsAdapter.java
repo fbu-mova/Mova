@@ -49,7 +49,8 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
 
         holder.cbItem.setText(action.getTask());
 
-        if (action.getIsPriority()) holder.ivPriority.setVisibility(View.VISIBLE);
+        int visible = (action.getIsPriority()) ? View.VISIBLE : View.GONE;
+        holder.ivPriority.setVisibility(visible);
 
     }
 

@@ -83,8 +83,7 @@ public class GoalComposeActivity extends DelegatedResultActivity {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
 
-                GoalUtils.submitGoal(goalName, goalDescription, actions, true, (goal) -> endActivity(goal));
-                // fixme -- needs to be changed to allow icon logic to be saved from here and in general
+                GoalUtils.submitGoal(goalName, goalDescription, unsavedActions, true, (goal) -> endActivity(goal));
             }
         });
 

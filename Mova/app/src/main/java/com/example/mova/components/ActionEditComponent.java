@@ -107,6 +107,7 @@ public class ActionEditComponent extends Component {
                 // need to update the uncreatedAction with priority
 
                 action.setIsPriority(true);
+                Toast.makeText(getActivity(), "priority selected!", Toast.LENGTH_LONG).show();
                 // fixme -- want to show onClick in UI : what would user see?
             }
         });
