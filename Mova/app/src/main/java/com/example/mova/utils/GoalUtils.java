@@ -195,7 +195,7 @@ public class GoalUtils {
         action.saveInBackground((e) -> callback.call(e));
     }
 
-    public static void submitGoal(String goalName, String goalDescription, List<String> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+    public static void submitGoal(String goalName, String goalDescription, List<Action> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
         // todo -- include image choosing for goal image + color
         // todo -- update to also encompass Social functionality ? can share w/ group if not on personal feed
 
@@ -220,7 +220,7 @@ public class GoalUtils {
         });
     }
 
-    private static void saveSharedAction(List<String> actions, Goal goal, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+    private static void saveSharedAction(List<Action> actions, Goal goal, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
         List<SharedAction> sharedActionsList = new ArrayList<>();
 
@@ -230,9 +230,10 @@ public class GoalUtils {
             // the iteration in the for loop
 
             SharedAction sharedAction = new SharedAction()
-                    .setTask(actions.get(item))
+                    .setTask(actions.get(item).getTask())
                     .setGoal(goal)
-                    .setUsersDone(0);
+                    .setUsersDone(0)
+                    .setIsPriority(actions.get(item).getIsPriority());
 
             sharedActionsList.add(sharedAction);
 
@@ -258,31 +259,27 @@ public class GoalUtils {
 
     }
 
-    private static void saveAction(List<String> actions, Goal goal, List<SharedAction> sharedActionsList, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
-
-        List<Action> actionsList = new ArrayList<>();
+    private static void saveAction(List<Action> actions, Goal goal, List<SharedAction> sharedActionsList, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
         AsyncUtils.waterfall(actions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
             // the iteration in the for loop
 
-            // save the Action
-            Action action = new Action()
-                    .setTask(actions.get(item))
-                    .setParentGoal(goal)
-                    .setParentUser((User) ParseUser.getCurrentUser())
-                    .setParentSharedAction(sharedActionsList.get(item))
-                    .setIsConnectedToParent(true)
-                    .setIsDone(false);
+//            // save the Action
+//            Action action = new Action()
+//                    .setTask(actions.get(item))
+//                    .setParentGoal(goal)
+//                    .setParentUser((User) ParseUser.getCurrentUser())
+//                    .setParentSharedAction(sharedActionsList.get(item))
+//                    .setIsConnectedToParent(true)
+//                    .setIsDone(false);
 
-            actionsList.add(action);
-
-            // save action
-            action.saveInBackground((ParseException e) -> {
+            // save action -- fixme: still needs to be saved again?
+            actions.get(item).saveInBackground((ParseException e) -> {
                 if (e == null) {
                     Log.d(TAG, "Saved Action successfully");
 
                     // add to specific sharedAction's relation
-                    sharedActionsList.get(item).relChildActions.add(action);
+                    sharedActionsList.get(item).relChildActions.add(actions.get(item));
                     sharedActionsList.get(item).saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -305,7 +302,7 @@ public class GoalUtils {
             // when whole for-loop has run though -- save goal
             Log.d(TAG, "in saveAction final callback");
 
-            updateGoalRels(sharedActionsList, actionsList, goal, created, finalCallback);
+            updateGoalRels(sharedActionsList, actions, goal, created, finalCallback);
         });
     }
 
@@ -366,15 +363,43 @@ public class GoalUtils {
 
         goal.relSharedActions.getList((sharedActions) -> {
 
-            List<String> actionsList = new ArrayList<>();
-            for (SharedAction sharedAction : sharedActions) {
-                actionsList.add(sharedAction.getTask());
-            }
+            // TODO -- need to create the actions from relSharedAction then save via saveAction
+            // another waterfall :(
+            List<Action> actionsList = new ArrayList<>();
+            AsyncUtils.waterfall(sharedActions.size(), (Integer item, AsyncUtils.ItemCallback<Throwable> callback) -> {
+                // in for loop
+                SharedAction sharedAction = sharedActions.get(item);
 
-            saveAction(actionsList, goal, sharedActions, false, (item) -> {
-                // add User to usersInvolved relation of goal + save goal
-                goal.relUsersInvolved.add(User.getCurrentUser(), (user) -> {});
+                Action action = new Action()
+                        .setIsDone(false)
+                        .setIsConnectedToParent(true)
+                        .setParentSharedAction(sharedAction)
+                        .setParentUser(User.getCurrentUser())
+                        .setParentGoal(sharedAction.getGoal())
+                        .setTask(sharedAction.getTask())
+                        .setIsPriority(sharedAction.getIsPriority());
+
+                action.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            actionsList.add(action);
+                        }
+                        else {
+                            Log.e(TAG, "error saving action in saveSocialGoal", e);
+                        }
+                        callback.call(e);
+                    }
+                });
+
+            }, (e) -> {
+                // after loop complete
+                saveAction(actionsList, goal, sharedActions, false, (item) -> {
+                    // add User to usersInvolved relation of goal + save goal
+                    goal.relUsersInvolved.add(User.getCurrentUser(), (user) -> {});
+                });
             });
+
         });
 
     }
