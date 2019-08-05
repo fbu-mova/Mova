@@ -14,6 +14,7 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
+import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
@@ -80,12 +81,30 @@ public class ActionComponent extends Component {
         editComponent = new ActionEditComponent(item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(String task, ComponentManager manager) {
+                // editing a social goal - two cases (if author, if not author)
+
                 // update this action with new text
                 String new_action = task;
+                boolean update_both = true;
 
-                // fixme -- add case where editing personal version of a social goal,
-                //  so action saved, connected to SharedAction set to false, sharedAction not changed
-                GoalUtils.saveSharedAndAction(item, new_action, (item) -> {
+                if (!item.getParentGoal().getIsPersonal()) { // fixme -- getParentGoal doesn't return whole goal
+                    if (User.getCurrentUser() == item.getParentGoal().getAuthor()) { // fixme -- same issue as above
+                        // has same saving logic as in isPersonal case
+
+                        // display dialog confirming
+                    }
+                    else {
+                        // case where editing personal version of a social goal,
+                        //  so action saved, connected to SharedAction set to false, sharedAction not changed
+
+                        // display dialog confirming
+
+                        // need saving logic
+                        update_both = false;
+                    }
+                }
+
+                if (update_both) GoalUtils.saveSharedAndAction(item, new_action, (item) -> {
                     Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
                 });
 
