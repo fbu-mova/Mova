@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class Recurrence {
 
     private static final Recurrence EMPTY = new Recurrence(Key.Empty);
+    private static final Recurrence SHARED = new Recurrence(Key.Shared);
 
     public final Key key;
 
@@ -62,6 +63,8 @@ public class Recurrence {
                 return makeMonthly(num1);
             case Year:
                 return makeYearly(num1, num2);
+            case Shared:
+                return makeShared();
             case Empty:
             default:
                 return makeEmpty();
@@ -81,6 +84,10 @@ public class Recurrence {
         checkMonth(month);
         checkDay(day);
         return new YearlyRecurrence(month, day);
+    }
+
+    public static Recurrence makeShared() {
+        return SHARED;
     }
 
     public static Recurrence makeEmpty() {
@@ -157,17 +164,10 @@ public class Recurrence {
             return ((MonthlyRecurrence) this).nextRelativeDate(prevActionDate);
         } else if (this.getClass() == YearlyRecurrence.class) {
             return ((YearlyRecurrence) this).nextRelativeDate(prevActionDate);
+        } else if (this.getClass() == WeeklyRecurrence.class) {
+            return ((WeeklyRecurrence) this).nextRelativeDate(prevActionDate);
         } else {
-            /** @source https://stackoverflow.com/questions/3463756/is-there-a-good-way-to-get-the-date-of-the-coming-wednesday */
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(prevActionDate);
-
-            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
-            int diff = key.toCalendarDayOfWeek() - weekday;
-            if (diff <= 0) diff += 7;
-
-            calendar.add(Calendar.DAY_OF_MONTH, diff);
-            return calendar.getTime();
+            throw new IllegalArgumentException("The recurrence key " + key + " does not have a relative next date.");
         }
     }
 
@@ -181,6 +181,7 @@ public class Recurrence {
         Sunday,
         Month,
         Year,
+        Shared,
         Empty;
 
         public String toString() {
@@ -194,6 +195,7 @@ public class Recurrence {
                 case Sunday:    return "S";
                 case Month:     return "Mo";
                 case Year:      return "Y";
+                case Shared:    return "Sh";
 
                 case Empty:
                 default:
@@ -212,21 +214,9 @@ public class Recurrence {
                 case "S":  return Sunday;
                 case "Mo": return Month;
                 case "Y":  return Year;
+                case "Sh": return Shared;
                 case "E":  return Empty;
                 default:   throw new IllegalArgumentException("Invalid recurrence key \"" + str + "\".");
-            }
-        }
-
-        protected int toCalendarDayOfWeek() {
-            switch (this) {
-                case Monday:    return Calendar.MONDAY;
-                case Tuesday:   return Calendar.TUESDAY;
-                case Wednesday: return Calendar.WEDNESDAY;
-                case Thursday:  return Calendar.THURSDAY;
-                case Friday:    return Calendar.FRIDAY;
-                case Saturday:  return Calendar.SATURDAY;
-                case Sunday:    return Calendar.SUNDAY;
-                default:        throw new IllegalArgumentException("Key cannot be converted to calendar date; it does not represent a day of the week.");
             }
         }
     }
