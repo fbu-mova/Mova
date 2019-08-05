@@ -269,6 +269,7 @@ public class Action extends HashableParseObject {
 
             if (toAdd.size() == 0) callback.call(actions, null);
 
+            // Passed through to helper methods to save an action
             AsyncUtils.ItemCallback<Action> saveAction = (action) -> {
                 if (action.getCreatedAt().compareTo(mostRecentAction.item.getCreatedAt()) > 0) {
                     mostRecentAction.item = action;
@@ -277,6 +278,7 @@ public class Action extends HashableParseObject {
                 actions.add(action);
             };
 
+            // Passed through to helper methods to take any closing steps necessary
             AsyncUtils.EmptyCallback finalSteps = () -> {
                 // Deactivate all old recurrences relative to most recent recurrence
                 addRecurrence(Recurrence.makeEmpty());
@@ -293,66 +295,97 @@ public class Action extends HashableParseObject {
                 if (toAdd.size() > 1) throw new IllegalArgumentException("Actions must contain only one shared recurrence indicator.");
 
                 // Save all shared
-                getParentSharedAction().getAllMoreRecentRecurs((sharedActions, e1) -> {
-                    if (e1 != null) callback.call(new ArrayList<>(), e1);
-                    else {
-                        // When ready, pull down all recurs from SharedActions to Actions
-                        AsyncUtils.ItemCallback<List<SharedAction>> pullRecurs = (recurs) -> {
-                            AsyncUtils.executeMany(
-                                recurs.size(),
-                                (i, cb) -> {
-                                    SharedAction sA = recurs.get(i);
-                                    Action action = pullDownSharedAction(sA, User.getCurrentUser());
-                                    GoalUtils.saveActionOnSharedGoal(sA, action, sA.getGoal(), false, (e3) -> {
-                                        if (e3 != null) {
-                                            saveAction.call(action);
-                                        }
-                                        cb.call(e3);
-                                    });
-                                },
-                                (e3) -> {
-                                    if (e3 != null) callback.call(actions, e3);
-                                    else            finalSteps.call();
-                                }
-                            );
-                        };
-
-                        // If SharedAction has not yet recurred, force it to recur, and pull the data
-                        if (sharedActions.size() == 0) {
-                            getParentSharedAction().addRecur((recurs, e2) -> {
-                                if (e2 != null) callback.call(actions, e2);
-                                pullRecurs.call(recurs);
-                            });
-                        } else {
-                            pullRecurs.call(sharedActions);
-                        }
-                    }
-                });
-            } else { // Otherwise, work with each recurrence independent of shared functionality
-                AsyncUtils.executeMany(
-                    toAdd.size(),
-                    (i, cb) -> {
-                        Recurrence r = toAdd.get(i);
-                        Date manual = r.nextRelativeDate(getCreatedAt());
-                        Action action = makeDatedRecurAction(manual);
-                        action.saveInBackground((e1) -> {
-                            if (e1 == null) {
-                                saveAction.call(action);
-                            }
-                            cb.call(e1);
-                        });
-                    },
-                    (e1) -> {
-                        if (e1 != null) callback.call(actions, e1);
-                        else            finalSteps.call();
-                    }
+                addSharedRecur(
+                    saveAction,
+                    finalSteps,
+                    (e1) -> callback.call(actions, e1)
                 );
+            } else { // Otherwise, work with each recurrence independent of shared functionality
+                addPersonalRecur(
+                    toAdd,
+                    saveAction,
+                    finalSteps,
+                    (e1) -> callback.call(actions, e1)
+                );
+            }
+        });
+    }
+
+    /**
+     * Creates and adds the actions for a list of recurrences, with manual dates determined by the recurrence.
+     * @param toAdd      The list of recurrences to add.
+     * @param saveAction The function to call to store an action once it's been saved to the database.
+     * @param finalSteps The function to call once all behavior has completed.
+     * @param callback   The function to call upon erroring or completion.
+     */
+    private void addPersonalRecur(List<Recurrence> toAdd, AsyncUtils.ItemCallback<Action> saveAction, AsyncUtils.EmptyCallback finalSteps, AsyncUtils.ItemCallback<Throwable> callback) {
+        AsyncUtils.executeMany(
+            toAdd.size(),
+            (i, cb) -> {
+                Recurrence r = toAdd.get(i);
+                Date manual = r.nextRelativeDate(getCreatedAt());
+                Action action = makeDatedRecurAction(manual);
+                action.saveInBackground((e1) -> {
+                    if (e1 == null) {
+                        saveAction.call(action);
+                    }
+                    cb.call(e1);
+                });
+            },
+            (e1) -> {
+                if (e1 != null) callback.call(e1);
+                else            finalSteps.call();
+            }
+        );
+    }
+
+    /**
+     * Creates and adds the actions for a shared recurrence, creating any not yet recurred SharedActions in the process.
+     * @param saveAction The function to call to store an action once it's been saved to the database.
+     * @param finalSteps The function to call once all behavior has completed.
+     * @param callback   The function to call upon erroring or completion.
+     */
+    private void addSharedRecur(AsyncUtils.ItemCallback<Action> saveAction, AsyncUtils.EmptyCallback finalSteps, AsyncUtils.ItemCallback<Throwable> callback) {
+        getParentSharedAction().getAllMoreRecentRecurs((sharedActions, e1) -> {
+            if (e1 != null) callback.call(e1);
+            else {
+                // When ready, pull down all recurs from SharedActions to Actions
+                AsyncUtils.ItemCallback<List<SharedAction>> pullRecurs = (recurs) -> {
+                    AsyncUtils.executeMany(
+                            recurs.size(),
+                            (i, cb) -> {
+                                SharedAction sA = recurs.get(i);
+                                Action action = pullDownSharedAction(sA, User.getCurrentUser());
+                                GoalUtils.saveActionOnSharedGoal(sA, action, sA.getGoal(), false, (e3) -> {
+                                    if (e3 != null) {
+                                        saveAction.call(action);
+                                    }
+                                    cb.call(e3);
+                                });
+                            },
+                            (e3) -> {
+                                if (e3 != null) callback.call(e3);
+                                else            finalSteps.call();
+                            }
+                    );
+                };
+
+                // If SharedAction has not yet recurred, force it to recur, and pull the data
+                if (sharedActions.size() == 0) {
+                    getParentSharedAction().addRecur((recurs, e2) -> {
+                        if (e2 != null) callback.call(e2);
+                        pullRecurs.call(recurs);
+                    });
+                } else {
+                    pullRecurs.call(sharedActions);
+                }
             }
         });
     }
 
     private Action makeDatedRecurAction(Date manual) {
         Action action = new Action()
+                .setParentUser(User.getCurrentUser())
                 .setCreatedAt(manual)
                 .setTask(getTask())
                 .setParentGoal(getParentGoal())
