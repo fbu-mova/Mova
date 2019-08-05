@@ -35,6 +35,7 @@ public class SearchActivity extends DelegatedResultActivity {
 
     User user;
     List<Tag> tags;
+    String[] tagArr;
 
 //    @BindView(R.id.svSearch)
 //    SearchView svSearch;
@@ -94,6 +95,48 @@ public class SearchActivity extends DelegatedResultActivity {
         tagGoals = new ArrayList<>();
         tagGoalsData = new ArrayList<>();
 
+
+
+        TagUtlis.getTags((listoftags) -> {
+            tagArr = new String[listoftags.size()];
+            tags.addAll(listoftags);
+            int i = 0;
+            for(Tag tag: listoftags){
+                tagArr[i] = tag.getName();
+                i++;
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, tagArr);
+            acSearch.setThreshold(1);
+            adapter.notifyDataSetChanged();
+            acSearch.setAdapter(adapter);
+
+
+            ibSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tvClick.setVisibility(View.GONE);
+                    getData(acSearch.getText().toString());
+                }
+            });
+
+            //getData("Tag");
+
+//            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String query) {
+//                    tvClick.setVisibility(View.GONE);
+//                    getData(query);
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean onQueryTextChange(String newText) {
+//                    return false;
+//                }
+//            });
+
+        });
+
         //final androidx.appcompat.widget.SearchView.SearchAutoComplete searchAutoComplete = svSearch.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 
         tagGroupsAdapter = new DataComponentAdapter<Group>(this , tagGroups) {
@@ -146,38 +189,7 @@ public class SearchActivity extends DelegatedResultActivity {
 
 
 
-        TagUtlis.getTags((listoftags) -> {
-            tags.addAll(listoftags);
 
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, tags.toArray());
-            acSearch.setAdapter(adapter);
-            acSearch.setThreshold(1);
-
-            ibSearch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    tvClick.setVisibility(View.GONE);
-                    getData(acSearch.getText().toString());
-                }
-            });
-
-            //getData("Tag");
-
-//            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//                @Override
-//                public boolean onQueryTextSubmit(String query) {
-//                    tvClick.setVisibility(View.GONE);
-//                    getData(query);
-//                    return false;
-//                }
-//
-//                @Override
-//                public boolean onQueryTextChange(String newText) {
-//                    return false;
-//                }
-//            });
-
-        });
 
 
 

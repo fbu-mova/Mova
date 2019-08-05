@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -35,7 +36,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
-import static com.example.mova.activities.GoalComposeActivity.REQUEST_GOAL_DETAILS;
 import static com.example.mova.model.Action.KEY_PARENT_USER;
 import static com.example.mova.model.User.getCurrentUser;
 
