@@ -77,31 +77,8 @@ public class ConfirmEditSocialActionDialog  extends DialogFragment {
         btConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // casework: if author, then save
 
-                if (isAuthor) {
-                    // fixme -- should be same as isPersonal (haven't checked)
-                    GoalUtils.saveSharedAndAction(action, new_task, (item) -> {
-                        Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
-                    });
-                }
-                else {
-                    // additional step: needs to set action's isConnectedToParentSharedAction as false
-                    GoalUtils.saveSharedAndAction(action, new_task, (item) -> {
-                        action.setIsConnectedToParent(false)
-                                .saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            Log.e(TAG, "updating action failed", e);
-                                        }
-                                    }
-                                });
-                    });
-                }
+                saveEditedAction();
 
                 ConfirmEditSocialActionDialog.this.dismiss();
             }
@@ -114,5 +91,34 @@ public class ConfirmEditSocialActionDialog  extends DialogFragment {
                 ConfirmEditSocialActionDialog.this.dismiss();
             }
         });
+    }
+
+    private void saveEditedAction() {
+
+        // casework depending on if author
+
+        if (isAuthor) {
+            // fixme -- should be same as isPersonal (haven't checked)
+            GoalUtils.saveSharedAndAction(action, new_task, (item) -> {
+                Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
+            });
+        }
+        else {
+            // additional step: needs to set action's isConnectedToParentSharedAction as false
+            GoalUtils.saveSharedAndAction(action, new_task, (item) -> {
+                action.setIsConnectedToParent(false)
+                        .saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Log.e(TAG, "updating action failed", e);
+                                }
+                            }
+                        });
+            });
+        }
     }
 }
