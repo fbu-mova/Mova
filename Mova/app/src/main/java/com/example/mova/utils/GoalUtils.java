@@ -524,4 +524,25 @@ public class GoalUtils {
         });
     }
 
+    public static void findUsersAction(SharedAction sharedAction, AsyncUtils.ItemCallback<Action> callback) {
+        sharedAction.relChildActions.getQuery()
+                .whereEqualTo(KEY_PARENT_USER, User.getCurrentUser())
+                .findInBackground(new FindCallback<Action>() {
+                    @Override
+                    public void done(List<Action> objects, ParseException e) {
+                        if (e == null) {
+                            Log.d(TAG, "found action");
+                            if (objects.size() == 1) {
+                                callback.call(objects.get(0));
+                                return;
+                            }
+                            Log.e(TAG, "found either none or too many actions");
+                        }
+                        else {
+                            Log.e(TAG, "failed finding action", e);
+                        }
+                    }
+                });
+    }
+
 }
