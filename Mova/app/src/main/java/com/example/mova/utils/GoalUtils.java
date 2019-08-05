@@ -330,6 +330,53 @@ public class GoalUtils {
         });
     }
 
+    /**
+     * Saves an action on its parent shared action, and saves both on their parent goal.
+     * @param sharedAction
+     * @param action
+     * @param goal
+     * @param created Whether the SharedAction was just created; determines whether to first add the sharedAction to the goal.
+     * @param callback
+     */
+    public static void saveActionOnSharedGoal(SharedAction sharedAction, Action action, Goal goal, boolean created, AsyncUtils.ItemCallback<Throwable> callback) {
+        action.saveInBackground((e) -> {
+            if (e != null) {
+                callback.call(e);
+                return;
+            }
+
+            sharedAction.relChildActions.add(action);
+            sharedAction.saveInBackground((e1) -> {
+                if (e1 != null) {
+                    callback.call(e1);
+                    return;
+                }
+
+                updateGoalRels(sharedAction, action, goal, created, callback);
+            });
+        });
+    }
+
+    /**
+     * Adds an action and shared action to the goal's relations.
+     * @param sharedAction
+     * @param action
+     * @param goal
+     * @param created Whether the SharedAction was just created; determines whether to first add the sharedAction to the goal.
+     * @param callback
+     */
+    public static void updateGoalRels(SharedAction sharedAction, Action action, Goal goal, boolean created, AsyncUtils.ItemCallback<Throwable> callback) {
+        if (created) goal.relSharedActions.add(sharedAction);
+        goal.relActions.add(action);
+
+        goal.saveInBackground((e) -> {
+            if (e != null) {
+                Log.e("GoalUtils", "Failed to update goal relations", e);
+            }
+            callback.call(e);
+        });
+    }
+
     private static void saveGoalToUser(Goal goal, AsyncUtils.ItemCallback<Goal> finalCallback) {
 
         ((User) ParseUser.getCurrentUser()).relGoals.add(goal, finalCallback);

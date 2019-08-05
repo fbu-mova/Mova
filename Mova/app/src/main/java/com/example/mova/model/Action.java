@@ -1,7 +1,10 @@
 package com.example.mova.model;
 
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.GoalUtils;
+import com.example.mova.utils.Wrapper;
 import com.parse.ParseClassName;
+import com.parse.ParseQuery;
 
 import org.json.JSONObject;
 
@@ -150,7 +153,7 @@ public class Action extends HashableParseObject {
         put(KEY_ARCHIVED, archived);
 
         if (getRecurrence() != null) {
-
+            // TODO
         }
 
         return this;
@@ -202,6 +205,7 @@ public class Action extends HashableParseObject {
 
     public Action removeRecurrence()  {
         put(KEY_RECURRENCE, JSONObject.NULL);
+        put(KEY_RECURRENCE_ID, JSONObject.NULL);
         return this;
     }
 
@@ -214,25 +218,41 @@ public class Action extends HashableParseObject {
      * Determines whether or not the action's next recurrence(s) should be created and added to the DB.
      * @return The recurrences for which the action should be duplicated.
      */
-    public List<Recurrence> shouldAddRecur() {
+    public void shouldAddRecur(AsyncUtils.TwoItemCallback<List<Recurrence>, Throwable> callback) {
         List<Recurrence> recurrence = getRecurrence();
-        Date now = new Date();
-
-        List<Recurrence> result = new ArrayList<>();
 
         // Check for no recurrence or empty recurrence
         if (recurrence.size() == 0
-            || recurrence.contains(Recurrence.makeEmpty())) return result;
+            || recurrence.contains(Recurrence.makeEmpty())) callback.call(new ArrayList<>(), null);
 
-        for (Recurrence r : recurrence) {
-            // If the next relative date has already happened, then true
-            Date nextDate = r.nextRelativeDate(getCreatedAt());
-            if (now.compareTo(nextDate) >= 0) {
-                result.add(r);
+        AsyncUtils.ItemCallback<List<Recurrence>> checkRecurrences = (xRecurrence) -> {
+            List<Recurrence> result = new ArrayList<>();
+            Date now = new Date();
+
+            for (Recurrence r : xRecurrence) {
+                // If the next relative date has already happened, then true
+                Date nextDate = r.nextRelativeDate(getCreatedAt());
+                if (now.compareTo(nextDate) >= 0) {
+                    result.add(r);
+                }
             }
-        }
 
-        return result;
+            callback.call(result, null);
+        };
+
+        // Check for shared recurrence
+        if (recurrence.contains(Recurrence.makeShared())) {
+            getParentSharedAction().fetchIfNeededInBackground((object, e) -> {
+                if (e != null) callback.call(new ArrayList<>(), e);
+                else {
+                    SharedAction sharedAction = (SharedAction) object;
+                    List<Recurrence> sharedRecurrence = sharedAction.getRecurrence();
+                    checkRecurrences.call(sharedRecurrence);
+                }
+            });
+        } else {
+            checkRecurrences.call(recurrence);
+        }
     }
 
     /**
@@ -240,24 +260,134 @@ public class Action extends HashableParseObject {
      * Adds empty to the recurrence of the current action to deprecate it.
      * @return The new action. Null if no action was created.
      */
-    public List<Action> addRecur() {
-        List<Recurrence> toAdd = shouldAddRecur();
-        if (toAdd.size() == 0) return null;
+    public void addRecur(AsyncUtils.TwoItemCallback<List<Action>, Throwable> callback) {
+        shouldAddRecur((toAdd, e) -> {
+            // Set up output, counter for most recent recurrence
+            List<Action> actions = new ArrayList<>();
+            final Wrapper<Action> mostRecentAction = new Wrapper<>();
+            mostRecentAction.item = this;
 
-        List<Action> actions = new ArrayList<>();
+            if (toAdd.size() == 0) callback.call(actions, null);
 
-        for (Recurrence r : toAdd) {
-            Date manual = r.nextRelativeDate(getCreatedAt());
-            Action action = new Action();
-            action.setCreatedAt(manual);
-            action.setTask(getTask());
-            action.setParentGoal(getParentGoal());
-            // TODO: Migrate all functions to SharedAction.
-            actions.add(action);
+            AsyncUtils.ItemCallback<Action> saveAction = (action) -> {
+                if (action.getCreatedAt().compareTo(mostRecentAction.item.getCreatedAt()) > 0) {
+                    mostRecentAction.item = action;
+                }
+
+                actions.add(action);
+            };
+
+            AsyncUtils.EmptyCallback finalSteps = () -> {
+                // Deactivate all old recurrences relative to most recent recurrence
+                addRecurrence(Recurrence.makeEmpty());
+                for (Action action : actions) {
+                    if (action.equals(mostRecentAction.item)) continue;
+                    action.addRecurrence(Recurrence.makeEmpty());
+                }
+
+                callback.call(actions, null);
+            };
+
+            // If the action is connected to a SharedAction and its recurrence is determined by that SharedAction...
+            if (toAdd.contains(Recurrence.makeShared())) {
+                if (toAdd.size() > 1) throw new IllegalArgumentException("Actions must contain only one shared recurrence indicator.");
+
+                // Save all shared
+                getParentSharedAction().getAllMoreRecentRecurs((sharedActions, e1) -> {
+                    if (e1 != null) callback.call(new ArrayList<>(), e1);
+                    else {
+                        // When ready, pull down all recurs from SharedActions to Actions
+                        AsyncUtils.ItemCallback<List<SharedAction>> pullRecurs = (recurs) -> {
+                            AsyncUtils.executeMany(
+                                recurs.size(),
+                                (i, cb) -> {
+                                    SharedAction sA = recurs.get(i);
+                                    Action action = pullDownSharedAction(sA, User.getCurrentUser());
+                                    GoalUtils.saveActionOnSharedGoal(sA, action, sA.getGoal(), false, (e3) -> {
+                                        if (e3 != null) {
+                                            saveAction.call(action);
+                                        }
+                                        cb.call(e3);
+                                    });
+                                },
+                                (e3) -> {
+                                    if (e3 != null) callback.call(actions, e3);
+                                    else            finalSteps.call();
+                                }
+                            );
+                        };
+
+                        // If SharedAction has not yet recurred, force it to recur, and pull the data
+                        if (sharedActions.size() == 0) {
+                            getParentSharedAction().addRecur((recurs, e2) -> {
+                                if (e2 != null) callback.call(actions, e2);
+                                pullRecurs.call(recurs);
+                            });
+                        } else {
+                            pullRecurs.call(sharedActions);
+                        }
+                    }
+                });
+            } else { // Otherwise, work with each recurrence independent of shared functionality
+                AsyncUtils.executeMany(
+                    toAdd.size(),
+                    (i, cb) -> {
+                        Recurrence r = toAdd.get(i);
+                        Date manual = r.nextRelativeDate(getCreatedAt());
+                        Action action = makeDatedRecurAction(manual);
+                        action.saveInBackground((e1) -> {
+                            if (e1 == null) {
+                                saveAction.call(action);
+                            }
+                            cb.call(e1);
+                        });
+                    },
+                    (e1) -> {
+                        if (e1 != null) callback.call(actions, e1);
+                        else            finalSteps.call();
+                    }
+                );
+            }
+        });
+    }
+
+    private Action makeDatedRecurAction(Date manual) {
+        Action action = new Action()
+                .setCreatedAt(manual)
+                .setTask(getTask())
+                .setParentGoal(getParentGoal())
+                .setIsConnectedToParent(getIsConnectedToParent())
+                .setRecurrenceId(getRecurrenceId())
+                .setRecurrence(getRecurrence());
+
+        if (getIsConnectedToParent()) action.setParentSharedAction(getParentSharedAction());
+
+        return action;
+    }
+
+    /**
+     * Creates an Action based on the data in a SharedAction.
+     * @param sharedAction The SharedAction providing the data.
+     * @return The Action.
+     */
+    public static Action pullDownSharedAction(SharedAction sharedAction, User user) {
+        Action action = new Action()
+                .setParentUser(user)
+                .setTask(sharedAction.getTask())
+                .setParentSharedAction(sharedAction)
+                .setParentGoal(sharedAction.getGoal())
+                .setIsConnectedToParent(true)
+                .setCreatedAt(sharedAction.getCreatedAt())
+                .setIsDone(false);
+
+        if (sharedAction.isRecurring()) {
+            action.setRecurrence(Recurrence.makeShared());
+            if (sharedAction.getRecurrence().contains(Recurrence.makeEmpty())) {
+                action.addRecurrence(Recurrence.makeEmpty());
+            }
         }
 
-        // FIXME: This may need to be async.
-        return actions;
+        return action;
     }
 
     // Recurrence ID
@@ -269,5 +399,27 @@ public class Action extends HashableParseObject {
     public Action setRecurrenceId(String id) {
         put(KEY_RECURRENCE_ID, id);
         return this;
+    }
+
+    /**
+     * Fetches the most recent copy of a recurring action.
+     * Provides null if the action is not recurring or no action could be found.
+     */
+    public void getMostRecentRecur(AsyncUtils.TwoItemCallback<SharedAction, Throwable> cb) {
+        if (!isRecurring()) cb.call(null, null);
+
+        String id = getRecurrenceId();
+        ParseQuery<SharedAction> query = new ParseQuery<>(SharedAction.class);
+
+        query.whereEqualTo(KEY_RECURRENCE_ID, id);
+        // FIXME: Will this query work?
+        query.orderByDescending(KEY_MANUAL_CREATED_AT);
+        query.addDescendingOrder(KEY_CREATED_AT);
+
+        query.setLimit(1);
+        query.findInBackground((sharedActions, e) -> {
+            SharedAction item = (sharedActions != null && sharedActions.size() > 0) ? sharedActions.get(0) : null;
+            cb.call(item, e);
+        });
     }
 }
