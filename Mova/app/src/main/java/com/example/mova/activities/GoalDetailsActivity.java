@@ -139,7 +139,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 //        finish();
     }
 
-    private void loadAllActions() {
+    private void loadAllActions() { // fixme : should be same as GoalCardComp, visible even if not involved
 
         // query for all the actions of this goal that is from the user
 
