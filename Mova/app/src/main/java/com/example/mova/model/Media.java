@@ -3,6 +3,7 @@ package com.example.mova.model;
 import android.graphics.Bitmap;
 
 import com.example.mova.component.Component;
+import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.MediaImageComponent;
 import com.example.mova.components.MediaTextComponent;
 import com.example.mova.components.PostComponent;
@@ -199,6 +200,10 @@ public class Media extends HashableParseObject {
                 return new MediaImageComponent(getContentImage());
             case Post:
                 return new PostComponent(getContentPost());
+            case Goal:
+                // FIXME: Find a better way to handle async data on GoalData
+                Goal.GoalData data = new Goal.GoalData(getContentGoal(), false);
+                return new GoalCardComponent(data);
             default:
                 return null;
         }

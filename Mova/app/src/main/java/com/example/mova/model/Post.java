@@ -135,64 +135,6 @@ public class Post extends HashableParseObject {
     }
 
     public void savePost(PostConfig config, AsyncUtils.ItemCallback<Post> callback) {
-        // Save all tags if they don't yet exist, and then add them to the journal entry's tag relation
-//        AsyncUtils.executeMany(
-//                config.tags.size(),
-//                (position, cb) -> {
-//                    Tag tag = config.tags.get(position);
-//                    Tag.getTag(tag.getName(), (tagFromDB) -> {
-//                        if (tagFromDB == null) {
-//                            tag.saveInBackground((e) -> {
-//                                if (e != null) {
-//                                    Log.e("User", "Failed to create tag " + tag.getName() + " on journal post", e);
-//                                } else {
-//                                    this.relTags.add(tag, (sameTag) -> cb.call(null));
-//                                }
-//                            });
-//                        } else {
-//                            this.relTags.add(tagFromDB, (sameTag) -> cb.call(null));
-//                        }
-//                    });
-//                },
-//                (err) -> {
-//                    AsyncUtils.EmptyCallback doSavePost = () -> this.saveInBackground((e) -> {
-//                        if (e != null) {
-//                            Log.e("User", "Failed to save entry", e);
-//                        } else {
-//                            // Save as reply if reply
-//                            if (config.postToReply != null) {
-//                                this.setParent(config.postToReply);
-//                                config.postToReply.relComments.add(this);
-//                                config.postToReply.saveInBackground((e1) -> {
-//                                    if (e1 != null) {
-//                                        Log.e("User", "Failed to save postToReply", e);
-//                                    } else {
-//                                        callback.call(this);
-//                                    }
-//                                });
-//                            } else {
-//                                callback.call(this);
-//                            }
-//                        }
-//                    });
-//
-//                    // Save media if it exists
-//                    if (config.media != null) {
-//                        config.media.setParent(this);
-//                        config.media.saveInBackground((e) -> {
-//                            if (e != null) {
-//                                Log.e("User", "Failed to create media", e);
-//                            } else {
-//                                this.setMedia(config.media);
-//                                doSavePost.call();
-//                            }
-//                        });
-//                    } else {
-//                        doSavePost.call();
-//                    }
-//                }
-//        );
-
         Tag.saveTags(
             config.tags,
             (tag, cb) -> this.relTags.add(tag, (sameTag) -> cb.call()),
