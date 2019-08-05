@@ -3,7 +3,7 @@ package com.example.mova.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Event {
+public class  Event {
     protected List<AsyncUtils.EmptyCallback> listeners;
 
     public Event() {

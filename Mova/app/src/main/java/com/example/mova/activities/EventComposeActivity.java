@@ -49,7 +49,8 @@ public class EventComposeActivity extends AppCompatActivity {
 
     User user;
     final Calendar myCalendar = Calendar.getInstance();
-    private List<String> tags;
+    private List<String> tagString;
+    private List<Tag> tags;
     private List<Group> groups;
     String[] groupArr;
     Address address;
@@ -101,6 +102,7 @@ public class EventComposeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_compose);
         ButterKnife.bind(this);
         user = (User) ParseUser.getCurrentUser();
+        tagString = new ArrayList<>();
         tags = new ArrayList<>();
         groups = new ArrayList<>();
 
@@ -250,25 +252,29 @@ public class EventComposeActivity extends AppCompatActivity {
                 .setHost(user);
 
                 //set parent group if the field is valid
-                for(int i = 0; i < groupArr.length ; i++){
-                    if(actvParentGroup.getText().toString().equals(groupArr[i].toString())){
-                        Group group = groups.get(i);
-                        event.relGroup.add(group);
-                        event.setParentGroup(group);
-                        group.relEvents.add(event);
-                        group.saveInBackground();
-                    }else{
-                        Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
+                if(groupArr != null) {
+                    for (int i = 0; i < groupArr.length; i++) {
+                        if (actvParentGroup.getText().toString().equals(groupArr[i].toString())) {
+                            Group group = groups.get(i);
+                            event.relGroup.add(group);
+                            event.setParentGroup(group);
+                            group.relEvents.add(event);
+                            group.saveInBackground();
+                        } else {
+                            Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
 
-                //Add tags
-                for(String tagString: tags){
+                //Add tagString
+                for(String tagString: tagString){
                     Tag tag = new Tag(tagString);
+                    tags.add(tag);
                     event.relTags.add(tag);
                     tag.relEvents.add(event);
                     tag.saveInBackground();
                 }
+
 
                 //Add Participants
                 event.relParticipants.add(user);
@@ -306,12 +312,12 @@ public class EventComposeActivity extends AppCompatActivity {
     }
 
     private void updateTags(String tag, boolean shouldKeep) {
-        if (shouldKeep && !tags.contains(tag)) {
-            tags.add(tag);
+        if (shouldKeep && !tagString.contains(tag)) {
+            tagString.add(tag);
         } else {
-            tags.remove(tag);
+            tagString.remove(tag);
         }
-        TextUtils.writeCommaSeparated(tags, "No tags", tvTags, (str) -> str);
+        TextUtils.writeCommaSeparated(tagString, "No tagString", tvTags, (str) -> str);
     }
 
     @Override
