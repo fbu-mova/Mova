@@ -39,6 +39,9 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     protected static int viewLayoutRes = R.layout.item_involved_shared_action;
     protected InvolvedViewHolder holder;
 
+    private int complete;
+    private int total;
+
     public InvolvedSharedActionComponent(SharedAction.Data data) {
         super(data, Color.parseColor("#999999"), Color.parseColor("#222222"),
                 false, (thing) -> thing.sharedAction.getTask(),
@@ -58,16 +61,21 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
 
         this.holder.cbItem.setText(sharedAction.getTask());
 
-        int complete = sharedAction.getUsersDone();
+        complete = sharedAction.getUsersDone();
 
         sharedAction.relChildActions.getSize((total) -> {
-            this.holder.tvNumDone.setText(complete + "/" + total + " done!");
+            this.total = total;
+            updateNumDone(complete, this.total);
         });
 
         this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
                 onCheckedChanged(buttonView, isChecked));
         this.holder.cbItem.setTextColor(uncheckedColor);
         this.holder.cbItem.setChecked(getDone.call(item));
+    }
+
+    private void updateNumDone(int complete, int total) {
+        this.holder.tvNumDone.setText(complete + "/" + this.total + " done!");
     }
 
     @Override
@@ -86,6 +94,13 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
             });
         });
 
+        if (isChecked) {
+            complete++;
+        }
+        else {
+            complete--;
+        }
+        updateNumDone(complete, total);
     }
 
     private static void findUsersAction(SharedAction sharedAction, AsyncUtils.ItemCallback<Action> callback) {

@@ -28,8 +28,6 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +66,7 @@ public class GoalCardComponent extends Component {
         super();
         this.item = bundle.goal;
         this.isUserInvolved = bundle.userIsInvolved;
-        this.isPersonal = item.getIsPersonal();
+        this.isPersonal = false; // FIXME: item.getIsPersonal();
     }
 
     @Override
@@ -103,135 +101,124 @@ public class GoalCardComponent extends Component {
 
     @Override
     protected void onRender(ViewHolder holder) {
+        item.fetchIfNeededInBackground((goal, e) -> {
+            if (e != null) {
+                Log.e("GoalCardComponent", "Failed to load goal", e);
+                Toast.makeText(getActivity(), "Failed to load goal", Toast.LENGTH_LONG).show();
+                return;
+            }
+
         checkViewHolderClass(holder, GoalCardViewHolder.class);
         viewHolder = (GoalCardViewHolder) holder;
 
-//        if (viewHolder == null) {
-//            Log.e(TAG, "not inflating views to viewHolder, in render");
-//            return;
-//        }
-
-        Log.d(TAG, "in render function");
-
+            Goal item = (Goal) goal;
         viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
                 intent.putExtra("goal", item);
 
-                // fixme -- add ability to alter priority of goals as go back to goals fragment
+                    // fixme -- add ability to alter priority of goals as go back to goals fragment
 
                 getActivity().startActivity(intent);
-
-//                activity.startActivityForDelegatedResult(intent, REQUEST_GOAL_DETAILS, new DelegatedResultActivity.ActivityResultCallback() {
-//                    @Override
-//                    public void call(int requestCode, int resultCode, Intent data) {
-//                        if (resultCode == RESULT_OK) {
-//                            if (requestCode == REQUEST_GOAL_DETAILS) {
-//
-//                            }
-//                        }
-//                    }
-//                });
             }
         });
 
         viewHolder.tvName.setText(item.getTitle());
-        Log.d(TAG, String.format("tvName of this viewholder: %s", viewHolder.tvName.getText().toString()));
-
         viewHolder.tvDescription.setText(item.getDescription());
-        Log.d(TAG, String.format("tvDescription of this viewholder: %s", viewHolder.tvDescription.getText().toString()));
 
-        GoalUtils.getNumActionsComplete(item, getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
 
-        viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
-        viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
-        viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
+            viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
+            viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
+            viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
 
         // get and render the actions -- use bool isPersonal and bool isUserInvolved
+
         // fixme -- jank casework
-        if (isPersonal && (item.getAuthor() == (User) ParseUser.getCurrentUser())) {
+        if (isPersonal) {
             // a personal goal that only the creator can see, should always be the case
 
-            actions = new ArrayList<>();
+                actions = new ArrayList<>();
 
-        actionsAdapter = new DataComponentAdapter<Action>(getActivity(), actions) {
+            actionsAdapter = new DataComponentAdapter<Action>(getActivity(), actions) {
 
-            @Override
-            protected Component makeComponent(Action item, ViewHolder holder) {
-                return new ActionComponent(item);
+                    @Override
+                    protected Component makeComponent(Action item, ViewHolder holder) {
+                        return new ActionComponent(item);
+                    }
+
+                    @Override
+                    protected Component.Inflater makeInflater(Action item) {
+                        return new ActionComponent.Inflater();
+                    }
+                };
+
+                viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+                viewHolder.rvActions.setAdapter(actionsAdapter);
+
+                GoalUtils.loadGoalActions(item, (objects) -> {
+                    updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
+                });
             }
-
-            @Override
-            protected Component.Inflater makeInflater(Action item) {
-                return new ActionComponent.Inflater();
-            }
-        };
-
-        viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
-        viewHolder.rvActions.setAdapter(actionsAdapter);
-
-            GoalUtils.loadGoalActions(item, (objects) -> {
-                updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
-            });
-        }
-        else if (!isPersonal && isUserInvolved) {
-            // a social goal that the user is involved in BUT user is not author
+            else if (!isPersonal && isUserInvolved) {
+                // a social goal that the user is involved in BUT user is not author
                 // for now, user sees official social goal
 
-            // fixme -- for now, social goals can't be edited from the cards.
-            // todo -- make it so creator can edit via goal details page ?
+                // fixme -- for now, social goals can't be edited from the cards.
+                // todo -- make it so creator can edit via goal details page ?
 
-            sharedActions = new ArrayList<>();
+                sharedActions = new ArrayList<>();
 
-            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
-                @Override
-                public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new InvolvedSharedActionComponent(item);
-                    return component;
-                }
+                sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
+                    @Override
+                    public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
+                        Component component = new InvolvedSharedActionComponent(item);
+                        return component;
+                    }
 
-                @Override
-                protected Component.Inflater makeInflater(SharedAction.Data item) {
-                    return new InvolvedSharedActionComponent.Inflater();
-                }
-            };
+                    @Override
+                    protected Component.Inflater makeInflater(SharedAction.Data item) {
+                        return new InvolvedSharedActionComponent.Inflater();
+                    }
+                };
 
-            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
-            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+                viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+                viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
-            GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
-            });
-        }
-        else if (!isPersonal && !isUserInvolved) {
-            // a social goal the user is not involved in
+                GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                    updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                });
+            }
+            else if (!isPersonal && !isUserInvolved) {
+                // a social goal the user is not involved in
 
-            sharedActions = new ArrayList<>();
+                sharedActions = new ArrayList<>();
 
-            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
-                @Override
-                public Component makeComponent(SharedAction.Data item, ViewHolder holder) {
-                    Component component = new UninvolvedSharedActionComponent(item);
-                    return component;
-                }
+                sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
+                    @Override
+                    public Component makeComponent(SharedAction.Data item, ViewHolder holder) {
+                        Component component = new UninvolvedSharedActionComponent(item);
+                        return component;
+                    }
 
-                @Override
-                protected Component.Inflater makeInflater(SharedAction.Data item) {
-                    return new UninvolvedSharedActionComponent.Inflater();
-                }
-            };
+                    @Override
+                    protected Component.Inflater makeInflater(SharedAction.Data item) {
+                        return new UninvolvedSharedActionComponent.Inflater();
+                    }
+                };
 
-            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
-            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+                viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+                viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
-            GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
-            });
-        }
+                GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                    updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                });
+            }
+        });
     }
 
     @Override
@@ -248,7 +235,7 @@ public class GoalCardComponent extends Component {
                 3. if (true, true) -> true. everything else false
           */
 
-        AsyncUtils.executeMany(objects.size(), (Integer number, AsyncUtils.ItemCallback<Throwable> callback) -> {
+        AsyncUtils.waterfall(objects.size(), (Integer number, AsyncUtils.ItemCallback<Throwable> callback) -> {
             // iteration in the for loop
 
             SharedAction sharedAction = objects.get(number);
@@ -273,7 +260,7 @@ public class GoalCardComponent extends Component {
                             callback.call(e);
                         }
                     });
-        }, () -> {
+        }, (e) -> {
             rvActions.scrollToPosition(0);
         });
     }

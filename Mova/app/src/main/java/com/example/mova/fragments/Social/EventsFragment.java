@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,12 +18,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.EventComposeActivity;
+import com.example.mova.activities.SearchActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Event;
 import com.example.mova.model.User;
-import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -104,6 +106,27 @@ public class EventsFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), EventComposeActivity.class);
                 startActivityForResult(intent, 1);
+            }
+        });
+
+        ibSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SearchActivity.class);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
+                startActivity(intent, options.toBundle());
+
+//                Fragment frag = new SearchFragment();
+//                manager = ((AppCompatActivity)getActivity())
+//                        .getSupportFragmentManager();
+//                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+//                //fl.removeAllViews();
+//                FragmentTransaction ft = manager
+//                        .beginTransaction();
+//                ft.add(R.id.flSocialContainer, frag);
+//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                ft.addToBackStack(null);
+//                ft.commit();
             }
         });
 

@@ -1,6 +1,7 @@
 package com.example.mova.fragments.Social;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,25 +13,29 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mova.dialogs.ComposePostDialog;
-import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.SearchActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.PostComponent;
-import com.example.mova.model.Group;
-import com.example.mova.model.Post;
-import com.example.mova.model.User;
 import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.containers.EndlessScrollRefreshLayout;
 import com.example.mova.containers.ScrollLoadHandler;
+import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.model.Group;
+import com.example.mova.model.Post;
+import com.example.mova.model.User;
+import com.example.mova.utils.PostConfig;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONObject;
 
@@ -55,6 +60,7 @@ public class SocialFeedFragment extends Fragment {
     @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
     @BindView(R.id.esrlPosts)  protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlPosts;
     @BindView(R.id.ibSearch) protected ImageButton ibSearch;
+    public static FragmentManager manager;
 
     List<Post> posts;
     DataComponentAdapter<Post> adapter;
@@ -97,6 +103,26 @@ public class SocialFeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        ibSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SearchActivity.class);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
+                startActivity(intent, options.toBundle());
+
+//                Fragment frag = new SearchFragment();
+//                manager = ((AppCompatActivity)getActivity())
+//                        .getSupportFragmentManager();
+//                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+//                //fl.removeAllViews();
+//                FragmentTransaction ft = manager
+//                        .beginTransaction();
+//                ft.add(R.id.flSocialContainer, frag);
+//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                ft.addToBackStack(null);
+//                ft.commit();
+            }
+        });
         // Temporary fabCompose press for testing ComposePostComponent
         fabCompose.setOnClickListener((v) -> {
             ComposePostDialog dialog = new ComposePostDialog((DelegatedResultActivity) getActivity()) {
@@ -179,7 +205,7 @@ public class SocialFeedFragment extends Fragment {
         friendsQuery.findInBackground((friends, e) -> {
             if (e != null) {
                 Log.e("SocialFeedFragment", "Failed to load friends for feed loading", e);
-                Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Failed to load posts", Toast.LENGTH_LONG).show();
                 esrlPosts.setRefreshing(false);
                 return;
             }
@@ -208,6 +234,8 @@ public class SocialFeedFragment extends Fragment {
                 queries.add(userPostQuery);
                 queries.add(groupPostQuery);
                 ParseQuery<Post> compoundQuery = ParseQuery.or(queries);
+                // FIXME: Users who join groups and load posts that aren't theirs receive post.getAuthor() = null
+                // FIXME: Found that users who are not the current user cannot be retrieved
                 Post.includeAllPointers(compoundQuery);
                 compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false); // Only social posts
                 compoundQuery.whereEqualTo(Post.KEY_PARENT_POST, JSONObject.NULL); // No replies

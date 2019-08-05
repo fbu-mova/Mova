@@ -1,16 +1,19 @@
-package com.example.mova.activities;
+package com.example.mova.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
@@ -31,7 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchActivity extends DelegatedResultActivity {
+public class SearchFragment extends Fragment {
 
     User user;
     List<Tag> tags;
@@ -39,14 +42,10 @@ public class SearchActivity extends DelegatedResultActivity {
 //    @BindView(R.id.svSearch)
 //    SearchView svSearch;
 
-    @BindView(R.id.acSearch)
-    AutoCompleteTextView acSearch;
-
-    @BindView(R.id.ibSearch)
-    ImageButton ibSearch;
-
-    @BindView(R.id.tvSearchGroups) TextView tvSearchGroups;
-    @BindView(R.id.rvSearchGroups) RecyclerView rvSearchGroups;
+    @BindView(R.id.tvSearchGroups)
+    TextView tvSearchGroups;
+    @BindView(R.id.rvSearchGroups)
+    RecyclerView rvSearchGroups;
     List<Group> tagGroups;
     private DataComponentAdapter<Group> tagGroupsAdapter;
 
@@ -64,16 +63,39 @@ public class SearchActivity extends DelegatedResultActivity {
     @BindView(R.id.tvClick)
     TextView tvClick;
 
+    public SearchFragment() {
+        // Required empty public constructor
+    }
+
+
+    public static SearchFragment newInstance() {
+        SearchFragment fragment = new SearchFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        ButterKnife.bind(this);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.activity_search, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
 
 
 
         user = User.getCurrentUser();
-
 
 //        svSearch.setSubmitButtonEnabled(true);
 //        svSearch.onActionViewExpanded();
@@ -94,9 +116,7 @@ public class SearchActivity extends DelegatedResultActivity {
         tagGoals = new ArrayList<>();
         tagGoalsData = new ArrayList<>();
 
-        //final androidx.appcompat.widget.SearchView.SearchAutoComplete searchAutoComplete = svSearch.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-
-        tagGroupsAdapter = new DataComponentAdapter<Group>(this , tagGroups) {
+        tagGroupsAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), tagGroups) {
             @Override
             protected Component makeComponent(Group item, Component.ViewHolder holder) {
                 Component component = new GroupThumbnailComponent(item);
@@ -109,7 +129,7 @@ public class SearchActivity extends DelegatedResultActivity {
             }
         };
 
-        tagEventsAdapter = new DataComponentAdapter<Event>(this, tagEvents) {
+        tagEventsAdapter = new DataComponentAdapter<Event>((DelegatedResultActivity) getActivity(), tagEvents) {
             @Override
             protected Component makeComponent(Event item, Component.ViewHolder holder) {
                 Component component = new EventThumbnailComponent(item);
@@ -122,7 +142,7 @@ public class SearchActivity extends DelegatedResultActivity {
             }
         };
 
-        tagGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(this, tagGoalsData) {
+        tagGoalsAdapter = new DataComponentAdapter<Goal.GoalData>((DelegatedResultActivity) getActivity(), tagGoalsData) {
             @Override
             protected Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
                 Component component = new GoalCardComponent(item);
@@ -135,9 +155,9 @@ public class SearchActivity extends DelegatedResultActivity {
             }
         };
 
-        rvSearchGroups.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-        rvSearchEvents.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-        rvSearchGoals.setLayoutManager(new LinearLayoutManager(this));
+        rvSearchGroups.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+        rvSearchEvents.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+        rvSearchGoals.setLayoutManager(new LinearLayoutManager(getContext()));
 
         rvSearchGroups.setAdapter(tagGroupsAdapter);
         rvSearchEvents.setAdapter(tagEventsAdapter);
@@ -148,18 +168,6 @@ public class SearchActivity extends DelegatedResultActivity {
 
         TagUtlis.getTags((listoftags) -> {
             tags.addAll(listoftags);
-
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, tags.toArray());
-            acSearch.setAdapter(adapter);
-            acSearch.setThreshold(1);
-
-            ibSearch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    tvClick.setVisibility(View.GONE);
-                    getData(acSearch.getText().toString());
-                }
-            });
 
             //getData("Tag");
 
@@ -185,7 +193,7 @@ public class SearchActivity extends DelegatedResultActivity {
         tvClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finishAfterTransition();
+                //finishAfterTransition();
             }
         });
 
@@ -219,7 +227,7 @@ public class SearchActivity extends DelegatedResultActivity {
         });
 
         TagUtlis.getGoals(tag,(listOfGoals) -> {
-            AsyncUtils.executeMany(listOfGoals.size(), (i2,cb2) -> {
+            AsyncUtils.executeMany(listOfGoals.size(), (i2, cb2) -> {
                 GoalUtils.checkIfUserInvolved(listOfGoals.get(i2), user, (bool) -> {
                     Goal.GoalData goalData = new Goal.GoalData(listOfGoals.get(i2), bool);
                     tagGoalsData.add(goalData);

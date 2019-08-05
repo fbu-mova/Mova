@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mova.R;
 import com.example.mova.model.User;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -65,12 +66,23 @@ public class SignupActivity extends DelegatedResultActivity {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Log.d(TAG, "Signed up successfully!");
+                    ParseACL acl = new ParseACL(user);
+                    acl.setPublicReadAccess(true);
+                    user.setACL(acl);
 
-                    // Launch an intent to go to main Personal screen
-                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    user.saveInBackground((e1) -> {
+                        if (e1 != null) {
+                            Log.e(TAG, "Signing up failed", e);
+                            Toast.makeText(SignupActivity.this, "Signing up failed", Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.d(TAG, "Signed up successfully!");
+
+                            // Launch an intent to go to main Personal screen
+                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
                 }
                 else {
                     Log.e(TAG, "Signing up failed", e);

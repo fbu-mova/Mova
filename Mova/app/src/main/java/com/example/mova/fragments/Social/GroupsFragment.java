@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -18,14 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GroupComposeActivity;
+import com.example.mova.activities.SearchActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GroupThumbnailComponent;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.User;
-import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
@@ -99,6 +101,27 @@ public class GroupsFragment extends Fragment {
         user = User.getCurrentUser();
         userGroups = new ArrayList<>();
         userActiveSocialGoals = new ArrayList<>();
+
+        ibSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SearchActivity.class);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
+                startActivity(intent, options.toBundle());
+
+//                Fragment frag = new SearchFragment();
+//                manager = ((AppCompatActivity)getActivity())
+//                        .getSupportFragmentManager();
+//                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+//                //fl.removeAllViews();
+//                FragmentTransaction ft = manager
+//                        .beginTransaction();
+//                ft.add(R.id.flSocialContainer, frag);
+//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                ft.addToBackStack(null);
+//                ft.commit();
+            }
+        });
 
         fabCreateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
