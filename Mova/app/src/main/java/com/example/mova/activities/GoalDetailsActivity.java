@@ -87,7 +87,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         });
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-
         Glide.with(this)
                 .load(url)
                 .error(R.color.colorPrimaryDark)

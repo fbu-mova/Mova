@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 
+import com.example.mova.ConfirmEditSocialActionDialog;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
@@ -85,28 +87,20 @@ public class ActionComponent extends Component {
 
                 // update this action with new text
                 String new_action = task;
-                boolean update_both = true;
 
                 if (!item.getParentGoal().getIsPersonal()) { // fixme -- getParentGoal doesn't return whole goal
-                    if (User.getCurrentUser() == item.getParentGoal().getAuthor()) { // fixme -- same issue as above
-                        // has same saving logic as in isPersonal case
 
-                        // display dialog confirming
-                    }
-                    else {
-                        // case where editing personal version of a social goal,
-                        //  so action saved, connected to SharedAction set to false, sharedAction not changed
+                    confirmEdit((User.getCurrentUser() == item.getParentGoal().getAuthor()), task); // fixme, getParentGoal again
+                    // includes case where editing personal version of a social goal,
+                    //  so action saved, connected to SharedAction set to false, sharedAction not changed
 
-                        // display dialog confirming
-
-                        // need saving logic
-                        update_both = false;
-                    }
                 }
-
-                if (update_both) GoalUtils.saveSharedAndAction(item, new_action, (item) -> {
-                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
-                });
+                else {
+                    // saving logic for isPersonal
+                    GoalUtils.saveSharedAndAction(item, new_action, (item) -> {
+                        Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
+                    });
+                }
 
                 manager.swap("ActionViewComponent");
             }
@@ -136,6 +130,12 @@ public class ActionComponent extends Component {
     @Override
     protected void onDestroy() {
 
+    }
+
+    private void confirmEdit(boolean isAuthor, String new_task) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        ConfirmEditSocialActionDialog confirmEditSocialActionDialog = ConfirmEditSocialActionDialog.newInstance(item, isAuthor, new_task);
+        confirmEditSocialActionDialog.show(fm, "showingConfirmEditSocialActionDialog");
     }
 
     public static class ViewHolder extends Component.ViewHolder {
