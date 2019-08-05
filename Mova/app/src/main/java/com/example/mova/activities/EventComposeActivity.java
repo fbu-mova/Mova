@@ -49,7 +49,8 @@ public class EventComposeActivity extends AppCompatActivity {
 
     User user;
     final Calendar myCalendar = Calendar.getInstance();
-    private List<String> tags;
+    private List<String> tagString;
+    private List<Tag> tags;
     private List<Group> groups;
     String[] groupArr;
     Address address;
@@ -101,6 +102,7 @@ public class EventComposeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_compose);
         ButterKnife.bind(this);
         user = (User) ParseUser.getCurrentUser();
+        tagString = new ArrayList<>();
         tags = new ArrayList<>();
         groups = new ArrayList<>();
 
@@ -264,13 +266,15 @@ public class EventComposeActivity extends AppCompatActivity {
                     }
                 }
 
-                //Add tags
-                for(String tagString: tags){
+                //Add tagString
+                for(String tagString: tagString){
                     Tag tag = new Tag(tagString);
+                    tags.add(tag);
                     event.relTags.add(tag);
                     tag.relEvents.add(event);
                     tag.saveInBackground();
                 }
+
 
                 //Add Participants
                 event.relParticipants.add(user);
@@ -308,12 +312,12 @@ public class EventComposeActivity extends AppCompatActivity {
     }
 
     private void updateTags(String tag, boolean shouldKeep) {
-        if (shouldKeep && !tags.contains(tag)) {
-            tags.add(tag);
+        if (shouldKeep && !tagString.contains(tag)) {
+            tagString.add(tag);
         } else {
-            tags.remove(tag);
+            tagString.remove(tag);
         }
-        TextUtils.writeCommaSeparated(tags, "No tags", tvTags, (str) -> str);
+        TextUtils.writeCommaSeparated(tagString, "No tagString", tvTags, (str) -> str);
     }
 
     @Override

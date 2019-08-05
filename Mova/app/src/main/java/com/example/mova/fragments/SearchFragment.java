@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,8 +39,8 @@ public class SearchFragment extends Fragment {
     User user;
     List<Tag> tags;
 
-    @BindView(R.id.svSearch)
-    SearchView svSearch;
+//    @BindView(R.id.svSearch)
+//    SearchView svSearch;
 
     @BindView(R.id.tvSearchGroups)
     TextView tvSearchGroups;
@@ -98,8 +97,8 @@ public class SearchFragment extends Fragment {
 
         user = User.getCurrentUser();
 
-        svSearch.setSubmitButtonEnabled(true);
-        svSearch.onActionViewExpanded();
+//        svSearch.setSubmitButtonEnabled(true);
+//        svSearch.onActionViewExpanded();
 
         tvClick.setVisibility(View.VISIBLE);
 
@@ -172,19 +171,19 @@ public class SearchFragment extends Fragment {
 
             //getData("Tag");
 
-            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    tvClick.setVisibility(View.GONE);
-                    getData(query);
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
+//            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String query) {
+//                    tvClick.setVisibility(View.GONE);
+//                    getData(query);
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean onQueryTextChange(String newText) {
+//                    return false;
+//                }
+//            });
 
         });
 

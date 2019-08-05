@@ -7,16 +7,6 @@
     android:background="?android:windowBackground"
     tools:context=".activities.SearchActivity">
 
-    <SearchView
-        android:id="@+id/svSearch"
-        android:layout_width="0dp"
-        android:transitionName="search"
-        android:layout_height="wrap_content"
-        android:queryHint="Search tag"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/tvSearchGroups"
         android:layout_width="wrap_content"
@@ -26,7 +16,7 @@
         android:text="Groups"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/svSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/acSearch" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSearchGroups"
@@ -88,6 +78,28 @@
         app:layout_constraintBottom_toBottomOf="@+id/rvSearchGoals"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/svSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/acSearch" />
+
+    <AutoCompleteTextView
+        android:id="@+id/acSearch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:transitionName="search"
+        app:layout_constraintEnd_toStartOf="@+id/ibSearch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ibSearch"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_search_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,9 @@ package com.example.mova.activities;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.SearchView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,8 +36,14 @@ public class SearchActivity extends DelegatedResultActivity {
     User user;
     List<Tag> tags;
 
-    @BindView(R.id.svSearch)
-    SearchView svSearch;
+//    @BindView(R.id.svSearch)
+//    SearchView svSearch;
+
+    @BindView(R.id.acSearch)
+    AutoCompleteTextView acSearch;
+
+    @BindView(R.id.ibSearch)
+    ImageButton ibSearch;
 
     @BindView(R.id.tvSearchGroups) TextView tvSearchGroups;
     @BindView(R.id.rvSearchGroups) RecyclerView rvSearchGroups;
@@ -66,8 +74,9 @@ public class SearchActivity extends DelegatedResultActivity {
 
         user = User.getCurrentUser();
 
-        svSearch.setSubmitButtonEnabled(true);
-        svSearch.onActionViewExpanded();
+
+//        svSearch.setSubmitButtonEnabled(true);
+//        svSearch.onActionViewExpanded();
 
         tvClick.setVisibility(View.VISIBLE);
 
@@ -84,6 +93,8 @@ public class SearchActivity extends DelegatedResultActivity {
         tagEvents = new ArrayList<>();
         tagGoals = new ArrayList<>();
         tagGoalsData = new ArrayList<>();
+
+        //final androidx.appcompat.widget.SearchView.SearchAutoComplete searchAutoComplete = svSearch.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 
         tagGroupsAdapter = new DataComponentAdapter<Group>(this , tagGroups) {
             @Override
@@ -138,21 +149,33 @@ public class SearchActivity extends DelegatedResultActivity {
         TagUtlis.getTags((listoftags) -> {
             tags.addAll(listoftags);
 
-            //getData("Tag");
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, tags.toArray());
+            acSearch.setAdapter(adapter);
+            acSearch.setThreshold(1);
 
-            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            ibSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onQueryTextSubmit(String query) {
+                public void onClick(View v) {
                     tvClick.setVisibility(View.GONE);
-                    getData(query);
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
+                    getData(acSearch.getText().toString());
                 }
             });
+
+            //getData("Tag");
+
+//            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String query) {
+//                    tvClick.setVisibility(View.GONE);
+//                    getData(query);
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean onQueryTextChange(String newText) {
+//                    return false;
+//                }
+//            });
 
         });
 
