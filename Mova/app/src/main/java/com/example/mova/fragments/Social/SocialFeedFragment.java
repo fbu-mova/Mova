@@ -34,6 +34,7 @@ import com.example.mova.containers.EndlessScrollRefreshLayout;
 import com.example.mova.containers.ScrollLoadHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONObject;
 
@@ -219,6 +220,8 @@ public class SocialFeedFragment extends Fragment {
                 queries.add(userPostQuery);
                 queries.add(groupPostQuery);
                 ParseQuery<Post> compoundQuery = ParseQuery.or(queries);
+                // FIXME: Users who join groups and load posts that aren't theirs receive post.getAuthor() = null
+                // FIXME: Found that users who are not the current user cannot be retrieved
                 Post.includeAllPointers(compoundQuery);
                 compoundQuery.whereEqualTo(Post.KEY_IS_PERSONAL, false); // Only social posts
                 compoundQuery.whereEqualTo(Post.KEY_PARENT_POST, JSONObject.NULL); // No replies
