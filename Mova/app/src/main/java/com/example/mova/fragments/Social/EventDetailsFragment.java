@@ -62,6 +62,8 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
     TextView tvEventLocation;
     @BindView(R.id.tvEventTime)
     TextView tvEventTime;
+    @BindView(R.id.tvDescription)
+    TextView tvDescription;
     @BindView(R.id.rvEventComments)
     RecyclerView rvEventComments;
     @BindView(R.id.btnEventAction)
@@ -133,6 +135,7 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
         tvEventName.setText(event.getTitle());
         tvEventLocation.setText("Where: " + location);
         tvEventTime.setText("When: " + TimeUtils.toDateString( event.getDate()));
+        tvDescription.setText(event.getDescription());
 
         ParseFile file = event.getEventPic();
         if(file != null){
