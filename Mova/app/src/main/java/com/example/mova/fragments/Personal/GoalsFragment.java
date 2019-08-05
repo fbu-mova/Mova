@@ -161,14 +161,14 @@ public class GoalsFragment extends Fragment {
 
     private void loadThumbNailGoals() {
         // todo -- create an algorithm that decides which posts will be featured here
-            // todo -- possible querying in Goal model class
-            // fixme -- for now, just do normal loadAllGoals
+            // for now, just do normal loadAllGoals
 
         ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
                 .setLimit(5)
-                .include(KEY_FROM_GROUP);
+                .include(KEY_FROM_GROUP)
+                .orderByDescending(Goal.KEY_CREATED_AT);
 
         updateAdapter(allGoalsQuery, thumbnailGoals, thumbnailGoalsAdapter, rvThumbnailGoals);
     }
@@ -178,7 +178,8 @@ public class GoalsFragment extends Fragment {
         ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
-                .include(KEY_FROM_GROUP);
+                .include(KEY_FROM_GROUP)
+                .orderByDescending(Goal.KEY_CREATED_AT);
 
         updateAdapter(allGoalsQuery, allGoals, allGoalsAdapter, rvAllGoals);
     }
@@ -193,10 +194,11 @@ public class GoalsFragment extends Fragment {
                     Log.d(TAG, "Goal query succeeded!");
                     Log.d(TAG, String.format("object size: %s", objects.size()));
 
-                    for (Goal goal : objects) {
+                    for (int i = objects.size() - 1; i >= 0; i--) {
                         // load into recyclerview
                         // FIXME: Insert an object that stores the goal + the async boolean
                         // FIXME: (alt) Update userIsInvolved on User object
+                        Goal goal = objects.get(i);
                         Goal.GoalData data = new Goal.GoalData(goal, true);
                         // for personal goal fragment, querying means user involved with all resulting goals
                         goals.add(0, data);

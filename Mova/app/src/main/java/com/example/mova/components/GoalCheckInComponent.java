@@ -59,7 +59,8 @@ public class GoalCheckInComponent extends Component {
     public void loadData(AsyncUtils.ItemCallback<Throwable> callback) {
 
         ParseQuery<Action> actionsQuery = goal.relActions.getQuery();
-        actionsQuery.whereEqualTo(KEY_PARENT_USER, (User) ParseUser.getCurrentUser());
+        actionsQuery.whereEqualTo(KEY_PARENT_USER, User.getCurrentUser())
+            .orderByAscending(Action.KEY_COMPLETED_AT);
         actionsQuery.findInBackground((actions, e) -> {
             this.goalActions = actions;
             callback.call(e);
