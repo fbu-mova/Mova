@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -260,9 +261,10 @@ public class EventComposeActivity extends AppCompatActivity {
                             event.setParentGroup(group);
                             group.relEvents.add(event);
                             group.saveInBackground();
-                        } else {
-                            Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
                         }
+//                        else {
+//                            Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
+//                        }
                     }
                 }
 
@@ -270,10 +272,18 @@ public class EventComposeActivity extends AppCompatActivity {
                 for(String tagString: tagString){
                     Tag tag = new Tag(tagString);
                     tags.add(tag);
-                    event.relTags.add(tag);
+                    //event.relTags.add(tag);
                     tag.relEvents.add(event);
-                    tag.saveInBackground();
+                    //tag.saveInBackground();
                 }
+
+                Tag.saveTags(
+                        tags,
+                        (tag, cb) -> event.relTags.add(tag, (sameTag) -> cb.call()),
+                        (err) -> {if(err != null){
+                            Log.e("User", "Failed to save tags", err);
+                        }}
+                );
 
 
                 //Add Participants
