@@ -256,10 +256,15 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
     private void initDatePicker() {
         Calendar cal = Calendar.getInstance();
+        initDatePicker(cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+    }
+
+    private void initDatePicker(int monthOfYear, int dayOfMonth) {
+        Calendar cal = Calendar.getInstance();
         dpYearDate.init(
             cal.get(Calendar.YEAR),
-            cal.get(Calendar.MONTH),
-            cal.get(Calendar.DAY_OF_MONTH),
+            monthOfYear,
+            dayOfMonth,
             new DatePicker.OnDateChangedListener() {
                 @Override
                 public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -392,7 +397,7 @@ public abstract class RecurrenceSettingsComponent extends Component {
         public void loadState() {
             loadType();
             if (dpYearDate != null) {
-                initDatePicker();
+                initDatePicker(month, day);
             }
         }
     }
