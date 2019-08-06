@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,7 +106,6 @@ public class PostComponent extends Component {
             } else if (!(parseObject instanceof User)) {
                 Log.e("PostComponent", "Failed to coerce author");
             } else {
-                // FIXME: Will group now be the object, or will it be parseObject?
                 User loaded = (User) parseObject;
                 holder.tvUsername.setText(loaded.getUsername());
                 // TODO: Profile picture
@@ -118,6 +118,11 @@ public class PostComponent extends Component {
 
     private void displayMedia() {
         Media media = post.getMedia();
+        if (media == null) {
+            holder.clMedia.setVisibility(View.GONE);
+            return;
+        }
+
         media.fetchIfNeededInBackground((fetchedMedia, e) -> {
             if (e != null) {
                 Log.e("PostComponent", "Failed to load media", e);
@@ -149,7 +154,6 @@ public class PostComponent extends Component {
                 } else if (!(parseObject instanceof Group)) {
                     Log.e("PostComponent", "Failed to coerce group");
                 } else {
-                    // FIXME: Will group now be the object, or will it be parseObject?
                     Group loaded = (Group) parseObject;
                     holder.tvGroupName.setText(loaded.getName());
                     // TODO: Group image
@@ -235,12 +239,12 @@ public class PostComponent extends Component {
                     } else if (posts.size() == 0) {
                         User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
                             Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
-                            // TODO: Update icon
+                            toggleIcon(holder.ivSave, true);
                         });
                     } else {
                         User.getCurrentUser().relScrapbook.remove(post, () -> {
                             Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
-                            // TODO: Update icon
+                            toggleIcon(holder.ivSave, false);
                         });
                     }
                 });
@@ -262,6 +266,15 @@ public class PostComponent extends Component {
                 ft.commit();
             });
         }
+    }
+
+    private void toggleIcon(ImageView ivIcon, boolean active) {
+        if (ivIcon == null) return;
+        // TODO: Perhaps choose more colorful tints based on additional context.
+        Resources res = getActivity().getResources();
+        int id = (active) ? R.color.buttonActive : R.color.buttonInactive;
+        int tintColor = res.getColor(id);
+        ivIcon.setColorFilter(tintColor);
     }
 
     public static class ViewHolder extends Component.ViewHolder {
