@@ -71,6 +71,7 @@ public class GoalUtils {
             int numAction = 0;
             for(Action action: actionList) {
                 if (action.getIsDone()) {
+                    if (action.getCompletedAt() == null || date == null) break;
                     if (TimeUtils.normalizeToDay(action.getCompletedAt()).equals(TimeUtils.normalizeToDay(date))) {
                         numAction++;
                     }
