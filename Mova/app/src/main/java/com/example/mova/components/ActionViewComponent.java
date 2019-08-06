@@ -41,6 +41,7 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
         // FIXME: Will this ever be called, given polymorphic structure? (adapters call the most generic component possible, I think)
         // todo -- implement icons
+
     }
 
     @Override

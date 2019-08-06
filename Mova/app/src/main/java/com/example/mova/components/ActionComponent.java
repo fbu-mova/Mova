@@ -88,7 +88,7 @@ public class ActionComponent extends Component {
                 // update this action with new text
                 String new_action = wrapper.getMessage();
 
-                if (!action.getParentGoal().getIsPersonal()) { // fixme -- getParentGoal doesn't return whole goal
+                if (!action.getParentGoal().getIsPersonal()) { // fixme!!!!!! -- getParentGoal doesn't return whole goal
 
                     confirmEdit((User.getCurrentUser() == action.getParentGoal().getAuthor()), new_action); // fixme, getParentGoal again
                     // includes case where editing personal version of a social goal,
