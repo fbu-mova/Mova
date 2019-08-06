@@ -65,7 +65,7 @@ public class GoalCardComponent extends Component {
         super();
         this.item = bundle.goal;
         this.isUserInvolved = bundle.userIsInvolved;
-        this.isPersonal = false; // FIXME: item.getIsPersonal();
+        this.isPersonal = item.getIsPersonal(); // false; // FIXME: item.getIsPersonal(); (why need fix?)
     }
 
     @Override
@@ -147,7 +147,7 @@ public class GoalCardComponent extends Component {
 
                     @Override
                     protected Component makeComponent(Action item, ViewHolder holder) {
-                        return new ActionComponent(item);
+                        return new ActionComponent(item, GoalCardComponent.this.isPersonal);
                     }
 
                     @Override

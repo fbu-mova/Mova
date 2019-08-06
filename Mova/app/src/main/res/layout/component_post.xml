@@ -13,23 +13,24 @@
         android:id="@+id/tvSubheader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/elementMargin"
         android:text="Because you..."
-        android:textColor="#999" />
+        android:textColor="@color/textLight"
+        android:textSize="@dimen/textSizeBody" />
 
     <LinearLayout
         android:id="@+id/llGroup"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/elementMargin"
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvGroupImage"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginRight="8dp"
-            app:cardCornerRadius="1000dp"
+            android:layout_width="@dimen/profileImage"
+            android:layout_height="@dimen/profileImage"
+            android:layout_marginRight="@dimen/elementMargin"
+            app:cardCornerRadius="@dimen/borderRadiusCircle"
             app:cardElevation="0dp">
 
             <ImageView
@@ -55,31 +56,28 @@
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="@dimen/borderRadius"
         app:cardElevation="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/innerMargin"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/llDetails"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/elementMargin"
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvProfileImage"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginRight="8dp"
-                    app:cardCornerRadius="1000dp"
+                    android:layout_width="@dimen/profileImage"
+                    android:layout_height="@dimen/profileImage"
+                    android:layout_marginRight="@dimen/elementMargin"
+                    app:cardCornerRadius="@dimen/borderRadiusCircle"
                     app:cardElevation="0dp">
 
                     <ImageView
@@ -96,18 +94,19 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text="Username"
-                    android:textColor="#222"
-                    android:textSize="14dp" />
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeBody" />
 
                 <TextView
                     android:id="@+id/tvDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginLeft="@dimen/elementMargin"
                     android:layout_weight="0"
                     android:text="Date"
-                    android:textColor="#999" />
+                    android:textColor="@color/textLight"
+                    android:textSize="@dimen/textSizeBody" />
 
             </LinearLayout>
 
@@ -116,58 +115,62 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Message"
-                android:textColor="#222"
-                android:textSize="18dp" />
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeFocus" />
 
             <com.example.mova.component.ComponentLayout
                 android:id="@+id/clMedia"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/elementMargin"
+                android:clipChildren="false">
 
             </com.example.mova.component.ComponentLayout>
 
             <LinearLayout
                 android:id="@+id/llButtons"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/elementMargin"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal"></LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/ivRepost"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="@dimen/buttonIcon"
+                        android:layout_height="@dimen/buttonIcon"
                         android:layout_weight="0"
-                        app:srcCompat="@color/colorPrimary" />
+                        android:tint="@color/buttonInactive"
+                        app:srcCompat="@drawable/ic_round_repeat_24px" />
 
                     <ImageView
                         android:id="@+id/ivReply"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="8dp"
+                        android:layout_width="@dimen/buttonIcon"
+                        android:layout_height="@dimen/buttonIcon"
+                        android:layout_marginLeft="@dimen/elementMargin"
                         android:layout_weight="0"
-                        app:srcCompat="@color/colorPrimary" />
+                        android:tint="@color/buttonInactive"
+                        app:srcCompat="@drawable/ic_round_reply_24px" />
 
                     <ImageView
                         android:id="@+id/ivSave"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="8dp"
+                        android:layout_width="@dimen/buttonIcon"
+                        android:layout_height="@dimen/buttonIcon"
+                        android:layout_marginLeft="@dimen/elementMargin"
                         android:layout_weight="0"
-                        app:srcCompat="@color/colorPrimary" />
+                        android:tint="@color/buttonInactive"
+                        app:srcCompat="@drawable/ic_round_bookmark_24px" />
                 </LinearLayout>
 
             </LinearLayout>

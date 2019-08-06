@@ -11,6 +11,7 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
 @ParseClassName("Media")
@@ -207,6 +208,25 @@ public class Media extends HashableParseObject {
             default:
                 return null;
         }
+    }
+
+    public void fetchContentIfNeededInBackground(AsyncUtils.TwoItemCallback<Object, Throwable> callback) {
+        ContentType type = getType();
+
+        if (type == ContentType.Text) {
+            callback.call(getContentText(), null);
+            return;
+        }
+
+        if (type == ContentType.Image) {
+            ParseFile file = getContentImage();
+            file.getFileInBackground((loaded, e) -> callback.call(file, e));
+            return;
+        }
+
+        // Otherwise, content must be a ParseObject
+        ParseObject obj = (ParseObject) getContent();
+        obj.fetchIfNeededInBackground((fetched, e) -> callback.call(fetched, e));
     }
 
     public static enum ContentType {
