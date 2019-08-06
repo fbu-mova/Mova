@@ -78,7 +78,11 @@ public abstract class ChecklistItemComponent<T> extends Component {
             }
         });
         this.holder.cbItem.setTextColor(uncheckedColor);
-        setChecked(getDone.call(item), false);
+        
+        this.allowCheckedEvent = false;
+        this.holder.cbItem.setChecked(getDone.call(item));
+        this.allowCheckedEvent = true;
+
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }
@@ -89,17 +93,6 @@ public abstract class ChecklistItemComponent<T> extends Component {
     }
 
     public abstract void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
-
-    public void setChecked(boolean checked, boolean allowCheckedEvent) {
-        this.allowCheckedEvent = allowCheckedEvent;
-        if (holder != null) {
-            holder.cbItem.setChecked(checked);
-        }
-    }
-
-    public void setChecked(boolean checked) {
-        setChecked(checked, true);
-    }
 
     @Override
     public String getName() {
