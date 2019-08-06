@@ -1,6 +1,7 @@
 package com.example.mova.components;
 
-import android.util.AttributeSet;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,6 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Recurrence;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +34,7 @@ public abstract class RecurrenceSettingsComponent extends Component {
     private ComponentManager manager;
 
     private ArrayAdapter<Type> typeAdapter;
+    private State state;
 
     private Spinner spWeek;
     private ArrayAdapter<Day> weekAdapter;
@@ -77,10 +77,13 @@ public abstract class RecurrenceSettingsComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
-        this.holder.ivClose.setOnClickListener((v) -> onClose(this));
+        this.holder.ivClose.setOnClickListener((v) -> {
+            this.holder.flWhen.removeAllViews();
+            onClose(this);
+        });
 
         configureSpinner();
-        hideWhenOptions();
+        if (state != null) state.loadState();
     }
 
     @Override
@@ -118,6 +121,22 @@ public abstract class RecurrenceSettingsComponent extends Component {
         }
     }
 
+    private State makeNewState(Type type) {
+        switch (type) {
+            case Week:
+                return new WeekState();
+            case Month:
+                return new MonthState();
+            case Year:
+            default:
+                return new YearState();
+        }
+    }
+
+    private void saveState() {
+        if (state != null) state.saveState();
+    }
+
     private void configureSpinner() {
         typeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, Type.values());
         holder.spType.setAdapter(typeAdapter);
@@ -127,12 +146,12 @@ public abstract class RecurrenceSettingsComponent extends Component {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Type type = Type.values()[position]; // FIXME: Will these ids translate correctly? Are they parallel arrays?
                 updateWhenOptions(type);
-                showWhenOptions();
+                saveState();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                hideWhenOptions();
+
             }
         });
     }
@@ -154,12 +173,25 @@ public abstract class RecurrenceSettingsComponent extends Component {
                 holder.tvWhen.setText("on");
                 break;
         }
+        state = makeNewState(type);
+        saveState();
     }
 
     private void createWhenViews() {
         spWeek = new Spinner(getActivity());
         weekAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, Day.values());
         spWeek.setAdapter(weekAdapter);
+        spWeek.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                saveState();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         actvMonthDay = new AutoCompleteTextView(getActivity());
         for (int i = 1; i <= monthDays.length; i++) {
@@ -181,20 +213,27 @@ public abstract class RecurrenceSettingsComponent extends Component {
         }
         monthDayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, monthDays);
         actvMonthDay.setAdapter(monthDayAdapter);
+        actvMonthDay.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                saveState();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         dpYearDate = (DatePicker) getActivity().getLayoutInflater().inflate(R.layout.layout_spinner_date_picker, null);
         int year = getActivity().getResources().getIdentifier("android:id/year", null, null);
         dpYearDate.findViewById(year).setVisibility(View.GONE);
-    }
-
-    private void showWhenOptions() {
-        holder.tvWhen.setVisibility(View.VISIBLE);
-        holder.flWhen.setVisibility(View.VISIBLE);
-    }
-
-    private void hideWhenOptions() {
-        holder.tvWhen.setVisibility(View.GONE);
-        holder.flWhen.setVisibility(View.GONE);
+        dpYearDate.setOnFocusChangeListener((v, hasFocus) -> saveState());
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -235,5 +274,51 @@ public abstract class RecurrenceSettingsComponent extends Component {
         Friday,
         Saturday,
         Sunday
+    }
+
+    protected interface State {
+        // TODO: Handle any overarching state, like the type from spinner
+
+        void saveState();
+        void loadState();
+    }
+
+    protected class WeekState implements State {
+
+        @Override
+        public void saveState() {
+            // TODO
+        }
+
+        @Override
+        public void loadState() {
+            // TODO
+        }
+    }
+
+    protected class MonthState implements State {
+
+        @Override
+        public void saveState() {
+            // TODO
+        }
+
+        @Override
+        public void loadState() {
+            // TODO
+        }
+    }
+
+    protected class YearState implements State {
+
+        @Override
+        public void saveState() {
+            // TODO
+        }
+
+        @Override
+        public void loadState() {
+            // TODO
+        }
     }
 }
