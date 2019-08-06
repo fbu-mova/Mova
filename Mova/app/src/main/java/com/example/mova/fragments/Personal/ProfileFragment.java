@@ -208,7 +208,7 @@ public class ProfileFragment extends Fragment {
                 EdgeDecorator decorator = new EdgeDecorator(0);
                 //Toast.makeText(getContext(), "We made it", Toast.LENGTH_SHORT).show();
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                View view = inflater.inflate(R.layout.layout_rv_profile_friends, null  );
+                View view = inflater.inflate(R.layout.layout_recycler_view, null  );
                 RecyclerView rvExtraFriends = view.findViewById(R.id.rvFriendsExtra);
                 rvExtraFriends.setLayoutManager(new GridLayoutManager(getActivity(), 3));
                 rvExtraFriends.setAdapter(userFriendAdapter);
@@ -231,7 +231,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 EdgeDecorator decorator = new EdgeDecorator(10);
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                View view1 = inflater.inflate(R.layout.layout_rv_profile_friends, null);
+                View view1 = inflater.inflate(R.layout.layout_recycler_view, null);
                 RecyclerView rvExtraGroups = view1.findViewById(R.id.rvFriendsExtra);
                 rvExtraGroups.setLayoutManager(new LinearLayoutManager(getActivity()));
                 rvExtraGroups.setAdapter(showMoreGroupAdapter);
