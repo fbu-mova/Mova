@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Recurrence;
+
+import org.xmlpull.v1.XmlPullParser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,7 +69,7 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
     @Override
     protected void onLaunch() {
-
+        createWhenViews();
     }
 
     @Override
@@ -76,7 +79,6 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
         this.holder.ivClose.setOnClickListener((v) -> onClose(this));
 
-        createWhenViews();
         configureSpinner();
         hideWhenOptions();
     }
@@ -180,9 +182,9 @@ public abstract class RecurrenceSettingsComponent extends Component {
         monthDayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, monthDays);
         actvMonthDay.setAdapter(monthDayAdapter);
 
-        dpYearDate = new DatePicker(getActivity());
-//        int year = getActivity().getResources().getIdentifier("android:id/year", null, null);
-//        dpYearDate.findViewById(year).setVisibility(View.GONE);
+        dpYearDate = (DatePicker) getActivity().getLayoutInflater().inflate(R.layout.layout_spinner_date_picker, null);
+        int year = getActivity().getResources().getIdentifier("android:id/year", null, null);
+        dpYearDate.findViewById(year).setVisibility(View.GONE);
     }
 
     private void showWhenOptions() {
