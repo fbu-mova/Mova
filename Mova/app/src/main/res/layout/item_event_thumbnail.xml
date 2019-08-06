@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/elementMargin"
         android:orientation="horizontal">
 
@@ -36,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:text="Group"
             android:textColor="@color/textMain"
             android:textSize="@dimen/textSizeBody"
@@ -46,7 +47,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="true"
         app:cardCornerRadius="@dimen/borderRadius"
@@ -57,7 +58,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <ImageView
@@ -72,7 +73,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/innerMargin"
                 android:orientation="vertical">
 
@@ -80,9 +81,10 @@
                     android:id="@+id/tvEventName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/elementMargin"
                     android:text="Event Name"
                     android:textColor="@color/textMain"
-                    android:textSize="@dimen/textSizeBody" />
+                    android:textSize="@dimen/textSizeFocus" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -101,9 +103,10 @@
 
                     <TextView
                         android:id="@+id/tvWhen"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
                         android:text="When"
                         android:textColor="@color/textLight"
                         android:textSize="14sp" />
@@ -127,9 +130,10 @@
 
                     <TextView
                         android:id="@+id/tvEventLocation"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
                         android:text="Location"
                         android:textColor="@color/textLight"
                         android:textSize="14sp" />
