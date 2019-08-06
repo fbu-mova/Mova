@@ -20,8 +20,12 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.model.MonthlyRecurrence;
 import com.example.mova.model.Recurrence;
+import com.example.mova.model.WeeklyRecurrence;
+import com.example.mova.model.YearlyRecurrence;
 
+import java.time.Month;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -53,7 +57,19 @@ public abstract class RecurrenceSettingsComponent extends Component {
     public RecurrenceSettingsComponent() { }
 
     public RecurrenceSettingsComponent(Recurrence recurrence) {
-        // TODO: Create state from recurrence
+        if (WeeklyRecurrence.is(recurrence)) {
+            WeeklyRecurrence wR = (WeeklyRecurrence) recurrence;
+            String dayStr = wR.key.toString();
+            state = new WeekState(Day.valueOf(dayStr));
+        } else if (MonthlyRecurrence.is(recurrence)) {
+            MonthlyRecurrence mR = (MonthlyRecurrence) recurrence;
+            state = new MonthState(mR.day);
+        } else if (YearlyRecurrence.is(recurrence)) {
+            YearlyRecurrence yR = (YearlyRecurrence) recurrence;
+            state = new YearState(yR.month, yR.day);
+        } else {
+            throw new IllegalArgumentException("Recurrence must be time-based; cannot be a shared or empty recurrence. Recurrence key was " + recurrence.key + ".");
+        }
     }
 
     @Override
@@ -213,20 +229,7 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
         actvMonthDay = new AutoCompleteTextView(getActivity());
         for (int i = 1; i <= monthDays.length; i++) {
-            String numStr = Integer.toString(i);
-            switch (i % 10) {
-                case 1:
-                    numStr += "st";
-                    break;
-                case 2:
-                    numStr += "nd";
-                    break;
-                case 3:
-                    numStr += "rd";
-                    break;
-                default:
-                    numStr += "th";
-            }
+            String numStr = makeMonthDayText(i);
             monthDays[i - 1] = numStr;
         }
         monthDayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, monthDays);
@@ -252,6 +255,24 @@ public abstract class RecurrenceSettingsComponent extends Component {
         int year = getActivity().getResources().getIdentifier("android:id/year", null, null);
         dpYearDate.findViewById(year).setVisibility(View.GONE);
         initDatePicker();
+    }
+
+    private String makeMonthDayText(int day) {
+        String numStr = Integer.toString(day);
+        switch (day % 10) {
+            case 1:
+                numStr += "st";
+                break;
+            case 2:
+                numStr += "nd";
+                break;
+            case 3:
+                numStr += "rd";
+                break;
+            default:
+                numStr += "th";
+        }
+        return numStr;
     }
 
     private void initDatePicker() {
@@ -339,6 +360,13 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
         protected Day day;
 
+        public WeekState() {}
+
+        public WeekState(Day day) {
+            this.type = Type.Week;
+            this.day = day;
+        }
+
         @Override
         public void saveState() {
             // FIXME: Does this need a check for type == Week?
@@ -363,6 +391,13 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
         protected String dayText;
 
+        public MonthState() {}
+
+        public MonthState(int day) {
+            this.type = Type.Month;
+            dayText = makeMonthDayText(day);
+        }
+
         @Override
         public void saveState() {
             saveType();
@@ -383,6 +418,14 @@ public abstract class RecurrenceSettingsComponent extends Component {
     protected class YearState extends State {
 
         protected int month, day;
+
+        public YearState() {}
+
+        public YearState(int month, int day) {
+            this.type = Type.Year;
+            this.month = month;
+            this.day = day;
+        }
 
         @Override
         public void saveState() {
