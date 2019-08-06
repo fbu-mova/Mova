@@ -2,6 +2,7 @@ package com.example.mova.model;
 
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
+import com.example.mova.utils.TimeUtils;
 import com.example.mova.utils.Wrapper;
 import com.parse.ParseClassName;
 import com.parse.ParseQuery;
@@ -229,10 +230,12 @@ public class Action extends HashableParseObject {
             List<Recurrence> result = new ArrayList<>();
             Date now = new Date();
 
+            // TODO: Replicate this updated logic in SharedAction and/or extract it to a HashedParseObject with special recurrence methods
             for (Recurrence r : xRecurrence) {
                 // If the next relative date has already happened, then true
                 Date nextDate = r.nextRelativeDate(getCreatedAt());
-                if (now.compareTo(nextDate) >= 0) {
+                nextDate = (nextDate == null) ? null : TimeUtils.normalizeToDay(nextDate);
+                if (nextDate != null && now.compareTo(nextDate) >= 0) {
                     result.add(r);
                 }
             }
@@ -390,10 +393,10 @@ public class Action extends HashableParseObject {
                 .setTask(getTask())
                 .setParentGoal(getParentGoal())
                 .setIsConnectedToParent(getIsConnectedToParent())
-                .setRecurrenceId(getRecurrenceId())
                 .setRecurrence(getRecurrence());
 
         if (getIsConnectedToParent()) action.setParentSharedAction(getParentSharedAction());
+        if (getRecurrenceId() != null) action.setRecurrenceId(getRecurrenceId());
 
         return action;
     }
