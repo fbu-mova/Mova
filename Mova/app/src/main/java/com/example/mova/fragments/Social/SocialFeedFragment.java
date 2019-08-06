@@ -1,27 +1,27 @@
 package com.example.mova.fragments.Social;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.activities.SearchActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.PostComponent;
@@ -29,13 +29,13 @@ import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.containers.EndlessScrollRefreshLayout;
 import com.example.mova.containers.ScrollLoadHandler;
 import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.fragments.SearchFragment;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.PostConfig;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONObject;
 
@@ -106,21 +106,21 @@ public class SocialFeedFragment extends Fragment {
         ibSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), SearchActivity.class);
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
-                startActivity(intent, options.toBundle());
+//                Intent intent = new Intent(getContext(), SearchActivity.class);
+//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
+//                startActivity(intent, options.toBundle());
 
-//                Fragment frag = new SearchFragment();
-//                manager = ((AppCompatActivity)getActivity())
-//                        .getSupportFragmentManager();
-//                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
-//                //fl.removeAllViews();
-//                FragmentTransaction ft = manager
-//                        .beginTransaction();
-//                ft.add(R.id.flSocialContainer, frag);
-//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                ft.addToBackStack(null);
-//                ft.commit();
+                Fragment frag = new SearchFragment();
+                manager = ((AppCompatActivity)getActivity())
+                        .getSupportFragmentManager();
+                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+                //fl.removeAllViews();
+                FragmentTransaction ft = manager
+                        .beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
         // Temporary fabCompose press for testing ComposePostComponent

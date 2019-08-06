@@ -98,6 +98,9 @@ public class GroupThumbnailComponent extends Component {
         viewHolder.ivGroupPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                if(getActivity().equals(SearchActivity.class)){
+//
+//                }
                 Fragment frag = GroupDetailsFragment.newInstance(group);
                 manager = ((AppCompatActivity)getActivity())
                         .getSupportFragmentManager();

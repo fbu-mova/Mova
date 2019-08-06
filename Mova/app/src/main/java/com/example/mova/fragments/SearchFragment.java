@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,9 +41,16 @@ public class SearchFragment extends Fragment {
 
     User user;
     List<Tag> tags;
+    String[] tagArr;
 
 //    @BindView(R.id.svSearch)
 //    SearchView svSearch;
+
+    @BindView(R.id.acSearch)
+    AutoCompleteTextView acSearch;
+
+    @BindView(R.id.ibSearch)
+    ImageButton ibSearch;
 
     @BindView(R.id.tvSearchGroups)
     TextView tvSearchGroups;
@@ -96,6 +106,8 @@ public class SearchFragment extends Fragment {
 
 
         user = User.getCurrentUser();
+        //isRunning = true;
+
 
 //        svSearch.setSubmitButtonEnabled(true);
 //        svSearch.onActionViewExpanded();
@@ -115,6 +127,50 @@ public class SearchFragment extends Fragment {
         tagEvents = new ArrayList<>();
         tagGoals = new ArrayList<>();
         tagGoalsData = new ArrayList<>();
+
+
+
+        TagUtlis.getTags((listoftags) -> {
+            tagArr = new String[listoftags.size()];
+            tags.addAll(listoftags);
+            int i = 0;
+            for(Tag tag: listoftags){
+                tagArr[i] = tag.getName();
+                i++;
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter(getContext(), R.layout.support_simple_spinner_dropdown_item, tagArr);
+            acSearch.setThreshold(1);
+            adapter.notifyDataSetChanged();
+            acSearch.setAdapter(adapter);
+
+
+            ibSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tvClick.setVisibility(View.GONE);
+                    getData(acSearch.getText().toString());
+                }
+            });
+
+            //getData("Tag");
+
+//            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String query) {
+//                    tvClick.setVisibility(View.GONE);
+//                    getData(query);
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean onQueryTextChange(String newText) {
+//                    return false;
+//                }
+//            });
+
+        });
+
+        //final androidx.appcompat.widget.SearchView.SearchAutoComplete searchAutoComplete = svSearch.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 
         tagGroupsAdapter = new DataComponentAdapter<Group>((DelegatedResultActivity) getActivity(), tagGroups) {
             @Override
@@ -166,26 +222,7 @@ public class SearchFragment extends Fragment {
 
 
 
-        TagUtlis.getTags((listoftags) -> {
-            tags.addAll(listoftags);
 
-            //getData("Tag");
-
-//            svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//                @Override
-//                public boolean onQueryTextSubmit(String query) {
-//                    tvClick.setVisibility(View.GONE);
-//                    getData(query);
-//                    return false;
-//                }
-//
-//                @Override
-//                public boolean onQueryTextChange(String newText) {
-//                    return false;
-//                }
-//            });
-
-        });
 
 
 
@@ -196,11 +233,6 @@ public class SearchFragment extends Fragment {
                 //finishAfterTransition();
             }
         });
-
-
-
-
-
     }
 
     private void getData(String tagName){

@@ -36,6 +36,7 @@ public class SearchActivity extends DelegatedResultActivity {
     User user;
     List<Tag> tags;
     String[] tagArr;
+    //public static Boolean isRunning = false;
 
 //    @BindView(R.id.svSearch)
 //    SearchView svSearch;
@@ -74,6 +75,7 @@ public class SearchActivity extends DelegatedResultActivity {
 
 
         user = User.getCurrentUser();
+        //isRunning = true;
 
 
 //        svSearch.setSubmitButtonEnabled(true);
