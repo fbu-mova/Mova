@@ -18,33 +18,33 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/ivIcon1"
+        android:id="@+id/ivReminderButton"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        app:layout_constraintStart_toEndOf="@+id/ivIcon3"
-        app:layout_constraintTop_toTopOf="@+id/ivIcon2"
+        app:layout_constraintStart_toEndOf="@+id/ivPriorityButton"
+        app:layout_constraintTop_toTopOf="@+id/ivRepeatButton"
         app:srcCompat="@color/colorAccent" />
 
     <ImageView
-        android:id="@+id/ivIcon3"
+        android:id="@+id/ivPriorityButton"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ivIcon1"
+        app:layout_constraintTop_toTopOf="@+id/ivReminderButton"
         app:srcCompat="@color/colorAccent" />
 
     <ImageView
-        android:id="@+id/ivIcon2"
+        android:id="@+id/ivRepeatButton"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/btSave"
-        app:layout_constraintStart_toEndOf="@+id/ivIcon1"
+        app:layout_constraintStart_toEndOf="@+id/ivReminderButton"
         app:layout_constraintTop_toTopOf="@+id/btSave"
         app:srcCompat="@color/colorAccent" />
 

@@ -16,10 +16,7 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
-import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
-import com.parse.ParseException;
-import com.parse.SaveCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,6 +88,10 @@ public class ActionEditComponent extends Component {
                 componentManager.swap("ActionViewComponent");
             }
         });
+
+        viewHolder.ivRepeatButton.setOnClickListener((v) -> {
+            // TODO
+        });
     }
 
     @Override
@@ -100,11 +101,11 @@ public class ActionEditComponent extends Component {
 
     public static class ActionEditViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.etAction)        protected EditText etAction;
-        @BindView(R.id.ivIcon1)         protected ImageView ivIcon1; // fixme -- in future, image buttons
-        @BindView(R.id.ivIcon2)         protected ImageView ivIcon2;
-        @BindView(R.id.ivIcon3)         protected ImageView ivIcon3;
-        @BindView(R.id.btSave)        protected Button btSave;
+        @BindView(R.id.etAction)         protected EditText etAction;
+        @BindView(R.id.ivReminderButton) protected ImageView ivReminderButton; // fixme -- in future, image buttons
+        @BindView(R.id.ivRepeatButton)   protected ImageView ivRepeatButton;
+        @BindView(R.id.ivPriorityButton) protected ImageView ivPriorityButton;
+        @BindView(R.id.btSave)           protected Button btSave;
 
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);
