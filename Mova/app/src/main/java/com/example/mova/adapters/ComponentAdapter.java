@@ -52,4 +52,14 @@ public class ComponentAdapter extends RecyclerView.Adapter<Component.ViewHolder>
     protected Component.Inflater makeInflater(Component component) {
         return component.makeInflater();
     }
+
+    /**
+     * Forces the RecyclerView to remove its cached ViewHolders before notifying of an entire dataset change.
+     * @param rv The RecyclerView to which this adapter is connected.
+     */
+    public void notifyWithFlush(RecyclerView rv) {
+        rv.setAdapter(null);
+        rv.setAdapter(this);
+        notifyDataSetChanged();
+    }
 }

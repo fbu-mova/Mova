@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecurrenceSettingsComponent extends Component {
+public abstract class RecurrenceSettingsComponent extends Component {
 
     private ViewHolder holder;
     private ComponentManager manager;
@@ -74,6 +74,8 @@ public class RecurrenceSettingsComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
+        this.holder.ivClose.setOnClickListener((v) -> onClose(this));
+
         createWhenViews();
         configureSpinner();
         hideWhenOptions();
@@ -83,6 +85,8 @@ public class RecurrenceSettingsComponent extends Component {
     protected void onDestroy() {
 
     }
+
+    protected abstract void onClose(RecurrenceSettingsComponent component);
 
     public Recurrence makeRecurrence() {
         Object selectedItem = holder.spType.getSelectedItem();

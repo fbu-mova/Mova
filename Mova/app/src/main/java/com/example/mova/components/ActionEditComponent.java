@@ -20,6 +20,7 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Action;
 import com.example.mova.utils.GoalUtils;
 
@@ -128,15 +129,20 @@ public class ActionEditComponent extends Component {
 
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv.setAdapter(recurAdapter);
+        rv.addItemDecoration(new EdgeDecorator(32));
 
         recurComponents.add(new SimpleListAddComponent() {
             @Override
             protected void onClick(View view) {
                 int secondToLast = recurComponents.size() - 1;
-                recurComponents.add(secondToLast, new RecurrenceSettingsComponent());
-                rv.setAdapter(null);
-                rv.setAdapter(recurAdapter);
-                recurAdapter.notifyDataSetChanged();
+                recurComponents.add(secondToLast, new RecurrenceSettingsComponent() {
+                    @Override
+                    protected void onClose(RecurrenceSettingsComponent component) {
+                        recurComponents.remove(component);
+                        recurAdapter.notifyWithFlush(rv);
+                    }
+                });
+                recurAdapter.notifyWithFlush(rv);
             }
         });
         recurAdapter.notifyItemInserted(0);

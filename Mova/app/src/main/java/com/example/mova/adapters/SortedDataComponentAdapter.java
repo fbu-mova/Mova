@@ -77,4 +77,14 @@ public abstract class SortedDataComponentAdapter<T> extends RecyclerView.Adapter
     public void changeSource(SortedList<T> newSource) {
         this.items = newSource;
     }
+
+    /**
+     * Forces the RecyclerView to remove its cached ViewHolders before notifying of an entire dataset change.
+     * @param rv The RecyclerView to which this adapter is connected.
+     */
+    public void notifyWithFlush(RecyclerView rv) {
+        rv.setAdapter(null);
+        rv.setAdapter(this);
+        notifyDataSetChanged();
+    }
 }
