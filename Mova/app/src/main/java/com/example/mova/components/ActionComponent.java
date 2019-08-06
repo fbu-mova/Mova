@@ -82,22 +82,22 @@ public class ActionComponent extends Component {
         viewComponent = new ActionViewComponent(item, componentManager);
         editComponent = new ActionEditComponent(item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
-            public void call(String task, ComponentManager manager) {
+            public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {
                 // editing a social goal - two cases (if author, if not author)
 
                 // update this action with new text
-                String new_action = task;
+                String new_action = wrapper.getMessage();
 
-                if (!item.getParentGoal().getIsPersonal()) { // fixme -- getParentGoal doesn't return whole goal
+                if (!action.getParentGoal().getIsPersonal()) { // fixme -- getParentGoal doesn't return whole goal
 
-                    confirmEdit((User.getCurrentUser() == item.getParentGoal().getAuthor()), task); // fixme, getParentGoal again
+                    confirmEdit((User.getCurrentUser() == action.getParentGoal().getAuthor()), new_action); // fixme, getParentGoal again
                     // includes case where editing personal version of a social goal,
                     //  so action saved, connected to SharedAction set to false, sharedAction not changed
 
                 }
                 else {
                     // saving logic for isPersonal
-                    GoalUtils.saveSharedAndAction(item, new_action, (item) -> {
+                    GoalUtils.saveSharedAndAction(action, new_action, (item) -> {
                         Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
                     });
                 }

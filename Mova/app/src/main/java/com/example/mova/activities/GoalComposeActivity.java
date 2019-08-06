@@ -55,7 +55,6 @@ public class GoalComposeActivity extends DelegatedResultActivity {
     @BindView(R.id.btSubmit)            protected Button btSubmit;
     @BindView(R.id.rvComposeAction)     protected RecyclerView rvComposeAction;
 //    @BindView(R.id.etAddAction)         protected EditText etAddAction;
-// FIXME: save button of action currently assumes goal already saved
     @BindView(R.id.clAddAction)         protected ComponentLayout clAddAction;
 
     ComposeActionsAdapter actionAdapter;

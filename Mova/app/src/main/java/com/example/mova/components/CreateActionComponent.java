@@ -14,6 +14,7 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
+import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
@@ -32,12 +33,10 @@ public class CreateActionComponent extends Component {
 
     private ViewHolder viewHolder;
 
-    private Action uncreatedAction;
     private GoalComposeActivity.HandleCreateAction handler;
 
     public CreateActionComponent(GoalComposeActivity.HandleCreateAction handler) {
         super();
-        this.uncreatedAction = new Action();
         this.handler = handler;
     }
 
@@ -77,17 +76,19 @@ public class CreateActionComponent extends Component {
             }
         });
 
-        viewComponent = new CreateActionViewComponent(uncreatedAction, componentManager);
-        editComponent = new ActionEditComponent(uncreatedAction, componentManager, new GoalUtils.onActionEditSaveListener() {
+        viewComponent = new CreateActionViewComponent(componentManager);
+        editComponent = new ActionEditComponent(null, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
-            public void call(String task, ComponentManager manager) {
+            public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {
                 // todo -- want to save the string task and the updated icons logic to the unsavedAction
 
                 Log.i(TAG, "editComp save button pressed");
 
-                uncreatedAction.setTask(task)
+                Action uncreatedAction = new Action().setTask(wrapper.getMessage())
+                        .setIsPriority(wrapper.getIsPriority())
                         .setIsConnectedToParent(true)
-                        .setIsDone(true); // fixme -- add icon logic setting
+                        .setIsDone(false)
+                        .setParentUser(User.getCurrentUser()); // fixme -- add icon logic setting
 
                 uncreatedAction.saveInBackground(new SaveCallback() {
                     @Override

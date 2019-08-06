@@ -30,6 +30,7 @@ public class ActionEditComponent extends Component {
     private static final String TAG = "action edit comp";
 
     private Action action;
+    private Action.Wrapper wrapper;
     private ActionEditViewHolder viewHolder;
 
     private ComponentManager componentManager;
@@ -37,9 +38,12 @@ public class ActionEditComponent extends Component {
 
     public ActionEditComponent(Action action, ComponentManager componentManager, GoalUtils.onActionEditSaveListener onActionEditSaveListener) {
         super();
+
         this.action = action;
         setManager(componentManager);
         this.onActionEditSaveListener = onActionEditSaveListener;
+
+        this.wrapper = new Action.Wrapper();
     }
 
     @Override
@@ -80,8 +84,9 @@ public class ActionEditComponent extends Component {
             @Override
             public void onClick(View v) {
 
-                onActionEditSaveListener.call(viewHolder.etAction.getText().toString(), componentManager);
-
+                wrapper.setMessage(viewHolder.etAction.getText().toString());
+                onActionEditSaveListener.call(action, wrapper, componentManager);
+                wrapper = new Action.Wrapper();
             }
         });
 
@@ -106,7 +111,14 @@ public class ActionEditComponent extends Component {
             public void onClick(View v) {
                 // need to update the uncreatedAction with priority
 
-                action.setIsPriority(true);
+                if (action != null) {
+                    action.setIsPriority(true);
+                }
+                else {
+                    // some action wrapper class that stores the info ?
+                    wrapper.setIsPriority(true);
+                }
+
                 Toast.makeText(getActivity(), "priority selected!", Toast.LENGTH_LONG).show();
                 // fixme -- want to show onClick in UI : what would user see?
             }
