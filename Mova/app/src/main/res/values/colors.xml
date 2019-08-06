@@ -23,4 +23,7 @@
     <color name="textLight">#999</color>
 
     <color name="bg">#EEE</color>
+
+    <color name="buttonInactive">#CCC</color>
+    <color name="buttonActive">#777</color>
 </resources>
