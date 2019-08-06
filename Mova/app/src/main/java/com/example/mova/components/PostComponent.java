@@ -152,8 +152,9 @@ public class PostComponent extends Component {
                 if (mediaComponent == null) {
                     holder.clMedia.setVisibility(View.GONE);
                 } else {
-                    holder.clMedia.setVisibility(View.VISIBLE);
+                    // FIXME: PostComponent does not display despite inflating properly
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+                    holder.clMedia.setVisibility(View.VISIBLE);
                 }
             });
         });

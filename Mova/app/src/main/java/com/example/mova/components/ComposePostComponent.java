@@ -190,6 +190,7 @@ public abstract class ComposePostComponent extends Component {
                 ((PostComponent) mediaComponent).setConfig(newConfig);
             }
             holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+            holder.clMedia.setVisibility(View.VISIBLE);
         }
     }
 
