@@ -22,6 +22,7 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Action;
+import com.example.mova.model.Recurrence;
 import com.example.mova.utils.GoalUtils;
 
 import java.util.ArrayList;
@@ -117,12 +118,8 @@ public class ActionEditComponent extends Component {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle("Repeat this action...")
                 .setView(view)
-                .setPositiveButton("Save", (DialogInterface dialog, int which) -> {
-                    // TODO
-                })
-                .setNegativeButton("Cancel", (DialogInterface dialog, int which) -> {
-                    // TODO
-                });
+                .setPositiveButton("Save", (DialogInterface dialog, int which) -> updateRecurrences())
+                .setNegativeButton("Cancel", (DialogInterface dialog, int which) -> { });
 
         recurComponents = new ArrayList<>();
         recurAdapter = new ComponentAdapter(getActivity(), recurComponents);
@@ -148,6 +145,21 @@ public class ActionEditComponent extends Component {
         recurAdapter.notifyItemInserted(0);
 
         builder.show();
+    }
+
+    private void updateRecurrences() {
+        List<Recurrence> recurrence = new ArrayList<>();
+        for (Component component : recurComponents) {
+            try {
+                RecurrenceSettingsComponent recurComponent = (RecurrenceSettingsComponent) component;
+                Recurrence r = recurComponent.makeRecurrence();
+                recurrence.add(r);
+            } catch (ClassCastException e) {
+                Log.d("ActionEditComponent", "Skip non-recurrence component");
+            }
+        }
+        action.setRecurrence(recurrence);
+        // FIXME: Might this disturb empty or shared recurrences?
     }
 
     public static class ActionEditViewHolder extends Component.ViewHolder {
