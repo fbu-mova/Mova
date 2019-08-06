@@ -144,14 +144,18 @@ public class PostComponent extends Component {
             }
 
             Media item = (Media) fetchedMedia;
+            media.fetchContentIfNeededInBackground((fetchedContent, e1) -> {
+                // Update content with loaded instance
+                item.setContent(fetchedContent);
 
-            Component mediaComponent = (item == null) ? null : item.makeComponent();
-            if (mediaComponent == null) {
-                holder.clMedia.setVisibility(View.GONE);
-            } else {
-                holder.clMedia.setVisibility(View.VISIBLE);
-                holder.clMedia.inflateComponent(getActivity(), mediaComponent);
-            }
+                Component mediaComponent = item.makeComponent();
+                if (mediaComponent == null) {
+                    holder.clMedia.setVisibility(View.GONE);
+                } else {
+                    holder.clMedia.setVisibility(View.VISIBLE);
+                    holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+                }
+            });
         });
     }
 
