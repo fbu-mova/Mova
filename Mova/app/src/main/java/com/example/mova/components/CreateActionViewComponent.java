@@ -26,10 +26,8 @@ public class CreateActionViewComponent extends Component {
     private ComponentManager componentManager;
 
     private ViewHolder viewHolder;
-    private Action uncreatedAction;
 
-    public CreateActionViewComponent(Action action, ComponentManager componentManager) {
-        this.uncreatedAction = action;
+    public CreateActionViewComponent(ComponentManager componentManager) {
         setManager(componentManager);
     }
 
