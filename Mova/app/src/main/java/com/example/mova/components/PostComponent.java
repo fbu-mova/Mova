@@ -14,8 +14,8 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.mova.ComposePostDialog;
-import com.example.mova.PostConfig;
+import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
@@ -118,13 +118,23 @@ public class PostComponent extends Component {
 
     private void displayMedia() {
         Media media = post.getMedia();
-        Component mediaComponent = (media == null) ? null : media.makeComponent();
-        if (mediaComponent == null) {
-            holder.clMedia.setVisibility(View.GONE);
-        } else {
-            holder.clMedia.setVisibility(View.VISIBLE);
-            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
-        }
+        media.fetchIfNeededInBackground((fetchedMedia, e) -> {
+            if (e != null) {
+                Log.e("PostComponent", "Failed to load media", e);
+                Toast.makeText(getActivity(), "Failed to load media", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Media item = (Media) fetchedMedia;
+
+            Component mediaComponent = (item == null) ? null : item.makeComponent();
+            if (mediaComponent == null) {
+                holder.clMedia.setVisibility(View.GONE);
+            } else {
+                holder.clMedia.setVisibility(View.VISIBLE);
+                holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+            }
+        });
     }
 
     private void displayGroup() {

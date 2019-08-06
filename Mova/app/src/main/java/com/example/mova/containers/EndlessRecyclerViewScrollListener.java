@@ -1,6 +1,4 @@
-package com.example.mova.scrolling;
-
-import android.widget.GridLayout;
+package com.example.mova.containers;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;

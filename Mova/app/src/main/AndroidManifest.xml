@@ -23,7 +23,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.GroupComposeActivity"></activity>
+        <activity android:name=".activities.SearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@layout/activity_search" />
+        </activity>
+        <activity android:name=".activities.GroupComposeActivity" />
         <activity android:name=".activities.EventComposeActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         <!--
  possible FIXME: if weird crashes, it's bc authorities attr is not unique across apps (Parstagram)

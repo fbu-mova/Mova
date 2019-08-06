@@ -35,7 +35,9 @@ public class MainActivity extends DelegatedResultActivity {
         ButterKnife.bind(this);
 
         User currUser = User.getCurrentUser();
-        currUser.setACL(new ParseACL(currUser));
+        ParseACL acl = new ParseACL(currUser);
+        acl.setPublicReadAccess(true);
+        currUser.setACL(acl);
 
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
     }

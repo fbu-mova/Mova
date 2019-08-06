@@ -6,18 +6,23 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mova.PostConfig;
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.containers.GestureListener;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.SortedDataComponentAdapter;
@@ -27,10 +32,10 @@ import com.example.mova.components.JournalEntryComponent;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
-import com.example.mova.scrolling.EdgeDecorator;
-import com.example.mova.scrolling.EndlessScrollLayout;
-import com.example.mova.scrolling.EndlessScrollRefreshLayout;
-import com.example.mova.scrolling.ScrollLoadHandler;
+import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.containers.EndlessScrollLayout;
+import com.example.mova.containers.EndlessScrollRefreshLayout;
+import com.example.mova.containers.ScrollLoadHandler;
 import com.example.mova.utils.DataEvent;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
@@ -57,8 +62,10 @@ public class JournalFragment extends Fragment {
     private Journal journal;
     private Date currDate;
 
+    private GestureDetector gestureDetector;
     private DataEvent<Date> dateSelectEvent;
 
+    @BindView(R.id.glRoot)      protected GestureLayout glRoot;
     @BindView(R.id.tvTitle)     protected TextView tvTitle;
     @BindView(R.id.tvDate)      protected TextView tvDate;
     @BindView(R.id.eslDates)    protected EndlessScrollLayout<Component.ViewHolder> eslDates;
@@ -103,45 +110,47 @@ public class JournalFragment extends Fragment {
         currDate = TimeUtils.getToday();
         dateSelectEvent = new DataEvent<>();
 
+        configureGestureHandling();
+
         journal = new Journal(
-                User.getCurrentUser(),
-                new SortedList.Callback<Date>() {
-                    @Override
-                    public int compare(Date o1, Date o2) {
-                        return Journal.defaultCompareDates(o1, o2);
-                    }
+            User.getCurrentUser(),
+            new SortedList.Callback<Date>() {
+                @Override
+                public int compare(Date o1, Date o2) {
+                    return Journal.defaultCompareDates(o1, o2);
+                }
 
-                    @Override
-                    public void onChanged(int position, int count) {
-                        dateAdapter.notifyItemRangeChanged(position, count);
-                    }
+                @Override
+                public void onChanged(int position, int count) {
+                    dateAdapter.notifyItemRangeChanged(position, count);
+                }
 
-                    @Override
-                    public boolean areContentsTheSame(Date oldItem, Date newItem) {
-                        return Journal.defaultDatesEqual(oldItem, newItem);
-                    }
+                @Override
+                public boolean areContentsTheSame(Date oldItem, Date newItem) {
+                    return Journal.defaultDatesEqual(oldItem, newItem);
+                }
 
-                    @Override
-                    public boolean areItemsTheSame(Date item1, Date item2) {
-                        return Journal.defaultDatesEqual(item1, item2);
-                    }
+                @Override
+                public boolean areItemsTheSame(Date item1, Date item2) {
+                    return Journal.defaultDatesEqual(item1, item2);
+                }
 
-                    @Override
-                    public void onInserted(int position, int count) {
-                        dateAdapter.notifyItemRangeInserted(position, count);
-                    }
+                @Override
+                public void onInserted(int position, int count) {
+                    dateAdapter.notifyItemRangeInserted(position, count);
+                }
 
-                    @Override
-                    public void onRemoved(int position, int count) {
-                        dateAdapter.notifyItemRangeRemoved(position, count);
-                    }
+                @Override
+                public void onRemoved(int position, int count) {
+                    dateAdapter.notifyItemRangeRemoved(position, count);
+                }
 
-                    @Override
-                    public void onMoved(int fromPosition, int toPosition) {
-                        dateAdapter.notifyItemMoved(fromPosition, toPosition);
-                    }
-                },
-                Journal.makeDefaultPostSortHandler()
+                @Override
+                public void onMoved(int fromPosition, int toPosition) {
+                    dateAdapter.notifyItemMoved(fromPosition, toPosition);
+                }
+            },
+            Journal.makeDefaultPostSortHandler()
         );
 
         // On date click, display only the entries for that date
@@ -299,5 +308,34 @@ public class JournalFragment extends Fragment {
             displayEntries(currDate);
             esrlEntries.setRefreshing(false);
         });
+    }
+
+    private void configureGestureHandling() {
+        gestureDetector = new GestureDetector(getActivity(), new GestureListener(glRoot) {
+            @Override
+            public boolean onTouch() {
+                return false;
+            }
+
+            @Override
+            public boolean onSwipe(List<Direction> directions) {
+                Date date = currDate;
+
+                if (directions.indexOf(Direction.Left) >= 0) {
+                    date = journal.getPrevDate(currDate);
+                } else if (directions.indexOf(Direction.Right) >= 0) {
+                    date = journal.getNextDate(currDate);
+                }
+
+                if (date == currDate) return false;
+
+                currDate = date;
+                displayEntries(currDate);
+                return false;
+            }
+        });
+
+        glRoot.setOnTouchListener((View v, MotionEvent event) -> !gestureDetector.onTouchEvent(event));
+        glRoot.setGestureDetector(gestureDetector);
     }
 }

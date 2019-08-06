@@ -45,10 +45,10 @@ public class LoginActivity extends DelegatedResultActivity {
         }
 
 //        //Fill field
-//        Intent intent = getIntent();
-//        etUsername.setText(intent.getStringExtra("username"));
+        Intent intent = getIntent();
+        etUsername.setText(intent.getStringExtra("username"));
 
-        // Set OnClickListeners
+//         Set OnClickListeners
 
         btLogIn.setOnClickListener(new View.OnClickListener() {
             @Override

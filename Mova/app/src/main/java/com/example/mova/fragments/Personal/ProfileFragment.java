@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.mova.EditProfileDialog;
+import com.example.mova.dialogs.EditProfileDialog;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.LoginActivity;
@@ -32,7 +32,7 @@ import com.example.mova.components.ProfileShowMoreGroupsComponent;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
-import com.example.mova.scrolling.EdgeDecorator;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.utils.FriendUtils;
 import com.example.mova.utils.GroupUtils;
 import com.parse.ParseFile;
@@ -137,8 +137,7 @@ public class ProfileFragment extends Fragment {
                 ParseUser.logOut();
                 currentUser = ParseUser.getCurrentUser();
                 Intent intent = new Intent(getContext(), LoginActivity.class);
-//                intent.putExtra("username", username);
-
+                intent.putExtra("username", username);
                 startActivity(intent);
                 getActivity().finish();
             }
