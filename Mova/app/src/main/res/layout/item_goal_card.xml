@@ -11,13 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:clipChildren="false"
+        app:cardCornerRadius="@dimen/borderRadius"
+        app:cardElevation="@dimen/shallowCardElevation"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clipChildren="false">
 
             <com.example.mova.GoalProgressBar
                 android:id="@+id/goalProgressBar"
@@ -28,24 +33,24 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
+                app:barHeight="4dp"
+                app:goalIndicatorHeight="16dp"
+                app:goalIndicatorWidth="4dp"
+                app:goalNotReachedColor="@color/colorPrimaryDark"
+                app:goalReachedColor="@color/colorAccent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:goalReachedColor="@color/colorAccent"
-                app:goalNotReachedColor="@color/colorPrimaryDark"
-                app:unfilledSectionColor="@color/colorAccent"
-                app:barHeight="4dp"
-                app:goalIndicatorHeight="16dp"
-                app:goalIndicatorWidth="4dp"/>
+                app:unfilledSectionColor="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/tvQuote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_margin="@dimen/innerMargin"
                 android:text="Quote"
+                android:textColor="@color/textLight"
+                android:textSize="@dimen/textSizeBody"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/goalProgressBar" />
 
@@ -53,10 +58,10 @@
                 android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_margin="@dimen/innerMargin"
                 android:text="Goal Name"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeFocus"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvQuote" />
 
@@ -64,10 +69,10 @@
                 android:id="@+id/tvDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_margin="@dimen/innerMargin"
                 android:text="Description of goal"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeBody"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvName" />
 
@@ -75,11 +80,7 @@
                 android:id="@+id/rvActions"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_margin="@dimen/innerMargin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
@@ -88,9 +89,10 @@
                 android:id="@+id/tvNumDone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_margin="@dimen/innerMargin"
                 android:text="10 people completed"
+                android:textColor="@color/textLight"
+                android:textSize="@dimen/textSizeBody"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvName" />
 
@@ -98,11 +100,10 @@
                 android:id="@+id/tvTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="@dimen/innerMargin"
                 android:text="TAG"
+                android:textColor="@color/textLight"
+                android:textSize="@dimen/textSizeBody"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvActions" />
