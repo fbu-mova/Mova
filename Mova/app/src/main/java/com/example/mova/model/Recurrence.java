@@ -113,6 +113,12 @@ public class Recurrence {
         }
     }
 
+    protected static String padInt(int num) {
+        String str = Integer.toString(num);
+        if (str.length() == 1) str = "0" + str;
+        return str;
+    }
+
     public static String toString(List<Recurrence> recurrences) {
         StringBuilder builder = new StringBuilder();
 

@@ -17,7 +17,7 @@ public class YearlyRecurrence extends Recurrence {
 
     @Override
     public String toString() {
-        return key.toString() + month + day;
+        return key.toString() + padInt(month) + padInt(day);
     }
 
     @Override
