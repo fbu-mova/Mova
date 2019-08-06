@@ -92,20 +92,20 @@ public class ActionComponent extends Component {
 
                 // update this action with new text
                 String new_action = wrapper.getMessage();
-
-                if (!isPersonal) { // fixme!!!!!! -- getParentGoal doesn't return whole goal
-
-                    confirmEdit((User.getCurrentUser() == action.getParentGoal().getAuthor()), new_action); // fixme, getParentGoal again
-                    // includes case where editing personal version of a social goal,
-                    //  so action saved, connected to SharedAction set to false, sharedAction not changed
-
-                }
-                else {
+//
+//                if (!isPersonal) { // fixme!!!!!! -- getParentGoal doesn't return whole goal
+//
+//                    confirmEdit((User.getCurrentUser() == action.getParentGoal().getAuthor()), new_action); // fixme, getParentGoal again
+//                    // includes case where editing personal version of a social goal,
+//                    //  so action saved, connected to SharedAction set to false, sharedAction not changed
+//
+//                }
+//                else {
                     // saving logic for isPersonal
                     GoalUtils.saveSharedAndAction(action, new_action, (item) -> {
                         Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
                     });
-                }
+//                }
 
                 manager.swap("ActionViewComponent");
             }
