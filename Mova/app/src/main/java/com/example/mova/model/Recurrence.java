@@ -72,7 +72,7 @@ public class Recurrence {
     }
 
     public static Recurrence makeWeekly(Key dayOfWeek) {
-        return new Recurrence(dayOfWeek);
+        return new WeeklyRecurrence(dayOfWeek);
     }
 
     public static Recurrence makeMonthly(Integer day) {

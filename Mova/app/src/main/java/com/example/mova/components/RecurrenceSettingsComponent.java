@@ -20,8 +20,8 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Recurrence;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,7 +84,31 @@ public class RecurrenceSettingsComponent extends Component {
     }
 
     public Recurrence makeRecurrence() {
-        return null; // TODO
+        Object selectedItem = holder.spType.getSelectedItem();
+        if (selectedItem == null || selectedItem.getClass() != Type.class) return null;
+        Type type = (Type) selectedItem;
+
+        switch (type) {
+            case Week:
+                Object objDay = spWeek.getSelectedItem();
+                if (objDay == null || objDay.getClass() != Day.class) return null;
+                Day day = (Day) objDay;
+                Recurrence.Key key = Recurrence.Key.valueOf(day.toString());
+                return Recurrence.makeWeekly(key);
+            case Month:
+                String monthDay = actvMonthDay.getText().toString();
+                Pattern re = Pattern.compile("\\d+");
+                Matcher matcher = re.matcher(monthDay);
+                if (!matcher.find()) return null;
+                int moDay = Integer.parseInt(matcher.group(0));
+                return Recurrence.makeMonthly(moDay);
+            case Year:
+                int yMonth = dpYearDate.getMonth();
+                int yDay = dpYearDate.getDayOfMonth();
+                return Recurrence.makeYearly(yMonth, yDay);
+            default:
+                return null;
+        }
     }
 
     private void configureSpinner() {
@@ -194,14 +218,6 @@ public class RecurrenceSettingsComponent extends Component {
         Week,
         Month,
         Year;
-
-        public static List<String> strValues() {
-            List<String> result = new ArrayList<>();
-            for (Type t : values()) {
-                result.add(t.toString().toLowerCase());
-            }
-            return result;
-        }
     }
 
     protected enum Day {
