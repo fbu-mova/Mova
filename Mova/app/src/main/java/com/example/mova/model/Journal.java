@@ -2,10 +2,12 @@ package com.example.mova.model;
 
 import androidx.recyclerview.widget.SortedList;
 
-import com.example.mova.PostConfig;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 
 import java.util.Date;
@@ -61,6 +63,44 @@ public class Journal {
         entries.put(date, entriesFromDate);
         if (dates.indexOf(date) < 0) dates.add(date);
         return entriesFromDate;
+    }
+
+    /**
+     * Gets the date after the given date.
+     * If the date does not exist or there is no date after the given date, returns the given date.
+     * @param date The date to compare to.
+     * @return The next date.
+     */
+    public Date getNextDate(Date date) {
+        int index = dates.indexOf(date);
+        if (index < 0) return date;
+
+        Date plusOne = date, minusOne = date;
+        if (index + 1 < dates.size()) plusOne = dates.get(index + 1);
+        if (index - 1 >= 0)           minusOne = dates.get(index - 1);
+
+        if      (date.compareTo(plusOne) < 0)  return plusOne;
+        else if (date.compareTo(minusOne) < 0) return minusOne;
+        else                                   return date;
+    }
+
+    /**
+     * Gets the date before the given date.
+     * If the date does not exist or there is no date after the given date, returns the given date.
+     * @param date The date to compare to.
+     * @return The previous date.
+     */
+    public Date getPrevDate(Date date) {
+        int index = dates.indexOf(date);
+        if (index < 0) return date;
+
+        Date plusOne = date, minusOne = date;
+        if (index + 1 < dates.size()) plusOne = dates.get(index + 1);
+        if (index - 1 >= 0)           minusOne = dates.get(index - 1);
+
+        if      (date.compareTo(plusOne) > 0)  return plusOne;
+        else if (date.compareTo(minusOne) > 0) return minusOne;
+        else                                   return date;
     }
 
     /**
@@ -178,6 +218,9 @@ public class Journal {
             todayEntries.add(config.post);
             callback.call(null);
         };
+
+        ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
+        if (location != null) config.post.setLocation(location);
         user.postJournalEntry(config, cb);
     }
 

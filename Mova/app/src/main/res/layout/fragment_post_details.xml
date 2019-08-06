@@ -14,12 +14,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
             android:orientation="vertical">
 
             <com.example.mova.component.ComponentLayout
                 android:id="@+id/clPost"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clipChildren="false">
 
             </com.example.mova.component.ComponentLayout>
 
@@ -35,12 +37,12 @@
                 android:textColor="#222"
                 android:textSize="18dp" />
 
-            <com.example.mova.scrolling.EndlessScrollLayout
+            <com.example.mova.containers.EndlessScrollLayout
                 android:id="@+id/eslComments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            </com.example.mova.scrolling.EndlessScrollLayout>
+            </com.example.mova.containers.EndlessScrollLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

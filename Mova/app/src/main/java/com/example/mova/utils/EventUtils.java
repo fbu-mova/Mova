@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.mova.model.Event;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
+import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -103,6 +104,21 @@ public class EventUtils {
                 }
             }
             callback.call(false);
+        });
+    }
+
+    public static void getTags(Event event, AsyncUtils.ListCallback<Tag> callback){
+        ParseQuery<Tag> pqTags = event.relTags.getQuery();
+        pqTags.findInBackground(new FindCallback<Tag>() {
+            @Override
+            public void done(List<Tag> objects, ParseException e) {
+                if(e != null){
+                    Log.e("EventUtils", "Error with query comments");
+                    e.printStackTrace();
+                    return;
+                }
+                callback.call(objects);
+            }
         });
     }
 }

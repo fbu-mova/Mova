@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -22,10 +23,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
+import com.example.mova.fragments.SocialFragment;
 import com.example.mova.model.Event;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
+import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.TextUtils;
 import com.parse.ParseException;
@@ -47,7 +50,8 @@ public class EventComposeActivity extends AppCompatActivity {
 
     User user;
     final Calendar myCalendar = Calendar.getInstance();
-    private List<String> tags;
+    private List<String> tagString;
+    private List<Tag> tags;
     private List<Group> groups;
     String[] groupArr;
     Address address;
@@ -99,6 +103,7 @@ public class EventComposeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_compose);
         ButterKnife.bind(this);
         user = (User) ParseUser.getCurrentUser();
+        tagString = new ArrayList<>();
         tags = new ArrayList<>();
         groups = new ArrayList<>();
 
@@ -119,11 +124,15 @@ public class EventComposeActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EventComposeActivity.this);
                     builder.setMessage("Are you sure you want to delete this event?")
-                    .setTitle("Delete")
+                    .setTitle("Confirm")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             event.deleteInBackground();
+                            user.relEvents.remove(event, () -> {});
+                            finish();
+                            Intent intent1 = new Intent(EventComposeActivity.this, SocialFragment.class);
+                            startActivity(intent1);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -157,6 +166,12 @@ public class EventComposeActivity extends AppCompatActivity {
 //            etDate.setText(event.getDate().toString());
 
             etDescription.setText(event.getDescription());
+
+            EventUtils.getTags(event, (oldTagList) -> {
+                for(Tag tag: oldTagList){
+                    updateTags(tag.getName(), true);
+                }
+            });
 
         }
 
@@ -238,25 +253,38 @@ public class EventComposeActivity extends AppCompatActivity {
                 .setHost(user);
 
                 //set parent group if the field is valid
-                for(int i = 0; i < groupArr.length ; i++){
-                    if(actvParentGroup.getText().toString().equals(groupArr[i].toString())){
-                        Group group = groups.get(i);
-                        event.relGroup.add(group);
-                        event.setParentGroup(group);
-                        group.relEvents.add(event);
-                        group.saveInBackground();
-                    }else{
-                        Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
+                if(groupArr != null) {
+                    for (int i = 0; i < groupArr.length; i++) {
+                        if (actvParentGroup.getText().toString().equals(groupArr[i].toString())) {
+                            Group group = groups.get(i);
+                            event.relGroup.add(group);
+                            event.setParentGroup(group);
+                            group.relEvents.add(event);
+                            group.saveInBackground();
+                        }
+//                        else {
+//                            Toast.makeText(EventComposeActivity.this, "Group is invalid, add group later", Toast.LENGTH_SHORT).show();
+//                        }
                     }
                 }
 
-                //Add tags
-                for(String tagString: tags){
+                //Add tagString
+                for(String tagString: tagString){
                     Tag tag = new Tag(tagString);
-                    event.relTags.add(tag);
+                    tags.add(tag);
+                    //event.relTags.add(tag);
                     tag.relEvents.add(event);
-                    tag.saveInBackground();
+                    //tag.saveInBackground();
                 }
+
+                Tag.saveTags(
+                        tags,
+                        (tag, cb) -> event.relTags.add(tag, (sameTag) -> cb.call()),
+                        (err) -> {if(err != null){
+                            Log.e("User", "Failed to save tags", err);
+                        }}
+                );
+
 
                 //Add Participants
                 event.relParticipants.add(user);
@@ -294,12 +322,12 @@ public class EventComposeActivity extends AppCompatActivity {
     }
 
     private void updateTags(String tag, boolean shouldKeep) {
-        if (shouldKeep && !tags.contains(tag)) {
-            tags.add(tag);
+        if (shouldKeep && !tagString.contains(tag)) {
+            tagString.add(tag);
         } else {
-            tags.remove(tag);
+            tagString.remove(tag);
         }
-        TextUtils.writeCommaSeparated(tags, "No tags", tvTags, (str) -> str);
+        TextUtils.writeCommaSeparated(tagString, "No tagString", tvTags, (str) -> str);
     }
 
     @Override

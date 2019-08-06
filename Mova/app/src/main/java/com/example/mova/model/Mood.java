@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.model;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,7 +12,11 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.mova.R;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,10 +53,16 @@ public class Mood {
         int getValue() {
             return value;
         }
+    }
 
+    public static List<Status> getStatuses() {
+        ArrayList<Status> statuses = new ArrayList<>(Arrays.asList(Status.values()));
+        statuses.remove(Status.Empty);
+        return statuses;
     }
 
     public static int getColor(Status status){
+
         switch (status){
             case Happy:
                 return Color.RED;
@@ -124,7 +134,7 @@ public class Mood {
             inflate(getContext(), R.layout.layout_mood_selector, this);
             ButterKnife.bind(this, this);
 
-            ArrayAdapter<Status> statusAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Arrays.asList(Status.values()));
+            ArrayAdapter<Status> statusAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Mood.getStatuses());
             statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spStatus.setAdapter(statusAdapter);
             spStatus.setOnItemSelectedListener(this);

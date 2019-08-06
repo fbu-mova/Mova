@@ -24,9 +24,9 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Post;
-import com.example.mova.scrolling.EdgeDecorator;
-import com.example.mova.scrolling.EndlessScrollLayout;
-import com.example.mova.scrolling.ScrollLoadHandler;
+import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.containers.EndlessScrollLayout;
+import com.example.mova.containers.ScrollLoadHandler;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;

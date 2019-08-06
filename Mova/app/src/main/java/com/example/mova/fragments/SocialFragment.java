@@ -138,6 +138,9 @@ public class SocialFragment extends Fragment {
                 if(EventThumbnailComponent.manager != null){
                     EventThumbnailComponent.manager.popBackStack(0,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
+                if(SocialFeedFragment.manager != null) {
+                    SocialFeedFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
                 return true;
             }
         });

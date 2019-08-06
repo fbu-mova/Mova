@@ -3,6 +3,7 @@ package com.example.mova.model;
 import android.graphics.Bitmap;
 
 import com.example.mova.component.Component;
+import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.MediaImageComponent;
 import com.example.mova.components.MediaTextComponent;
 import com.example.mova.components.PostComponent;
@@ -10,6 +11,7 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
 @ParseClassName("Media")
@@ -199,9 +201,32 @@ public class Media extends HashableParseObject {
                 return new MediaImageComponent(getContentImage());
             case Post:
                 return new PostComponent(getContentPost());
+            case Goal:
+                // FIXME: Find a better way to handle async data on GoalData
+                Goal.GoalData data = new Goal.GoalData(getContentGoal(), false);
+                return new GoalCardComponent(data);
             default:
                 return null;
         }
+    }
+
+    public void fetchContentIfNeededInBackground(AsyncUtils.TwoItemCallback<Object, Throwable> callback) {
+        ContentType type = getType();
+
+        if (type == ContentType.Text) {
+            callback.call(getContentText(), null);
+            return;
+        }
+
+        if (type == ContentType.Image) {
+            ParseFile file = getContentImage();
+            file.getFileInBackground((loaded, e) -> callback.call(file, e));
+            return;
+        }
+
+        // Otherwise, content must be a ParseObject
+        ParseObject obj = (ParseObject) getContent();
+        obj.fetchIfNeededInBackground((fetched, e) -> callback.call(fetched, e));
     }
 
     public static enum ContentType {

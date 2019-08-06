@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
+import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -40,7 +41,22 @@ public class GroupUtils {
             @Override
             public void done(List<User> objects, ParseException e) {
                 if(e != null){
-                    Log.e("GoalUtils", "Error with query");
+                    Log.e("GoalUtils", "Error with  user list query");
+                    e.printStackTrace();
+                    return;
+                }
+                callback.call(objects);
+            }
+        });
+    }
+
+    public static void getAdminList(Group group, AsyncUtils.ListCallback<User> callback){
+        ParseQuery<User> pqUser = group.relAdmins.getQuery();
+        pqUser.findInBackground(new FindCallback<User>() {
+            @Override
+            public void done(List<User> objects, ParseException e) {
+                if(e != null){
+                    Log.e("GoalUtils", "Error with admin list query");
                     e.printStackTrace();
                     return;
                 }
@@ -55,7 +71,7 @@ public class GroupUtils {
             @Override
             public void done(List<Goal> objects, ParseException e) {
                 if(e != null){
-                    Log.e("GoalUtils", "Error with query");
+                    Log.e("GoalUtils", "Error with goal query");
                     e.printStackTrace();
                     return;
                 }
@@ -71,7 +87,7 @@ public class GroupUtils {
             @Override
             public void done(List<Post> objects, ParseException e) {
                 if(e != null){
-                    Log.e("GoalUtils", "Error with query");
+                    Log.e("GoalUtils", "Error with posts query");
                     e.printStackTrace();
                     return;
                 }
@@ -86,7 +102,45 @@ public class GroupUtils {
             @Override
             public void done(List<Group> objects, ParseException e) {
                 if(e != null){
-                    Log.e("GoalUtils", "Error with query");
+                    Log.e("GoalUtils", "Error with  user groups query");
+                    e.printStackTrace();
+                    return;
+                }
+                callback.call(objects);
+            }
+        });
+    }
+
+    public static void getIsMember(User user, Group group, AsyncUtils.ItemCallback<Boolean> callback){
+        getUserGroups(user, (groupList) -> {
+            for(Group g: groupList){
+                if(g.equals(group)){
+                    callback.call(true);
+                    return;
+                }
+            }
+            callback.call(false);
+        });
+    }
+
+    public static void getIsAdmin(User user, Group group, AsyncUtils.ItemCallback<Boolean> callback){
+        getAdminList(group, (admins) -> {
+            for(User admin: admins){
+                if(user.equals(admin)){
+                    callback.call(true);
+                    return;
+                }
+            } callback.call(false);
+        });
+    }
+
+    public static void getTags(Group group, AsyncUtils.ListCallback<Tag> callback){
+        ParseQuery<Tag> pqTags = group.relTags.getQuery();
+        pqTags.findInBackground(new FindCallback<Tag>() {
+            @Override
+            public void done(List<Tag> objects, ParseException e) {
+                if(e != null){
+                    Log.e("EventUtils", "Error with query comments");
                     e.printStackTrace();
                     return;
                 }

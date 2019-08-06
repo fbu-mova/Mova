@@ -27,15 +27,25 @@ public class LocationUtils {
     private static final int REQUEST_LOCATION = 1;
     //private static LocationManager locationManager;
 
-    public static String makeLocationText(Context context, ParseGeoPoint location) {
+    public static String makeLocationText(Context context, ParseGeoPoint location, boolean useFullName) {
         try {
             Geocoder geocoder = new Geocoder(context);
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             Address address = addresses.get(0);
-            String cityName = address.getAddressLine(0);
-//            String stateName = address.getAddressLine(1);
-//            String countryName = address.getAddressLine(2);
-            return cityName;
+            String name = address.getAddressLine(0);
+            if (useFullName) return name;
+
+            String[] parts = name.split(", ");
+            if (parts.length == 0) return name;
+            else if (parts.length < 4) return parts[0];
+            String city = parts[1];
+
+            String[] stateParts = parts[2].split(" ");
+            if (stateParts.length < 2) return city;
+            String state = stateParts[0];
+            String country = parts[3];
+
+            return city + ", " + state;
         } catch (Exception e) {
             Log.e("LocationUtils", "Bad Geocoder conversion from location");
             e.printStackTrace();

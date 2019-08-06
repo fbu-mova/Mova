@@ -1,9 +1,11 @@
-package com.example.mova;
+package com.example.mova.dialogs;
 
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.example.mova.utils.PostConfig;
+import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;

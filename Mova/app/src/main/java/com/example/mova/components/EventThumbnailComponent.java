@@ -82,13 +82,20 @@ public class EventThumbnailComponent extends Component {
         checkViewHolderClass(holder, EventThumbnailViewHolder.class);
         viewHolder = (EventThumbnailViewHolder) holder;
 
-        String location = LocationUtils.makeLocationText(getActivity(),event.getLocation());
+        String location = LocationUtils.makeLocationText(getActivity(),event.getLocation(), true);
         String[] locationsplit = location.split(",");
-        String[] state = locationsplit[2].split(" ");
+        int i = 0;
+        int j = 0;
+        if(locationsplit.length > 4){
+            i = 3;
+            j = 2;
+        }else{i = 2;
+        j = 1;}
+        String[] state = locationsplit[i].split(" ");
 
         //viewHolder.tvGroupName.setText();
         viewHolder.tvEventName.setText(event.getTitle());
-        viewHolder.tvEventLocation.setText(locationsplit[1] + ", "+ state[1]);
+        viewHolder.tvEventLocation.setText(locationsplit[j] + ", "+ state[1]);
         viewHolder.tvWhen.setText(TimeUtils.toDateString(event.getDate()));
         if(event.getParentGroup() != null){
             event.getParentGroupName(event.getParentGroup(),(name) -> {

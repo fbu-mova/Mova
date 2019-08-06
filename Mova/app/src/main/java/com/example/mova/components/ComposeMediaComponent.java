@@ -34,9 +34,9 @@ import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
-import com.example.mova.scrolling.EdgeDecorator;
-import com.example.mova.scrolling.EndlessScrollRefreshLayout;
-import com.example.mova.scrolling.ScrollLoadHandler;
+import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.containers.EndlessScrollRefreshLayout;
+import com.example.mova.containers.ScrollLoadHandler;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -154,7 +154,12 @@ public abstract class ComposeMediaComponent extends Component {
         scrapbookAdapter = new DataComponentAdapter<Post>(getActivity(), scrapbookPosts) {
             @Override
             protected Component makeComponent(Post item, Component.ViewHolder holder) {
-                return new PostComponent(item, new PostComponent.Config(null, false, true));
+                PostComponent.Config config = new PostComponent.Config(null, false, false);
+                config.onClick = (post) -> {
+                    Media media = new Media(post);
+                    returnMedia(media);
+                };
+                return new PostComponent(item, config);
             }
 
             @Override

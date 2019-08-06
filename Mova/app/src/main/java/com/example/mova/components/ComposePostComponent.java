@@ -14,7 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
-import com.example.mova.PostConfig;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
@@ -109,7 +109,7 @@ public abstract class ComposePostComponent extends Component {
         if (postConfig.postToReply == null) {
             holder.flReplyContent.setVisibility(View.GONE);
         } else {
-            PostComponent postComponent = new PostComponent(postConfig.postToReply, new PostComponent.Config(null, false, true));
+            PostComponent postComponent = new PostComponent(postConfig.postToReply, new PostComponent.Config(null, false, false));
             holder.flReplyContent.setVisibility(View.VISIBLE);
             holder.clPostToReply.setMargin(32);
             holder.clPostToReply.inflateComponent(getActivity(), postComponent);
@@ -184,7 +184,13 @@ public abstract class ComposePostComponent extends Component {
             holder.clMedia.clear();
         } else {
             holder.llAddMedia.setVisibility(View.GONE);
+            if (postConfig.media.getType() == Media.ContentType.Post) {
+                PostComponent.Config oldConfig = ((PostComponent) mediaComponent).getConfig();
+                PostComponent.Config newConfig = new PostComponent.Config(oldConfig.subheader, false, false);
+                ((PostComponent) mediaComponent).setConfig(newConfig);
+            }
             holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+            holder.clMedia.setVisibility(View.VISIBLE);
         }
     }
 
