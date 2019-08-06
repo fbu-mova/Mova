@@ -80,7 +80,7 @@ public class ActionEditComponent extends Component {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
 
-        viewHolder.btSave.setOnClickListener(new View.OnClickListener() {
+        viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -136,7 +136,7 @@ public class ActionEditComponent extends Component {
         @BindView(R.id.ivIcon1)         protected ImageView recurring;
         @BindView(R.id.ivIcon2)         protected ImageView reminder;
         @BindView(R.id.ivIcon3)         protected ImageView priority;
-        @BindView(R.id.btSave)          protected Button btSave;
+        @BindView(R.id.ivSave)          protected ImageView ivSave;
 
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);
