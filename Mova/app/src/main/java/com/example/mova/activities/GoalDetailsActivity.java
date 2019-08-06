@@ -63,6 +63,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         ButterKnife.bind(this);
 
         goal = getIntent().getParcelableExtra("goal");
+        isPersonal = goal.getIsPersonal();
 
         tvGoalName.setText(goal.getTitle());
 //        tvFromGroup.setText(goal.getGroupName()); // FIXME -- null object reference error
@@ -104,7 +105,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
             @Override
             public Component makeComponent(Action item, Component.ViewHolder holder) {
-                Component component = new ActionComponent(item);
+                Component component = new ActionComponent(item, isPersonal);
                 return component;
             }
 
