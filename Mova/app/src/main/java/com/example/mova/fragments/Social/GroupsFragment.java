@@ -1,17 +1,21 @@
 package com.example.mova.fragments.Social;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,12 +23,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GroupComposeActivity;
-import com.example.mova.activities.SearchActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.fragments.SearchFragment;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.User;
@@ -51,6 +55,7 @@ public class GroupsFragment extends Fragment {
     //Todo - allow user to add goals
 
     User user;
+    public static FragmentManager manager;
 
     @BindView(R.id.ibSearch)
     ImageButton ibSearch;
@@ -105,21 +110,21 @@ public class GroupsFragment extends Fragment {
         ibSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), SearchActivity.class);
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
-                startActivity(intent, options.toBundle());
+//                Intent intent = new Intent(getContext(), SearchActivity.class);
+//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
+//                startActivity(intent, options.toBundle());
 
-//                Fragment frag = new SearchFragment();
-//                manager = ((AppCompatActivity)getActivity())
-//                        .getSupportFragmentManager();
-//                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
-//                //fl.removeAllViews();
-//                FragmentTransaction ft = manager
-//                        .beginTransaction();
-//                ft.add(R.id.flSocialContainer, frag);
-//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                ft.addToBackStack(null);
-//                ft.commit();
+                Fragment frag = new SearchFragment();
+                manager = ((AppCompatActivity)getActivity())
+                        .getSupportFragmentManager();
+                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+                //fl.removeAllViews();
+                FragmentTransaction ft = manager
+                        .beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
 
@@ -156,10 +161,10 @@ public class GroupsFragment extends Fragment {
                 return new GoalCardComponent.Inflater();
             }
         };
+        Resources resources = getResources();
+        EdgeDecorator decorator = new EdgeDecorator((int) resources.getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal);
 
-        EdgeDecorator decorator = new EdgeDecorator(5);
-
-        rvGroups.setLayoutManager(new GridLayoutManager(getContext(), 2,  GridLayoutManager.HORIZONTAL,false));
+        rvGroups.setLayoutManager(new GridLayoutManager(getContext(), 1,  GridLayoutManager.HORIZONTAL,false));
         rvActiveGoals.setLayoutManager(new LinearLayoutManager(getContext()));
 
         rvGroups.addItemDecoration(decorator);

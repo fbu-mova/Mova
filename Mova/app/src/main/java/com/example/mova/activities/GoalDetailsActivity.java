@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.mova.dialogs.ConfirmShareGoalDialog;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.components.ActionComponent;
 import com.example.mova.component.Component;
+import com.example.mova.components.ActionComponent;
+import com.example.mova.dialogs.ConfirmShareGoalDialog;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
@@ -24,7 +24,6 @@ import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +62,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         ButterKnife.bind(this);
 
         goal = getIntent().getParcelableExtra("goal");
+        isPersonal = goal.getIsPersonal();
 
         tvGoalName.setText(goal.getTitle());
 //        tvFromGroup.setText(goal.getGroupName()); // FIXME -- null object reference error
@@ -104,7 +104,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
             @Override
             public Component makeComponent(Action item, Component.ViewHolder holder) {
-                Component component = new ActionComponent(item);
+                Component component = new ActionComponent(item,isPersonal);
                 return component;
             }
 

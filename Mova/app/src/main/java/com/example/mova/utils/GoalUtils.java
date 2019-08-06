@@ -1,7 +1,6 @@
 package com.example.mova.utils;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.mova.component.ComponentManager;
 import com.example.mova.feed.Prioritized;
@@ -9,15 +8,12 @@ import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
+import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,7 +118,7 @@ public class GoalUtils {
         return percent;
     }
 
-    public void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ItemCallback<LineGraphSeries<DataPoint>> callback){
+    public void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ItemCallback<BarGraphSeries<DataPoint>> callback){
         DataPoint[] dataPoints = new DataPoint[length];
         AsyncUtils.executeMany(length, (i, cb) -> {
             Date date = new Date();
@@ -136,7 +132,7 @@ public class GoalUtils {
                 cb.call(null);
             });
 
-        }, (err) -> {callback.call(new LineGraphSeries<DataPoint>(dataPoints));} );
+        }, (err) -> {callback.call(new BarGraphSeries<DataPoint>(dataPoints));} );
 
     }
 

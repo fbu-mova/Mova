@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -62,8 +61,8 @@ public class GroupDetailsFragment extends Fragment {
 
     @BindView(R.id.bottom_navigation_groups)
     BottomNavigationView bottomNavigationView;
-    @BindView(R.id.svGroupDetails)
-    SearchView svGroupDetails;
+//    @BindView(R.id.svGroupDetails)
+//    SearchView svGroupDetails;
     @BindView(R.id.ivGroupDetailsPic)
     ImageView ivGroupDetailsPic;
     @BindView(R.id.tvGroupName)

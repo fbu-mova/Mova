@@ -21,4 +21,5 @@
     <dimen name="profileImage">32dp</dimen>
 
     <dimen name="thumbnailWidth">160dp</dimen>
+    <dimen name="thumbnailImageHeight">100dp</dimen>
 </resources>
