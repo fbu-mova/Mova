@@ -51,6 +51,19 @@ public class PostComponent extends Component {
         this.config = config;
     }
 
+    public Config getConfig() {
+        return config;
+    }
+
+    /**
+     * Updates the component's configuration.
+     * Does not force render.
+     * @param config The new config to use.
+     */
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
     @Override
     public ViewHolder getViewHolder() {
         return holder;
@@ -273,6 +286,7 @@ public class PostComponent extends Component {
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.addToBackStack(null);
                 ft.commit();
+                config.onClick.call(post);
             });
         }
     }
@@ -333,8 +347,10 @@ public class PostComponent extends Component {
         public String subheader = null;
         public boolean showButtons = true;
         public boolean allowDetailsClick = true;
+
         public AsyncUtils.ItemCallback<Post> onReply = (post) -> {};
         public AsyncUtils.ItemCallback<Post> onRepost = (post) -> {};
+        public AsyncUtils.ItemCallback<Post> onClick = (post) -> {};
 
         public Config() { }
 
