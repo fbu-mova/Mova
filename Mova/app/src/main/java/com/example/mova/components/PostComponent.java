@@ -230,13 +230,8 @@ public class PostComponent extends Component {
             });
 
             holder.ivSave.setOnClickListener((view) -> {
-                ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
-                query.whereEqualTo(Post.KEY_ID, post.getObjectId());
-                query.findInBackground((posts, e) -> {
-                    if (e != null) {
-                        Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
-                        Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
-                    } else if (posts.size() == 0) {
+                isSavedToScrapbook((saved) -> {
+                    if (saved) {
                         User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
                             Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
                             toggleIcon(holder.ivSave, true);
@@ -249,9 +244,23 @@ public class PostComponent extends Component {
                     }
                 });
             });
+
+            isSavedToScrapbook((saved) -> toggleIcon(holder.ivSave, saved));
         } else {
             hideButtons();
         }
+    }
+
+    private void isSavedToScrapbook(AsyncUtils.ItemCallback<Boolean> callback) {
+        ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
+        query.whereEqualTo(Post.KEY_ID, post.getObjectId());
+        query.findInBackground((posts, e) -> {
+            if (e != null) {
+                Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
+                Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
+            }
+            callback.call(posts.size() > 0);
+        });
     }
 
     private void configurePostClick() {
