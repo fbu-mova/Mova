@@ -16,8 +16,10 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
+import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
+import com.parse.ParseQuery;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,9 +36,12 @@ public class ActionComponent extends Component {
     private ActionEditComponent editComponent;
     private ComponentManager componentManager;
 
-    public ActionComponent(Action item) {
+    private boolean isPersonal;
+
+    public ActionComponent(Action item, boolean isPersonal) {
         super();
         this.item = item;
+        this.isPersonal = isPersonal;
     }
 
     // overrides bc type of viewHolder is different from type of holder in checklistItemComp
@@ -88,7 +93,7 @@ public class ActionComponent extends Component {
                 // update this action with new text
                 String new_action = wrapper.getMessage();
 
-                if (!action.getParentGoal().getIsPersonal()) { // fixme!!!!!! -- getParentGoal doesn't return whole goal
+                if (!isPersonal) { // fixme!!!!!! -- getParentGoal doesn't return whole goal
 
                     confirmEdit((User.getCurrentUser() == action.getParentGoal().getAuthor()), new_action); // fixme, getParentGoal again
                     // includes case where editing personal version of a social goal,
@@ -133,6 +138,7 @@ public class ActionComponent extends Component {
     }
 
     private void confirmEdit(boolean isAuthor, String new_task) {
+        
         FragmentManager fm = getActivity().getSupportFragmentManager();
         ConfirmEditSocialActionDialog confirmEditSocialActionDialog = ConfirmEditSocialActionDialog.newInstance(item, isAuthor, new_task);
         confirmEditSocialActionDialog.show(fm, "showingConfirmEditSocialActionDialog");
