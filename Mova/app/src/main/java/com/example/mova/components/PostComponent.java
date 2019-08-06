@@ -244,7 +244,7 @@ public class PostComponent extends Component {
 
             holder.ivSave.setOnClickListener((view) -> {
                 isSavedToScrapbook((saved) -> {
-                    if (saved) {
+                    if (!saved) {
                         User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
                             Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
                             toggleIcon(holder.ivSave, true);
@@ -277,8 +277,8 @@ public class PostComponent extends Component {
     }
 
     private void configurePostClick() {
-        if (config.allowDetailsClick) {
-            holder.card.setOnClickListener((view) -> {
+        holder.card.setOnClickListener((view) -> {
+            if (config.allowDetailsClick) {
                 PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
                 FragmentManager manager = getActivity().getSupportFragmentManager();
                 FragmentTransaction ft = manager.beginTransaction();
@@ -286,9 +286,9 @@ public class PostComponent extends Component {
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.addToBackStack(null);
                 ft.commit();
-                config.onClick.call(post);
-            });
-        }
+            }
+            config.onClick.call(post);
+        });
     }
 
     private void toggleIcon(ImageView ivIcon, boolean active) {
