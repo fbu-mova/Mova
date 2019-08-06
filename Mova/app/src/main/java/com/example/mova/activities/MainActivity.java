@@ -39,6 +39,8 @@ public class MainActivity extends DelegatedResultActivity {
         acl.setPublicReadAccess(true);
         currUser.setACL(acl);
 
+        updateRecurrences();
+
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
     }
 
@@ -65,6 +67,11 @@ public class MainActivity extends DelegatedResultActivity {
             }
         });
         bottomNavigationView.setSelectedItemId(R.id.action_personal);
+    }
+
+    private void updateRecurrences() {
+        // TODO: Potentially launch this on a new thread.
+        User.getCurrentUser().updateRecurrences();
     }
 
     @Override

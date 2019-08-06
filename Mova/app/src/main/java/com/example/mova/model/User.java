@@ -1,5 +1,7 @@
 package com.example.mova.model;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.example.mova.utils.PostConfig;
@@ -91,6 +93,62 @@ public class User extends ParseUser {
             public void done(List<User> objects, ParseException e) {
                 callback.call(objects);
             }
+        });
+    }
+
+    public void updateRecurrences() {
+        updateRecurrences((e) -> {});
+    }
+
+    public void updateRecurrences(AsyncUtils.ItemCallback<Throwable> callback) {
+        /* TODO:
+         * - Loop through user's goals
+         * - For each goal, loop through all actions
+         * - For each action, update recurrences
+         * - Migrate this logic to the User model
+         */
+        ParseQuery<Goal> goalQuery = relGoals.getQuery();
+        goalQuery.findInBackground((goals, e) -> {
+            if (e != null) {
+                Log.e("User", "Failed to load goals while updating recurrences", e);
+                return;
+            }
+
+            AsyncUtils.executeMany(
+                goals.size(),
+                (i, cb) -> {
+                    // Get all actions on each goal for the current user
+                    Goal g = goals.get(i);
+                    ParseQuery<Action> actionQuery = g.relActions.getQuery();
+                    actionQuery.whereEqualTo(Action.KEY_PARENT_USER, this);
+                    actionQuery.include(Action.KEY_PARENT_SHARED_ACTION);
+
+                    actionQuery.findInBackground((actions, e1) -> {
+                        if (e1 != null) {
+                            Log.e("User", "Failed to load actions while updating recurrences on Goal " + g.getTitle(), e);
+                            cb.call(e1);
+                            return;
+                        }
+
+                        // For each action, add all new recurs
+                        AsyncUtils.executeMany(
+                            (actions.size()),
+                            (j, cb2) -> {
+                                Action action = actions.get(j);
+                                action.addRecur((recurs, e2) -> {
+                                    cb2.call(e2);
+                                });
+                            },
+                            (e2) -> {
+                                cb.call(e2);
+                            }
+                        );
+                    });
+                },
+                (e1) -> {
+                    callback.call(e1);
+                }
+            );
         });
     }
 
