@@ -32,7 +32,7 @@ public class GoalUtils {
     private static final String TAG = "GoalUtils";
 
     public interface onActionEditSaveListener {
-        void call(String task, ComponentManager manager);
+        void call(Action action, Action.Wrapper wrapper, ComponentManager manager);
     }
 
     public static void getActionList(AsyncUtils.ListCallback<Action> callback, Goal goal, User user){
@@ -200,7 +200,7 @@ public class GoalUtils {
         // todo -- update to also encompass Social functionality ? can share w/ group if not on personal feed
 
         Goal goal = new Goal()
-                .setAuthor((User) ParseUser.getCurrentUser())
+                .setAuthor(User.getCurrentUser())
                 .setTitle(goalName)
                 .setDescription(goalDescription)
                 .setIsPersonal(true); // fixme -- pass in as parameter to include Social functionality
@@ -272,6 +272,9 @@ public class GoalUtils {
 //                    .setParentSharedAction(sharedActionsList.get(item))
 //                    .setIsConnectedToParent(true)
 //                    .setIsDone(false);
+
+            actions.get(item).setParentGoal(goal)
+                    .setParentSharedAction(sharedActionsList.get(item));
 
             // save action -- fixme: still needs to be saved again?
             actions.get(item).saveInBackground((ParseException e) -> {
