@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
+import com.example.mova.model.Action;
 
 import java.util.List;
 
@@ -21,10 +23,10 @@ import butterknife.ButterKnife;
 
 public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAdapter.ViewHolder> {
 
-    private List<String> actions;
+    private List<Action> actions;
     Context context;
 
-    public ComposeActionsAdapter(List<String> actions) {
+    public ComposeActionsAdapter(List<Action> actions) {
         this.actions = actions;
     }
 
@@ -40,9 +42,15 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
 
     @Override
     public void onBindViewHolder(@NonNull ComposeActionsAdapter.ViewHolder holder, int position) {
-        String action = actions.get(position);
+        Action action = actions.get(position);
 
-        holder.cbItem.setText(action);
+        // fixme -- needs to be actions to get the icon logic, or needs to get those info somewhere
+            // fixme -- also, how would UI look for recurring / reminder?
+
+        holder.cbItem.setText(action.getTask());
+
+        int visible = (action.getIsPriority()) ? View.VISIBLE : View.GONE;
+        holder.ivPriority.setVisibility(visible);
 
     }
 
@@ -51,14 +59,10 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
         return actions.size();
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        showAlertDialog();
-//    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.cbItem)    public CheckBox cbItem;
+        @BindView(R.id.cbItem)      public CheckBox cbItem;
+        @BindView(R.id.ivPriority)  public ImageView ivPriority;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

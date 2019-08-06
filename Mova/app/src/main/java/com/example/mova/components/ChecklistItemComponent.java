@@ -33,6 +33,8 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     protected ComponentManager componentManager;
 
+    protected boolean allowCheckedEvent;
+
     public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, boolean applyColorToggleToText,
                                   AsyncUtils.ItemReturnCallback<T, String> getTitle,
                                   AsyncUtils.ItemReturnCallback<T, Boolean> getDone) {
@@ -42,6 +44,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
         this.applyColorToggleToText = applyColorToggleToText;
         this.getTitle = getTitle;
         this.getDone = getDone;
+        this.allowCheckedEvent = true;
     }
 
     @Override
@@ -69,10 +72,13 @@ public abstract class ChecklistItemComponent<T> extends Component {
         this.holder = (ViewHolder) holder;
 
         this.holder.cbItem.setText(getTitle.call(item));
-        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
-                onCheckedChanged(buttonView, isChecked));
+        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (allowCheckedEvent) {
+                onCheckedChanged(buttonView, isChecked);
+            }
+        });
         this.holder.cbItem.setTextColor(uncheckedColor);
-        this.holder.cbItem.setChecked(getDone.call(item));
+        setChecked(getDone.call(item), false);
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }
@@ -83,6 +89,17 @@ public abstract class ChecklistItemComponent<T> extends Component {
     }
 
     public abstract void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
+
+    public void setChecked(boolean checked, boolean allowCheckedEvent) {
+        this.allowCheckedEvent = allowCheckedEvent;
+        if (holder != null) {
+            holder.cbItem.setChecked(checked);
+        }
+    }
+
+    public void setChecked(boolean checked) {
+        setChecked(checked, true);
+    }
 
     @Override
     public String getName() {

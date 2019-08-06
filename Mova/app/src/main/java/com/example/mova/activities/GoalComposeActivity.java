@@ -19,6 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.adapters.ComposeActionsAdapter;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.ActionComponent;
+import com.example.mova.components.CreateActionComponent;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
@@ -35,7 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GoalComposeActivity extends AppCompatActivity {
+public class GoalComposeActivity extends DelegatedResultActivity {
 
     private static final String TAG = "Goal Compose Activity";
     public static final String KEY_COMPOSED_GOAL = "composed goal";
@@ -46,23 +49,20 @@ public class GoalComposeActivity extends AppCompatActivity {
     // add tags
     // add icons for actions
 
-    @BindView(R.id.etGoalName)
-    protected EditText etGoalName;
-    @BindView(R.id.etGoalDescription)
-    protected EditText etGoalDescription;
+    @BindView(R.id.etGoalName)          protected EditText etGoalName;
+    @BindView(R.id.etGoalDescription)   protected EditText etGoalDescription;
     //    @BindView(R.id.etAction)                protected EditText etAction;
-    @BindView(R.id.btSubmit)
-    protected Button btSubmit;
-    @BindView(R.id.rvComposeAction)
-    protected RecyclerView rvComposeAction;
-    @BindView(R.id.etAddAction)
-    protected EditText etAddAction;
+    @BindView(R.id.btSubmit)            protected Button btSubmit;
+    @BindView(R.id.rvComposeAction)     protected RecyclerView rvComposeAction;
+//    @BindView(R.id.etAddAction)         protected EditText etAddAction;
+    @BindView(R.id.clAddAction)         protected ComponentLayout clAddAction;
 
     ComposeActionsAdapter actionAdapter;
     List<String> actions;
 
-    List<SharedAction> sharedActionsList;
-    List<Action> actionsList;
+    // TODO : current updates
+
+    List<Action> unsavedActions; // unsaved because they're not saved to the goal yet
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,41 +71,28 @@ public class GoalComposeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         actions = new ArrayList<>();
-        actionAdapter = new ComposeActionsAdapter(actions);
+        unsavedActions = new ArrayList<>();
+        actionAdapter = new ComposeActionsAdapter(unsavedActions);
         rvComposeAction.setLayoutManager(new LinearLayoutManager(this));
         rvComposeAction.setAdapter(actionAdapter);
 
-        sharedActionsList = new ArrayList<>();
-        actionsList = new ArrayList<>();
-
-        btSubmit.setOnClickListener(new View.OnClickListener() { // todo -- maybe make bottom nav to help w/ jank layout ?
+        btSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
 
-                GoalUtils.submitGoal(goalName, goalDescription, actions, true, (goal) -> endActivity(goal));
+                GoalUtils.submitGoal(goalName, goalDescription, unsavedActions, true, (goal) -> endActivity(goal));
             }
         });
 
-        // add 'enter' soft keyboard usage for etAddAction
-        etAddAction.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        clAddAction.inflateComponent(GoalComposeActivity.this, new CreateActionComponent(new HandleCreateAction() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                    // save added action to the adapter, clear etAddAction
-                    String newAction = etAddAction.getText().toString();
-                    actions.add(newAction); // put at end rather than beginning
-                    actionAdapter.notifyItemInserted(actions.size() - 1);
-                    etAddAction.setText("");
-
-                    handled = true;
-                }
-                return handled;
+            public void call(Action action) {
+                onSetAction(action);
             }
-        });
+        }));
+
     }
 
     private void endActivity(Goal goal) {
@@ -114,5 +101,18 @@ public class GoalComposeActivity extends AppCompatActivity {
         // getIntent().putExtra(KEY_COMPOSED_POST_TAGS, tagObjects);
         setResult(RESULT_OK, getIntent());
         finish();
+    }
+
+    public interface HandleCreateAction { // fixme -- for now, doesn't save it. depends on later saving logic
+        public void call(Action action); // should always call onSetAction
+    }
+
+    public void onSetAction(Action action) {
+        // adds the task of this action to the recyclerview, adds the action to list unsavedActions
+
+        Log.i(TAG, "passing info of action back to compose activity");
+
+        unsavedActions.add(action);
+        actionAdapter.notifyItemInserted(unsavedActions.size() - 1);
     }
 }

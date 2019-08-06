@@ -33,6 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
+import static com.example.mova.model.Action.KEY_CREATED_AT;
 import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalDetailsActivity extends DelegatedResultActivity {
@@ -86,7 +87,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         });
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-
         Glide.with(this)
                 .load(url)
                 .error(R.color.colorPrimaryDark)
@@ -139,11 +139,13 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 //        finish();
     }
 
-    private void loadAllActions() {
+    private void loadAllActions() { // fixme : should be same as GoalCardComp, visible even if not involved
 
         // query for all the actions of this goal that is from the user
 
-        ParseQuery<Action> query = goal.relActions.getQuery().whereEqualTo(KEY_PARENT_USER, ParseUser.getCurrentUser());
+        ParseQuery<Action> query = goal.relActions.getQuery()
+                .whereEqualTo(KEY_PARENT_USER, User.getCurrentUser())
+                .orderByDescending(KEY_CREATED_AT);
 
         query.findInBackground(new FindCallback<Action>() {
             @Override

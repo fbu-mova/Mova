@@ -20,6 +20,7 @@ public class Action extends HashableParseObject {
     public static final String KEY_PARENT_GOAL = "parentGoal";
     public static final String KEY_PARENT_SHARED_ACTION = "parentSharedAction";
     public static final String KEY_PARENT_USER = "parentUser";
+    public static final String KEY_IS_PRIORITY = "isPriority";
 
     //Task
 
@@ -118,4 +119,45 @@ public class Action extends HashableParseObject {
         put(KEY_PARENT_USER, user);
         return this;
     }
+
+    //IsPriority
+
+    public Boolean getIsPriority() {
+        return getBoolean(KEY_IS_PRIORITY);
+    }
+
+    public Action setIsPriority(Boolean bool) {
+        put(KEY_IS_PRIORITY, bool);
+        return this;
+    }
+
+    public static class Wrapper {
+
+        public boolean isPriority;
+        public String message;
+
+        public Wrapper() {
+            this.isPriority = false;
+            this.message = "";
+        }
+
+        public Wrapper setIsPriority(boolean isPriority) {
+            this.isPriority = isPriority;
+            return this;
+        }
+
+        public Wrapper setMessage(String message) {
+            this.message = message;
+            return this;
+        }
+
+        public boolean getIsPriority() {
+            return this.isPriority;
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+    }
+
 }

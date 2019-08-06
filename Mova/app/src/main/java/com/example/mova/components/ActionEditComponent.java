@@ -30,14 +30,20 @@ public class ActionEditComponent extends Component {
     private static final String TAG = "action edit comp";
 
     private Action action;
+    private Action.Wrapper wrapper;
     private ActionEditViewHolder viewHolder;
 
     private ComponentManager componentManager;
+    private GoalUtils.onActionEditSaveListener onActionEditSaveListener;
 
-    public ActionEditComponent(Action action, ComponentManager componentManager) {
+    public ActionEditComponent(Action action, ComponentManager componentManager, GoalUtils.onActionEditSaveListener onActionEditSaveListener) {
         super();
+
         this.action = action;
         setManager(componentManager);
+        this.onActionEditSaveListener = onActionEditSaveListener;
+
+        this.wrapper = new Action.Wrapper();
     }
 
     @Override
@@ -74,21 +80,47 @@ public class ActionEditComponent extends Component {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
 
-        // todo -- implement icons (need to update in action model)
-
         viewHolder.btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // update this action with new text
-                String new_action = viewHolder.etAction.getText().toString();
 
-                // fixme -- add case where editing personal version of a social goal,
-                //  so action saved, connected to SharedAction set to false, sharedAction not changed
-                GoalUtils.saveSharedAndAction(action, new_action, (item) -> {
-                    Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
-                });
+                wrapper.setMessage(viewHolder.etAction.getText().toString());
+                onActionEditSaveListener.call(action, wrapper, componentManager);
+                wrapper = new Action.Wrapper();
+            }
+        });
 
-                componentManager.swap("ActionViewComponent");
+        // todo -- implement icons (need to update in action model)
+
+        viewHolder.recurring.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        viewHolder.reminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        viewHolder.priority.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // need to update the uncreatedAction with priority
+
+                if (action != null) {
+                    action.setIsPriority(true);
+                }
+                else {
+                    // some action wrapper class that stores the info ?
+                    wrapper.setIsPriority(true);
+                }
+
+                Toast.makeText(getActivity(), "priority selected!", Toast.LENGTH_LONG).show();
+                // fixme -- want to show onClick in UI : what would user see?
             }
         });
     }
@@ -101,10 +133,10 @@ public class ActionEditComponent extends Component {
     public static class ActionEditViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.etAction)        protected EditText etAction;
-        @BindView(R.id.ivIcon1)         protected ImageView ivIcon1; // fixme -- in future, image buttons
-        @BindView(R.id.ivIcon2)         protected ImageView ivIcon2;
-        @BindView(R.id.ivIcon3)         protected ImageView ivIcon3;
-        @BindView(R.id.btSave)        protected Button btSave;
+        @BindView(R.id.ivIcon1)         protected ImageView recurring;
+        @BindView(R.id.ivIcon2)         protected ImageView reminder;
+        @BindView(R.id.ivIcon3)         protected ImageView priority;
+        @BindView(R.id.btSave)          protected Button btSave;
 
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);

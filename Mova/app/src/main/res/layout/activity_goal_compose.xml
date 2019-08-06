@@ -34,22 +34,6 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <EditText
-            android:id="@+id/etAddAction"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:ems="10"
-            android:hint="Add action"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvComposeAction" />
-
-        <EditText
             android:id="@+id/etGoalName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,6 +58,19 @@
             android:inputType="textPersonName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/etGoalName" />
+
+        <com.example.mova.component.ComponentLayout
+            android:id="@+id/clAddAction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvComposeAction">
+
+        </com.example.mova.component.ComponentLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

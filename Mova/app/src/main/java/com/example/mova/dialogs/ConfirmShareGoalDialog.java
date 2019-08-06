@@ -278,7 +278,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
                 if (e == null) {
                     Log.d(TAG, "shared goal successfully");
                     Toast.makeText(getContext(), "Shared goal!", Toast.LENGTH_SHORT).show();
-                    ConfirmShareGoalDialog.this.dismiss();
+                    ConfirmShareGoalDialog.this.dismiss(); // fixme -- add this as a callback if want to extract
                 }
                 else {
                     Log.e(TAG, "sharing goal failed");
