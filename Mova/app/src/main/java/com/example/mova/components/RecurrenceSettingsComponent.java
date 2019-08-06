@@ -22,6 +22,9 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Recurrence;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +49,12 @@ public abstract class RecurrenceSettingsComponent extends Component {
     private DatePicker dpYearDate;
 
     private static final int LAYOUT_RES = R.layout.component_recurrence_item;
+
+    public RecurrenceSettingsComponent() { }
+
+    public RecurrenceSettingsComponent(Recurrence recurrence) {
+        // TODO: Create state from recurrence
+    }
 
     @Override
     public ViewHolder getViewHolder() {
@@ -84,7 +93,10 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
         createWhenViews();
         configureSpinner();
-        if (state != null) state.loadState();
+        if (state != null) {
+            state.loadState();
+            updateWhenOptions((Type) this.holder.spType.getSelectedItem());
+        }
     }
 
     @Override
@@ -107,11 +119,8 @@ public abstract class RecurrenceSettingsComponent extends Component {
                 Recurrence.Key key = Recurrence.Key.valueOf(day.toString());
                 return Recurrence.makeWeekly(key);
             case Month:
-                String monthDay = actvMonthDay.getText().toString();
-                Pattern re = Pattern.compile("\\d+");
-                Matcher matcher = re.matcher(monthDay);
-                if (!matcher.find()) return null;
-                int moDay = Integer.parseInt(matcher.group(0));
+                Integer moDay = getMonthDay();
+                if (moDay == null) return null;
                 return Recurrence.makeMonthly(moDay);
             case Year:
                 int yMonth = dpYearDate.getMonth();
@@ -120,6 +129,14 @@ public abstract class RecurrenceSettingsComponent extends Component {
             default:
                 return null;
         }
+    }
+
+    private Integer getMonthDay() {
+        String monthDay = actvMonthDay.getText().toString();
+        Pattern re = Pattern.compile("\\d+");
+        Matcher matcher = re.matcher(monthDay);
+        if (!matcher.find()) return null;
+        return Integer.parseInt(matcher.group(0));
     }
 
     private State makeNewState(Type type) {
@@ -234,7 +251,22 @@ public abstract class RecurrenceSettingsComponent extends Component {
         dpYearDate = (DatePicker) getActivity().getLayoutInflater().inflate(R.layout.layout_spinner_date_picker, null);
         int year = getActivity().getResources().getIdentifier("android:id/year", null, null);
         dpYearDate.findViewById(year).setVisibility(View.GONE);
-        dpYearDate.setOnFocusChangeListener((v, hasFocus) -> saveState());
+        initDatePicker();
+    }
+
+    private void initDatePicker() {
+        Calendar cal = Calendar.getInstance();
+        dpYearDate.init(
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH),
+            new DatePicker.OnDateChangedListener() {
+                @Override
+                public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                    saveState();
+                }
+            }
+        );
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -277,49 +309,91 @@ public abstract class RecurrenceSettingsComponent extends Component {
         Sunday
     }
 
-    protected interface State {
-        // TODO: Handle any overarching state, like the type from spinner
+    protected abstract class State {
+        protected Type type;
 
-        void saveState();
-        void loadState();
+        public abstract void saveState();
+        public abstract void loadState();
+
+        protected void saveType() {
+            if (holder != null) {
+                type = (Type) holder.spType.getSelectedItem();
+            }
+        }
+
+        protected void loadType() {
+            if (holder != null && type != null) {
+                List<Type> values = Arrays.asList(Type.values());
+                int pos = values.indexOf(type);
+                if (pos >= 0) holder.spType.setSelection(pos);
+            }
+        }
     }
 
-    protected class WeekState implements State {
+    protected class WeekState extends State {
+
+        protected Day day;
 
         @Override
         public void saveState() {
-            // TODO
+            // FIXME: Does this need a check for type == Week?
+            saveType();
+            if (spWeek != null) {
+                day = (Day) spWeek.getSelectedItem();
+            }
         }
 
         @Override
         public void loadState() {
-            // TODO
+            loadType();
+            if (spWeek != null && day != null) {
+                List<Day> values = Arrays.asList(Day.values());
+                int pos = values.indexOf(day);
+                if (pos >= 0) holder.spType.setSelection(pos);
+            }
         }
     }
 
-    protected class MonthState implements State {
+    protected class MonthState extends State {
+
+        protected String dayText;
 
         @Override
         public void saveState() {
-            // TODO
+            saveType();
+            if (actvMonthDay != null) {
+                dayText = actvMonthDay.getText().toString();
+            }
         }
 
         @Override
         public void loadState() {
-            // TODO
+            loadType();
+            if (actvMonthDay != null && dayText != null) {
+                actvMonthDay.setText(dayText);
+            }
         }
     }
 
-    protected class YearState implements State {
+    protected class YearState extends State {
+
+        protected int month, day;
 
         @Override
         public void saveState() {
-            // TODO
+            saveType();
+            if (dpYearDate != null) {
+                month = dpYearDate.getMonth();
+                day = dpYearDate.getDayOfMonth();
+            }
         }
 
         @Override
         public void loadState() {
-            // TODO
+            loadType();
+            if (dpYearDate != null) {
+                initDatePicker();
+            }
         }
     }
 }
