@@ -69,7 +69,7 @@ public abstract class RecurrenceSettingsComponent extends Component {
 
     @Override
     protected void onLaunch() {
-        createWhenViews();
+
     }
 
     @Override
@@ -82,6 +82,7 @@ public abstract class RecurrenceSettingsComponent extends Component {
             onClose(this);
         });
 
+        createWhenViews();
         configureSpinner();
         if (state != null) state.loadState();
     }
