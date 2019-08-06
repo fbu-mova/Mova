@@ -1,5 +1,7 @@
 package com.example.mova.model;
 
+import android.util.Log;
+
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
@@ -284,13 +286,32 @@ public class Action extends HashableParseObject {
             // Passed through to helper methods to take any closing steps necessary
             AsyncUtils.EmptyCallback finalSteps = () -> {
                 // Deactivate all old recurrences relative to most recent recurrence
-                addRecurrence(Recurrence.makeEmpty());
-                for (Action action : actions) {
-                    if (action.equals(mostRecentAction.item)) continue;
-                    action.addRecurrence(Recurrence.makeEmpty());
-                }
-
-                callback.call(actions, null);
+                AsyncUtils.executeMany(
+                    actions.size(),
+                    (i, cb) -> {
+                        Action action = actions.get(i);
+                        // Unless action is the most recent recurrence...
+                        if (action.equals(mostRecentAction.item)) {
+                            cb.call(null);
+                            return;
+                        }
+                        // Add and save an empty annotation
+                        action.addRecurrence(Recurrence.makeEmpty());
+                        action.saveInBackground((e2) -> {
+                            if (e2 != null) {
+                                Log.e("Action", "Failed to save empty recurrence on action " + action.getTask(), e2);
+                            }
+                            cb.call(e2);
+                        });
+                    },
+                    (e1) -> {
+                        // Add and save an empty annotation on the original action
+                        addRecurrence(Recurrence.makeEmpty());
+                        saveInBackground((e2) -> {
+                            callback.call(actions, e2);
+                        });
+                    }
+                );
             };
 
             // If the action is connected to a SharedAction and its recurrence is determined by that SharedAction...
