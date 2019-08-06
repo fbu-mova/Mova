@@ -177,18 +177,18 @@ public class RecurrenceSettingsComponent extends Component {
         actvMonthDay.setAdapter(monthDayAdapter);
 
         dpYearDate = new DatePicker(getActivity());
-        int year = getActivity().getResources().getIdentifier("android:id/year", null, null);
-        dpYearDate.findViewById(year).setVisibility(View.GONE);
+//        int year = getActivity().getResources().getIdentifier("android:id/year", null, null);
+//        dpYearDate.findViewById(year).setVisibility(View.GONE);
     }
 
     private void showWhenOptions() {
-        holder.tvWhen.setVisibility(View.GONE);
-        holder.flWhen.setVisibility(View.GONE);
+        holder.tvWhen.setVisibility(View.VISIBLE);
+        holder.flWhen.setVisibility(View.VISIBLE);
     }
 
     private void hideWhenOptions() {
-        holder.tvWhen.setVisibility(View.VISIBLE);
-        holder.flWhen.setVisibility(View.VISIBLE);
+        holder.tvWhen.setVisibility(View.GONE);
+        holder.flWhen.setVisibility(View.GONE);
     }
 
     public static class ViewHolder extends Component.ViewHolder {

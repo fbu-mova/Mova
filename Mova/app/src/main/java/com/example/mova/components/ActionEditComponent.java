@@ -134,7 +134,9 @@ public class ActionEditComponent extends Component {
             protected void onClick(View view) {
                 int secondToLast = recurComponents.size() - 1;
                 recurComponents.add(secondToLast, new RecurrenceSettingsComponent());
-                recurAdapter.notifyItemInserted(secondToLast);
+                rv.setAdapter(null);
+                rv.setAdapter(recurAdapter);
+                recurAdapter.notifyDataSetChanged();
             }
         });
         recurAdapter.notifyItemInserted(0);
