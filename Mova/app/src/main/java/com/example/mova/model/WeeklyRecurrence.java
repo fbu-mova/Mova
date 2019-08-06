@@ -35,4 +35,18 @@ public class WeeklyRecurrence extends Recurrence {
             default:        throw new IllegalArgumentException("Key cannot be converted to calendar date; it does not represent a day of the week.");
         }
     }
+
+    /**
+     * Determines whether a recurrence is strictly a weekly recurrence.
+     * @param recurrence The recurrence to check.
+     * @return Whether the recurrence is of this type.
+     */
+    public static boolean is(Recurrence recurrence) {
+        try {
+            int result = toCalendarDayOfWeek(recurrence.key);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }

@@ -44,4 +44,13 @@ public class YearlyRecurrence extends Recurrence {
 
         return calendar.getTime();
     }
+
+    /**
+     * Determines whether a recurrence is strictly a yearly recurrence.
+     * @param recurrence The recurrence to check.
+     * @return Whether the recurrence is of this type.
+     */
+    public static boolean is(Recurrence recurrence) {
+        return recurrence.key == Key.Year;
+    }
 }

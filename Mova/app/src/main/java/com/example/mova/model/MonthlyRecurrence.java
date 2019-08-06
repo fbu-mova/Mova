@@ -38,4 +38,13 @@ public class MonthlyRecurrence extends Recurrence {
         calendar.set(Calendar.DAY_OF_MONTH, day);
         return calendar.getTime();
     }
+
+    /**
+     * Determines whether a recurrence is strictly a monthly recurrence.
+     * @param recurrence The recurrence to check.
+     * @return Whether the recurrence is of this type.
+     */
+    public static boolean is(Recurrence recurrence) {
+        return recurrence.key == Key.Month;
+    }
 }

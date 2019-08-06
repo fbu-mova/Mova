@@ -160,15 +160,26 @@ public class Recurrence {
             throw new IllegalArgumentException("Empty recurrences have no relative next date.");
         }
         // FIXME: Are these class checks necessary given that we usually use the most generic version of Recurrence?
-        if (this.getClass() == MonthlyRecurrence.class) {
+        if (MonthlyRecurrence.is(this)) {
             return ((MonthlyRecurrence) this).nextRelativeDate(prevActionDate);
-        } else if (this.getClass() == YearlyRecurrence.class) {
+        } else if (YearlyRecurrence.is(this)) {
             return ((YearlyRecurrence) this).nextRelativeDate(prevActionDate);
-        } else if (this.getClass() == WeeklyRecurrence.class) {
+        } else if (WeeklyRecurrence.is(this)) {
             return ((WeeklyRecurrence) this).nextRelativeDate(prevActionDate);
         } else {
             throw new IllegalArgumentException("The recurrence key " + key + " does not have a relative next date.");
         }
+    }
+
+    /**
+     * Determines whether a recurrence is strictly a shared or empty recurrence.
+     * @param recurrence The recurrence to check.
+     * @return Whether the recurrence is of this type.
+     */
+    public static boolean is(Recurrence recurrence) {
+        return !WeeklyRecurrence.is(recurrence)
+            && !MonthlyRecurrence.is(recurrence)
+            && !YearlyRecurrence.is(recurrence);
     }
 
     public enum Key {
