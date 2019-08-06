@@ -354,7 +354,7 @@ public abstract class RecurrenceSettingsComponent extends Component {
             if (spWeek != null && day != null) {
                 List<Day> values = Arrays.asList(Day.values());
                 int pos = values.indexOf(day);
-                if (pos >= 0) holder.spType.setSelection(pos);
+                if (pos >= 0) spWeek.setSelection(pos);
             }
         }
     }
