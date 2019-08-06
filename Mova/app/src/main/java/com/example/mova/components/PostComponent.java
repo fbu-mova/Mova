@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,19 @@ public class PostComponent extends Component {
 
     public PostComponent(Post post, Config config) {
         this.post = post;
+        this.config = config;
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    /**
+     * Updates the component's configuration.
+     * Does not force render.
+     * @param config The new config to use.
+     */
+    public void setConfig(Config config) {
         this.config = config;
     }
 
@@ -105,7 +119,6 @@ public class PostComponent extends Component {
             } else if (!(parseObject instanceof User)) {
                 Log.e("PostComponent", "Failed to coerce author");
             } else {
-                // FIXME: Will group now be the object, or will it be parseObject?
                 User loaded = (User) parseObject;
                 holder.tvUsername.setText(loaded.getUsername());
                 // TODO: Profile picture
@@ -118,6 +131,11 @@ public class PostComponent extends Component {
 
     private void displayMedia() {
         Media media = post.getMedia();
+        if (media == null) {
+            holder.clMedia.setVisibility(View.GONE);
+            return;
+        }
+
         media.fetchIfNeededInBackground((fetchedMedia, e) -> {
             if (e != null) {
                 Log.e("PostComponent", "Failed to load media", e);
@@ -126,14 +144,19 @@ public class PostComponent extends Component {
             }
 
             Media item = (Media) fetchedMedia;
+            media.fetchContentIfNeededInBackground((fetchedContent, e1) -> {
+                // Update content with loaded instance
+                item.setContent(fetchedContent);
 
-            Component mediaComponent = (item == null) ? null : item.makeComponent();
-            if (mediaComponent == null) {
-                holder.clMedia.setVisibility(View.GONE);
-            } else {
-                holder.clMedia.setVisibility(View.VISIBLE);
-                holder.clMedia.inflateComponent(getActivity(), mediaComponent);
-            }
+                Component mediaComponent = item.makeComponent();
+                if (mediaComponent == null) {
+                    holder.clMedia.setVisibility(View.GONE);
+                } else {
+                    // FIXME: PostComponent does not display despite inflating properly
+                    holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+                    holder.clMedia.setVisibility(View.VISIBLE);
+                }
+            });
         });
     }
 
@@ -149,7 +172,6 @@ public class PostComponent extends Component {
                 } else if (!(parseObject instanceof Group)) {
                     Log.e("PostComponent", "Failed to coerce group");
                 } else {
-                    // FIXME: Will group now be the object, or will it be parseObject?
                     Group loaded = (Group) parseObject;
                     holder.tvGroupName.setText(loaded.getName());
                     // TODO: Group image
@@ -226,33 +248,42 @@ public class PostComponent extends Component {
             });
 
             holder.ivSave.setOnClickListener((view) -> {
-                ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
-                query.whereEqualTo(Post.KEY_ID, post.getObjectId());
-                query.findInBackground((posts, e) -> {
-                    if (e != null) {
-                        Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
-                        Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
-                    } else if (posts.size() == 0) {
+                isSavedToScrapbook((saved) -> {
+                    if (!saved) {
                         User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
                             Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
-                            // TODO: Update icon
+                            toggleIcon(holder.ivSave, true);
                         });
                     } else {
                         User.getCurrentUser().relScrapbook.remove(post, () -> {
                             Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
-                            // TODO: Update icon
+                            toggleIcon(holder.ivSave, false);
                         });
                     }
                 });
             });
+
+            isSavedToScrapbook((saved) -> toggleIcon(holder.ivSave, saved));
         } else {
             hideButtons();
         }
     }
 
+    private void isSavedToScrapbook(AsyncUtils.ItemCallback<Boolean> callback) {
+        ParseQuery<Post> query = User.getCurrentUser().relScrapbook.getQuery();
+        query.whereEqualTo(Post.KEY_ID, post.getObjectId());
+        query.findInBackground((posts, e) -> {
+            if (e != null) {
+                Log.e("PostComponent", "Failed to load scrapbook entries for toggle", e);
+                Toast.makeText(getActivity(), "Failed to save to scrapbook", Toast.LENGTH_LONG).show();
+            }
+            callback.call(posts.size() > 0);
+        });
+    }
+
     private void configurePostClick() {
-        if (config.allowDetailsClick) {
-            holder.card.setOnClickListener((view) -> {
+        holder.card.setOnClickListener((view) -> {
+            if (config.allowDetailsClick) {
                 PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
                 FragmentManager manager = getActivity().getSupportFragmentManager();
                 FragmentTransaction ft = manager.beginTransaction();
@@ -260,8 +291,18 @@ public class PostComponent extends Component {
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.addToBackStack(null);
                 ft.commit();
-            });
-        }
+            }
+            config.onClick.call(post);
+        });
+    }
+
+    private void toggleIcon(ImageView ivIcon, boolean active) {
+        if (ivIcon == null) return;
+        // TODO: Perhaps choose more colorful tints based on additional context.
+        Resources res = getActivity().getResources();
+        int id = (active) ? R.color.buttonActive : R.color.buttonInactive;
+        int tintColor = res.getColor(id);
+        ivIcon.setColorFilter(tintColor);
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -311,8 +352,10 @@ public class PostComponent extends Component {
         public String subheader = null;
         public boolean showButtons = true;
         public boolean allowDetailsClick = true;
+
         public AsyncUtils.ItemCallback<Post> onReply = (post) -> {};
         public AsyncUtils.ItemCallback<Post> onRepost = (post) -> {};
+        public AsyncUtils.ItemCallback<Post> onClick = (post) -> {};
 
         public Config() { }
 
