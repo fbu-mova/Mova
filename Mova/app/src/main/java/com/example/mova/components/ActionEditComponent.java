@@ -1,5 +1,7 @@
 package com.example.mova.components;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +12,19 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.ComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
 import com.example.mova.utils.GoalUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +38,9 @@ public class ActionEditComponent extends Component {
     private ActionEditViewHolder viewHolder;
 
     private ComponentManager componentManager;
+
+    private List<Component> recurComponents;
+    private ComponentAdapter recurAdapter;
 
     public ActionEditComponent(Action action, ComponentManager componentManager) {
         super();
@@ -89,14 +100,46 @@ public class ActionEditComponent extends Component {
             }
         });
 
-        viewHolder.ivRepeatButton.setOnClickListener((v) -> {
-            // TODO
-        });
+        viewHolder.ivRepeatButton.setOnClickListener((v) -> openRecurrenceSettings());
     }
 
     @Override
     protected void onDestroy() {
 
+    }
+
+    private void openRecurrenceSettings() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.layout_recycler_view, null);
+        RecyclerView rv = view.findViewById(R.id.rv);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+                .setTitle("Repeat this action...")
+                .setView(view)
+                .setPositiveButton("Save", (DialogInterface dialog, int which) -> {
+                    // TODO
+                })
+                .setNegativeButton("Cancel", (DialogInterface dialog, int which) -> {
+                    // TODO
+                });
+
+        recurComponents = new ArrayList<>();
+        recurAdapter = new ComponentAdapter(getActivity(), recurComponents);
+
+        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rv.setAdapter(recurAdapter);
+
+        recurComponents.add(new SimpleListAddComponent() {
+            @Override
+            protected void onClick(View view) {
+                int secondToLast = recurComponents.size() - 1;
+                recurComponents.add(secondToLast, new RecurrenceSettingsComponent());
+                recurAdapter.notifyItemInserted(secondToLast);
+            }
+        });
+        recurAdapter.notifyItemInserted(0);
+
+        builder.show();
     }
 
     public static class ActionEditViewHolder extends Component.ViewHolder {

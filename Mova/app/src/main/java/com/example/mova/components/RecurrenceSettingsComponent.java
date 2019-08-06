@@ -76,6 +76,7 @@ public class RecurrenceSettingsComponent extends Component {
 
         createWhenViews();
         configureSpinner();
+        hideWhenOptions();
     }
 
     @Override
