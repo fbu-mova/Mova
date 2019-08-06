@@ -187,12 +187,12 @@ public class Action extends HashableParseObject {
     }
 
     public Action setRecurrence(Recurrence recurrence) {
-        put(KEY_RECURRENCE, recurrence.toString());
+        put(KEY_RECURRENCE, recurrence.toExpression());
         return this;
     }
 
     public Action setRecurrence(List<Recurrence> recurrence) {
-        put(KEY_RECURRENCE, Recurrence.toString(recurrence));
+        put(KEY_RECURRENCE, Recurrence.toExpression(recurrence));
         return this;
     }
 

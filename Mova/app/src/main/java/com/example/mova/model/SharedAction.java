@@ -2,7 +2,6 @@ package com.example.mova.model;
 
 import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONObject;
@@ -93,7 +92,7 @@ public class SharedAction extends HashableParseObject {
     }
 
     public SharedAction setRecurrence(Recurrence recurrence) {
-        put(KEY_RECURRENCE, recurrence.toString());
+        put(KEY_RECURRENCE, recurrence.toExpression());
         if (getRecurrenceId() == null) {
             setRecurrenceId(getObjectId());
         }
@@ -101,7 +100,7 @@ public class SharedAction extends HashableParseObject {
     }
 
     public SharedAction setRecurrence(List<Recurrence> recurrence) {
-        put(KEY_RECURRENCE, Recurrence.toString(recurrence));
+        put(KEY_RECURRENCE, Recurrence.toExpression(recurrence));
         if (getRecurrenceId() == null) {
             setRecurrenceId(getObjectId());
         }

@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -113,17 +112,33 @@ public class Recurrence {
         }
     }
 
-    protected static String padInt(int num) {
-        String str = Integer.toString(num);
-        if (str.length() == 1) str = "0" + str;
-        return str;
+    public static String add(String existingRecurrence, Recurrence recurrence) {
+        String result = "";
+        if (existingRecurrence == null) existingRecurrence = "";
+
+        result += existingRecurrence;
+        if (!existingRecurrence.equals("")) result += ",";
+        result += recurrence.toExpression();
+
+        return result;
     }
 
-    public static String toString(List<Recurrence> recurrences) {
+    public String toExpression() {
+        // FIXME: Are these class checks necessary given that we usually use the most generic version of Recurrence?
+        if (this.getClass() == MonthlyRecurrence.class) {
+            return ((MonthlyRecurrence) this).toExpression();
+        } else if (this.getClass() == YearlyRecurrence.class) {
+            return ((YearlyRecurrence) this).toExpression();
+        } else {
+            return key.toExpression();
+        }
+    }
+
+    public static String toExpression(List<Recurrence> recurrences) {
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < recurrences.size(); i++) {
-            builder.append(recurrences.get(i).toString());
+            builder.append(recurrences.get(i).toExpression());
             if (i < recurrences.size() - 1) {
                 builder.append(",");
             }
@@ -132,27 +147,10 @@ public class Recurrence {
         return builder.toString();
     }
 
-    public static String add(String existingRecurrence, Recurrence recurrence) {
-        String result = "";
-        if (existingRecurrence == null) existingRecurrence = "";
-
-        result += existingRecurrence;
-        if (!existingRecurrence.equals("")) result += ",";
-        result += recurrence.toString();
-
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        // FIXME: Are these class checks necessary given that we usually use the most generic version of Recurrence?
-        if (this.getClass() == MonthlyRecurrence.class) {
-            return ((MonthlyRecurrence) this).toString();
-        } else if (this.getClass() == YearlyRecurrence.class) {
-            return ((YearlyRecurrence) this).toString();
-        } else {
-            return key.toString();
-        }
+    protected static String padInt(int num) {
+        String str = Integer.toString(num);
+        if (str.length() == 1) str = "0" + str;
+        return str;
     }
 
     @Override
@@ -201,7 +199,7 @@ public class Recurrence {
         Shared,
         Empty;
 
-        public String toString() {
+        public String toExpression() {
             switch (this) {
                 case Monday:    return "M";
                 case Tuesday:   return "T";

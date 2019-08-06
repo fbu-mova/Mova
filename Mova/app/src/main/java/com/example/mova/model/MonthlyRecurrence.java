@@ -14,9 +14,8 @@ public class MonthlyRecurrence extends Recurrence {
         this.day = day;
     }
 
-    @Override
-    public String toString() {
-        return key.toString() + padInt(day);
+    public String toExpression() {
+        return key.toExpression() + padInt(day);
     }
 
     @Override

@@ -131,20 +131,41 @@ public class ActionEditComponent extends Component {
         recurComponents.add(new SimpleListAddComponent() {
             @Override
             protected void onClick(View view) {
-                int secondToLast = recurComponents.size() - 1;
-                recurComponents.add(secondToLast, new RecurrenceSettingsComponent() {
-                    @Override
-                    protected void onClose(RecurrenceSettingsComponent component) {
-                        recurComponents.remove(component);
-                        recurAdapter.notifyWithFlush(rv);
-                    }
-                });
-                recurAdapter.notifyWithFlush(rv);
+                addRecurComponent(rv);
             }
         });
         recurAdapter.notifyItemInserted(0);
 
+        List<Recurrence> recurrence = action.getRecurrence();
+        for (Recurrence r : recurrence) {
+            addRecurComponent(rv, r);
+        }
+
         builder.show();
+    }
+
+    private void addRecurComponent(RecyclerView rv) {
+        int secondToLast = recurComponents.size() - 1;
+        recurComponents.add(secondToLast, new RecurrenceSettingsComponent() {
+            @Override
+            protected void onClose(RecurrenceSettingsComponent component) {
+                recurComponents.remove(component);
+                recurAdapter.notifyWithFlush(rv);
+            }
+        });
+        recurAdapter.notifyWithFlush(rv);
+    }
+
+    private void addRecurComponent(RecyclerView rv, Recurrence recurrence) {
+        int secondToLast = recurComponents.size() - 1;
+        recurComponents.add(secondToLast, new RecurrenceSettingsComponent(recurrence) {
+            @Override
+            protected void onClose(RecurrenceSettingsComponent component) {
+                recurComponents.remove(component);
+                recurAdapter.notifyWithFlush(rv);
+            }
+        });
+        recurAdapter.notifyWithFlush(rv);
     }
 
     private void updateRecurrences() {
