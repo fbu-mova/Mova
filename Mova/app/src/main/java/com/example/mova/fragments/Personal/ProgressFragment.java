@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
-import com.example.mova.model.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -24,6 +23,7 @@ import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Journal;
+import com.example.mova.model.Mood;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
@@ -172,9 +172,9 @@ public class ProgressFragment extends Fragment {
             cal.add(Calendar.DATE, -length + 1);
             Date d2 = cal.getTime();
             graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),new SimpleDateFormat("MM/dd")));
+            graph.getViewport().setXAxisBoundsManual(true);
             graph.getViewport().setMinX(Long.valueOf(d2.getTime()).doubleValue());
             graph.getViewport().setMaxX(Long.valueOf(d1.getTime()).doubleValue());
-            graph.getViewport().setXAxisBoundsManual(true);
             graph.getGridLabelRenderer().setHumanRounding(false);
             graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
             graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
@@ -249,6 +249,7 @@ public class ProgressFragment extends Fragment {
            Goal goal = mGoals.get(i);
             goalUtils.getDataForGraph(goal, User.getCurrentUser(), length , (series) -> {
                 series.setTitle(goal.getTitle());
+                series.setSpacing(10);
                 if(goal.getColor() != null){
                     series.setColor(Color.parseColor(goal.getColor()));
                 }
