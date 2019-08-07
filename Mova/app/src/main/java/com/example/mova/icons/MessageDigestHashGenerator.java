@@ -5,11 +5,11 @@ import java.security.MessageDigest;
 public class MessageDigestHashGenerator implements Identicon.HashGeneratorInterface {
     private MessageDigest messageDigest;
 
-    public MessageDigestHashGenerator(String algorithim) {
+    public MessageDigestHashGenerator(String algorithm) {
         try {
-            messageDigest = MessageDigest.getInstance(algorithim);
-        }catch(Exception e) {
-            System.err.println("Error setting algorithim: " + algorithim);
+            messageDigest = MessageDigest.getInstance(algorithm);
+        } catch(Exception e) {
+            System.err.println("Error setting algorithim: " + algorithm);
         }
     }
 

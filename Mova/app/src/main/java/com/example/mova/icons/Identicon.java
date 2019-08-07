@@ -27,24 +27,17 @@ public class Identicon {
         return generate(username, width, height, hashGenerator);
     }
 
-    public static Bitmap generate(String username, HashGeneratorInterface hashGenerator) {
-        return generate(username, DEFAULT_WIDTH, DEFAULT_HEIGHT, hashGenerator);
+    public static Bitmap generate(String name, HashGeneratorInterface hashGenerator) {
+        return generate(name, DEFAULT_WIDTH, DEFAULT_HEIGHT, hashGenerator);
     }
 
-    private static Bitmap generate(String username, int width, int height, HashGeneratorInterface hashGenerator) {
-
-        byte[] hash = hashGenerator.generate(username);
+    private static Bitmap generate(String name, int width, int height, HashGeneratorInterface hashGenerator) {
+        byte[] hash = hashGenerator.generate(name);
 
         Bitmap identicon = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
-        // get byte values as unsigned ints
-        int r = hash[0] & 255;
-        int g = hash[1] & 255;
-        int b = hash[2] & 255;
-
-//        int background = Color.parseColor("#f0f0f0");
-        int foreground = Color.argb(255, r, g, b);
-        int background = lighten(foreground, 0.5f);
+        int foreground = color(hash);
+        int background = lighten(foreground, 0.2f);
 
         for (int x = 0; x < width; x++) {
 
@@ -70,6 +63,20 @@ public class Identicon {
         canvas.drawBitmap(identicon, 1, 1, null);
 
         return bmpWithBorder;
+    }
+
+    public static int color(String name, HashGeneratorInterface hashGenerator) {
+        byte[] hash = hashGenerator.generate(name);
+        return color(hash);
+    }
+
+    private static int color(byte[] hash) {
+        // get byte values as unsigned ints
+        int r = hash[0] & 255;
+        int g = hash[1] & 255;
+        int b = hash[2] & 255;
+
+        return Color.argb(255, r, g, b);
     }
 
     // FIXME: Test this!
