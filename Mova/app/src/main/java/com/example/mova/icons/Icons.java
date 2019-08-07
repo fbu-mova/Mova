@@ -1,9 +1,10 @@
 package com.example.mova.icons;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
-import com.example.mova.activities.MainActivity;
+import com.example.mova.R;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
@@ -11,14 +12,19 @@ import com.example.mova.utils.AsyncUtils;
 
 public class Icons {
     private static Identicon.HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("MD5");
+    private static Context context;
     private static NounProjectClient client;
 
     public static void setContext(Context context) {
+        Icons.context = context;
         client = new NounProjectClient(context);
     }
 
     public static Bitmap identicon(String name) {
+        Resources res = context.getResources();
+        int size = (int) res.getDimension(R.dimen.profileImage);
         Bitmap identicon = Identicon.generate(name, hashGenerator);
+        identicon = Bitmap.createScaledBitmap(identicon, size, size, false);
         return identicon;
     }
 
