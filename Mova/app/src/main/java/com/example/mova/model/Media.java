@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
-import com.example.mova.components.MediaImageComponent;
+import com.example.mova.components.ImageComponent;
 import com.example.mova.components.MediaTextComponent;
 import com.example.mova.components.PostComponent;
 import com.example.mova.utils.AsyncUtils;
@@ -198,7 +198,7 @@ public class Media extends HashableParseObject {
             case Text:
                 return new MediaTextComponent(this);
             case Image:
-                return new MediaImageComponent(getContentImage());
+                return new ImageComponent(getContentImage());
             case Post:
                 return new PostComponent(getContentPost());
             case Goal:

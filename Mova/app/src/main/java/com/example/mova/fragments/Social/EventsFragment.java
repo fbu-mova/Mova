@@ -1,6 +1,7 @@
 package com.example.mova.fragments.Social;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -160,7 +161,8 @@ public class EventsFragment extends Fragment {
 
         //Toast.makeText(getContext(), userLocation.toString() , Toast.LENGTH_SHORT).show();
 
-        EdgeDecorator decorator = new EdgeDecorator(5);
+        Resources resources = getResources();
+        EdgeDecorator decorator = new EdgeDecorator((int) resources.getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal);
 
         rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvNearYou.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
