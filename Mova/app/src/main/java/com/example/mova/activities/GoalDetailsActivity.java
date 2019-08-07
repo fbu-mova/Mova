@@ -66,7 +66,10 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         isPersonal = goal.getIsPersonal();
 
         tvGoalName.setText(goal.getTitle());
-//        tvFromGroup.setText(goal.getGroupName()); // FIXME -- null object reference error
+
+        if (goal.getGroupName() == "")  tvFromGroup.setVisibility(View.GONE);
+        else                            tvFromGroup.setText(goal.getGroupName()); // FIXME -- null object reference error
+
         tvDescription.setText(goal.getDescription());
 
         ivShare.setOnClickListener(new View.OnClickListener() {
