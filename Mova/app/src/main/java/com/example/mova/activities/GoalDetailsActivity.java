@@ -1,6 +1,7 @@
 package com.example.mova.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.CreateActionComponent;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.InvolvedSharedActionComponent;
 import com.example.mova.components.UninvolvedSharedActionComponent;
@@ -31,6 +34,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +62,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
     @BindView(R.id.ivShare)         protected ImageView ivShare;
     @BindView(R.id.ivSave)          protected ImageView ivSave;
+    @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
 
     // recyclerview - case personal
     private List<Action> actions;
@@ -79,7 +84,9 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         isPersonal = goal.getIsPersonal();
         tvGoalName.setText(goal.getTitle());
 
-        goal.getGroupName((str) -> {
+        goal.getGroupName(() -> {
+            tvFromGroup.setVisibility(View.GONE);
+        }, (str) -> {
             if (str == "") tvFromGroup.setVisibility(View.GONE);
             else           tvFromGroup.setText(str); // FIXME -- null object reference error
 
@@ -117,6 +124,102 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             int progress = (int) (portionDone * PROGRESS_MAX);
             goalpb.setProgress(progress);
         });
+
+        if (isPersonal) { // FIXME -- currently social goals can't add actions (getting author User object also a callback itself...)
+            inflateAddActionComponent();
+        }
+
+        setUpRecyclerView();
+
+    }
+
+    private void inflateAddActionComponent() {
+
+        clAddAction.inflateComponent(GoalDetailsActivity.this, new CreateActionComponent(new GoalComposeActivity.HandleCreateAction() {
+            @Override
+            public void call(Action action) {
+                SharedAction sharedAction = new SharedAction()
+                        .setTask(action.getTask())
+                        .setIsPriority(action.getIsPriority())
+                        .setUsersDone(0)
+                        .setGoal(goal);
+
+                // save sharedAction
+                sharedAction.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            sharedAction.relChildActions.add(action);
+                            sharedAction.relUsersInvolved.add(User.getCurrentUser());
+
+                            // save sharedAction again
+                            sharedAction.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        // action needs to save parentGoal and parentSharedAction
+                                        action.setParentGoal(goal);
+                                        action.setParentSharedAction(sharedAction);
+                                        action.saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                if (e == null) {
+
+                                                    // need to update and save goal
+                                                    goal.relSharedActions.add(sharedAction);
+                                                    goal.relActions.add(action);
+
+                                                    goal.saveInBackground(new SaveCallback() {
+                                                        @Override
+                                                        public void done(ParseException e) {
+                                                            if (e == null) {
+                                                                Log.d(TAG, "create action success");
+
+                                                                // add action (or sharedAction, depending on casework...) to recyclerview
+                                                                updateRecyclerView(action, sharedAction);
+                                                            }
+                                                            else {
+                                                                Log.e(TAG, "create action failed");
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                                else {
+                                                    Log.e(TAG, "penultimate create action failed", e);
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        Log.e(TAG, "create action save 2 of shared action failed", e);
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            Log.e(TAG, "create action save 1 of shared action failed", e);
+                        }
+                    }
+                });
+            }
+        }));
+
+    }
+
+    private void updateRecyclerView(Action action, SharedAction sharedAction) {
+
+        if (isPersonal) {
+            actions.add(action);
+            actionsAdapter.notifyItemInserted(actions.size() - 1);
+        }
+        else if (!isPersonal) { // here, can only add if creator of social goal
+            sharedActions.add(new SharedAction.Data(sharedAction, false));
+            sharedActionsAdapter.notifyItemInserted(sharedActions.size() - 1);
+        }
+
+    }
+
+    private void setUpRecyclerView() {
 
         // recyclerview -- casework like in GoalCardComp
         if (isPersonal) {
