@@ -96,10 +96,6 @@ public class Group extends HashableParseObject {
         return this;
     }
 
-    public void suggestedIcons(AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> callback) {
-        Icons.nounIcons(getName(), callback);
-    }
-
     public static class Query extends ParseQuery<Group> {
 
         public Query() {

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,10 +14,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.components.ImageComponent;
 import com.example.mova.fragments.SocialFragment;
+import com.example.mova.icons.Icons;
+import com.example.mova.icons.NounProjectClient;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
@@ -27,12 +36,14 @@ import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GroupComposeActivity extends AppCompatActivity {
+public class GroupComposeActivity extends DelegatedResultActivity {
 
     private User user;
     private Group group;
@@ -40,7 +51,7 @@ public class GroupComposeActivity extends AppCompatActivity {
     private List<Tag> listtags;
 
     @BindView(R.id.ibGroupImage)       protected ImageButton ibGroupImage;
-    @BindView(R.id.cvIcon)             protected ImageView cvIcon;
+    @BindView(R.id.cvIcon)             protected CardView cvIcon;
     @BindView(R.id.ivIcon)             protected ImageView ivIcon;
     @BindView(R.id.etGroupName)        protected EditText etGroupName;
     @BindView(R.id.etGroupDescription) protected EditText etGroupDescription;
@@ -179,6 +190,57 @@ public class GroupComposeActivity extends AppCompatActivity {
                 updateTags(tagName, true);
                 etAddtag.setText("");
             }
+        });
+
+        configureIconClick();
+    }
+
+    private void configureIconClick() {
+        cvIcon.setOnClickListener((v) -> {
+            View view = getLayoutInflater().inflate(R.layout.layout_recycler_view, null);
+            RecyclerView rv = view.findViewById(R.id.rv);
+
+            List<NounProjectClient.Icon> icons = new ArrayList<>();
+            DataComponentAdapter<NounProjectClient.Icon> adapter = new DataComponentAdapter<NounProjectClient.Icon>(this, icons) {
+                @Override
+                protected Component makeComponent(NounProjectClient.Icon item, Component.ViewHolder holder) {
+                    return new ImageComponent(Icons.highestResImage(item));
+                }
+
+                @Override
+                protected Component.Inflater makeInflater(NounProjectClient.Icon item) {
+                    return new ImageComponent.Inflater();
+                }
+            };
+
+            rv.setLayoutManager(new GridLayoutManager(this, 4));
+            rv.setAdapter(adapter);
+            // TODO: Add edges
+
+            String term = etGroupName.getText().toString().toLowerCase();
+            if (term.equals("")) {
+                Toast.makeText(this, "Give your group a name first!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Icons.nounIcons(term, 20, (suggestedIcons, e) -> {
+                runOnUiThread(() -> {
+                    if (e != null) {
+                        Log.e("GroupComposeActivity", "Failed to load suggested group icons", e);
+                        Toast.makeText(this, "Failed to load suggested group icons", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    Collections.addAll(icons, suggestedIcons);
+                    adapter.notifyDataSetChanged();
+                });
+            });
+
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setTitle("Choose an icon")
+                    .setView(view)
+                    .setNegativeButton("Cancel", (dialog, which) -> {})
+                    .show();
         });
     }
 
