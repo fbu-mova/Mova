@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,34 +34,21 @@ import butterknife.ButterKnife;
 
 public class GroupComposeActivity extends AppCompatActivity {
 
-    User user;
-    Group group;
+    private User user;
+    private Group group;
     private List<String> tags;
-    List<Tag> listtags;
+    private List<Tag> listtags;
 
-    @BindView(R.id.ibGroupImage)
-    ImageButton ibGroupImage;
-
-    @BindView(R.id.etGroupName)
-    EditText etGroupName;
-
-    @BindView(R.id.etGroupDescription)
-    EditText etGroupDesctiption;
-
-    @BindView(R.id.etAddTag2)
-    EditText etAddtag;
-
-    @BindView(R.id.btnAddTag2)
-    Button btnAddTag;
-
-    @BindView(R.id.tvTags2)
-    TextView tvTags;
-
-    @BindView(R.id.btnSave)
-    Button btnSave;
-
-    @BindView(R.id.btnDeleteGroup)
-    Button btnDeleteGroup;
+    @BindView(R.id.ibGroupImage)       protected ImageButton ibGroupImage;
+    @BindView(R.id.cvIcon)             protected ImageView cvIcon;
+    @BindView(R.id.ivIcon)             protected ImageView ivIcon;
+    @BindView(R.id.etGroupName)        protected EditText etGroupName;
+    @BindView(R.id.etGroupDescription) protected EditText etGroupDescription;
+    @BindView(R.id.etAddTag2)          protected EditText etAddtag;
+    @BindView(R.id.btnAddTag2)         protected Button btnAddTag;
+    @BindView(R.id.tvTags2)            protected TextView tvTags;
+    @BindView(R.id.btnSave)            protected Button btnSave;
+    @BindView(R.id.btnDeleteGroup)     protected Button btnDeleteGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +65,9 @@ public class GroupComposeActivity extends AppCompatActivity {
 
         btnDeleteGroup.setVisibility(View.GONE);
 
-        if(intent.getParcelableExtra("group") == null){
+        if (intent.getParcelableExtra("group") == null) {
             group = new Group();
-        }else{
+        } else {
             group = intent.getParcelableExtra("group");
 
             //Show the delete button
@@ -114,7 +102,7 @@ public class GroupComposeActivity extends AppCompatActivity {
 
             //Fill in the image
             ParseFile file = group.getGroupPic();
-            if(file != null){
+            if (file != null) {
                 String imageUrl = file.getUrl();
                 Glide.with(GroupComposeActivity.this)
                         .load(imageUrl)
@@ -123,12 +111,12 @@ public class GroupComposeActivity extends AppCompatActivity {
 
             //Fill in the text feilds
             etGroupName.setText(group.getName());
-            etGroupDesctiption.setText(group.getDescription());
+            etGroupDescription.setText(group.getDescription());
 
 
             //Fill in the tag feild
             GroupUtils.getTags(group, (oldTagList) -> {
-                for(Tag tag: oldTagList){
+                for (Tag tag: oldTagList) {
                     updateTags(tag.getName(), true);
                 }
             });
@@ -141,7 +129,7 @@ public class GroupComposeActivity extends AppCompatActivity {
                 group.setName(etGroupName.getText().toString());
 
                 //Set description
-                group.setDescription(etGroupDesctiption.getText().toString());
+                group.setDescription(etGroupDescription.getText().toString());
 
                 //Change profile pic
 

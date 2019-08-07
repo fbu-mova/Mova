@@ -25,7 +25,7 @@ public class Icons {
         identicon = Bitmap.createScaledBitmap(identicon, size, size, false);
         return identicon;
     }
-    
+
     public static Bitmap identicon(User user, int size) {
         return identicon(user.getUsername(), size);
     }
