@@ -3,6 +3,7 @@ package com.example.mova.activities;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.mova.NounProjectClient;
 import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.fragments.SocialFragment;
@@ -40,6 +42,11 @@ public class MainActivity extends DelegatedResultActivity {
         currUser.setACL(acl);
 
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
+
+        NounProjectClient client = new NounProjectClient(this);
+        client.getIcons("baking", (icons, e) -> {
+            Log.d("MainActivity", (icons == null) ? "icons null" : "icons " + icons.length);
+        });
     }
 
     private void initFragments() {

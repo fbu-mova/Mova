@@ -26,19 +26,19 @@ import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer;
 import se.akerfeldt.okhttp.signpost.SigningInterceptor;
 
 public class NounProjectClient {
-    protected static final String API_ROOT = "http://api.thenounproject.com";
+    protected static final String API_ROOT = "https://api.thenounproject.com";
 
     protected OkHttpClient client;
     protected Context context;
 
     public NounProjectClient(Context context) {
         this.context = context;
-        client = new OkHttpClient();
 
         // Authenticate client
         OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(getApiKey(), getApiSecret());
-        consumer.setTokenWithSecret(getApiKey(), getApiSecret());
-        client.interceptors().add(new SigningInterceptor(consumer));
+        client = new OkHttpClient.Builder()
+            .addInterceptor(new SigningInterceptor(consumer))
+            .build();
     }
 
     public void getIcons(String term, AsyncUtils.TwoItemCallback<Icon[], Throwable> cb) {
@@ -153,6 +153,14 @@ public class NounProjectClient {
         return context.getResources().getString(R.string.nounProjectSecret);
     }
 
+    protected static String tryGetString(JSONObject obj, String name) {
+        try {
+            return obj.getString(name);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
     public static class GetIconsConfig {
         public Boolean limitToPublicDomain;
         public Integer limit, offset;
@@ -181,8 +189,8 @@ public class NounProjectClient {
         // Does not support tags
 
         public Icon(JSONObject obj) throws JSONException {
-            attribution = obj.getString("attribution");
-            attributionPreviewUrl = obj.getString("attribution_preview_url");
+            attribution = tryGetString(obj, "attribution");
+            attributionPreviewUrl = tryGetString(obj, "attribution_preview_url");
 
 //            JSONArray collections = obj.getJSONArray("collections");
 //            this.collections = new Collection[collections.length()];
@@ -200,14 +208,14 @@ public class NounProjectClient {
             }
             this.dateUploaded = toSet;
 
-            iconUrl = obj.getString("icon_url");
+            iconUrl = tryGetString(obj, "icon_url");
             id = obj.getInt("id");
             isActive = obj.getInt("is_active") == 1;
-            licenseDescription = obj.getString("license_description");
+            licenseDescription = tryGetString(obj, "license_description");
             permalink = API_ROOT + obj.getString("permalink");
-            previewUrl = obj.getString("preview_url");
-            previewUrl42 = obj.getString("preview_url_42");
-            previewUrl84 = obj.getString("preview_url_84");
+            previewUrl = tryGetString(obj, "preview_url");
+            previewUrl42 = tryGetString(obj, "preview_url_42");
+            previewUrl84 = tryGetString(obj, "preview_url_84");
             term = obj.getString("term");
             termId = obj.getInt("term_id");
             termSlug = obj.getString("term_slug");
