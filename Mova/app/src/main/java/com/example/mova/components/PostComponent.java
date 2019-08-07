@@ -15,7 +15,10 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.icons.Icons;
+import com.example.mova.icons.Identicon;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -121,10 +124,12 @@ public class PostComponent extends Component {
             } else {
                 User loaded = (User) parseObject;
                 holder.tvUsername.setText(loaded.getUsername());
-                // TODO: Profile picture
                 holder.ivProfileImage.setOnClickListener((view) -> {
                     // TODO: Go to profile page
                 });
+                Glide.with(getActivity())
+                     .load(Icons.identicon(loaded))
+                     .into(holder.ivProfileImage);
             }
         });
     }

@@ -19,6 +19,7 @@
     <dimen name="inlineIcon">16dp</dimen>
     <dimen name="buttonIcon">22dp</dimen>
     <dimen name="profileImage">32dp</dimen>
+    <dimen name="iconPadding">4dp</dimen>
 
     <dimen name="thumbnailWidth">160dp</dimen>
     <dimen name="thumbnailImageHeight">100dp</dimen>

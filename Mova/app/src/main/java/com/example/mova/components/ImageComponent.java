@@ -7,12 +7,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseFile;
 
@@ -21,24 +24,56 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MediaImageComponent extends Component {
+public class ImageComponent extends Component {
 
+    private String url;
     private Bitmap bmp;
     private ParseFile parseFile;
+    private float borderRadius;
 
     private ViewHolder holder;
     private ComponentManager manager;
 
-    public MediaImageComponent(Bitmap bmp) {
+    private AsyncUtils.EmptyCallback onClick;
+
+    public ImageComponent(String url) {
+        this(url, 0);
+    }
+
+    public ImageComponent(String url, float borderRadius) {
+        this.url = url;
+        this.borderRadius = borderRadius;
+    }
+
+    public ImageComponent(Bitmap bmp) {
+        this(bmp, 0);
+    }
+
+    public ImageComponent(Bitmap bmp, float borderRadius) {
         this.bmp = bmp;
+        this.borderRadius = borderRadius;
     }
 
-    public MediaImageComponent(File imageFile) {
+    public ImageComponent(File imageFile) {
+        this(imageFile, 0);
+    }
+
+    public ImageComponent(File imageFile, float borderRadius) {
         this.bmp = ImageUtils.fileToBitmap(imageFile);
+        this.borderRadius = borderRadius;
     }
 
-    public MediaImageComponent(ParseFile parseFile) {
+    public ImageComponent(ParseFile parseFile) {
+        this(parseFile, 0);
+    }
+
+    public ImageComponent(ParseFile parseFile, float borderRadius) {
         this.parseFile = parseFile;
+        this.borderRadius = borderRadius;
+    }
+
+    public void setOnClick(AsyncUtils.EmptyCallback onClick) {
+        this.onClick = onClick;
     }
 
     @Override
@@ -71,10 +106,18 @@ public class MediaImageComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
-        if (parseFile == null) {
+        this.holder.card.setRadius(borderRadius);
+        this.holder.card.setOnClickListener((v) -> onClick.call());
+        loadImage();
+    }
+
+    protected void loadImage() {
+        if (bmp != null) {
             Glide.with(getActivity()).load(bmp).into(this.holder.iv);
-        } else {
+        } else if (parseFile != null) {
             Glide.with(getActivity()).load(parseFile.getUrl()).into(this.holder.iv);
+        } else {
+            Glide.with(getActivity()).load(url).into(this.holder.iv);
         }
     }
 
@@ -85,7 +128,8 @@ public class MediaImageComponent extends Component {
 
     public static class ViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.iv) public ImageView iv;
+        @BindView(R.id.card) public CardView card;
+        @BindView(R.id.iv)   public ImageView iv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
