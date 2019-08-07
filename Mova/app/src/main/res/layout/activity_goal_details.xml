@@ -29,13 +29,14 @@
 
         <TextView
             android:id="@+id/tvName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="Goal Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintEnd_toStartOf="@+id/ivShare"
             app:layout_constraintStart_toEndOf="@+id/ivPhoto"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,24 +64,26 @@
 
         <ImageView
             android:id="@+id/ivSave"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/buttonIcon"
+            android:layout_height="@dimen/buttonIcon"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/ivShare"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivShare"
             app:layout_constraintTop_toTopOf="@+id/ivShare"
             app:srcCompat="@color/colorPrimaryDark" />
 
         <ImageView
             android:id="@+id/ivShare"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/buttonIcon"
+            android:layout_height="@dimen/buttonIcon"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="2dp"
             app:layout_constraintBottom_toBottomOf="@+id/tvName"
+            app:layout_constraintEnd_toStartOf="@+id/ivSave"
             app:layout_constraintStart_toEndOf="@+id/tvName"
             app:layout_constraintTop_toTopOf="@+id/tvName"
             app:srcCompat="@color/colorAccent" />
@@ -92,32 +95,43 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        app:barHeight="4dp"
+        app:goalIndicatorHeight="16dp"
+        app:goalIndicatorWidth="4dp"
+        app:goalNotReachedColor="@color/blueMid"
+        app:goalReachedColor="@color/purpleDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
-        app:goalReachedColor="@color/colorAccent"
-        app:goalNotReachedColor="@color/colorPrimaryDark"
-        app:unfilledSectionColor="@color/colorAccent"
-        app:barHeight="4dp"
-        app:goalIndicatorHeight="16dp"
-        app:goalIndicatorWidth="4dp" />
+        app:unfilledSectionColor="@color/purpleLight" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvActions"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/clAddAction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/goalpb" />
+
+    <com.example.mova.component.ComponentLayout
+        android:id="@+id/clAddAction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </com.example.mova.component.ComponentLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

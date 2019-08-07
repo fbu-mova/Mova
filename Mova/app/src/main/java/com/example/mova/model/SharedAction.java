@@ -1,6 +1,9 @@
 package com.example.mova.model;
 
+import com.example.mova.utils.AsyncUtils;
+import com.parse.GetCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 @ParseClassName("SharedAction")
@@ -41,7 +44,7 @@ public class SharedAction extends HashableParseObject {
 
     //Users done
 
-    public int getUsersDone(){
+    public int getUsersDone() {
         return getInt(KEY_USERS_DONE);
     }
 

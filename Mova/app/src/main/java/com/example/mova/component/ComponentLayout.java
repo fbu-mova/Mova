@@ -34,6 +34,7 @@ public class ComponentLayout extends FrameLayout {
      * @param component The component to inflate.
      */
     public void inflateComponent(DelegatedResultActivity activity, Component component) {
+        this.clear(); // in case of RecyclerViews, discards old layout
         Component.Inflater inflater = component.makeInflater();
         Component.ViewHolder holder = inflater.inflate(activity, this, true);
         ViewUtils.setMargins(holder.getView(), marginLeft, marginTop, marginRight, marginBottom);

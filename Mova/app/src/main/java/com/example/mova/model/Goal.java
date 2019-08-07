@@ -4,9 +4,11 @@ import android.util.Log;
 
 import com.example.mova.utils.AsyncUtils;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -121,16 +123,32 @@ public class Goal extends HashableParseObject {
 
     //fromGroup
     public Group getGroup(){
+
         return (Group) getParseObject(KEY_FROM_GROUP);
     }
 
-    public String getGroupName() {
+    public void getGroupName(AsyncUtils.EmptyCallback empty, AsyncUtils.ItemCallback<String> callback) {
         Group group = getGroup();
         if (group == null) {
-            return "";
+            empty.call();
+            return;
+        }
+        group.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                String name;
+                if (e == null && object != null) {
+                    name = ((Group) object).getName();
+
+                }
+                else {
+                    Log.e("Goal model", "getGroupName failed or group null", e);
+                    name = "";
+                }
+                callback.call(name);
         }
 
-        return group.getName();
+        });
     }
 
 
