@@ -101,7 +101,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             }
             else {
                 // save social goal as a personal goal
-                GoalUtils.saveSocialGoal(goal);
+                GoalUtils.saveSocialGoal(goal, this);
             }
         });
 
@@ -168,7 +168,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(goal, (objects) -> {
-                GoalCardComponent.updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, rvActions);
+                GoalCardComponent.updateInvolvedSharedAdapter(objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
         else if (!isPersonal && !isUserInvolved) {
@@ -195,7 +195,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(goal, (objects) -> {
-                GoalCardComponent.updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, rvActions);
+                GoalCardComponent.updateUninvolvedSharedAdapter(goal, objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
 

@@ -183,7 +183,7 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                updateInvolvedSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
             });
         }
         else if (!isPersonal && !isUserInvolved) {
@@ -208,7 +208,7 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                updateUninvolvedSharedAdapter(item, objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
             });
         }
     }
@@ -218,7 +218,7 @@ public class GoalCardComponent extends Component {
 
     }
 
-    public static void updateSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
+    public static void updateInvolvedSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
         // fixme -- similar to updateAdapter in GoalFragments; merge with that or the generic-typed updateAdapter?
 
         /* first need to find SharedAction.Data isUserDone boolean:
@@ -253,6 +253,18 @@ public class GoalCardComponent extends Component {
                         }
                     });
         }, (e) -> {
+            rvActions.scrollToPosition(0);
+        });
+    }
+
+    public static void updateUninvolvedSharedAdapter(Goal goal, List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
+        // don't need to check user completion / connection. only need to display order of SharedActions given priority
+
+        GoalUtils.loadGoalSharedActions(goal, (sharedActionsList) -> {
+            for (SharedAction sharedAction : sharedActionsList) {
+                sharedActions.add(0, new SharedAction.Data(sharedAction, false));
+                sharedActionsAdapter.notifyItemInserted(0);
+            }
             rvActions.scrollToPosition(0);
         });
     }

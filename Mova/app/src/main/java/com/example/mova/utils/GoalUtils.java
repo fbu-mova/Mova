@@ -1,5 +1,6 @@
 package com.example.mova.utils;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -193,7 +194,19 @@ public class GoalUtils {
 
     public static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
         action.setIsDone(!action.getIsDone());
-        action.saveInBackground((e) -> callback.call(e));
+        action.saveInBackground((e) -> {
+            if (e == null) {
+                // update corresponding SharedAction's usersDone field
+                SharedAction sharedAction = action.getParentSharedAction();
+                if (action.getIsDone())     sharedAction.setUsersDone(sharedAction.getUsersDone() + 1);
+                else                        sharedAction.setUsersDone(sharedAction.getUsersDone() - 1);
+
+                sharedAction.saveEventually((error) -> callback.call(error));
+            }
+            else {
+                Log.e(TAG, "error in toggleDone first action save", e);
+            }
+        });
     }
 
     public static void submitGoal(String goalName, String goalDescription, List<Action> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
@@ -343,7 +356,7 @@ public class GoalUtils {
     }
 
 
-    public static void saveSocialGoal(Goal goal) {
+    public static void saveSocialGoal(Goal goal, Context context) {
         /* TO save a social goal as a personal goal:
         1. add the social goal to the relation of the User's goals
         2. for each shared action in the goal, create a new action pointing to that shared action
@@ -401,6 +414,7 @@ public class GoalUtils {
                 saveAction(actionsList, goal, sharedActions, false, (item) -> {
                     // add User to usersInvolved relation of goal + save goal
                     goal.relUsersInvolved.add(User.getCurrentUser(), (user) -> {});
+                    Toast.makeText(context, "Saved social goal successfully!", Toast.LENGTH_SHORT).show();
                 });
             });
 

@@ -89,6 +89,7 @@ public class GoalThumbnailComponent extends Component {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
                 intent.putExtra("goal", goal);
+                intent.putExtra("isUserInvolved", userIsInvolved);
 
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 

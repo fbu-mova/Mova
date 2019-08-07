@@ -68,10 +68,15 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
             updateNumDone(complete, this.total);
         });
 
-        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) ->
-                onCheckedChanged(buttonView, isChecked));
+        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (allowCheckedEvent) {
+                onCheckedChanged(buttonView, isChecked);
+            }
+        });
         this.holder.cbItem.setTextColor(uncheckedColor);
+        this.allowCheckedEvent = false;
         this.holder.cbItem.setChecked(getDone.call(item));
+        this.allowCheckedEvent = true;
     }
 
     private void updateNumDone(int complete, int total) {
@@ -101,7 +106,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
         else {
             complete--;
         }
-        updateNumDone(complete, total);
+        updateNumDone(complete, total); // updates UI without calling database
     }
 
     public static class InvolvedViewHolder extends Component.ViewHolder {
