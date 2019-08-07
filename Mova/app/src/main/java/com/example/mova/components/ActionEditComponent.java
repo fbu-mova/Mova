@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -90,6 +91,13 @@ public class ActionEditComponent extends Component {
             }
         });
 
+        viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                componentManager.swap("ActionViewComponent");
+            }
+        });
+
         // todo -- implement icons (need to update in action model)
 
         viewHolder.recurring.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +145,7 @@ public class ActionEditComponent extends Component {
         @BindView(R.id.ivIcon2)         protected ImageView reminder;
         @BindView(R.id.ivIcon3)         protected ImageView priority;
         @BindView(R.id.ivSave)          protected ImageView ivSave;
+        @BindView(R.id.parentLayout)    protected LinearLayout parentLayout;
 
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);
