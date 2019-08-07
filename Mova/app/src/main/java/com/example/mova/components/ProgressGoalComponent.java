@@ -10,14 +10,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Goal;
+import com.example.mova.model.User;
+import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 
 public class ProgressGoalComponent extends Component {
 
@@ -75,8 +80,17 @@ public class ProgressGoalComponent extends Component {
 //        }
 
         if(goal.getColor() != null){
-            viewHolder.ivGoalColor.setColorFilter(Color.parseColor(goal.getColor()));
+            int color = Color.parseColor(goal.getColor());
+            viewHolder.ivGoalColor.setColorFilter(color);
+            viewHolder.goalProgressBar.setGoalNotReachedColor(color);
+            viewHolder.tvGoalTitle.setTextColor(color);
         }
+
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
+            int progress = (int) (portionDone * PROGRESS_MAX);
+            viewHolder.goalProgressBar.setProgress(progress);
+        });
+
         viewHolder.tvGoalTitle.setText(goal.getTitle());
     }
 
@@ -89,6 +103,7 @@ public class ProgressGoalComponent extends Component {
 
         @BindView(R.id.tvGoalTitle) protected TextView tvGoalTitle;
         @BindView(R.id.ivGoalColor) protected ImageView ivGoalColor;
+        @BindView(R.id.goalProgressBar2) protected GoalProgressBar goalProgressBar;
 
         public ProgressGoalViewHolder(@NonNull View itemView) {
             super(itemView);
