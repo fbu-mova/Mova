@@ -280,7 +280,9 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                 runOnUiThread(() -> {
                     if (e != null) {
                         Log.e("GroupComposeActivity", "Failed to load suggested group icons", e);
-                        Toast.makeText(this, "Failed to load suggested group icons", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Couldn't find any icons for \"" + term + "\"", Toast.LENGTH_LONG).show();
+                        // TODO: Create friendlier UI for this
+                        // TODO: Differentiate between network errors and no icons found
                         return;
                     }
 
