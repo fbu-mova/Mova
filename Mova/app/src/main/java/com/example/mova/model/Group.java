@@ -1,5 +1,8 @@
 package com.example.mova.model;
 
+import com.example.mova.icons.Icons;
+import com.example.mova.icons.NounProjectClient;
+import com.example.mova.utils.AsyncUtils;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -13,6 +16,7 @@ public class Group extends HashableParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_GROUP_PIC = "groupPic";
     public static final String KEY_MEMBERS = "members";
+    public static final String KEY_ICON_ID = "nounIconId";
 
     //Relations
     public static final String KEY_GOALS = "goals";
@@ -22,15 +26,12 @@ public class Group extends HashableParseObject {
     public static final String KEY_POSTS = "posts";
     public static final String KEY_TAGS = "tags";
 
-
     public final RelationFrame<Goal> relGoals = new RelationFrame<>(this, KEY_GOALS);
     public final RelationFrame<User> relAdmins = new RelationFrame<>(this, KEY_ADMIN);
     public final RelationFrame<User> relUsers = new RelationFrame<>(this, KEY_USERS);
     public final RelationFrame<Event> relEvents = new RelationFrame<>(this, KEY_EVENTS);
     public final RelationFrame<Post> relPosts = new RelationFrame<>(this, KEY_POSTS);
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
-
-
 
     //CreatedAt
     public Date getCreatedAt() {
@@ -82,6 +83,21 @@ public class Group extends HashableParseObject {
         memberCount += increase;
         put(KEY_MEMBERS, memberCount);
         return this;
+    }
+
+    // Icon
+    public void getNounIcon(AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> callback) {
+        int id = getInt(KEY_ICON_ID);
+        Icons.nounIcon(id, callback);
+    }
+
+    public Group setNounIcon(NounProjectClient.Icon icon) {
+        put(KEY_ICON_ID, icon.id);
+        return this;
+    }
+
+    public void suggestedIcons(AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> callback) {
+        Icons.nounIcons(getName(), callback);
     }
 
     public static class Query extends ParseQuery<Group> {
