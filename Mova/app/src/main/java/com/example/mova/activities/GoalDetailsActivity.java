@@ -22,7 +22,9 @@ import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -63,12 +65,15 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         ButterKnife.bind(this);
 
         goal = getIntent().getParcelableExtra("goal");
-        isPersonal = goal.getIsPersonal();
 
+        isPersonal = goal.getIsPersonal();
         tvGoalName.setText(goal.getTitle());
 
-        if (goal.getGroupName() == "")  tvFromGroup.setVisibility(View.GONE);
-        else                            tvFromGroup.setText(goal.getGroupName()); // FIXME -- null object reference error
+        goal.getGroupName((str) -> {
+            if (str == "") tvFromGroup.setVisibility(View.GONE);
+            else           tvFromGroup.setText(str); // FIXME -- null object reference error
+
+        });
 
         tvDescription.setText(goal.getDescription());
 
@@ -80,7 +85,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         });
 
         ivSave.setOnClickListener((v) -> {
-            if (goal.getIsPersonal()) {
+            if (isPersonal) {
                 // fixme -- what if not in same group as this goal? can still see in first place? ( ~this case)
                 Toast.makeText(GoalDetailsActivity.this, "You can't save someone else's personal goal!", Toast.LENGTH_LONG).show();
             }
@@ -121,7 +126,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         rvActions.setLayoutManager(new LinearLayoutManager(this));
         rvActions.setAdapter(actionsAdapter);
 
-        loadAllActions();
+        loadAllActions(); // fixme : mentioned in method declaration, but needs to address casework
     }
 
     private void confirmShare() {
@@ -130,17 +135,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         ConfirmShareGoalDialog confirmShareGoalDialog = ConfirmShareGoalDialog.newInstance(goal);
         confirmShareGoalDialog.show(fm, "showingConfirmShareGoalDialog");
 
-    }
-
-    // FIXME -- going back + refresh not happening issues
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-//        Intent intent = new Intent(this, getCallingActivity().getClass());
-//        intent.putExtra();
-//        setResult(RESULT_OK, intent);
-//        finish();
     }
 
     private void loadAllActions() { // fixme : should be same as GoalCardComp, visible even if not involved

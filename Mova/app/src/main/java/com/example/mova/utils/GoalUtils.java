@@ -458,22 +458,21 @@ public class GoalUtils {
                 if (e == null) {
                     Log.d(TAG, "action query success w/ size " + objects.size());
 
-//                    List<Action> actions = new ArrayList<>();
-//                    int counter = 0;
-//
-//                    for (Action object : objects) {
-//                        // fixme -- order might be flipped, should be consistent tho
-////                               assumes objects goes newest to oldest per orderByDescending
-//                        if (object.getIsPriority()) {
-//                            actions.add(counter, object);
-//                            counter++;
-//                        }
-//                        else {
-//                            actions.add(object);
-//                        }
-//                    }
-//                    callback.call(actions);
-                    callback.call(objects);
+                    List<Action> actions = new ArrayList<>();
+                    int counter = 0;
+
+                    for (Action object : objects) {
+                        // fixme -- order might be flipped, should be consistent tho
+//                               assumes objects goes newest to oldest per orderByDescending
+                        if (object.getIsPriority()) {
+                            actions.add(counter, object);
+                            counter++;
+                        }
+                        else {
+                            actions.add(object);
+                        }
+                    }
+                    callback.call(actions);
                 }
                 else {
                     Log.e(TAG, "query for actions failed", e);

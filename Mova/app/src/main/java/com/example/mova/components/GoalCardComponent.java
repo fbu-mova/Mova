@@ -110,7 +110,7 @@ public class GoalCardComponent extends Component {
         checkViewHolderClass(holder, GoalCardViewHolder.class);
         viewHolder = (GoalCardViewHolder) holder;
 
-            Goal item = (Goal) goal;
+        Goal item = (Goal) goal;
         viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

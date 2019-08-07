@@ -98,10 +98,11 @@ public class GoalThumbnailComponent extends Component {
 
         viewHolder.tvName.setText(goal.getTitle());
 
-        String groupName = goal.getGroupName();
-        int groupIcon = (groupName == "") ? View.INVISIBLE : View.VISIBLE;
-        viewHolder.tvFromGroup.setText(goal.getGroupName());
-        viewHolder.cvFromGroupIcon.setVisibility(groupIcon);
+        goal.getGroupName((str) -> {
+            int groupIcon = (str == "") ? View.INVISIBLE : View.VISIBLE;
+            viewHolder.tvFromGroup.setText(str);
+            viewHolder.cvFromGroupIcon.setVisibility(groupIcon);
+        });
 
         // how to get context for binding glide images? -- made it a field
 
