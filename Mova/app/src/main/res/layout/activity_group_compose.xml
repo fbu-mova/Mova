@@ -32,6 +32,7 @@
                 android:id="@+id/ivIcon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="@dimen/iconPadding"
                 app:srcCompat="@color/blueDark" />
         </androidx.cardview.widget.CardView>
 

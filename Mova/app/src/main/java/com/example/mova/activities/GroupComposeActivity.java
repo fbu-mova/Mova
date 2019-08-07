@@ -200,11 +200,25 @@ public class GroupComposeActivity extends DelegatedResultActivity {
             View view = getLayoutInflater().inflate(R.layout.layout_recycler_view, null);
             RecyclerView rv = view.findViewById(R.id.rv);
 
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setTitle("Choose an icon")
+                    .setView(view)
+                    .setNegativeButton("Cancel", (dialog, which) -> {})
+                    .create();
+
             List<NounProjectClient.Icon> icons = new ArrayList<>();
             DataComponentAdapter<NounProjectClient.Icon> adapter = new DataComponentAdapter<NounProjectClient.Icon>(this, icons) {
                 @Override
                 protected Component makeComponent(NounProjectClient.Icon item, Component.ViewHolder holder) {
-                    return new ImageComponent(Icons.highestResImage(item));
+                    ImageComponent component = new ImageComponent(Icons.highestResImage(item));
+                    component.setOnClick(() -> {
+                        alertDialog.dismiss();
+                        group.setNounIcon(item);
+                        Glide.with(GroupComposeActivity.this)
+                             .load(Icons.lowestResImage(item))
+                             .into(ivIcon);
+                    });
+                    return component;
                 }
 
                 @Override
@@ -236,11 +250,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                 });
             });
 
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle("Choose an icon")
-                    .setView(view)
-                    .setNegativeButton("Cancel", (dialog, which) -> {})
-                    .show();
+            alertDialog.show();
         });
     }
 

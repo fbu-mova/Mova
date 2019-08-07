@@ -15,6 +15,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseFile;
 
@@ -32,6 +33,8 @@ public class ImageComponent extends Component {
 
     private ViewHolder holder;
     private ComponentManager manager;
+
+    private AsyncUtils.EmptyCallback onClick;
 
     public ImageComponent(String url) {
         this(url, 0);
@@ -69,6 +72,10 @@ public class ImageComponent extends Component {
         this.borderRadius = borderRadius;
     }
 
+    public void setOnClick(AsyncUtils.EmptyCallback onClick) {
+        this.onClick = onClick;
+    }
+
     @Override
     public ViewHolder getViewHolder() {
         return holder;
@@ -100,6 +107,7 @@ public class ImageComponent extends Component {
         this.holder = (ViewHolder) holder;
 
         this.holder.card.setRadius(borderRadius);
+        this.holder.card.setOnClickListener((v) -> onClick.call());
         loadImage();
     }
 
