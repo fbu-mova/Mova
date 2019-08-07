@@ -75,7 +75,8 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     }
 
     private void updateNumDone(int complete, int total) {
-        this.holder.tvNumDone.setText(complete + "/" + this.total + " done!");
+        this.holder.tvNumDone.setVisibility(View.VISIBLE);
+        this.holder.tvNumDone.setText(complete + "/" + total + " done!");
     }
 
     @Override
