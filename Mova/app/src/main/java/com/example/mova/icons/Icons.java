@@ -20,16 +20,20 @@ public class Icons {
         client = new NounProjectClient(context);
     }
 
-    public static Bitmap identicon(String name) {
-        Resources res = context.getResources();
-        int size = (int) res.getDimension(R.dimen.profileImage);
+    public static Bitmap identicon(String name, int size) {
         Bitmap identicon = Identicon.generate(name, hashGenerator);
         identicon = Bitmap.createScaledBitmap(identicon, size, size, false);
         return identicon;
     }
+    
+    public static Bitmap identicon(User user, int size) {
+        return identicon(user.getUsername(), size);
+    }
 
     public static Bitmap identicon(User user) {
-        return identicon(user.getUsername());
+        Resources res = context.getResources();
+        int size = (int) res.getDimension(R.dimen.profileImage);
+        return identicon(user, size);
     }
 
     public static int color(String name) {
