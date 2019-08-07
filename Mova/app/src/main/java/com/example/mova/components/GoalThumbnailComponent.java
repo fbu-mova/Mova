@@ -107,8 +107,8 @@ public class GoalThumbnailComponent extends Component {
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
         Glide.with(getActivity())
                 .load(url)
-                .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
-                .placeholder(R.color.colorAccent)
+//                .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
+//                .placeholder(R.color.colorAccent) // FIXME: Migrated to older version of Glide
                 .into(viewHolder.ivPhoto);
 
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {

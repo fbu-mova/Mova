@@ -87,7 +87,8 @@ public class Icons {
                 return;
             }
 
-            List<NounProjectClient.Icon> svgOnly = Arrays.asList(icons);
+            List<NounProjectClient.Icon> svgOnly = new ArrayList<>();
+            Collections.addAll(svgOnly, icons);
             for (NounProjectClient.Icon icon : icons) {
                 if (icon.iconUrl == null) {
                     svgOnly.remove(icon);
@@ -100,7 +101,7 @@ public class Icons {
                 return;
             }
 
-            List<NounProjectClient.Icon> limited = svgOnly.subList(0, origLimit);
+            List<NounProjectClient.Icon> limited = svgOnly.subList(0, (origLimit <= svgOnly.size()) ? origLimit : svgOnly.size());
             NounProjectClient.Icon[] result = new NounProjectClient.Icon[limited.size()];
             cb.call(limited.toArray(result), null);
         });

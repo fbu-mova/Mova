@@ -168,8 +168,8 @@ public class GroupDetailsFragment extends Fragment {
             String imageUrl = file.getUrl();
             Glide.with(getContext())
                     .load(imageUrl)
-                    .placeholder(R.color.purpleLight)
-                    .error(R.color.purpleLight)
+//                    .placeholder(R.color.purpleLight) // FIXME: Migrated to older version of Glide
+//                    .error(R.color.purpleLight)
                     .into(ivGroupDetailsPic);
         }
 

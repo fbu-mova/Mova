@@ -64,9 +64,9 @@ public class EditProfileDialog extends DialogFragment {
             String imageUrl = file.getUrl();
             Glide.with(getContext())
                     .load(imageUrl)
-                    .transform(new CenterCrop(), new RoundedCorners(150))
-                    .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
-                    .placeholder(R.color.colorAccent)
+//                    .transform(new CenterCrop(), new RoundedCorners(150)) // FIXME: Migrated to older version of Glide
+//                    .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
+//                    .placeholder(R.color.colorAccent)
                     .into(ivEditProfilePic);
         }
 

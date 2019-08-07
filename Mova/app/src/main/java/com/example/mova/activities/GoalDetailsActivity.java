@@ -90,7 +90,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
         Glide.with(this)
                 .load(url)
-                .error(R.color.colorPrimaryDark)
+//                .error(R.color.colorPrimaryDark) // FIXME: Migrated to older version of Glide
                 .into(ivPhoto);
 
         // update GoalProgressBar

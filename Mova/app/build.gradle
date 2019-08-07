@@ -53,10 +53,10 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.12'
 
     // Image loading
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'jp.wasabeef:glide-transformations:3.3.0'
-    implementation 'com.github.2coffees1team:GlideToVectorYou:v1.0'
+    implementation 'com.github.2coffees1team:GlideToVectorYou:v1.2.0'
 
     // Design libraries
     implementation "com.android.support:appcompat-v7:28.0.0"
