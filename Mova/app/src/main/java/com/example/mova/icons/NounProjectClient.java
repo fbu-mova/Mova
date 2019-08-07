@@ -78,24 +78,22 @@ public class NounProjectClient {
                     throw e; // FIXME: Should likely not both call and throw
                 }
 
+                Icon[] icons = null;
+                Exception e = null;
                 try {
                     String responseData = response.body().string();
                     JSONObject json = new JSONObject(responseData);
 
                     JSONArray arr = json.getJSONArray("icons");
-                    Icon[] icons = new Icon[arr.length()];
+                    icons = new Icon[arr.length()];
                     for (int i = 0; i < icons.length; i++) {
-                        try {
-                            icons[i] = new Icon(arr.getJSONObject(i));
-                        } catch (JSONException e) {
-                            Log.e("NounProjectClient", "Failed to parse response to get icons for term " + term + " at item " + i, e);
-                            cb.call(icons, e);
-                        }
+                        icons[i] = new Icon(arr.getJSONObject(i));
                     }
-                    cb.call(icons, null);
-                } catch (Exception e) {
+                } catch (Exception e1) {
+                    e = e1;
                     Log.e("NounProjectClient", "Failed to parse response to get icons for term " + term, e);
-                    cb.call(null, e);
+                } finally {
+                    cb.call(icons, e);
                 }
             }
         });

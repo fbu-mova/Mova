@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
+
 import com.example.mova.R;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
@@ -20,43 +22,53 @@ public class Icons {
         client = new NounProjectClient(context);
     }
 
-    public static Bitmap identicon(String name, int size) {
+    public static Bitmap identicon(@NonNull String name, int size) {
         Bitmap identicon = Identicon.generate(name, hashGenerator);
         identicon = Bitmap.createScaledBitmap(identicon, size, size, false);
         return identicon;
     }
 
-    public static Bitmap identicon(User user, int size) {
+    public static Bitmap identicon(@NonNull User user, int size) {
         return identicon(user.getUsername(), size);
     }
 
-    public static Bitmap identicon(User user) {
+    public static Bitmap identicon(@NonNull User user) {
         Resources res = context.getResources();
         int size = (int) res.getDimension(R.dimen.profileImage);
         return identicon(user, size);
     }
 
-    public static int color(String name) {
+    public static int color(@NonNull String name) {
         return Identicon.color(name, hashGenerator);
     }
 
-    public static int color(User user) {
+    public static int color(@NonNull User user) {
         return color(user.getUsername());
     }
 
-    public static int color(Group group) {
+    public static int color(@NonNull Group group) {
         return color(group.getName());
     }
 
-    public static int color(Tag tag) {
+    public static int color(@NonNull Tag tag) {
         return color(tag.getName());
     }
 
-    public static void nounIcons(String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
+    public static void nounIcons(@NonNull String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
         client.getIcons(term, cb);
     }
 
-    public static void nounIcon(String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> cb) {
+    public static void nounIcons(@NonNull String term, int limit, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
+        NounProjectClient.GetIconsConfig config = new NounProjectClient.GetIconsConfig();
+        config.limit = limit;
+        client.getIcons(term, config, cb);
+    }
+
+    public static void nounIcons(@NonNull String term, NounProjectClient.GetIconsConfig config, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
+        client.getIcons(term, config, cb);
+    }
+
+    public static void nounIcon(@NonNull String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> cb) {
         client.getIcon(term, cb);
     }
 
@@ -64,16 +76,16 @@ public class Icons {
         client.getIcon(id, cb);
     }
 
-    public static String lowestResImage(NounProjectClient.Icon icon) {
+    public static String lowestResImage(@NonNull NounProjectClient.Icon icon) {
         if (icon.previewUrl42 != null) return icon.previewUrl42;
         if (icon.previewUrl84 != null) return icon.previewUrl84;
         if (icon.previewUrl != null)   return icon.previewUrl;
-        if (icon.iconUrl != null)      return icon.iconUrl;
+//        if (icon.iconUrl != null)      return icon.iconUrl;
         return null;
     }
 
-    public static String highestResImage(NounProjectClient.Icon icon) {
-        if (icon.iconUrl != null)      return icon.iconUrl;
+    public static String highestResImage(@NonNull NounProjectClient.Icon icon) {
+//        if (icon.iconUrl != null)      return icon.iconUrl;
         if (icon.previewUrl != null)   return icon.previewUrl;
         if (icon.previewUrl84 != null) return icon.previewUrl84;
         if (icon.previewUrl42 != null) return icon.previewUrl42;
