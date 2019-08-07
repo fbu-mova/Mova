@@ -127,8 +127,12 @@ public class Goal extends HashableParseObject {
         return (Group) getParseObject(KEY_FROM_GROUP);
     }
 
-    public void getGroupName(AsyncUtils.ItemCallback<String> callback) {
+    public void getGroupName(AsyncUtils.EmptyCallback empty, AsyncUtils.ItemCallback<String> callback) {
         Group group = getGroup();
+        if (group == null) {
+            empty.call();
+            return;
+        }
         group.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
