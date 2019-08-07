@@ -63,4 +63,20 @@ public class Icons {
     public static void nounIcon(int id, AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> cb) {
         client.getIcon(id, cb);
     }
+
+    public static String lowestResImage(NounProjectClient.Icon icon) {
+        if (icon.previewUrl42 != null) return icon.previewUrl42;
+        if (icon.previewUrl84 != null) return icon.previewUrl84;
+        if (icon.previewUrl != null)   return icon.previewUrl;
+        if (icon.iconUrl != null)      return icon.iconUrl;
+        return null;
+    }
+
+    public static String highestResImage(NounProjectClient.Icon icon) {
+        if (icon.iconUrl != null)      return icon.iconUrl;
+        if (icon.previewUrl != null)   return icon.previewUrl;
+        if (icon.previewUrl84 != null) return icon.previewUrl84;
+        if (icon.previewUrl42 != null) return icon.previewUrl42;
+        return null;
+    }
 }
