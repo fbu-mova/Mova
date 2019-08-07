@@ -42,11 +42,6 @@ public class MainActivity extends DelegatedResultActivity {
         currUser.setACL(acl);
 
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
-
-        NounProjectClient client = new NounProjectClient(this);
-        client.getIcons("baking", (icons, e) -> {
-            Log.d("MainActivity", (icons == null) ? "icons null" : "icons " + icons.length);
-        });
     }
 
     private void initFragments() {
