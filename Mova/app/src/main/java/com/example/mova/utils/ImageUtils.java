@@ -345,5 +345,4 @@ public class ImageUtils {
         // Return result
         return rotatedBitmap;
     }
-
 }

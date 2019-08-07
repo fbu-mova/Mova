@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
+import com.example.mova.utils.ColorUtils;
+
 /**
  * Creates symmetrical, Github-style identifying images deterministically using hashes.
  * @source I've modified the original class, but all credit otherwise due here: https://github.com/davidhampgonsalves/Contact-Identicons/tree/master/src/com/davidhampgonsalves/identicon
@@ -37,7 +39,7 @@ public class Identicon {
         Bitmap identicon = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
         int foreground = color(hash);
-        int background = lighten(foreground, 0.2f);
+        int background = ColorUtils.lighten(foreground, 0.2f);
 
         for (int x = 0; x < width; x++) {
 
@@ -77,14 +79,5 @@ public class Identicon {
         int b = hash[2] & 255;
 
         return Color.argb(255, r, g, b);
-    }
-
-    // FIXME: Test this!
-    /** @source https://stackoverflow.com/questions/4928772/using-color-and-color-darker-in-android */
-    private static int lighten(int color, float quantity) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-        hsv[2] = 1.0f - quantity * (1.0f - hsv[2]);
-        return Color.HSVToColor(hsv);
     }
 }

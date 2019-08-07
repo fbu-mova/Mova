@@ -3,6 +3,12 @@ package com.example.mova.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,12 +19,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomViewTarget;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
@@ -29,6 +42,7 @@ import com.example.mova.icons.NounProjectClient;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.TextUtils;
 import com.parse.ParseException;
@@ -197,6 +211,12 @@ public class GroupComposeActivity extends DelegatedResultActivity {
 
     private void configureIconClick() {
         cvIcon.setOnClickListener((v) -> {
+            String term = etGroupName.getText().toString().toLowerCase();
+            if (term.equals("")) {
+                Toast.makeText(this, "Give your group a name first!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             View view = getLayoutInflater().inflate(R.layout.layout_recycler_view, null);
             RecyclerView rv = view.findViewById(R.id.rv);
 
@@ -214,9 +234,29 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                     component.setOnClick(() -> {
                         alertDialog.dismiss();
                         group.setNounIcon(item);
-                        Glide.with(GroupComposeActivity.this)
-                             .load(Icons.lowestResImage(item))
-                             .into(ivIcon);
+//                        Glide.with(GroupComposeActivity.this)
+//                             .load(Icons.lowestResImage(item))
+//                             .into(new CustomViewTarget<ImageView, Drawable>(ivIcon) {
+//                                 @Override
+//                                 protected void onResourceCleared(@Nullable Drawable placeholder) {
+//                                    ivIcon.setImageDrawable(placeholder);
+//                                 }
+//
+//                                 @Override
+//                                 public void onLoadFailed(@Nullable Drawable errorDrawable) {
+//
+//                                 }
+//
+//                                 @Override
+//                                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+//                                     Bitmap bmp = ColorUtils.changeColorFromBlack(resource, Icons.color(term));
+//                                     BitmapDrawable bmpDrawable = new BitmapDrawable(getResources(), bmp);
+//                                     TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] { resource, bmpDrawable });
+//                                     ivIcon.setImageDrawable(finalDrawable);
+//                                     finalDrawable.startTransition(200);
+//                                 }
+//                             });
+//                        cvIcon.setBackgroundColor(Icons.backgroundColor(term));
                     });
                     return component;
                 }
@@ -229,13 +269,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
 
             rv.setLayoutManager(new GridLayoutManager(this, 4));
             rv.setAdapter(adapter);
-            // TODO: Add edges
-
-            String term = etGroupName.getText().toString().toLowerCase();
-            if (term.equals("")) {
-                Toast.makeText(this, "Give your group a name first!", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            // TODO: Add padding
 
             Icons.nounIcons(term, 20, (suggestedIcons, e) -> {
                 runOnUiThread(() -> {

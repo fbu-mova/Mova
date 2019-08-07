@@ -11,6 +11,7 @@ import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.ColorUtils;
 
 public class Icons {
     private static Identicon.HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("MD5");
@@ -42,16 +43,9 @@ public class Icons {
         return Identicon.color(name, hashGenerator);
     }
 
-    public static int color(@NonNull User user) {
-        return color(user.getUsername());
-    }
-
-    public static int color(@NonNull Group group) {
-        return color(group.getName());
-    }
-
-    public static int color(@NonNull Tag tag) {
-        return color(tag.getName());
+    public static int backgroundColor(@NonNull String name) {
+        int color = color(name);
+        return ColorUtils.lighten(color, 0.2f);
     }
 
     public static void nounIcons(@NonNull String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
