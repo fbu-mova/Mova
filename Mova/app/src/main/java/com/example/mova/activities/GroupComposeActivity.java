@@ -1,5 +1,6 @@
 package com.example.mova.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,10 +47,14 @@ import com.example.mova.model.User;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GroupUtils;
 import com.example.mova.utils.TextUtils;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYouListener;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -234,29 +240,28 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                     component.setOnClick(() -> {
                         alertDialog.dismiss();
                         group.setNounIcon(item);
-//                        Glide.with(GroupComposeActivity.this)
-//                             .load(Icons.lowestResImage(item))
-//                             .into(new CustomViewTarget<ImageView, Drawable>(ivIcon) {
-//                                 @Override
-//                                 protected void onResourceCleared(@Nullable Drawable placeholder) {
-//                                    ivIcon.setImageDrawable(placeholder);
-//                                 }
-//
-//                                 @Override
-//                                 public void onLoadFailed(@Nullable Drawable errorDrawable) {
-//
-//                                 }
-//
-//                                 @Override
-//                                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-//                                     Bitmap bmp = ColorUtils.changeColorFromBlack(resource, Icons.color(term));
-//                                     BitmapDrawable bmpDrawable = new BitmapDrawable(getResources(), bmp);
-//                                     TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] { resource, bmpDrawable });
-//                                     ivIcon.setImageDrawable(finalDrawable);
-//                                     finalDrawable.startTransition(200);
-//                                 }
-//                             });
-//                        cvIcon.setBackgroundColor(Icons.backgroundColor(term));
+                        try {
+                            URL svgUrl = new URL(item.iconUrl);
+                            Uri uri = new Uri.Builder().appendPath(svgUrl.toURI().toString()).build();
+                            GlideToVectorYou
+                                    .init()
+                                    .with(GroupComposeActivity.this)
+                                    .withListener(new GlideToVectorYouListener() {
+                                        @Override
+                                        public void onLoadFailed() {
+
+                                        }
+
+                                        @Override
+                                        public void onResourceReady() {
+                                            ivIcon.setColorFilter(Icons.color(term));
+                                            cvIcon.setBackgroundColor(Icons.backgroundColor(term));
+                                        }
+                                    })
+                                    .load(uri, ivIcon);
+                        } catch (Exception e) {
+                            Log.e("GroupComposeActivity", "Failed to load SVG with Glide", e);
+                        }
                     });
                     return component;
                 }
@@ -271,7 +276,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
             rv.setAdapter(adapter);
             // TODO: Add padding
 
-            Icons.nounIcons(term, 20, (suggestedIcons, e) -> {
+            Icons.svgNounIcons(term, 20, (suggestedIcons, e) -> {
                 runOnUiThread(() -> {
                     if (e != null) {
                         Log.e("GroupComposeActivity", "Failed to load suggested group icons", e);

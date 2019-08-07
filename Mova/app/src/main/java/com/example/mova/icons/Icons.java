@@ -13,6 +13,11 @@ import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class Icons {
     private static Identicon.HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("MD5");
     private static Context context;
@@ -60,6 +65,45 @@ public class Icons {
 
     public static void nounIcons(@NonNull String term, NounProjectClient.GetIconsConfig config, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
         client.getIcons(term, config, cb);
+    }
+
+    public static void svgNounIcons(@NonNull String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
+        svgNounIcons(term, new NounProjectClient.GetIconsConfig(), cb);
+    }
+
+    public static void svgNounIcons(@NonNull String term, int limit, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
+        NounProjectClient.GetIconsConfig config = new NounProjectClient.GetIconsConfig();
+        config.limit = limit;
+        svgNounIcons(term, config, cb);
+    }
+
+    public static void svgNounIcons(@NonNull String term, NounProjectClient.GetIconsConfig config, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {
+        Integer origLimit = config.limit;
+        config.limit = 100;
+
+        client.getIcons(term, config, (icons, e) -> {
+            if (e != null) {
+                cb.call(icons, e);
+                return;
+            }
+
+            List<NounProjectClient.Icon> svgOnly = Arrays.asList(icons);
+            for (NounProjectClient.Icon icon : icons) {
+                if (icon.iconUrl == null) {
+                    svgOnly.remove(icon);
+                }
+            }
+
+            if (origLimit == null) {
+                NounProjectClient.Icon[] result = new NounProjectClient.Icon[svgOnly.size()];
+                cb.call(svgOnly.toArray(result), null);
+                return;
+            }
+
+            List<NounProjectClient.Icon> limited = svgOnly.subList(0, origLimit);
+            NounProjectClient.Icon[] result = new NounProjectClient.Icon[limited.size()];
+            cb.call(limited.toArray(result), null);
+        });
     }
 
     public static void nounIcon(@NonNull String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> cb) {
