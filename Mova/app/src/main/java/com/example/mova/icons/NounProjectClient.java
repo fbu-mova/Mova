@@ -1,9 +1,10 @@
-package com.example.mova;
+package com.example.mova.icons;
 
 import android.content.Context;
 import android.graphics.drawable.Icon;
 import android.util.Log;
 
+import com.example.mova.R;
 import com.example.mova.utils.AsyncUtils;
 
 import org.json.JSONArray;
