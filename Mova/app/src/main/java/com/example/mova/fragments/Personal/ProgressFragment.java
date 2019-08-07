@@ -249,7 +249,7 @@ public class ProgressFragment extends Fragment {
            Goal goal = mGoals.get(i);
             goalUtils.getDataForGraph(goal, User.getCurrentUser(), length , (series) -> {
                 series.setTitle(goal.getTitle());
-                series.setSpacing(0);
+                series.setSpacing(10);
                 if(goal.getColor() != null){
                     series.setColor(Color.parseColor(goal.getColor()));
                 }
