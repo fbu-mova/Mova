@@ -100,22 +100,16 @@ public class GoalCardComponent extends Component {
 
     @Override
     protected void onRender(ViewHolder holder) {
-        item.fetchIfNeededInBackground((goal, e) -> {
-            if (e != null) {
-                Log.e("GoalCardComponent", "Failed to load goal", e);
-                Toast.makeText(getActivity(), "Failed to load goal", Toast.LENGTH_LONG).show();
-                return;
-            }
 
         checkViewHolderClass(holder, GoalCardViewHolder.class);
         viewHolder = (GoalCardViewHolder) holder;
 
-        Goal item = (Goal) goal;
         viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
                 intent.putExtra("goal", item);
+                intent.putExtra("isUserInvolved", isUserInvolved);
 
                     // fixme -- add ability to alter priority of goals as go back to goals fragment
 
@@ -141,7 +135,7 @@ public class GoalCardComponent extends Component {
         if (isPersonal) {
             // a personal goal that only the creator can see, should always be the case
 
-                actions = new ArrayList<>();
+            actions = new ArrayList<>();
 
             actionsAdapter = new DataComponentAdapter<Action>(getActivity(), actions) {
 
@@ -156,68 +150,67 @@ public class GoalCardComponent extends Component {
                     }
                 };
 
-                viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
-                viewHolder.rvActions.setAdapter(actionsAdapter);
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+            viewHolder.rvActions.setAdapter(actionsAdapter);
 
-                GoalUtils.loadGoalActions(item, (objects) -> {
-                    updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
-                });
-            }
-            else if (!isPersonal && isUserInvolved) {
-                // a social goal that the user is involved in BUT user is not author
-                // for now, user sees official social goal
+            GoalUtils.loadGoalActions(item, (objects) -> {
+                updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
+            });
+        }
+        else if (!isPersonal && isUserInvolved) {
+            // a social goal that the user is involved in BUT user is not author
+            // for now, user sees official social goal
 
-                // fixme -- for now, social goals can't be edited from the cards.
-                // todo -- make it so creator can edit via goal details page ?
+            // fixme -- for now, social goals can't be edited from the cards.
+            // todo -- make it so creator can edit via goal details page ?
 
-                sharedActions = new ArrayList<>();
+            sharedActions = new ArrayList<>();
 
-                sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
-                    @Override
-                    public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                        Component component = new InvolvedSharedActionComponent(item);
-                        return component;
-                    }
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
+                    Component component = new InvolvedSharedActionComponent(item);
+                    return component;
+                }
 
-                    @Override
-                    protected Component.Inflater makeInflater(SharedAction.Data item) {
-                        return new InvolvedSharedActionComponent.Inflater();
-                    }
-                };
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new InvolvedSharedActionComponent.Inflater();
+                }
+            };
 
-                viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
-                viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
-                GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                    updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
-                });
-            }
-            else if (!isPersonal && !isUserInvolved) {
-                // a social goal the user is not involved in
+            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+            });
+        }
+        else if (!isPersonal && !isUserInvolved) {
+            // a social goal the user is not involved in
 
-                sharedActions = new ArrayList<>();
+            sharedActions = new ArrayList<>();
 
-                sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
-                    @Override
-                    public Component makeComponent(SharedAction.Data item, ViewHolder holder) {
-                        Component component = new UninvolvedSharedActionComponent(item);
-                        return component;
-                    }
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction.Data item, ViewHolder holder) {
+                    Component component = new UninvolvedSharedActionComponent(item);
+                    return component;
+                }
 
-                    @Override
-                    protected Component.Inflater makeInflater(SharedAction.Data item) {
-                        return new UninvolvedSharedActionComponent.Inflater();
-                    }
-                };
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new UninvolvedSharedActionComponent.Inflater();
+                }
+            };
 
-                viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
-                viewHolder.rvActions.setAdapter(sharedActionsAdapter);
+            viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
+            viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
-                GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                    updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
-                });
-            }
-        });
+            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+                updateSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+            });
+        }
     }
 
     @Override
@@ -225,7 +218,7 @@ public class GoalCardComponent extends Component {
 
     }
 
-    private void updateSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
+    public static void updateSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
         // fixme -- similar to updateAdapter in GoalFragments; merge with that or the generic-typed updateAdapter?
 
         /* first need to find SharedAction.Data isUserDone boolean:
