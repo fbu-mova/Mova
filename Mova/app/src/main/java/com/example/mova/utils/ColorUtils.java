@@ -50,10 +50,6 @@ public class ColorUtils {
 //        p.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
 //        canvas.drawBitmap(bmp, new Matrix(), p);
 
-
-
-        // FIXME: Set white pixels to transparent first, and then... somehow fix?
-
         return bmp;
     }
 

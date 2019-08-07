@@ -234,8 +234,13 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                     component.setOnClick(() -> {
                         alertDialog.dismiss();
                         group.setNounIcon(item);
-//                        Glide.with(GroupComposeActivity.this)
-//                             .load(Icons.lowestResImage(item))
+                        Glide.with(GroupComposeActivity.this)
+                             .load(Icons.lowestResImage(item))
+                             .into(ivIcon);
+                        cvIcon.setCardBackgroundColor(Icons.backgroundColor(term));
+
+                        // TODO: Set color on group image, or find a good way to load SVGs for easier color setting
+
 //                             .into(new CustomViewTarget<ImageView, Drawable>(ivIcon) {
 //                                 @Override
 //                                 protected void onResourceCleared(@Nullable Drawable placeholder) {
@@ -254,9 +259,9 @@ public class GroupComposeActivity extends DelegatedResultActivity {
 //                                     TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] { resource, bmpDrawable });
 //                                     ivIcon.setImageDrawable(finalDrawable);
 //                                     finalDrawable.startTransition(200);
+//                                     cvIcon.setBackgroundColor(Icons.backgroundColor(term));
 //                                 }
 //                             });
-//                        cvIcon.setBackgroundColor(Icons.backgroundColor(term));
                     });
                     return component;
                 }
