@@ -160,6 +160,14 @@ public class NounProjectClient {
         }
     }
 
+    protected static Integer tryGetInt(JSONObject obj, String name) {
+        try {
+            return obj.getInt(name);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
     public static class GetIconsConfig {
         public Boolean limitToPublicDomain;
         public Integer limit, offset;
@@ -182,7 +190,7 @@ public class NounProjectClient {
         public final String termSlug;
         public final Uploader uploader;
         public final int uploaderId;
-        public final int year;
+        public final Integer year;
         // Does not support sponsors
         // Does not support collections
         // Does not support tags
@@ -209,7 +217,7 @@ public class NounProjectClient {
 
             iconUrl = tryGetString(obj, "icon_url");
             id = obj.getInt("id");
-            isActive = obj.getInt("is_active") == 1;
+            isActive = Integer.valueOf(1).equals(tryGetInt(obj, "is_active"));
             licenseDescription = tryGetString(obj, "license_description");
             permalink = API_ROOT + obj.getString("permalink");
             previewUrl = tryGetString(obj, "preview_url");
@@ -220,7 +228,7 @@ public class NounProjectClient {
             termSlug = obj.getString("term_slug");
             uploader = new Uploader(obj.getJSONObject("uploader"));
             uploaderId = obj.getInt("uploader_id");
-            year = obj.getInt("year");
+            year = tryGetInt(obj, "year");
         }
     }
 
