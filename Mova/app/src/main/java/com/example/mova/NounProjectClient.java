@@ -42,10 +42,10 @@ public class NounProjectClient {
     }
 
     public void getIcons(String term, AsyncUtils.TwoItemCallback<Icon[], Throwable> cb) {
-        getIcons(term, new Config(), cb);
+        getIcons(term, new GetIconsConfig(), cb);
     }
 
-    public void getIcons(String term, Config config, AsyncUtils.TwoItemCallback<Icon[], Throwable> cb) {
+    public void getIcons(String term, GetIconsConfig config, AsyncUtils.TwoItemCallback<Icon[], Throwable> cb) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(API_ROOT + "/icons/" + term).newBuilder();
         if (config.limitToPublicDomain != null) {
             urlBuilder.addQueryParameter("limit_to_public_domain", (config.limitToPublicDomain) ? "1" : "0");
@@ -100,6 +100,51 @@ public class NounProjectClient {
         });
     }
 
+    public void getIcon(String term, AsyncUtils.TwoItemCallback<Icon, Throwable> cb) {
+        String url = API_ROOT + "/icon/" + term;
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        getIcon(request, cb);
+    }
+
+    public void getIcon(int id, AsyncUtils.TwoItemCallback<Icon, Throwable> cb) {
+        String url = API_ROOT + "/icon/" + id;
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        getIcon(request, cb);
+    }
+
+    private void getIcon(Request request, AsyncUtils.TwoItemCallback<Icon, Throwable> cb) {
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("NounProjectClient", "Failed to get icon", e);
+                cb.call(null, e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    IOException e = new IOException("Unexpected code " + response);
+                    cb.call(null, e);
+                    throw e; // FIXME: Should likely not both call and throw
+                }
+
+                try {
+                    String responseData = response.body().string();
+                    JSONObject json = new JSONObject(responseData);
+                    Icon icon = new Icon(json.getJSONObject("icon"));
+                    cb.call(icon, null);
+                } catch (Exception e) {
+                    Log.e("NounProjectClient", "Failed to parse response to get icon", e);
+                    cb.call(null, e);
+                }
+            }
+        });
+    }
+
     protected String getApiKey() {
         return context.getResources().getString(R.string.nounProjectKey);
     }
@@ -108,7 +153,7 @@ public class NounProjectClient {
         return context.getResources().getString(R.string.nounProjectSecret);
     }
 
-    public static class Config {
+    public static class GetIconsConfig {
         public Boolean limitToPublicDomain;
         public Integer limit, offset;
     }
@@ -116,7 +161,6 @@ public class NounProjectClient {
     public static class Icon {
         public final String attribution;
         public final String attributionPreviewUrl;
-        public final String[] collections;
         public final Date dateUploaded;
         public final String iconUrl;
         public final int id;
@@ -133,16 +177,18 @@ public class NounProjectClient {
         public final int uploaderId;
         public final int year;
         // Does not support sponsors
+        // Does not support collections
+        // Does not support tags
 
         public Icon(JSONObject obj) throws JSONException {
             attribution = obj.getString("attribution");
             attributionPreviewUrl = obj.getString("attribution_preview_url");
 
-            JSONArray collections = obj.getJSONArray("collections");
-            this.collections = new String[collections.length()];
-            for (int i = 0; i < collections.length(); i++) {
-                this.collections[i] = collections.getString(i);
-            }
+//            JSONArray collections = obj.getJSONArray("collections");
+//            this.collections = new Collection[collections.length()];
+//            for (int i = 0; i < collections.length(); i++) {
+//                this.collections[i] = new Collection(collections.getJSONObject(i));
+//            }
 
             String dateUploaded = obj.getString("date_uploaded");
             SimpleDateFormat dateFmt = new SimpleDateFormat("YYYY-MM-dd");
