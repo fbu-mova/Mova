@@ -13,7 +13,9 @@ import com.example.mova.model.User;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -198,10 +200,21 @@ public class GoalUtils {
             if (e == null) {
                 // update corresponding SharedAction's usersDone field
                 SharedAction sharedAction = action.getParentSharedAction();
-                if (action.getIsDone())     sharedAction.setUsersDone(sharedAction.getUsersDone() + 1);
-                else                        sharedAction.setUsersDone(sharedAction.getUsersDone() - 1);
+                sharedAction.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (e == null && object != null) {
+                            int numDone = sharedAction.getUsersDone();
+                            if (action.getIsDone())     sharedAction.setUsersDone(numDone + 1);
+                            else                        sharedAction.setUsersDone((numDone <= 1) ? 0 : numDone - 1);
 
-                sharedAction.saveEventually((error) -> callback.call(error));
+                            sharedAction.saveInBackground((error) -> callback.call(error));
+                        }
+                        else {
+                            Log.e(TAG, "error in fetching sharedAction in toggleDone", e);
+                        }
+                    }
+                });
             }
             else {
                 Log.e(TAG, "error in toggleDone first action save", e);
