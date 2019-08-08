@@ -91,7 +91,7 @@ public class GoalProgressBar extends View {
             setUnfilledColor(typedArray.getColor(R.styleable.GoalProgressBar_unfilledColor, getResources().getColor(R.color.blueUltraLight)));
 
             setThickness(typedArray.getDimensionPixelOffset(R.styleable.GoalProgressBar_thickness, getResources().getDimensionPixelSize(R.dimen.elementMargin)));
-            setMaxLength(typedArray.getInt(R.styleable.GoalProgressBar_maxLength, Integer.MAX_VALUE));
+            setMaxLength(typedArray.getDimensionPixelOffset(R.styleable.GoalProgressBar_maxLength, Integer.MAX_VALUE));
 
             setOrientation(typedArray.getInt(R.styleable.GoalProgressBar_barOrientation, 1));
             setAutoRoundedEnd(typedArray.getInt(R.styleable.GoalProgressBar_autoRoundedEnd, 1));
