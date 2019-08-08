@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,7 +22,9 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.fragments.Social.EventDetailsFragment;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Event;
+import com.example.mova.model.Group;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseFile;
@@ -97,11 +101,6 @@ public class EventThumbnailComponent extends Component {
         viewHolder.tvEventName.setText(event.getTitle());
         viewHolder.tvEventLocation.setText(locationsplit[j] + ", "+ state[1]);
         viewHolder.tvWhen.setText(TimeUtils.toDateString(event.getDate()));
-        if(event.getParentGroup() != null){
-            event.getParentGroupName(event.getParentGroup(),(name) -> {
-                viewHolder.tvGroupName.setText(name);
-            });
-        }
         ParseFile file = event.getEventPic();
         if(file != null){
             String imageUrl = file.getUrl();
@@ -126,6 +125,29 @@ public class EventThumbnailComponent extends Component {
                 ft.commit();
             }
         });
+
+        displayGroup();
+    }
+
+    private void displayGroup() {
+        if (event.getParentGroup() == null) {
+            viewHolder.llGroup.setVisibility(View.GONE);
+            return;
+        }
+
+        event.getParentGroup().fetchIfNeededInBackground((obj, e) -> {
+            if (e != null) {
+                Log.e("EventThumbnailComponent", "Failed to load event group", e);
+                return;
+            }
+
+            getActivity().runOnUiThread(() -> {
+                Group group = (Group) obj;
+                viewHolder.llGroup.setVisibility(View.VISIBLE);
+                viewHolder.tvGroup.setText(group.getName());
+                Icons.displayNounIcon(group, viewHolder.cvGroup, viewHolder.ivGroup);
+            });
+        });
     }
 
     @Override
@@ -135,11 +157,15 @@ public class EventThumbnailComponent extends Component {
 
     public static class EventThumbnailViewHolder extends Component.ViewHolder{
 
-        @BindView(R.id.tvGroupName) TextView tvGroupName;
         @BindView(R.id.ivEventPic) ImageView ivEventPic;
         @BindView(R.id.tvEventName) TextView tvEventName;
         @BindView(R.id.tvEventLocation) TextView tvEventLocation;
         @BindView(R.id.tvWhen) TextView tvWhen;
+
+        @BindView(R.id.llGroup) LinearLayout llGroup;
+        @BindView(R.id.ivGroup) ImageView ivGroup;
+        @BindView(R.id.cvGroup) CardView cvGroup;
+        @BindView(R.id.tvGroup) TextView tvGroup;
 
         public EventThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
