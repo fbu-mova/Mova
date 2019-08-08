@@ -238,7 +238,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                     component.setOnClick(() -> {
                         alertDialog.dismiss();
                         group.setNounIcon(item);
-                        Icons.displayNounIcon(item, cvIcon, ivIcon);
+                        Icons.from(GroupComposeActivity.this).displayNounIcon(item, cvIcon, ivIcon);
                     });
                     return component;
                 }
@@ -253,7 +253,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
             rv.setAdapter(adapter);
             // TODO: Add padding
 
-            Icons.nounIcons(term, 20, (suggestedIcons, e) -> {
+            Icons.from(this).nounIcons(term, 20, (suggestedIcons, e) -> {
                 runOnUiThread(() -> {
                     if (e != null) {
                         Log.e("GroupComposeActivity", "Failed to load suggested group icons", e);

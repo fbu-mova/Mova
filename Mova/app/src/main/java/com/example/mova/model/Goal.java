@@ -1,5 +1,6 @@
 package com.example.mova.model;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.example.mova.icons.Icons;
@@ -178,9 +179,9 @@ public class Goal extends HashableParseObject {
     }
 
     // Icon
-    public void getNounIcon(AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> callback) {
+    public void getNounIcon(Activity activity, AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> callback) {
         int id = getInt(KEY_ICON_ID);
-        Icons.nounIcon(id, callback);
+        Icons.from(activity).nounIcon(id, callback);
     }
 
     public Goal setNounIcon(NounProjectClient.Icon icon) {
