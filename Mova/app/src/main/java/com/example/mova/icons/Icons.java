@@ -25,6 +25,7 @@ import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
+import com.example.mova.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -171,39 +172,79 @@ public class Icons {
     }
 
     public static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv) {
-        Glide.with(context)
-            .asBitmap()
-            .load(Icons.lowestResImage(icon))
-            .into(new CustomTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                    Bitmap colored = ColorUtils.changeColorFromBlack(resource, Icons.color(icon.term));
-                    BitmapDrawable bmpDrawable = new BitmapDrawable(context.getResources(), colored);
-                    TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] {
-                            new BitmapDrawable(context.getResources(), Bitmap.createBitmap(colored.getWidth(), colored.getHeight(), Bitmap.Config.ARGB_8888)),
-                            bmpDrawable
-                    });
-                    iv.setImageDrawable(finalDrawable);
-                    finalDrawable.startTransition(200);
-                    cv.setCardBackgroundColor(Icons.backgroundColor(icon.term));
-                }
+        displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                transitionColoredIcon(iv, resource, Icons.color(icon.term));
+                cv.setCardBackgroundColor(Icons.backgroundColor(icon.term));
+            }
 
-                @Override
-                public void onLoadCleared(@Nullable Drawable placeholder) {
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
 
-                }
-            });
+            }
+        });
     }
 
     public static void displayNounIcon(Group group, CardView cv, ImageView iv) {
         group.getNounIcon((icon, e) -> {
             if (e != null) {
                 Log.e("Icons", "Failed to get icon for group " + group.getName());
+                displayPlaceholder(cv, iv);
+            } else {
+                displayNounIcon(icon, cv, iv);
             }
         });
     }
 
     public static void displayNounIcon(Goal goal, CardView cv, ImageView iv) {
+        goal.getNounIcon((icon, e) -> {
+            if (e != null) {
+                Log.e("Icons", "Failed to get icon for goal " + goal.getTitle());
+                displayPlaceholder(cv, iv);
+            } else {
+                displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        ColorUtils.Hue hue = goal.getHue();
+                        if (hue == null) hue = ColorUtils.Hue.random();
+                        int color = ColorUtils.getColor(context.getResources(), hue, ColorUtils.Lightness.Mid);
+                        int bgColor = ColorUtils.getColor(context.getResources(), hue, ColorUtils.Lightness.UltraLight);
 
+                        transitionColoredIcon(iv, resource, color);
+                        cv.setCardBackgroundColor(bgColor);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    public static void displayPlaceholder(CardView cv, ImageView iv) {
+        int placeholderColor = ColorUtils.randomColorInScheme(context.getResources(), false, ColorUtils.ColorType.Dark);
+        iv.setImageBitmap(ImageUtils.makeTransparentBitmap(iv.getWidth(), iv.getHeight()));
+        cv.setCardBackgroundColor(placeholderColor);
+    }
+
+    private static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv, CustomTarget<Bitmap> target) {
+        Glide.with(context)
+                .asBitmap()
+                .load(Icons.lowestResImage(icon))
+                .into(target);
+    }
+
+    private static void transitionColoredIcon(ImageView iv, Bitmap icon, int color) {
+        Bitmap colored = ColorUtils.changeColorFromBlack(icon, color);
+        BitmapDrawable bmpDrawable = new BitmapDrawable(context.getResources(), colored);
+        TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] {
+                new BitmapDrawable(context.getResources(), Bitmap.createBitmap(colored.getWidth(), colored.getHeight(), Bitmap.Config.ARGB_8888)),
+                bmpDrawable
+        });
+        iv.setImageDrawable(finalDrawable);
+        finalDrawable.startTransition(200);
     }
 }

@@ -162,13 +162,27 @@ public class ColorUtils {
     public enum Hue {
         Blue,
         Purple,
-        Orange
+        Orange;
+
+        public static Hue random() {
+            Random random = new Random();
+            Hue[] values = Hue.values();
+            int i = random.nextInt(values.length);
+            return values[i];
+        }
     }
 
     public enum Lightness {
         UltraLight,
         Light,
         Mid,
-        Dark
+        Dark;
+
+        public static Lightness random() {
+            Random random = new Random();
+            Lightness[] values = Lightness.values();
+            int i = random.nextInt(values.length);
+            return values[i];
+        }
     }
 }
