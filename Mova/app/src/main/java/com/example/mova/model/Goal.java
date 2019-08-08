@@ -2,7 +2,10 @@ package com.example.mova.model;
 
 import android.util.Log;
 
+import com.example.mova.icons.Icons;
+import com.example.mova.icons.NounProjectClient;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.ColorUtils;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseClassName;
@@ -33,12 +36,13 @@ public class Goal extends HashableParseObject {
     public static final String KEY_SHARED_ACTIONS = "sharedActions";
     public static final String KEY_TAGS = "tags";
 
+    public static final String KEY_ICON_ID = "nounIconId";
+    public static final String KEY_HUE = "hue";
+
     public final RelationFrame<User> relUsersInvolved = new RelationFrame<>(this, KEY_USERS_INVOLVED);
     public final RelationFrame<Action> relActions = new RelationFrame<>(this, KEY_ACTIONS);
     public final RelationFrame<SharedAction> relSharedActions = new RelationFrame<>(this, KEY_SHARED_ACTIONS);
     public final RelationFrame<Tag> relTags = new RelationFrame<>(this, KEY_TAGS);
-
-
 
     //Title
 
@@ -174,6 +178,29 @@ public class Goal extends HashableParseObject {
         return this;
     }
 
+    // Icon
+    public void getNounIcon(AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> callback) {
+        int id = getInt(KEY_ICON_ID);
+        Icons.nounIcon(id, callback);
+    }
+
+    public Goal setNounIcon(NounProjectClient.Icon icon) {
+        put(KEY_ICON_ID, icon.id);
+        return this;
+    }
+
+    // Hue
+    public ColorUtils.Hue getHue() {
+        String str = getString(KEY_HUE);
+        if (str == null) return null;
+        return ColorUtils.Hue.valueOf(str);
+    }
+
+    public Goal setHue(ColorUtils.Hue hue) {
+        put(KEY_HUE, hue.toString());
+        return this;
+    }
+
     public static class Query extends ParseQuery<Goal> {
 
         public Query() {
@@ -205,7 +232,6 @@ public class Goal extends HashableParseObject {
         }
     }
 
-
     public static class GoalData {
         public Goal goal;
         public boolean userIsInvolved;
@@ -215,7 +241,5 @@ public class Goal extends HashableParseObject {
             this.userIsInvolved = userIsInvolved;
         }
     }
-
-
 }
 
