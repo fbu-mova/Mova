@@ -67,6 +67,7 @@ dependencies {
 
     //Graphs
     implementation 'com.jjoe64:graphview:4.2.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // Horizontal SwipeRefreshLayout
     implementation 'com.github.ashakirov:Horizontal-SwipeRefreshLayout:master'
