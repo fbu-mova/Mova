@@ -126,6 +126,9 @@ public class ActionEditComponent extends Component {
                                 action.deleteInBackground();
                                 goal.relActions.remove(action, () -> {});
                                 sharedAction.relChildActions.remove(action, ()-> {});
+                                if(goal.getIsPersonal()){
+                                    sharedAction.deleteInBackground();
+                                }
                                 GoalCardComponent.actionsAdapter.notifyDataSetChanged();
                             }
                         })

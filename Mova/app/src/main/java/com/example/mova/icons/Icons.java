@@ -234,7 +234,7 @@ public class Icons {
 
     public static void displayPlaceholder(CardView cv, ImageView iv) {
         int placeholderColor = ColorUtils.randomColorInScheme(context.getResources(), false, ColorUtils.ColorType.Dark);
-        iv.setImageBitmap(ImageUtils.makeTransparentBitmap(iv.getWidth(), iv.getHeight()));
+        iv.setImageBitmap(ImageUtils.makeTransparentBitmap(100, 100));
         cv.setCardBackgroundColor(placeholderColor);
     }
 

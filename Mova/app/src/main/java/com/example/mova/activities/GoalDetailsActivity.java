@@ -13,17 +13,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.mova.component.ComponentLayout;
-import com.example.mova.components.CreateActionComponent;
-import com.example.mova.components.GoalCardComponent;
-import com.example.mova.components.InvolvedSharedActionComponent;
-import com.example.mova.components.UninvolvedSharedActionComponent;
-import com.example.mova.dialogs.ConfirmShareGoalDialog;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.ActionComponent;
+import com.example.mova.components.CreateActionComponent;
+import com.example.mova.components.GoalCardComponent;
+import com.example.mova.components.InvolvedSharedActionComponent;
+import com.example.mova.components.UninvolvedSharedActionComponent;
 import com.example.mova.dialogs.ConfirmShareGoalDialog;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
@@ -31,11 +30,8 @@ import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -53,6 +49,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     private static final String TAG = "goal details activity";
     private Goal goal;
 
+    User user;
     private boolean isPersonal;
     private boolean isUserInvolved;
 
@@ -84,6 +81,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         setContentView(R.layout.activity_goal_details);
         ButterKnife.bind(this);
 
+        user = User.getCurrentUser();
         goal = getIntent().getParcelableExtra("goal");
         isUserInvolved = getIntent().getBooleanExtra("isUserInvolved", false);
 
@@ -138,7 +136,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             goalpb.setProgress(progress);
         });
 
-        if (isPersonal) { // FIXME -- currently social goals can't add actions (getting author User object also a callback itself...)
+        if (isPersonal || user.equals(goal.getAuthor())) { // FIXME -- currently social goals can't add actions (getting author User object also a callback itself...)
             inflateAddActionComponent();
         }
 
