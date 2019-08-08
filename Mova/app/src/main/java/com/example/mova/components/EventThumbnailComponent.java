@@ -146,7 +146,7 @@ public class EventThumbnailComponent extends Component {
                 Group group = (Group) obj;
                 viewHolder.llGroup.setVisibility(View.VISIBLE);
                 viewHolder.tvGroup.setText(group.getName());
-                Icons.displayNounIcon(group, viewHolder.cvGroup, viewHolder.ivGroup);
+                Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvGroup, viewHolder.ivGroup);
             });
         });
     }
