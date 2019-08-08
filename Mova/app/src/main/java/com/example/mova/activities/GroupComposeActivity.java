@@ -238,53 +238,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                     component.setOnClick(() -> {
                         alertDialog.dismiss();
                         group.setNounIcon(item);
-                        Glide.with(GroupComposeActivity.this)
-                             .asBitmap()
-                             .load(Icons.lowestResImage(item))
-                             .into(new CustomTarget<Bitmap>() {
-                                 @Override
-                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                     Bitmap colored = ColorUtils.changeColorFromBlack(resource, Icons.color(term));
-                                     BitmapDrawable bmpDrawable = new BitmapDrawable(getResources(), colored);
-                                     TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] {
-                                         new BitmapDrawable(getResources(), Bitmap.createBitmap(colored.getWidth(), colored.getHeight(), Bitmap.Config.ARGB_8888)),
-                                         bmpDrawable
-                                     });
-                                     ivIcon.setImageDrawable(finalDrawable);
-                                     finalDrawable.startTransition(200);
-                                     cvIcon.setCardBackgroundColor(Icons.backgroundColor(term));
-                                 }
-
-                                 @Override
-                                 public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                                 }
-                             });
-//                        cvIcon.setCardBackgroundColor(Icons.backgroundColor(term));
-
-                        // TODO: Set color on group image, or find a good way to load SVGs for easier color setting
-
-//                             .into(new CustomViewTarget<ImageView, Drawable>(ivIcon) {
-//                                 @Override
-//                                 protected void onResourceCleared(@Nullable Drawable placeholder) {
-//                                    ivIcon.setImageDrawable(placeholder);
-//                                 }
-//
-//                                 @Override
-//                                 public void onLoadFailed(@Nullable Drawable errorDrawable) {
-//
-//                                 }
-//
-//                                 @Override
-//                                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-//                                     Bitmap bmp = ColorUtils.changeColorFromBlack(resource, Icons.color(term));
-//                                     BitmapDrawable bmpDrawable = new BitmapDrawable(getResources(), bmp);
-//                                     TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] { resource, bmpDrawable });
-//                                     ivIcon.setImageDrawable(finalDrawable);
-//                                     finalDrawable.startTransition(200);
-//                                     cvIcon.setBackgroundColor(Icons.backgroundColor(term));
-//                                 }
-//                             });
+                        Icons.displayNounIcon(item, cvIcon, ivIcon);
                     });
                     return component;
                 }

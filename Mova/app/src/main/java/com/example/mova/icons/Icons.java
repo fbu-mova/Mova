@@ -1,12 +1,23 @@
 package com.example.mova.icons;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.mova.R;
+import com.example.mova.activities.GroupComposeActivity;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
@@ -32,6 +43,12 @@ public class Icons {
         Bitmap identicon = Identicon.generate(name, hashGenerator);
         identicon = Bitmap.createScaledBitmap(identicon, size, size, false);
         return identicon;
+    }
+
+    public static Bitmap identicon(@NonNull String name) {
+        Resources res = context.getResources();
+        int size = (int) res.getDimension(R.dimen.profileImage);
+        return identicon(name, size);
     }
 
     public static Bitmap identicon(@NonNull User user, int size) {
@@ -140,5 +157,35 @@ public class Icons {
         if (icon.previewUrl84 != null) return icon.previewUrl84;
         if (icon.previewUrl42 != null) return icon.previewUrl42;
         return null;
+    }
+
+    public static void displayIdenticon(String name, CardView cv, ImageView iv) {
+        iv.setImageBitmap(identicon(name));
+        cv.setCardBackgroundColor(backgroundColor(name));
+    }
+
+    public static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv) {
+        Glide.with(context)
+            .asBitmap()
+            .load(Icons.lowestResImage(icon))
+            .into(new CustomTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    Bitmap colored = ColorUtils.changeColorFromBlack(resource, Icons.color(icon.term));
+                    BitmapDrawable bmpDrawable = new BitmapDrawable(context.getResources(), colored);
+                    TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] {
+                            new BitmapDrawable(context.getResources(), Bitmap.createBitmap(colored.getWidth(), colored.getHeight(), Bitmap.Config.ARGB_8888)),
+                            bmpDrawable
+                    });
+                    iv.setImageDrawable(finalDrawable);
+                    finalDrawable.startTransition(200);
+                    cv.setCardBackgroundColor(Icons.backgroundColor(icon.term));
+                }
+
+                @Override
+                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                }
+            });
     }
 }
