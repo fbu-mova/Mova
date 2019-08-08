@@ -155,7 +155,6 @@ public class Goal extends HashableParseObject {
         });
     }
 
-
     public Goal setGroup(Group group){
         put(KEY_FROM_GROUP,group);
         return this;
@@ -186,6 +185,15 @@ public class Goal extends HashableParseObject {
 
     public Goal setNounIcon(NounProjectClient.Icon icon) {
         put(KEY_ICON_ID, icon.id);
+        return this;
+    }
+
+    public int getNounIconId() {
+        return getInt(KEY_ICON_ID);
+    }
+
+    public Goal setNounIconId(int iconId) {
+        put(KEY_ICON_ID, iconId);
         return this;
     }
 

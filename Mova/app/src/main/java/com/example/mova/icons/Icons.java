@@ -183,6 +183,12 @@ public class Icons {
     }
 
     public static void displayNounIcon(Group group, CardView cv, ImageView iv) {
+        if (group.getNounIconId() == 0) {
+            Log.i("Icons", "Found noun icon 0 for goal \"" + group.getName() + "\"; displaying placeholder");
+            displayPlaceholder(cv, iv);
+            return;
+        }
+
         group.getNounIcon((icon, e) -> {
             if (e != null) {
                 Log.e("Icons", "Failed to get icon for group " + group.getName());
@@ -194,6 +200,12 @@ public class Icons {
     }
 
     public static void displayNounIcon(Goal goal, CardView cv, ImageView iv) {
+        if (goal.getNounIconId() == 0) {
+            Log.i("Icons", "Found noun icon 0 for goal \"" + goal.getTitle() + "\"; displaying placeholder");
+            displayPlaceholder(cv, iv);
+            return;
+        }
+
         goal.getNounIcon((icon, e) -> {
             if (e != null) {
                 Log.e("Icons", "Failed to get icon for goal " + goal.getTitle());
