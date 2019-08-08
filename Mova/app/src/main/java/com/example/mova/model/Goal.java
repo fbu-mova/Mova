@@ -174,6 +174,10 @@ public class Goal extends HashableParseObject {
         return this;
     }
 
+    public interface HandleUpdatedProgress {
+        void call(float updatedProgress);
+    }
+
     public static class Query extends ParseQuery<Goal> {
 
         public Query() {

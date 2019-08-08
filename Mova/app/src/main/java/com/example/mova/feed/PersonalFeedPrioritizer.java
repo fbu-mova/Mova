@@ -150,8 +150,7 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
     // TODO: Improve messages generally, maybe randomize or in some other way vary
     protected void makeGoalCheckIns(SortedList<PrioritizedComponent> addTo, List<Goal> goals, AsyncUtils.ItemCallback<Throwable> callback) {
         // Get goals sorted by progress
-        GoalUtils goalUtils = new GoalUtils();
-        goalUtils.sortGoals(goals, 7, User.getCurrentUser(), (TreeSet<Prioritized<Goal>> pGoals) -> {
+        GoalUtils.sortGoals(goals, 7, User.getCurrentUser(), (TreeSet<Prioritized<Goal>> pGoals) -> {
             // Choose top and bottom goals based on quantities in config
             if (pGoals.size() == 1) {
                 Prioritized<Goal> goal = pGoals.first();

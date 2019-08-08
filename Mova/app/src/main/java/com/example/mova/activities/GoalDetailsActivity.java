@@ -265,7 +265,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
                 @Override
                 public Component makeComponent(Action item, Component.ViewHolder holder) {
-                    Component component = new ActionComponent(item, isPersonal);
+                    Component component = new ActionComponent(item, isPersonal, goalpb);
                     return component;
                 }
 
@@ -294,7 +294,9 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(this, sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new InvolvedSharedActionComponent(item);
+                    Component component = new InvolvedSharedActionComponent(item, (portionDone) -> {
+                        goalpb.setProgress((int) (portionDone * PROGRESS_MAX));
+                    });
                     return component;
                 }
 

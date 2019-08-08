@@ -17,6 +17,7 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class GoalUtils {
         });
     }
 
-    public void getNumActionsComplete(Date date, Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback){
+    public static void getNumActionsComplete(Date date, Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback){
         getActionList((actionList) -> {
             int numAction = 0;
             for(Action action: actionList) {
@@ -96,8 +97,18 @@ public class GoalUtils {
                     doneAction++;
                 }
             }
-            callback.call(doneAction / totalAction);
+            callback.call(doneAction/totalAction);
         }, goal, user);
+    }
+
+    public static class ProgressData { // possible use for getNumActionsComplete to get more Data?
+        public int actionsCompleted;
+        public int totalActions;
+
+        public ProgressData(int actionsCompleted, int totalActions) {
+            this.actionsCompleted = actionsCompleted;
+            this.totalActions = totalActions;
+        }
     }
 
     /**
@@ -147,7 +158,7 @@ public class GoalUtils {
      * @param user The user whose goals should be prioritized.
      * @param callback
      */
-    public void sortGoals(List<Goal> goalList, int length, User user, AsyncUtils.ItemCallback<TreeSet<Prioritized<Goal>>> callback){
+    public static void sortGoals(List<Goal> goalList, int length, User user, AsyncUtils.ItemCallback<TreeSet<Prioritized<Goal>>> callback){
         TreeSet<Prioritized<Goal>> tsGoals = new TreeSet<>();
         AsyncUtils.executeMany(goalList.size(), (i,cb) -> {
             Calendar cal = Calendar.getInstance();
@@ -191,7 +202,7 @@ public class GoalUtils {
         });
     }
 
-    public static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
+    public static void toggleDone(Action action, AsyncUtils.ItemCallback<Float> callback) {
         action.setIsDone(!action.getIsDone());
         action.saveInBackground((e) -> {
             if (e == null) {
@@ -205,7 +216,15 @@ public class GoalUtils {
                             if (action.getIsDone())     sharedAction.setUsersDone(numDone + 1);
                             else                        sharedAction.setUsersDone((numDone <= 1) ? 0 : numDone - 1);
 
-                            sharedAction.saveInBackground((error) -> callback.call(error));
+                            sharedAction.saveInBackground((error) -> {
+                                if (error == null) {
+
+                                    toggleDonePartTwo(sharedAction, callback);
+                                }
+                                else {
+                                    Log.e(TAG, "final toggleDone error", e);
+                                }
+                            });
                         }
                         else {
                             Log.e(TAG, "error in fetching sharedAction in toggleDone", e);
@@ -215,6 +234,24 @@ public class GoalUtils {
             }
             else {
                 Log.e(TAG, "error in toggleDone first action save", e);
+            }
+        });
+    }
+
+    public static void toggleDonePartTwo(SharedAction sharedAction, AsyncUtils.ItemCallback<Float> callback) {
+
+        Goal goal = sharedAction.getGoal();
+        goal.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null && object != null) {
+                    getNumActionsComplete((Goal) object, User.getCurrentUser(), (portionDone) -> {
+                        callback.call(portionDone);
+                    });
+                }
+                else {
+                    Log.e(TAG, "get goal object failed", e);
+                }
             }
         });
     }

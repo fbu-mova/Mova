@@ -140,7 +140,7 @@ public class GoalCardComponent extends Component {
 
                     @Override
                     protected Component makeComponent(Action item, ViewHolder holder) {
-                        return new ActionComponent(item, GoalCardComponent.this.isPersonal);
+                        return new ActionComponent(item, GoalCardComponent.this.isPersonal, viewHolder.goalProgressBar);
                     }
 
                     @Override
@@ -168,7 +168,9 @@ public class GoalCardComponent extends Component {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new InvolvedSharedActionComponent(item);
+                    Component component = new InvolvedSharedActionComponent(item, (portionDone) -> {
+                        viewHolder.goalProgressBar.setProgress((int) (portionDone * PROGRESS_MAX));
+                    });
                     return component;
                 }
 

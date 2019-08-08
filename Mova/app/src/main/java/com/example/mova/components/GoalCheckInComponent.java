@@ -34,6 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class GoalCheckInComponent extends Component {
@@ -112,14 +113,12 @@ public class GoalCheckInComponent extends Component {
                     (action) -> action.getTask(), (action) -> action.getIsDone()) {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            GoalUtils.toggleDone(item, (e) -> {
-                                if (e != null) {
-                                    Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
-                                    Toast.makeText(getActivity(), "Failed to toggle action done", Toast.LENGTH_LONG).show();
-                                } else {
-                                    Log.i("GoalCheckInComponent", "Toggled action done");
+                            GoalUtils.toggleDone(item, new AsyncUtils.ItemCallback<Float>() {
+                                @Override
+                                public void call(Float item) {
+                                    GoalCheckInComponent.this.holder.pbProgress.setProgress((int) (item * PROGRESS_MAX));
                                 }
-                            });
+                            } );
                         }
                 };
             }

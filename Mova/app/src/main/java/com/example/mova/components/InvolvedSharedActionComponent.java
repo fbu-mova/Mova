@@ -16,6 +16,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.model.Action;
+import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
@@ -42,14 +43,15 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     private int complete;
     private int total;
 
-    public InvolvedSharedActionComponent(SharedAction.Data data) {
+    private Goal.HandleUpdatedProgress progressHandler;
+
+    public InvolvedSharedActionComponent(SharedAction.Data data, Goal.HandleUpdatedProgress progressHandler) {
         super(data, Color.parseColor("#999999"), Color.parseColor("#222222"),
                 false, (thing) -> thing.sharedAction.getTask(),
-                (thing) -> {
-                    return data.isUserDone;
-                });
+                (thing) -> {return data.isUserDone;});
 
         this.sharedAction = data.sharedAction;
+        this.progressHandler = progressHandler;
 
     }
 
@@ -89,14 +91,9 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
         // finds the action of the sharedAction corresponding to the user, updates isDone boolean
 
         GoalUtils.findUsersAction(sharedAction, (action) -> {
-            GoalUtils.toggleDone(action, (e) -> {
-                if (e == null) {
-                    Log.d(TAG, "toggled action done");
-                }
-                else {
-                    Log.e(TAG, "toggled action failed", e);
-                    Toast.makeText(getActivity(), "Toggling action failed", Toast.LENGTH_LONG).show();
-                }
+            GoalUtils.toggleDone(action, (portionDone) -> {
+                // update goalProgressBar - need to make call/handler/event listener in GoalCardComp/Details
+                progressHandler.call(portionDone);
             });
         });
 

@@ -103,7 +103,7 @@ public class GoalComposeActivity extends DelegatedResultActivity {
         finish();
     }
 
-    public interface HandleCreateAction { // fixme -- for now, doesn't save it. depends on later saving logic
+    public interface HandleCreateAction {
         public void call(Action action); // should always call onSetAction
     }
 

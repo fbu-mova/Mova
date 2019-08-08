@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
+import com.example.mova.model.Goal;
 import com.example.mova.utils.GoalUtils;
 
 public class ActionViewComponent extends ChecklistItemComponent<Action> {
@@ -18,11 +19,14 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
     private ComponentManager componentManager;
 
-    public ActionViewComponent(Action action, ComponentManager componentManager) {
+    private Goal.HandleUpdatedProgress progressHandler;
+
+    public ActionViewComponent(Action action, ComponentManager componentManager, Goal.HandleUpdatedProgress progressHandler) {
         super(action, Color.parseColor("#999999"), Color.parseColor("#222222"),
                 false, (item) -> item.getTask(),
                 (item) -> (item.getIsDone()));
         setManager(componentManager);
+        this.progressHandler = progressHandler;
     }
 
     @Override
@@ -46,14 +50,8 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        GoalUtils.toggleDone(item, (e) -> {
-            if (e == null) {
-                Log.d(TAG, "toggled action done");
-            }
-            else {
-                Log.e(TAG, "toggled action failed", e);
-                Toast.makeText(getActivity(), "Toggling action failed", Toast.LENGTH_LONG).show();
-            }
+        GoalUtils.toggleDone(item, (numDone) -> {
+            progressHandler.call(numDone);
         });
     }
 

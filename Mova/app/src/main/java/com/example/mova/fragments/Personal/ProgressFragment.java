@@ -113,7 +113,6 @@ public class ProgressFragment extends Fragment {
         goodGoals = new ArrayList<>();
         badGoals = new ArrayList<>();
         //prioGoals = new TreeSet<>();
-        goalUtils = new GoalUtils();
         journal = new Journal(User.getCurrentUser());
 
         //create the adapter

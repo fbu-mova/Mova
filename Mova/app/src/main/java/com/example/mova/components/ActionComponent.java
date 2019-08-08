@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.mova.GoalProgressBar;
 import com.example.mova.dialogs.ConfirmEditSocialActionDialog;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -16,11 +17,14 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
+import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
 
 public class ActionComponent extends Component {
 
@@ -36,10 +40,13 @@ public class ActionComponent extends Component {
 
     private boolean isPersonal;
 
-    public ActionComponent(Action item, boolean isPersonal) {
+    private GoalProgressBar pbGoal;
+
+    public ActionComponent(Action item, boolean isPersonal, GoalProgressBar pbGoal) {
         super();
         this.item = item;
         this.isPersonal = isPersonal;
+        this.pbGoal = pbGoal;
     }
 
     // overrides bc type of viewHolder is different from type of holder in checklistItemComp
@@ -82,7 +89,12 @@ public class ActionComponent extends Component {
             }
         });
 
-        viewComponent = new ActionViewComponent(item, componentManager);
+        viewComponent = new ActionViewComponent(item, componentManager, (portionDone) -> {
+
+            pbGoal.setProgress((int) (portionDone * PROGRESS_MAX));
+
+        });
+
         editComponent = new ActionEditComponent(item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {

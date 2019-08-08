@@ -153,10 +153,10 @@
 
             <com.example.mova.GoalProgressBar
                 android:id="@+id/goalpb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:filledColor="@color/blueMid"
-                app:unfilledColor="@color/purpleLight" />
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:roundOtherEnd="true"
+                app:maxLength="@dimen/progressBarMaxLength"/>
         </LinearLayout>
 
         <LinearLayout
