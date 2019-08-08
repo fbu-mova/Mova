@@ -72,7 +72,7 @@ public class JournalResponseComponent extends Component {
 
     private void displayMedia() {
         Media media = post.getMedia();
-        Component mediaComponent = (media == null) ? null : media.makeComponent();
+        Component mediaComponent = (media == null) ? null : media.makeComponent(getActivity().getResources());
         if (mediaComponent == null) {
             holder.clMedia.setVisibility(View.GONE);
         } else {

@@ -1,12 +1,12 @@
 package com.example.mova.icons;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -17,15 +17,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.mova.R;
-import com.example.mova.activities.GroupComposeActivity;
+import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
-import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
+import com.example.mova.utils.ImageUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -164,28 +163,96 @@ public class Icons {
         cv.setCardBackgroundColor(backgroundColor(name));
     }
 
+    public static void displayIdenticon(User user, CardView cv, ImageView iv) {
+        displayIdenticon(user.getUsername(), cv, iv);
+    }
+
     public static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv) {
+        displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                transitionColoredIcon(iv, resource, Icons.color(icon.term));
+                cv.setCardBackgroundColor(Icons.backgroundColor(icon.term));
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+            }
+        });
+    }
+
+    public static void displayNounIcon(Group group, CardView cv, ImageView iv) {
+        if (group.getNounIconId() == 0) {
+            Log.i("Icons", "Found noun icon 0 for goal \"" + group.getName() + "\"; displaying placeholder");
+            displayPlaceholder(cv, iv);
+            return;
+        }
+
+        group.getNounIcon((icon, e) -> {
+            if (e != null) {
+                Log.e("Icons", "Failed to get icon for group " + group.getName());
+                displayPlaceholder(cv, iv);
+            } else {
+                displayNounIcon(icon, cv, iv);
+            }
+        });
+    }
+
+    public static void displayNounIcon(Goal goal, CardView cv, ImageView iv) {
+        if (goal.getNounIconId() == 0) {
+            Log.i("Icons", "Found noun icon 0 for goal \"" + goal.getTitle() + "\"; displaying placeholder");
+            displayPlaceholder(cv, iv);
+            return;
+        }
+
+        goal.getNounIcon((icon, e) -> {
+            if (e != null) {
+                Log.e("Icons", "Failed to get icon for goal " + goal.getTitle());
+                displayPlaceholder(cv, iv);
+            } else {
+                displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        ColorUtils.Hue hue = goal.getHue();
+                        if (hue == null) hue = ColorUtils.Hue.random();
+                        int color = ColorUtils.getColor(context.getResources(), hue, ColorUtils.Lightness.Mid);
+                        int bgColor = ColorUtils.getColor(context.getResources(), hue, ColorUtils.Lightness.UltraLight);
+
+                        transitionColoredIcon(iv, resource, color);
+                        cv.setCardBackgroundColor(bgColor);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    public static void displayPlaceholder(CardView cv, ImageView iv) {
+        int placeholderColor = ColorUtils.randomColorInScheme(context.getResources(), false, ColorUtils.ColorType.Dark);
+        iv.setImageBitmap(ImageUtils.makeTransparentBitmap(iv.getWidth(), iv.getHeight()));
+        cv.setCardBackgroundColor(placeholderColor);
+    }
+
+    private static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv, CustomTarget<Bitmap> target) {
         Glide.with(context)
-            .asBitmap()
-            .load(Icons.lowestResImage(icon))
-            .into(new CustomTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                    Bitmap colored = ColorUtils.changeColorFromBlack(resource, Icons.color(icon.term));
-                    BitmapDrawable bmpDrawable = new BitmapDrawable(context.getResources(), colored);
-                    TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] {
-                            new BitmapDrawable(context.getResources(), Bitmap.createBitmap(colored.getWidth(), colored.getHeight(), Bitmap.Config.ARGB_8888)),
-                            bmpDrawable
-                    });
-                    iv.setImageDrawable(finalDrawable);
-                    finalDrawable.startTransition(200);
-                    cv.setCardBackgroundColor(Icons.backgroundColor(icon.term));
-                }
+                .asBitmap()
+                .load(Icons.lowestResImage(icon))
+                .into(target);
+    }
 
-                @Override
-                public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                }
-            });
+    private static void transitionColoredIcon(ImageView iv, Bitmap icon, int color) {
+        Bitmap colored = ColorUtils.changeColorFromBlack(icon, color);
+        BitmapDrawable bmpDrawable = new BitmapDrawable(context.getResources(), colored);
+        TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] {
+                new BitmapDrawable(context.getResources(), Bitmap.createBitmap(colored.getWidth(), colored.getHeight(), Bitmap.Config.ARGB_8888)),
+                bmpDrawable
+        });
+        iv.setImageDrawable(finalDrawable);
+        finalDrawable.startTransition(200);
     }
 }
