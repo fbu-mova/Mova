@@ -94,7 +94,7 @@ public class ActionEditComponent extends Component {
         viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                componentManager.swap("ActionViewComponent");
+                componentManager.swap("CreateActionViewComponent");
             }
         });
 
