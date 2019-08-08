@@ -53,7 +53,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     private boolean isPersonal;
     private boolean isUserInvolved;
 
-    @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
+    @BindView(R.id.ivIcon)         protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
     @BindView(R.id.tvGroupName)     protected TextView tvGroupName;
     @BindView(R.id.tvDescription)   protected TextView tvDescription;

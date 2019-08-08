@@ -1,7 +1,6 @@
 package com.example.mova.icons;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -208,8 +207,8 @@ public class Icons {
         });
     }
 
-    public static void displayPlaceholder(CardView cv, ImageView iv) {
-        int placeholderColor = ColorUtils.randomColorInScheme(context.getResources(), false, ColorUtils.ColorType.Dark);
+    public void displayPlaceholder(CardView cv, ImageView iv) {
+        int placeholderColor = ColorUtils.randomColorInScheme(activity.getResources(), false, ColorUtils.ColorType.Dark);
         iv.setImageBitmap(ImageUtils.makeTransparentBitmap(100, 100));
         cv.setCardBackgroundColor(placeholderColor);
     }
