@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,13 +58,17 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
     @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
-    @BindView(R.id.tvFromGroup)     protected TextView tvFromGroup;
+    @BindView(R.id.tvGroupName)     protected TextView tvGroupName;
     @BindView(R.id.tvDescription)   protected TextView tvDescription;
     @BindView(R.id.rvActions)       protected RecyclerView rvActions;
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
     @BindView(R.id.ivShare)         protected ImageView ivShare;
     @BindView(R.id.ivSave)          protected ImageView ivSave;
     @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
+
+    @BindView(R.id.llGroupDetails)  protected LinearLayout llGroupDetails;
+    @BindView(R.id.llShareGoal)     protected LinearLayout llShareGoal;
+    @BindView(R.id.llSaveGoal)      protected LinearLayout llSaveGoal;
 
     // recyclerview - case personal
     private List<Action> actions;
@@ -86,10 +91,17 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         tvGoalName.setText(goal.getTitle());
 
         goal.getGroupName(() -> {
-            tvFromGroup.setVisibility(View.GONE);
+            tvGroupName.setVisibility(View.GONE);
+            displayHeader(false);
         }, (str) -> {
-            if (str == "") tvFromGroup.setVisibility(View.GONE);
-            else           tvFromGroup.setText(str); // FIXME -- null object reference error
+            if (str == "") {
+                tvGroupName.setVisibility(View.GONE);
+                displayHeader(false);
+            }
+            else {
+                tvGroupName.setText(str);
+                displayHeader(true);
+            }
 
         });
 
@@ -132,6 +144,30 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
         setUpRecyclerView();
 
+    }
+
+    private void displayHeader(boolean hasGroup) {
+        // decides which of the headers to display
+
+        if (isPersonal) {
+            llGroupDetails.setVisibility(View.GONE);
+            llSaveGoal.setVisibility(View.GONE);
+            llShareGoal.setVisibility(View.VISIBLE);
+        }
+        else if (hasGroup) {
+            llGroupDetails.setVisibility(View.VISIBLE);
+            llShareGoal.setVisibility(View.GONE);
+            if (isUserInvolved) llSaveGoal.setVisibility(View.GONE);
+            else                llSaveGoal.setVisibility(View.VISIBLE);
+        }
+        else if (!hasGroup) {
+            llGroupDetails.setVisibility(View.GONE);
+            llShareGoal.setVisibility(View.VISIBLE);
+            if (isUserInvolved) llSaveGoal.setVisibility(View.GONE);
+            else                llSaveGoal.setVisibility(View.VISIBLE);
+
+
+        }
     }
 
     private void inflateAddActionComponent() {
