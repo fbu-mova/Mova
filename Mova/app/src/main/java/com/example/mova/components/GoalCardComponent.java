@@ -46,11 +46,11 @@ public class GoalCardComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_goal_card;
 
     private Goal item;
-    private GoalCardViewHolder viewHolder;
+    public GoalCardViewHolder viewHolder;
 
     // for action recyclerview in the card
     private ArrayList<Action> actions;
-    private DataComponentAdapter<Action> actionsAdapter;
+    public static DataComponentAdapter<Action> actionsAdapter;
 
     private ArrayList<SharedAction.Data> sharedActions;
     private DataComponentAdapter<SharedAction.Data> sharedActionsAdapter;
