@@ -8,11 +8,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -24,6 +24,7 @@ import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.InvolvedSharedActionComponent;
 import com.example.mova.components.UninvolvedSharedActionComponent;
 import com.example.mova.dialogs.ConfirmShareGoalDialog;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
@@ -62,6 +63,8 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.ivShare)         protected ImageView ivShare;
     @BindView(R.id.ivSave)          protected ImageView ivSave;
     @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
+    @BindView(R.id.cvIcon)          protected CardView cvIcon;
+
 
     @BindView(R.id.llGroupDetails)  protected LinearLayout llGroupDetails;
     @BindView(R.id.llShareGoal)     protected LinearLayout llShareGoal;
@@ -87,6 +90,8 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
         isPersonal = goal.getIsPersonal();
         tvGoalName.setText(goal.getTitle());
+
+        Icons.from(GoalDetailsActivity.this).displayNounIcon(goal, cvIcon, ivPhoto);
 
         goal.getGroupName(() -> {
             tvGroupName.setVisibility(View.GONE);
@@ -123,12 +128,12 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             }
         });
 
-        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-        Glide.with(this)  // fixme -- always take forever to load
-                .load(url)
-                .error(R.color.colorPrimaryDark)
-                .placeholder(R.color.orangeMid)
-                .into(ivPhoto);
+//        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
+//        Glide.with(this)  // fixme -- always take forever to load
+//                .load(url)
+//                .error(R.color.colorPrimaryDark)
+//                .placeholder(R.color.orangeMid)
+//                .into(ivPhoto);
 
         // update GoalProgressBar
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
