@@ -4,9 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.icu.util.Measure;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -20,25 +18,31 @@ public class GoalProgressBar extends View {
 
     // Attributes
 
+    private int progress;
+
     /** Bar color for the filled section (progress completed). */
     private int filledColor;
     /** Bar color for the unfilled section (remaining progress). */
     private int unfilledColor;
+
     /** Thickness of the progress bar. */
     private int thickness;
-    /** Orientation of the progress bar (horizontal = 0, vertical = 1). */
-    private int orientation;
     /** The maximum length of the progress bar; if the parent container is larger, rounds the bottom. */
     private int maxLength;
-    /** Whether or not to round the first end of the progress bar. */
-    private boolean roundTop;
 
+    /** Orientation of the progress bar. (0: horizontal, 1: vertical) */
+    private int orientation;
+    /** Whether or not to round the first end of the progress bar. */
+    private boolean roundStart;
+    /** The side of the bar to round when length exceeds maxLength. (0: start, 1: end) */
+    private int roundSide;
+    /** The end of the bar from which to start drawing progress. (0: start, 1: end) */
+    private int drawFrom;
 
     // Animation & values
 
     private ValueAnimator barAnimator;
     private Paint progressPaint;
-    private int progress;
 
     public static final int PROGRESS_MAX = 100;
 
@@ -58,10 +62,16 @@ public class GoalProgressBar extends View {
             // extract attributes to member variables from typedArray
             setFilledColor(typedArray.getColor(R.styleable.GoalProgressBar_filledColor, getResources().getColor(R.color.blueMid)));
             setUnfilledColor(typedArray.getColor(R.styleable.GoalProgressBar_unfilledColor, getResources().getColor(R.color.blueUltraLight)));
+
             setThickness(typedArray.getDimensionPixelOffset(R.styleable.GoalProgressBar_thickness, getResources().getDimensionPixelSize(R.dimen.elementMargin)));
-            setOrientation(typedArray.getInt(R.styleable.GoalProgressBar_barOrientation, 1));
             setMaxLength(typedArray.getInt(R.styleable.GoalProgressBar_maxLength, Integer.MAX_VALUE));
-            setRoundTop(typedArray.getBoolean(R.styleable.GoalProgressBar_roundTop, false));
+
+            setOrientation(typedArray.getInt(R.styleable.GoalProgressBar_barOrientation, 1));
+            setRoundStart(typedArray.getBoolean(R.styleable.GoalProgressBar_roundStart, false));
+            setRoundSide(typedArray.getInt(R.styleable.GoalProgressBar_barRoundSide, 1));
+            setDrawFrom(typedArray.getInt(R.styleable.GoalProgressBar_drawFrom, (orientation == 0) ? 0 : 1));
+
+            setProgress(typedArray.getInt(R.styleable.GoalProgressBar_progress, 0));
         } finally {
             typedArray.recycle();
         }
@@ -112,25 +122,41 @@ public class GoalProgressBar extends View {
     protected void onDraw(Canvas canvas) {
         // Set line dimensions
         int half = (orientation == 0) ? getHeight() / 2 : getWidth() / 2;
-        int progressEnd = (orientation == 0) ? (int) (getWidth() * progress / 100f) : (int) (getHeight() * progress / 100f);
+        int progressLength = (orientation == 0) ? (int) (getWidth() * progress / 100f) : (int) (getHeight() * progress / 100f);
 
         // draw the part of the bar that's filled (completed)
         progressPaint.setStrokeWidth(thickness);
         progressPaint.setColor(filledColor);
 
         if (orientation == 0) {
-            canvas.drawLine(0, half, progressEnd, half, progressPaint);
+            canvas.drawLine(
+                (drawFrom == 0) ? 0 : getWidth(), half,
+                (drawFrom == 0) ? progressLength : getWidth() - progressLength, half,
+                progressPaint
+            );
         } else {
-            canvas.drawLine(half, getHeight(), half, progressEnd, progressPaint);
+            canvas.drawLine(
+                half, (drawFrom == 0) ? 0 : getHeight(),
+                half, (drawFrom == 0) ? progressLength : getHeight() - progressLength,
+                progressPaint
+            );
         }
 
         // draw the unfilled section
         progressPaint.setColor(unfilledColor);
 
         if (orientation == 0) {
-            canvas.drawLine(progressEnd, half, getWidth(), half, progressPaint);
+            canvas.drawLine(
+                (drawFrom == 0) ? progressLength : getWidth() - progressLength, half,
+                (drawFrom == 0) ? getWidth() : 0, half,
+                progressPaint
+            );
         } else {
-            canvas.drawLine(half, progressEnd, half, 0, progressPaint);
+            canvas.drawLine(
+                half, (drawFrom == 0) ? progressLength : getHeight() - progressLength,
+                half, (drawFrom == 0) ? getHeight() : 0,
+                progressPaint
+            );
         }
 
         // TODO: Add masking on should round
@@ -151,6 +177,11 @@ public class GoalProgressBar extends View {
         invalidate();
     }
 
+    public void setMaxLength(int maxLength) {
+        this.maxLength = maxLength;
+        invalidate();
+    }
+
     public void setOrientation(int orientation) {
         if (!(orientation == 0 || orientation == 1)) {
             throw new IllegalArgumentException("Orientation must be 0 for horizontal or 1 for vertical; " + orientation + " is not a valid value.");
@@ -159,13 +190,18 @@ public class GoalProgressBar extends View {
         invalidate();
     }
 
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
+    public void setRoundStart(boolean roundStart) {
+        this.roundStart = roundStart;
         invalidate();
     }
 
-    public void setRoundTop(boolean roundTop) {
-        this.roundTop = roundTop;
+    public void setRoundSide(int roundSide) {
+        this.roundSide = roundSide;
+        invalidate();
+    }
+
+    public void setDrawFrom(int drawFrom) {
+        this.drawFrom = drawFrom;
         invalidate();
     }
 
