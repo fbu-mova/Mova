@@ -193,6 +193,7 @@ public class Media extends HashableParseObject {
         }
     }
 
+    // TODO: Possibly pipe configs as dynamically typed objects through makeComponent
     public Component makeComponent() {
         switch (getType()) {
             case Text:
@@ -200,7 +201,10 @@ public class Media extends HashableParseObject {
             case Image:
                 return new ImageComponent(getContentImage());
             case Post:
-                return new PostComponent(getContentPost());
+                PostComponent.Config config = new PostComponent.Config();
+                config.subheader = null;
+                config.showButtons = false;
+                return new PostComponent(getContentPost(), config);
             case Goal:
                 // FIXME: Find a better way to handle async data on GoalData
                 Goal.GoalData data = new Goal.GoalData(getContentGoal(), false);

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.mova.R;
 import com.example.mova.activities.GroupComposeActivity;
+import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
@@ -164,6 +166,10 @@ public class Icons {
         cv.setCardBackgroundColor(backgroundColor(name));
     }
 
+    public static void displayIdenticon(User user, CardView cv, ImageView iv) {
+        displayIdenticon(user.getUsername(), cv, iv);
+    }
+
     public static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv) {
         Glide.with(context)
             .asBitmap()
@@ -187,5 +193,17 @@ public class Icons {
 
                 }
             });
+    }
+
+    public static void displayNounIcon(Group group, CardView cv, ImageView iv) {
+        group.getNounIcon((icon, e) -> {
+            if (e != null) {
+                Log.e("Icons", "Failed to get icon for group " + group.getName());
+            }
+        });
+    }
+
+    public static void displayNounIcon(Goal goal, CardView cv, ImageView iv) {
+
     }
 }

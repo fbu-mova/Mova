@@ -1,5 +1,7 @@
 package com.example.mova.utils;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,7 +16,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import com.example.mova.R;
 import com.example.mova.icons.Icons;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class ColorUtils {
     /** @source https://stackoverflow.com/questions/4928772/using-color-and-color-darker-in-android */
@@ -78,5 +86,89 @@ public class ColorUtils {
         }
 
         return true;
+    }
+
+    public static int randomColorInScheme(Resources res, boolean shouldInclude, ColorType... includeTypes) {
+        List<ColorType> include = Arrays.asList(includeTypes);
+        List<Integer> colors = new ArrayList<>();
+
+        AsyncUtils.ItemReturnCallback<ColorType, Boolean> check = (type) -> (shouldInclude) == include.contains(type);
+
+        if (check.call(ColorType.Blue)) {
+            if (check.call(ColorType.UltraLight)) colors.add(res.getColor(R.color.blueUltraLight));
+            if (check.call(ColorType.Light))      colors.add(res.getColor(R.color.blueLight));
+            if (check.call(ColorType.Mid))        colors.add(res.getColor(R.color.blueMid));
+            if (check.call(ColorType.Dark))       colors.add(res.getColor(R.color.blueDark));
+        }
+
+        if (check.call(ColorType.Purple)) {
+            if (check.call(ColorType.UltraLight)) colors.add(res.getColor(R.color.purpleUltraLight));
+            if (check.call(ColorType.Light))      colors.add(res.getColor(R.color.purpleLight));
+            if (check.call(ColorType.Mid))        colors.add(res.getColor(R.color.purpleMid));
+            if (check.call(ColorType.Dark))       colors.add(res.getColor(R.color.purpleDark));
+        }
+
+        if (check.call(ColorType.Orange)) {
+            if (check.call(ColorType.UltraLight)) colors.add(res.getColor(R.color.orangeUltraLight));
+            if (check.call(ColorType.Light))      colors.add(res.getColor(R.color.orangeLight));
+            if (check.call(ColorType.Mid))        colors.add(res.getColor(R.color.orangeMid));
+            if (check.call(ColorType.Dark))       colors.add(res.getColor(R.color.orangeDark));
+        }
+
+        if (colors.size() == 0) throw new IllegalArgumentException("Must allow at least one color.");
+
+        Random random = new Random();
+        int index = random.nextInt(colors.size());
+        return colors.get(index);
+    }
+
+    public static int getColor(Resources res, Hue hue, Lightness lightness) {
+        switch (hue) {
+            case Blue:
+                switch (lightness) {
+                    case UltraLight:    return res.getColor(R.color.blueUltraLight);
+                    case Light:         return res.getColor(R.color.blueLight);
+                    case Mid:           return res.getColor(R.color.blueMid);
+                    case Dark: default: return res.getColor(R.color.blueDark);
+                }
+            case Purple:
+                switch (lightness) {
+                    case UltraLight:    return res.getColor(R.color.purpleUltraLight);
+                    case Light:         return res.getColor(R.color.purpleLight);
+                    case Mid:           return res.getColor(R.color.purpleMid);
+                    case Dark: default: return res.getColor(R.color.purpleDark);
+                }
+            case Orange:
+            default:
+                switch (lightness) {
+                    case UltraLight:    return res.getColor(R.color.orangeUltraLight);
+                    case Light:         return res.getColor(R.color.orangeLight);
+                    case Mid:           return res.getColor(R.color.orangeMid);
+                    case Dark: default: return res.getColor(R.color.orangeDark);
+                }
+        }
+    }
+
+    public enum ColorType {
+        UltraLight,
+        Light,
+        Mid,
+        Dark,
+        Blue,
+        Purple,
+        Orange,
+    }
+
+    public enum Hue {
+        Blue,
+        Purple,
+        Orange
+    }
+
+    public enum Lightness {
+        UltraLight,
+        Light,
+        Mid,
+        Dark
     }
 }
