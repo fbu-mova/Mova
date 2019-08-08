@@ -27,6 +27,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -235,9 +239,29 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                         alertDialog.dismiss();
                         group.setNounIcon(item);
                         Glide.with(GroupComposeActivity.this)
+                             .asBitmap()
                              .load(Icons.lowestResImage(item))
-                             .into(ivIcon);
-                        cvIcon.setCardBackgroundColor(Icons.backgroundColor(term));
+                             .into(new CustomTarget<Bitmap>() {
+                                 @Override
+                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                     Bitmap colored = ColorUtils.changeColorFromBlack(resource, Icons.color(term));
+                                     BitmapDrawable bmpDrawable = new BitmapDrawable(getResources(), colored);
+                                     TransitionDrawable finalDrawable = new TransitionDrawable(new Drawable[] {
+                                         new BitmapDrawable(getResources(), Bitmap.createBitmap(colored.getWidth(), colored.getHeight(), Bitmap.Config.ARGB_8888)),
+                                         bmpDrawable
+                                     });
+                                     ivIcon.setImageDrawable(finalDrawable);
+                                     finalDrawable.startTransition(200);
+                                     // FIXME: This color turns out to be far too dark. Is it the alpha on the foreground, somehow? Or... it's the cases where the identicon color is already light. Needs desaturation or darkening (either the BG or the FG).
+                                     cvIcon.setBackgroundColor(Icons.backgroundColor(term));
+                                 }
+
+                                 @Override
+                                 public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                 }
+                             });
+//                        cvIcon.setCardBackgroundColor(Icons.backgroundColor(term));
 
                         // TODO: Set color on group image, or find a good way to load SVGs for easier color setting
 

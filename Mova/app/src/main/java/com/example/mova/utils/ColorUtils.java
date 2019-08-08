@@ -35,37 +35,51 @@ public class ColorUtils {
 
     public static Bitmap changeColorFromBlack(Bitmap bmp, int color) {
         bmp.setHasAlpha(true);
-        recolorPixels(bmp, Color.WHITE, Color.RED);
-        recolorPixels(bmp, Color.BLACK, color);
-//        Canvas canvas = new Canvas(bmp);
-//        Paint p = new Paint(color);
-//        ColorFilter filter = new LightingColorFilter(0xFFFFFFFF , 0x00222222); // lighten
-//        ColorFilter filter = new LightingColorFilter(0xFF7F7F7F, 0x00000000);    // darken
-//        p.setColorFilter(filter);
-//        canvas.drawBitmap(bmp, new Matrix(), p);
-//        p.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
-//        canvas.drawBitmap(bmp, new Matrix(), p);
-//        p.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SCREEN));
-//        canvas.drawBitmap(bmp, new Matrix(), p);
-//        p.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
-//        canvas.drawBitmap(bmp, new Matrix(), p);
-
+        recolorPixels(bmp, Color.BLACK, color, 0.3f, (orig, desired) -> {
+            return androidx.core.graphics.ColorUtils.setAlphaComponent(desired, Color.alpha(orig));
+            // FIXME: Possibly also modify lightness?
+        });
         return bmp;
     }
 
-    // FIXME: Doesn't successfully change pixel colors
-    public static void recolorPixels(Bitmap bmp, int selectColor, int color) {
+    public interface BlendFunction {
+        int blend(int color1, int color2);
+    }
+
+    public static void recolorPixels(Bitmap bmp, int selectColor, int color, float percentError, BlendFunction blend) {
         Canvas canvas = new Canvas(bmp);
         canvas.drawBitmap(bmp, new Matrix(), new Paint());
         for (int i = 0; i < bmp.getHeight(); i++) {
             for (int j = 0; j < bmp.getWidth(); j++) {
-                if (bmp.getPixel(i, j) == selectColor) {
+                if (approxEqual(bmp.getPixel(i, j), selectColor, percentError)) {
+                    int blendedColor = blend.blend(bmp.getPixel(i, j), color);
                     Paint p = new Paint();
                     p.setStyle(Paint.Style.FILL);
-                    p.setColor(color);
+                    p.setColor(blendedColor);
                     canvas.drawPoint(i, j, p);
                 }
             }
         }
+    }
+
+    public static boolean approxEqual(int color1, int color2, float percentError) {
+        float[] hsla1 = new float[4];
+        androidx.core.graphics.ColorUtils.colorToHSL(color1, hsla1);
+        hsla1[3] = Color.alpha(color1);
+
+        float[] hsla2 = new float[4];
+        androidx.core.graphics.ColorUtils.colorToHSL(color2, hsla2);
+        hsla2[3] = Color.alpha(color2);
+
+        final float MAX_VALUE = 255f;
+        final float ABSOLUTE_ERROR = MAX_VALUE * percentError;
+
+        for (int i = 0; i < hsla1.length; i++) {
+            if (Math.abs(hsla1[i] - hsla2[i]) > ABSOLUTE_ERROR) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
