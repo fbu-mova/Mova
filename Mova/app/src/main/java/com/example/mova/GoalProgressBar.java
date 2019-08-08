@@ -3,9 +3,11 @@ package com.example.mova;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -15,6 +17,9 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.Nullable;
+
+import com.sdsmdg.harjot.vectormaster.VectorMasterDrawable;
+import com.sdsmdg.harjot.vectormaster.models.PathModel;
 
 public class GoalProgressBar extends View {
     // code derived from: https://guides.codepath.org/android/Progress-Bar-Custom-View
@@ -56,19 +61,26 @@ public class GoalProgressBar extends View {
     private Paint progressPaint;
     private Paint erasePaint;
 
+    private boolean hasAlreadyOffsetPath;
+
     public static final int PROGRESS_MAX = 100;
 
     // Corners
 
-    private VectorDrawable verticalBottomRightCorner   = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vbr);
-    private VectorDrawable verticalBottomLeftCorner    = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vbl);
-    private VectorDrawable verticalTopRightCorner      = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vtr);
-    private VectorDrawable verticalTopLeftCorner       = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vtl);
+    private VectorMasterDrawable verticalBottomRightCorner   = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_vbr);
+    private VectorMasterDrawable verticalBottomLeftCorner    = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_vbl);
+    private VectorMasterDrawable verticalTopRightCorner      = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_vtr);
+    private VectorMasterDrawable verticalTopLeftCorner       = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_vtl);
 
-    private VectorDrawable horizontalBottomRightCorner = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_hbr);
-    private VectorDrawable horizontalBottomLeftCorner  = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_hbl);
-    private VectorDrawable horizontalTopRightCorner    = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_htr);
-    private VectorDrawable horizontalTopLeftCorner     = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_htl);
+    private VectorMasterDrawable horizontalBottomRightCorner = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_hbr);
+    private VectorMasterDrawable horizontalBottomLeftCorner  = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_hbl);
+    private VectorMasterDrawable horizontalTopRightCorner    = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_htr);
+    private VectorMasterDrawable horizontalTopLeftCorner     = new VectorMasterDrawable(getContext(), R.drawable.ic_gpb_corner_htl);
+
+    private VectorMasterDrawable[] corners = new VectorMasterDrawable[] {
+        verticalBottomLeftCorner, verticalBottomRightCorner, verticalTopRightCorner, verticalTopLeftCorner,
+        horizontalBottomLeftCorner, horizontalBottomRightCorner, horizontalTopRightCorner, horizontalTopLeftCorner
+    };
 
     public GoalProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -81,6 +93,8 @@ public class GoalProgressBar extends View {
 
         erasePaint = new Paint();
         erasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        hasAlreadyOffsetPath = false;
 
         // extract custom attributes
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.GoalProgressBar, 0, 0);
@@ -194,15 +208,14 @@ public class GoalProgressBar extends View {
         }
 
         // Cut out corners as necessary
-
         if (shouldAutoRound) {
-            VectorDrawable corner = getCorner(true);
+            VectorMasterDrawable corner = getCorner(true);
             scaleCorner(corner);
             cutoutCorner(canvas, corner, true);
         }
 
         if (roundOtherEnd) {
-            VectorDrawable corner = getCorner(false);
+            VectorMasterDrawable corner = getCorner(false);
             scaleCorner(corner);
             cutoutCorner(canvas, corner, false);
         }
@@ -213,7 +226,7 @@ public class GoalProgressBar extends View {
      * @param forAutoRoundedCorner Whether to retrieve the auto-rounded corner or the other corner.
      * @return The corner cutoff drawable for the specified corner.
      */
-    private VectorDrawable getCorner(boolean forAutoRoundedCorner) {
+    private VectorMasterDrawable getCorner(boolean forAutoRoundedCorner) {
         if (forAutoRoundedCorner) {
             if (autoRoundedEnd == 0) {
                 if (orientation == 0) {
@@ -277,7 +290,7 @@ public class GoalProgressBar extends View {
         }
     }
 
-    private void scaleCorner(VectorDrawable corner) {
+    private Rect scaleCorner(VectorMasterDrawable corner) {
         float newWidth, newHeight;
 
         if (orientation == 0) {
@@ -290,52 +303,64 @@ public class GoalProgressBar extends View {
             newHeight = newWidth * aspectHW;
         }
 
-        corner.setBounds(0, 0, Math.round(newWidth), Math.round(newHeight));
+        Rect rect = new Rect(0, 0, Math.round(newWidth), Math.round(newHeight));
+        corner.setBounds(rect);
+        return rect;
     }
 
-    private void cutoutCorner(Canvas canvas, VectorDrawable corner, boolean isAutoRoundedCorner) {
-        // Convert corner to bitmap
-        Bitmap bmp = Bitmap.createBitmap(corner.getBounds().width(), corner.getBounds().height(), Bitmap.Config.ARGB_8888);
-        Canvas cornerCanvas = new Canvas(bmp);
-        corner.draw(cornerCanvas);
-
+    private Path translateCorner(VectorMasterDrawable corner, boolean isAutoRoundedCorner) {
         // Select correct position on canvas
         Rect rect;
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
 
+        int cWidth = corner.getBounds().width();
+        int cHeight = corner.getBounds().height();
+
         if (isAutoRoundedCorner) {
             if (orientation == 0) {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                    rect = new Rect(0, 0, cWidth, cHeight);
                 } else {
-                    rect = new Rect(width - bmp.getWidth(), 0, width, bmp.getHeight());
+                    rect = new Rect(width - cWidth, 0, width, cHeight);
                 }
             } else {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                    rect = new Rect(0, 0, cWidth, cHeight);
                 } else {
-                    rect = new Rect(0, height - bmp.getHeight(), bmp.getWidth(), height);
+                    rect = new Rect(0, height - cHeight, cWidth, height);
                 }
             }
         } else {
             if (orientation == 0) {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(width - bmp.getWidth(), 0, width, bmp.getHeight());
+                    rect = new Rect(width - cWidth, 0, width, cHeight);
                 } else {
-                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                    rect = new Rect(0, 0, cWidth, cHeight);
                 }
             } else {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(0, height - bmp.getHeight(), bmp.getWidth(), height);
+                    rect = new Rect(0, height - cHeight, cWidth, height);
                 } else {
-                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                    rect = new Rect(0, 0, cWidth, cHeight);
                 }
             }
         }
 
+        /* FIXME: This keeps on moving the path further and further away.
+         * I'm waiting for an answer here: https://stackoverflow.com/questions/57407452/move-vector-path-to-fixed-position-in-android
+         */
+        Path path = corner.getPathModelByName("corner").getPath();
+        path.offset(rect.left, rect.top);
+        return path;
+    }
+
+    private void cutoutCorner(Canvas canvas, VectorMasterDrawable corner, boolean isAutoRoundedCorner) {
+        // Convert corner to path and move to correct position (many thanks to VectorMaster for getting rid of this headache!)
+        Path path = translateCorner(corner, isAutoRoundedCorner);
+
         // Erase bitmap from canvas at chosen coordinates
-        canvas.drawBitmap(bmp, rect.left, rect.top, erasePaint);
+        canvas.drawPath(path, erasePaint);
     }
 
     public void setFilledColor(int filledColor) {
@@ -388,7 +413,7 @@ public class GoalProgressBar extends View {
 
     public void setProgress(int progress) {
         this.progress = progress;
-        setProgress(progress, false);
+        setProgress(progress, true);
     }
 
     private void setProgress(int progress, boolean animate) {
@@ -405,6 +430,7 @@ public class GoalProgressBar extends View {
             barAnimator.addUpdateListener((ValueAnimator animation) -> {
                 float interpolation = (float) animation.getAnimatedValue();
                 setProgress((int) (interpolation * progress), false);
+                hasAlreadyOffsetPath = false;
             });
 
             if (!barAnimator.isStarted()) {

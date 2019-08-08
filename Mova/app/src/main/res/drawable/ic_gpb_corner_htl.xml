@@ -4,6 +4,7 @@
     android:viewportWidth="13"
     android:viewportHeight="8">
   <path
+      android:name="corner"
       android:pathData="M13,0H0V7.9997C0.0399,7.9467 6.0232,0 13,0Z"
       android:fillColor="#C4C4C4"/>
 </vector>
