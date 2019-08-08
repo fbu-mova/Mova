@@ -1,7 +1,9 @@
 package com.example.mova.model;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
+import com.example.mova.R;
 import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.ImageComponent;
@@ -193,14 +195,19 @@ public class Media extends HashableParseObject {
         }
     }
 
-    public Component makeComponent() {
+    // TODO: Possibly pipe configs as dynamically typed objects through makeComponent
+    public Component makeComponent(Resources res) {
         switch (getType()) {
             case Text:
                 return new MediaTextComponent(this);
             case Image:
-                return new ImageComponent(getContentImage());
+                int borderRadius = res.getDimensionPixelOffset(R.dimen.borderRadius);
+                return new ImageComponent(getContentImage(), borderRadius);
             case Post:
-                return new PostComponent(getContentPost());
+                PostComponent.Config config = new PostComponent.Config();
+                config.subheader = null;
+                config.showButtons = false;
+                return new PostComponent(getContentPost(), config);
             case Goal:
                 // FIXME: Find a better way to handle async data on GoalData
                 Goal.GoalData data = new Goal.GoalData(getContentGoal(), false);

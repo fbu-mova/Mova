@@ -178,7 +178,7 @@ public abstract class ComposePostComponent extends Component {
 
     private void displayMedia() {
         // FIXME: Should media be fetched in background if needed?
-        Component mediaComponent = (postConfig.media == null) ? null : postConfig.media.makeComponent();
+        Component mediaComponent = (postConfig.media == null) ? null : postConfig.media.makeComponent(getActivity().getResources());
         if (mediaComponent == null) {
             holder.llAddMedia.setVisibility(View.VISIBLE);
             holder.clMedia.clear();

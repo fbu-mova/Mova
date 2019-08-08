@@ -39,6 +39,7 @@
                 android:id="@+id/ivFromGroupIcon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="@dimen/iconMargin"
                 android:layout_weight="1"
                 app:srcCompat="@color/blueMid" />
         </androidx.cardview.widget.CardView>
@@ -122,6 +123,7 @@
                             android:id="@+id/ivGroup"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_margin="@dimen/iconMargin"
                             app:srcCompat="@color/blueDark" />
                     </androidx.cardview.widget.CardView>
 

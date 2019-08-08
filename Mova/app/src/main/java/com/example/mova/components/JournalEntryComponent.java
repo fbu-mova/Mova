@@ -116,7 +116,7 @@ public class JournalEntryComponent extends Component {
 
     private void displayMedia() {
         Media media = entry.getMedia();
-        Component mediaComponent = (media == null) ? null : media.makeComponent();
+        Component mediaComponent = (media == null) ? null : media.makeComponent(getActivity().getResources());
         holder.clMedia.clear();
         if (mediaComponent != null) {
             holder.clMedia.setMarginTop(16).setMarginBottom(16);

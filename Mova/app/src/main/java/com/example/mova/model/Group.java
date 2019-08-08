@@ -96,6 +96,15 @@ public class Group extends HashableParseObject {
         return this;
     }
 
+    public int getNounIconId() {
+        return getInt(KEY_ICON_ID);
+    }
+
+    public Group setNounIconId(int iconId) {
+        put(KEY_ICON_ID, iconId);
+        return this;
+    }
+
     public static class Query extends ParseQuery<Group> {
 
         public Query() {

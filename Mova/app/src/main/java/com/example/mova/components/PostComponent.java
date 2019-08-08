@@ -15,10 +15,8 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.bumptech.glide.Glide;
 import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.icons.Icons;
-import com.example.mova.icons.Identicon;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -127,9 +125,7 @@ public class PostComponent extends Component {
                 holder.ivProfileImage.setOnClickListener((view) -> {
                     // TODO: Go to profile page
                 });
-                Glide.with(getActivity())
-                     .load(Icons.identicon(loaded))
-                     .into(holder.ivProfileImage);
+                Icons.displayIdenticon(loaded, holder.cvProfileImage, holder.ivProfileImage);
             }
         });
     }
@@ -153,11 +149,13 @@ public class PostComponent extends Component {
                 // Update content with loaded instance
                 item.setContent(fetchedContent);
 
-                Component mediaComponent = item.makeComponent();
+                Component mediaComponent = item.makeComponent(getActivity().getResources());
                 if (mediaComponent == null) {
                     holder.clMedia.setVisibility(View.GONE);
                 } else {
-                    // FIXME: PostComponent does not display despite inflating properly
+                    int elementMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.elementMargin);
+                    holder.clMedia.setMarginTop(elementMargin);
+                    holder.clMedia.setMarginBottom(elementMargin);
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
                     holder.clMedia.setVisibility(View.VISIBLE);
                 }
@@ -183,6 +181,7 @@ public class PostComponent extends Component {
                     holder.ivGroupImage.setOnClickListener((view) -> {
                         // TODO: Go to group page
                     });
+                    Icons.displayNounIcon(loaded, holder.cvGroupImage, holder.ivGroupImage);
                 }
             });
         }
@@ -313,7 +312,6 @@ public class PostComponent extends Component {
     public static class ViewHolder extends Component.ViewHolder {
 
         // TODO: Find a way to display date without displaying username, etc.
-        // TODO: Create settings for different views (group from, etc.)
 
         @BindView(R.id.tvSubheader)    public TextView tvSubheader;
 

@@ -9,46 +9,69 @@
     android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/tvSubheader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/elementMargin"
-        android:text="Because you..."
-        android:textColor="@color/textLight"
-        android:textSize="@dimen/textSizeBody" />
-
     <LinearLayout
-        android:id="@+id/llGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/elementMargin"
         android:orientation="horizontal">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvGroupImage"
-            android:layout_width="@dimen/profileImage"
-            android:layout_height="@dimen/profileImage"
-            android:layout_marginRight="@dimen/elementMargin"
-            app:cardCornerRadius="@dimen/borderRadiusCircle"
-            app:cardElevation="0dp">
-
-            <ImageView
-                android:id="@+id/ivGroupImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:srcCompat="@color/colorPrimary" />
-        </androidx.cardview.widget.CardView>
-
         <TextView
-            android:id="@+id/tvGroupName"
+            android:id="@+id/tvSubheader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/innerMargin"
             android:layout_weight="1"
-            android:text="Group Name"
-            android:textColor="#222"
-            android:textSize="14dp" />
+            android:text="Because you..."
+            android:textColor="@color/textLight"
+            android:textSize="@dimen/textSizeBody" />
+
+        <LinearLayout
+            android:id="@+id/llGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvGroupImage"
+                android:layout_width="@dimen/profileImage"
+                android:layout_height="@dimen/profileImage"
+                android:layout_marginRight="@dimen/elementMargin"
+                app:cardCornerRadius="@dimen/borderRadiusCircle"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/ivGroupImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/iconMargin"
+                    app:srcCompat="@color/colorPrimary" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/iconMargin"
+                android:layout_weight="0"
+                android:text="From"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeBody" />
+
+            <TextView
+                android:id="@+id/tvGroupName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0"
+                android:fontFamily="@font/lato_bold"
+                android:text="Group"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeBody" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -84,6 +107,7 @@
                         android:id="@+id/ivProfileImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_margin="@dimen/iconMargin"
                         app:srcCompat="@color/colorPrimary" />
                 </androidx.cardview.widget.CardView>
 
@@ -122,7 +146,6 @@
                 android:id="@+id/clMedia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/elementMargin"
                 android:clipChildren="false">
 
             </com.example.mova.component.ComponentLayout>

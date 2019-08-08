@@ -34,7 +34,7 @@ public class ImageComponent extends Component {
     private ViewHolder holder;
     private ComponentManager manager;
 
-    private AsyncUtils.EmptyCallback onClick;
+    private AsyncUtils.EmptyCallback onClick = () -> {};
 
     public ImageComponent(String url) {
         this(url, 0);
