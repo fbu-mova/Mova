@@ -207,6 +207,7 @@ public class Media extends HashableParseObject {
                 PostComponent.Config config = new PostComponent.Config();
                 config.subheader = null;
                 config.showButtons = false;
+                config.showGroup = false;
                 return new PostComponent(getContentPost(), config);
             case Goal:
                 // FIXME: Find a better way to handle async data on GoalData
