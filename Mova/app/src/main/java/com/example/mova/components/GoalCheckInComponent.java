@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -144,7 +145,7 @@ public class GoalCheckInComponent extends Component {
 
     public static class ViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.pbProgress)  public ProgressBar pbProgress;
+        @BindView(R.id.pbProgress)  public GoalProgressBar pbProgress;
         @BindView(R.id.tvGoalTitle) public TextView tvGoalTitle;
         @BindView(R.id.tvSubheader) public TextView tvSubheader;
         @BindView(R.id.rvChecklist) public RecyclerView rvChecklist;

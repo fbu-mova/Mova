@@ -33,10 +33,11 @@ public class GoalProgressBar extends View {
     /** Whether or not to round the first end of the progress bar. */
     private boolean roundTop;
 
-    // Animation & progress
 
-    private Paint progressPaint;
+    // Animation & values
+
     private ValueAnimator barAnimator;
+    private Paint progressPaint;
     private int progress;
 
     public static final int PROGRESS_MAX = 100;
@@ -58,8 +59,8 @@ public class GoalProgressBar extends View {
             setFilledColor(typedArray.getColor(R.styleable.GoalProgressBar_filledColor, getResources().getColor(R.color.blueMid)));
             setUnfilledColor(typedArray.getColor(R.styleable.GoalProgressBar_unfilledColor, getResources().getColor(R.color.blueUltraLight)));
             setThickness(typedArray.getDimensionPixelOffset(R.styleable.GoalProgressBar_thickness, getResources().getDimensionPixelSize(R.dimen.elementMargin)));
-            setOrientation(typedArray.getInt(R.styleable.GoalProgressBar_orientation, 1));
-            setMaxLength(typedArray.getInt(R.styleable.GoalProgressBar_maxLength, 0));
+            setOrientation(typedArray.getInt(R.styleable.GoalProgressBar_barOrientation, 1));
+            setMaxLength(typedArray.getInt(R.styleable.GoalProgressBar_maxLength, Integer.MAX_VALUE));
             setRoundTop(typedArray.getBoolean(R.styleable.GoalProgressBar_roundTop, false));
         } finally {
             typedArray.recycle();
@@ -110,7 +111,7 @@ public class GoalProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         // Set line dimensions
-        int half = (orientation == 0) ? getHeight() / 2: getWidth() / 2;
+        int half = (orientation == 0) ? getHeight() / 2 : getWidth() / 2;
         int progressEnd = (orientation == 0) ? (int) (getWidth() * progress / 100f) : (int) (getHeight() * progress / 100f);
 
         // draw the part of the bar that's filled (completed)
@@ -120,7 +121,7 @@ public class GoalProgressBar extends View {
         if (orientation == 0) {
             canvas.drawLine(0, half, progressEnd, half, progressPaint);
         } else {
-            canvas.drawLine(half, 0, half, progressEnd, progressPaint);
+            canvas.drawLine(half, getHeight(), half, progressEnd, progressPaint);
         }
 
         // draw the unfilled section
@@ -129,7 +130,7 @@ public class GoalProgressBar extends View {
         if (orientation == 0) {
             canvas.drawLine(progressEnd, half, getWidth(), half, progressPaint);
         } else {
-            canvas.drawLine(half, progressEnd, half, getHeight(), progressPaint);
+            canvas.drawLine(half, progressEnd, half, 0, progressPaint);
         }
 
         // TODO: Add masking on should round
@@ -170,7 +171,7 @@ public class GoalProgressBar extends View {
 
     public void setProgress(int progress) {
         this.progress = progress;
-        setProgress(progress, true);
+        setProgress(progress, false);
     }
 
     private void setProgress(int progress, boolean animate) {

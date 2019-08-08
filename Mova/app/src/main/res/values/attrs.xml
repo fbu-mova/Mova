@@ -5,7 +5,7 @@
         <attr name="filledColor" format="color"/>
         <attr name="unfilledColor" format="color"/>
         <attr name="thickness" format="dimension"/>
-        <attr name="orientation">
+        <attr name="barOrientation">
             <enum name="horizontal" value="0"/>
             <enum name="vertical" value="1"/>
         </attr>

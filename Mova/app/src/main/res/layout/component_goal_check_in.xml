@@ -10,12 +10,12 @@
     app:cardElevation="2dp">
 
 
-    <ProgressBar
+    <com.example.mova.GoalProgressBar
         android:id="@+id/pbProgress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:progress="0" />
+        app:barOrientation="horizontal"/>
 
     <LinearLayout
         android:layout_width="match_parent"
