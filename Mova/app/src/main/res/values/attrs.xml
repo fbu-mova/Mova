@@ -2,12 +2,15 @@
 <resources>
 
     <declare-styleable name="GoalProgressBar">
-        <attr name="goalIndicatorHeight" format="dimension"/>
-        <attr name="goalIndicatorWidth" format="dimension"/>
-        <attr name="goalReachedColor" format="color"/>
-        <attr name="goalNotReachedColor" format="color"/>
-        <attr name="unfilledSectionColor" format="color"/>
-        <attr name="barHeight" format="dimension"/>
+        <attr name="filledColor" format="color"/>
+        <attr name="unfilledColor" format="color"/>
+        <attr name="thickness" format="dimension"/>
+        <attr name="orientation">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+        <attr name="maxLength" format="dimension"/>
+        <attr name="roundTop" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="EmptyLoaderRecyclerLayout">
