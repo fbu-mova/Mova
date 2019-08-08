@@ -6,128 +6,248 @@
     android:layout_height="match_parent"
     tools:context=".activities.GoalDetailsActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout4"
+    <LinearLayout
+        android:id="@+id/llHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/innerMargin"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/ivPhoto"
-            android:layout_width="200dp"
+        <LinearLayout
+            android:id="@+id/llGroupDetails"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:color/holo_purple" />
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/profileImage"
+                android:layout_height="@dimen/profileImage"
+                app:cardCornerRadius="@dimen/borderRadiusCircle"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/ivGroupPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical|end"
+                    app:srcCompat="@color/blueLight" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvFromGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginLeft="@dimen/elementMargin"
+                android:text="Posted to"
+                android:textColor="@color/textLight"
+                android:textSize="@dimen/textSizeBody" />
+
+            <TextView
+                android:id="@+id/tvGroupName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginLeft="@dimen/elementMargin"
+                android:layout_marginRight="@dimen/elementMargin"
+                android:layout_weight="0"
+                android:text="GroupName"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeBody"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llShareGoal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/profileImage"
+                android:layout_height="@dimen/profileImage"
+                android:layout_marginRight="@dimen/elementMargin"
+                app:cardCornerRadius="@dimen/borderRadiusCircle"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/ivShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@color/colorAccent" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvShareText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/elementMargin"
+                android:layout_weight="0"
+                android:text="Share to a group, or your friends"
+                android:textColor="@color/textLight"
+                android:textSize="@dimen/textSizeBody" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llSaveGoal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Goal Name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintEnd_toStartOf="@+id/ivShare"
-            app:layout_constraintStart_toEndOf="@+id/ivPhoto"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:gravity="end"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvFromGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:text="from Group"
-            app:layout_constraintStart_toEndOf="@+id/ivPhoto"
-            app:layout_constraintTop_toBottomOf="@+id/tvName" />
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/profileImage"
+                android:layout_height="@dimen/profileImage"
+                android:layout_marginRight="@dimen/elementMargin"
+                app:cardCornerRadius="@dimen/borderRadiusCircle">
 
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Description of group"
-            app:layout_constraintStart_toEndOf="@+id/ivPhoto"
-            app:layout_constraintTop_toBottomOf="@+id/tvFromGroup" />
+                <ImageView
+                    android:id="@+id/ivSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@color/colorPrimaryDark" />
+            </androidx.cardview.widget.CardView>
 
-        <ImageView
-            android:id="@+id/ivSave"
-            android:layout_width="@dimen/buttonIcon"
-            android:layout_height="@dimen/buttonIcon"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/ivShare"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivShare"
-            app:layout_constraintTop_toTopOf="@+id/ivShare"
-            app:srcCompat="@color/colorPrimaryDark" />
+            <TextView
+                android:id="@+id/tvSaveText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/elementMargin"
+                android:layout_weight="0"
+                android:text="Save goal"
+                android:textColor="@color/textLight"
+                android:textSize="@dimen/textSizeBody" />
 
-        <ImageView
-            android:id="@+id/ivShare"
-            android:layout_width="@dimen/buttonIcon"
-            android:layout_height="@dimen/buttonIcon"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="2dp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvName"
-            app:layout_constraintEnd_toStartOf="@+id/ivSave"
-            app:layout_constraintStart_toEndOf="@+id/tvName"
-            app:layout_constraintTop_toTopOf="@+id/tvName"
-            app:srcCompat="@color/colorAccent" />
+        </LinearLayout>
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.example.mova.GoalProgressBar
-        android:id="@+id/goalpb"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        app:filledColor="@color/blueMid"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
-        app:unfilledColor="@color/purpleLight" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvActions"
+    <LinearLayout
+        android:id="@+id/llBody"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/clAddAction"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/goalpb" />
-
-    <com.example.mova.component.ComponentLayout
-        android:id="@+id/clAddAction"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="@dimen/innerMargin"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llHeader">
 
-    </com.example.mova.component.ComponentLayout>
+        <LinearLayout
+            android:id="@+id/llProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+
+            <com.example.mova.GoalProgressBar
+                android:id="@+id/goalpb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:filledColor="@color/blueMid"
+                app:unfilledColor="@color/purpleLight" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llMainBody"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/innerMargin"
+            android:layout_marginRight="@dimen/innerMargin"
+            android:layout_weight="10"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/llGoalTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="@dimen/profileImage"
+                    android:layout_height="@dimen/profileImage"
+                    android:layout_marginLeft="@dimen/elementMargin"
+                    app:cardCornerRadius="@dimen/borderRadiusCircle"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:adjustViewBounds="false"
+                        android:scaleType="fitXY"
+                        app:srcCompat="@android:color/holo_purple" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/elementMargin"
+                    android:text="Goal Name"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textSize="@dimen/textSizeTitle"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/elementMargin"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Description of group"
+                    android:textColor="@color/textLight"
+                    android:textSize="@dimen/textSizeBody" />
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/innerMargin">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvActions"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/clAddAction"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/clAddAction"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.example.mova.component.ComponentLayout
+                    android:id="@+id/clAddAction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                </com.example.mova.component.ComponentLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
