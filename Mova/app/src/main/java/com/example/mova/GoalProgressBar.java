@@ -4,14 +4,11 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.drawable.VectorDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -19,7 +16,6 @@ import android.view.animation.DecelerateInterpolator;
 import androidx.annotation.Nullable;
 
 import com.sdsmdg.harjot.vectormaster.VectorMasterDrawable;
-import com.sdsmdg.harjot.vectormaster.models.PathModel;
 
 public class GoalProgressBar extends View {
     // code derived from: https://guides.codepath.org/android/Progress-Bar-Custom-View
@@ -61,8 +57,6 @@ public class GoalProgressBar extends View {
     private Paint progressPaint;
     private Paint erasePaint;
 
-    private boolean hasAlreadyOffsetPath;
-
     public static final int PROGRESS_MAX = 100;
 
     // Corners
@@ -94,7 +88,6 @@ public class GoalProgressBar extends View {
         erasePaint = new Paint();
         erasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        hasAlreadyOffsetPath = false;
 
         // extract custom attributes
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.GoalProgressBar, 0, 0);
@@ -295,11 +288,11 @@ public class GoalProgressBar extends View {
 
         if (orientation == 0) {
             float aspectWH = (float) corner.getIntrinsicWidth() / (float) corner.getIntrinsicHeight();
-            newHeight = (float) thickness;
+            newHeight = (float) thickness + 1f;
             newWidth = newHeight * aspectWH;
         } else {
             float aspectHW = (float) corner.getIntrinsicHeight() / (float) corner.getIntrinsicWidth();
-            newWidth = (float) thickness;
+            newWidth = (float) thickness + 1f;
             newHeight = newWidth * aspectHW;
         }
 
@@ -347,12 +340,10 @@ public class GoalProgressBar extends View {
             }
         }
 
-        /* FIXME: This keeps on moving the path further and further away.
-         * I'm waiting for an answer here: https://stackoverflow.com/questions/57407452/move-vector-path-to-fixed-position-in-android
-         */
         Path path = corner.getPathModelByName("corner").getPath();
-        path.offset(rect.left, rect.top);
-        return path;
+        Path translated = new Path();
+        path.offset(rect.left, rect.top, translated);
+        return translated;
     }
 
     private void cutoutCorner(Canvas canvas, VectorMasterDrawable corner, boolean isAutoRoundedCorner) {
@@ -430,7 +421,6 @@ public class GoalProgressBar extends View {
             barAnimator.addUpdateListener((ValueAnimator animation) -> {
                 float interpolation = (float) animation.getAnimatedValue();
                 setProgress((int) (interpolation * progress), false);
-                hasAlreadyOffsetPath = false;
             });
 
             if (!barAnimator.isStarted()) {
