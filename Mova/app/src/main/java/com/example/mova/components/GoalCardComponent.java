@@ -5,11 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -104,7 +103,7 @@ public class GoalCardComponent extends Component {
         checkViewHolderClass(holder, GoalCardViewHolder.class);
         viewHolder = (GoalCardViewHolder) holder;
 
-        viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.llLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
@@ -118,16 +117,16 @@ public class GoalCardComponent extends Component {
         });
 
         viewHolder.tvName.setText(item.getTitle());
-        viewHolder.tvDescription.setText(item.getDescription());
+//        viewHolder.tvDescription.setText(item.getDescription());
 
         GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
 
-            viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
-            viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
-            viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
+//            viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
+//            viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
+//            viewHolder.tvTag.setVisibility(View.GONE); // todo -- include tag functionality
 
         // get and render the actions -- use bool isPersonal and bool isUserInvolved
 
@@ -285,13 +284,13 @@ public class GoalCardComponent extends Component {
     public static class GoalCardViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.goalProgressBar) protected GoalProgressBar goalProgressBar;
-        @BindView(R.id.tvQuote)         protected TextView tvQuote; // todo -- add to Parse ? stretch goal
+//        @BindView(R.id.tvQuote)         protected TextView tvQuote; // todo -- add to Parse ? stretch goal
         @BindView(R.id.tvName)          protected TextView tvName;
-        @BindView(R.id.tvDescription)   protected TextView tvDescription;
+//        @BindView(R.id.tvDescription)   protected TextView tvDescription;
         @BindView(R.id.rvActions)       protected RecyclerView rvActions;
-        @BindView(R.id.tvNumDone)       protected TextView tvNumDone; // fixme -- in personal, only one person ?
-        @BindView(R.id.tvTag)           protected TextView tvTag; // fixme -- what about multiple tags?
-        @BindView(R.id.layout)          protected ConstraintLayout clLayout;
+//        @BindView(R.id.tvNumDone)       protected TextView tvNumDone; // fixme -- in personal, only one person ?
+//        @BindView(R.id.tvTag)           protected TextView tvTag; // fixme -- what about multiple tags?
+        @BindView(R.id.layout)          protected LinearLayout llLayout;
 
         public GoalCardViewHolder(@NonNull View itemView) {
             super(itemView);
