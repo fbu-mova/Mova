@@ -151,9 +151,12 @@ public class GoalProgressBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+
         // Set line dimensions
-        int half = (orientation == 0) ? getHeight() / 2 : getWidth() / 2;
-        int progressLength = (orientation == 0) ? (int) (getWidth() * progress / 100f) : (int) (getHeight() * progress / 100f);
+        int half = (orientation == 0) ? height / 2 : width / 2;
+        int progressLength = (orientation == 0) ? (int) (width * progress / 100f) : (int) (height * progress / 100f);
 
         // draw the part of the bar that's filled (completed)
         progressPaint.setStrokeWidth(thickness);
@@ -161,14 +164,14 @@ public class GoalProgressBar extends View {
 
         if (orientation == 0) {
             canvas.drawLine(
-                (drawFrom == 0) ? 0 : getWidth(), half,
-                (drawFrom == 0) ? progressLength : getWidth() - progressLength, half,
+                (drawFrom == 0) ? 0 : width, half,
+                (drawFrom == 0) ? progressLength : width - progressLength, half,
                 progressPaint
             );
         } else {
             canvas.drawLine(
-                half, (drawFrom == 0) ? 0 : getHeight(),
-                half, (drawFrom == 0) ? progressLength : getHeight() - progressLength,
+                half, (drawFrom == 0) ? 0 : height,
+                half, (drawFrom == 0) ? progressLength : height - progressLength,
                 progressPaint
             );
         }
@@ -178,14 +181,14 @@ public class GoalProgressBar extends View {
 
         if (orientation == 0) {
             canvas.drawLine(
-                (drawFrom == 0) ? progressLength : getWidth() - progressLength, half,
-                (drawFrom == 0) ? getWidth() : 0, half,
+                (drawFrom == 0) ? progressLength : width - progressLength, half,
+                (drawFrom == 0) ? width : 0, half,
                 progressPaint
             );
         } else {
             canvas.drawLine(
-                half, (drawFrom == 0) ? progressLength : getHeight() - progressLength,
-                half, (drawFrom == 0) ? getHeight() : 0,
+                half, (drawFrom == 0) ? progressLength : height - progressLength,
+                half, (drawFrom == 0) ? height : 0,
                 progressPaint
             );
         }
@@ -298,31 +301,33 @@ public class GoalProgressBar extends View {
 
         // Select correct position on canvas
         Rect rect;
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
 
         if (isAutoRoundedCorner) {
             if (orientation == 0) {
                 if (autoRoundedEnd == 0) {
                     rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
                 } else {
-                    rect = new Rect(getWidth() - bmp.getWidth(), 0, getWidth(), bmp.getHeight());
+                    rect = new Rect(width - bmp.getWidth(), 0, width, bmp.getHeight());
                 }
             } else {
                 if (autoRoundedEnd == 0) {
                     rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
                 } else {
-                    rect = new Rect(0, getHeight() - bmp.getHeight(), bmp.getWidth(), getHeight());
+                    rect = new Rect(0, height - bmp.getHeight(), bmp.getWidth(), height);
                 }
             }
         } else {
             if (orientation == 0) {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(getWidth() - bmp.getWidth(), 0, getWidth(), bmp.getHeight());
+                    rect = new Rect(width - bmp.getWidth(), 0, width, bmp.getHeight());
                 } else {
                     rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
                 }
             } else {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(0, getHeight() - bmp.getHeight(), bmp.getWidth(), getHeight());
+                    rect = new Rect(0, height - bmp.getHeight(), bmp.getWidth(), height);
                 } else {
                     rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
                 }
