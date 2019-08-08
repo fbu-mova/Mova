@@ -127,9 +127,7 @@ public class PostComponent extends Component {
                 holder.ivProfileImage.setOnClickListener((view) -> {
                     // TODO: Go to profile page
                 });
-                Glide.with(getActivity())
-                     .load(Icons.identicon(loaded))
-                     .into(holder.ivProfileImage);
+                Icons.displayIdenticon(loaded.getUsername(), holder.cvProfileImage, holder.ivProfileImage);
             }
         });
     }
@@ -157,7 +155,9 @@ public class PostComponent extends Component {
                 if (mediaComponent == null) {
                     holder.clMedia.setVisibility(View.GONE);
                 } else {
-                    // FIXME: PostComponent does not display despite inflating properly
+                    int elementMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.elementMargin);
+                    holder.clMedia.setMarginTop(elementMargin);
+                    holder.clMedia.setMarginBottom(elementMargin);
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
                     holder.clMedia.setVisibility(View.VISIBLE);
                 }
