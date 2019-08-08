@@ -108,12 +108,12 @@ public class GoalThumbnailComponent extends Component {
             viewHolder.cvFromGroupIcon.setVisibility(groupIcon);
         });
 
-        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-        Glide.with(getActivity())
-                .load(url)
-                .error(R.color.blueDark) // todo - replace to be better image, add rounded corners
-                .placeholder(R.color.blueDark)
-                .into(viewHolder.ivPhoto);
+//        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
+//        Glide.with(getActivity())
+//                .load(url)
+//                .error(R.color.blueDark) // todo - replace to be better image, add rounded corners
+//                .placeholder(R.color.blueDark)
+//                .into(viewHolder.ivPhoto);
 
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);

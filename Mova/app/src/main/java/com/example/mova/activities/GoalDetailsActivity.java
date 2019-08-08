@@ -113,12 +113,12 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             }
         });
 
-        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-        Glide.with(this)  // fixme -- always take forever to load
-                .load(url)
-                .error(R.color.colorPrimaryDark)
-                .placeholder(R.color.orangeMid)
-                .into(ivPhoto);
+//        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
+//        Glide.with(this)  // fixme -- always take forever to load
+//                .load(url)
+//                .error(R.color.colorPrimaryDark)
+//                .placeholder(R.color.orangeMid)
+//                .into(ivPhoto);
 
         // update GoalProgressBar
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {

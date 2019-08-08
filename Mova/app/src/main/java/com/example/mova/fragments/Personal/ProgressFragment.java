@@ -27,6 +27,7 @@ import com.example.mova.model.Mood;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
 import com.jjoe64.graphview.GraphView;
@@ -250,9 +251,12 @@ public class ProgressFragment extends Fragment {
             goalUtils.getDataForGraph(goal, User.getCurrentUser(), length , (series) -> {
                 series.setTitle(goal.getTitle());
                 series.setSpacing(10);
-                if(goal.getColor() != null){
-                    series.setColor(Color.parseColor(goal.getColor()));
-                }
+
+                ColorUtils.Hue hue = goal.getHue();
+                if (hue == null) hue = ColorUtils.Hue.random();
+                int mid = ColorUtils.getColor(getResources(), hue, ColorUtils.Lightness.Mid);
+                
+                series.setColor(mid);
                 graph.addSeries(series);
                 cb.call(null);
 //                        graph.getViewport().setMinX(-1*length);
