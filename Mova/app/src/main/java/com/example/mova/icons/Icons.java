@@ -45,12 +45,23 @@ public class Icons {
     }
 
     public static int color(@NonNull String name) {
-        return Identicon.color(name, hashGenerator);
+        int color = Identicon.color(name, hashGenerator);
+        float[] hsl = new float[3];
+        androidx.core.graphics.ColorUtils.colorToHSL(color, hsl);
+        if (hsl[2] > (0.5f * 255f)) return secondaryColor(color);
+        else                        return color;
     }
 
     public static int backgroundColor(@NonNull String name) {
-        int color = color(name);
-        return ColorUtils.lighten(color, 0.2f);
+        int color = Identicon.color(name, hashGenerator);
+        float[] hsl = new float[3];
+        androidx.core.graphics.ColorUtils.colorToHSL(color, hsl);
+        if (hsl[2] > (0.5f * 255f)) return color;
+        else                        return secondaryColor(color);
+    }
+
+    public static int secondaryColor(int mainColor) {
+        return ColorUtils.lighten(mainColor, 0.3f);
     }
 
     public static void nounIcons(@NonNull String term, AsyncUtils.TwoItemCallback<NounProjectClient.Icon[], Throwable> cb) {

@@ -252,8 +252,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                                      });
                                      ivIcon.setImageDrawable(finalDrawable);
                                      finalDrawable.startTransition(200);
-                                     // FIXME: This color turns out to be far too dark. Is it the alpha on the foreground, somehow? Or... it's the cases where the identicon color is already light. Needs desaturation or darkening (either the BG or the FG).
-                                     cvIcon.setBackgroundColor(Icons.backgroundColor(term));
+                                     cvIcon.setCardBackgroundColor(Icons.backgroundColor(term));
                                  }
 
                                  @Override

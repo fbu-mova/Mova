@@ -19,10 +19,10 @@ import com.example.mova.icons.Icons;
 public class ColorUtils {
     /** @source https://stackoverflow.com/questions/4928772/using-color-and-color-darker-in-android */
     public static int lighten(int color, float quantity) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-        hsv[2] = 1.0f - quantity * (1.0f - hsv[2]);
-        return Color.HSVToColor(hsv);
+        float[] hsl = new float[3];
+        androidx.core.graphics.ColorUtils.colorToHSL(color, hsl);
+        hsl[2] = 1.0f - quantity * (1.0f - hsl[2]);
+        return androidx.core.graphics.ColorUtils.HSLToColor(hsl);
     }
 
     public static Bitmap changeColorFromBlack(Drawable drawable, int color) {
@@ -35,10 +35,7 @@ public class ColorUtils {
 
     public static Bitmap changeColorFromBlack(Bitmap bmp, int color) {
         bmp.setHasAlpha(true);
-        recolorPixels(bmp, Color.BLACK, color, 0.3f, (orig, desired) -> {
-            return androidx.core.graphics.ColorUtils.setAlphaComponent(desired, Color.alpha(orig));
-            // FIXME: Possibly also modify lightness?
-        });
+        recolorPixels(bmp, Color.BLACK, color, 0.5f, (orig, desired) -> androidx.core.graphics.ColorUtils.setAlphaComponent(desired, Color.alpha(orig)));
         return bmp;
     }
 

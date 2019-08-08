@@ -38,8 +38,8 @@ public class Identicon {
 
         Bitmap identicon = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
-        int foreground = color(hash);
-        int background = ColorUtils.lighten(foreground, 0.2f);
+        int foreground = Icons.color(name);
+        int background = Icons.backgroundColor(name);
 
         for (int x = 0; x < width; x++) {
 
