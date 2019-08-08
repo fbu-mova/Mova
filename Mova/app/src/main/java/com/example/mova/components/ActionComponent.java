@@ -9,17 +9,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.mova.ConfirmEditSocialActionDialog;
+import com.example.mova.dialogs.ConfirmEditSocialActionDialog;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
-import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
-import com.parse.ParseQuery;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,20 +90,20 @@ public class ActionComponent extends Component {
 
                 // update this action with new text
                 String new_action = wrapper.getMessage();
-
-                if (!isPersonal) { // fixme!!!!!! -- getParentGoal doesn't return whole goal
-
-                    confirmEdit((User.getCurrentUser() == action.getParentGoal().getAuthor()), new_action); // fixme, getParentGoal again
-                    // includes case where editing personal version of a social goal,
-                    //  so action saved, connected to SharedAction set to false, sharedAction not changed
-
-                }
-                else {
+//
+//                if (!isPersonal) { // fixme!!!!!! -- getParentGoal doesn't return whole goal
+//
+//                    confirmEdit((User.getCurrentUser() == action.getParentGoal().getAuthor()), new_action); // fixme, getParentGoal again
+//                    // includes case where editing personal version of a social goal,
+//                    //  so action saved, connected to SharedAction set to false, sharedAction not changed
+//
+//                }
+//                else {
                     // saving logic for isPersonal
                     GoalUtils.saveSharedAndAction(action, new_action, (item) -> {
                         Toast.makeText(getActivity(), "Updated action", Toast.LENGTH_SHORT).show();
                     });
-                }
+//                }
 
                 manager.swap("ActionViewComponent");
             }

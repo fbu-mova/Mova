@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.dialogs;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.mova.R;
 import com.example.mova.model.Action;
-import com.example.mova.model.Goal;
 import com.example.mova.utils.GoalUtils;
 import com.parse.ParseException;
 import com.parse.SaveCallback;

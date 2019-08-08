@@ -1,6 +1,8 @@
 package com.example.mova.utils;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mova.component.ComponentManager;
 import com.example.mova.feed.Prioritized;
@@ -11,7 +13,9 @@ import com.example.mova.model.User;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
@@ -189,7 +193,30 @@ public class GoalUtils {
 
     public static void toggleDone(Action action, AsyncUtils.ItemCallback<Throwable> callback) {
         action.setIsDone(!action.getIsDone());
-        action.saveInBackground((e) -> callback.call(e));
+        action.saveInBackground((e) -> {
+            if (e == null) {
+                // update corresponding SharedAction's usersDone field
+                SharedAction sharedAction = action.getParentSharedAction();
+                sharedAction.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (e == null && object != null) {
+                            int numDone = sharedAction.getUsersDone();
+                            if (action.getIsDone())     sharedAction.setUsersDone(numDone + 1);
+                            else                        sharedAction.setUsersDone((numDone <= 1) ? 0 : numDone - 1);
+
+                            sharedAction.saveInBackground((error) -> callback.call(error));
+                        }
+                        else {
+                            Log.e(TAG, "error in fetching sharedAction in toggleDone", e);
+                        }
+                    }
+                });
+            }
+            else {
+                Log.e(TAG, "error in toggleDone first action save", e);
+            }
+        });
     }
 
     public static void submitGoal(String goalName, String goalDescription, List<Action> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
@@ -339,7 +366,7 @@ public class GoalUtils {
     }
 
 
-    public static void saveSocialGoal(Goal goal) {
+    public static void saveSocialGoal(Goal goal, Context context) {
         /* TO save a social goal as a personal goal:
         1. add the social goal to the relation of the User's goals
         2. for each shared action in the goal, create a new action pointing to that shared action
@@ -397,6 +424,7 @@ public class GoalUtils {
                 saveAction(actionsList, goal, sharedActions, false, (item) -> {
                     // add User to usersInvolved relation of goal + save goal
                     goal.relUsersInvolved.add(User.getCurrentUser(), (user) -> {});
+                    Toast.makeText(context, "Saved social goal successfully!", Toast.LENGTH_SHORT).show();
                 });
             });
 
@@ -459,7 +487,7 @@ public class GoalUtils {
 
                     for (Action object : objects) {
                         // fixme -- order might be flipped, should be consistent tho
-                        //       assumes objects goes newest to oldest per orderByDescending
+//                               assumes objects goes newest to oldest per orderByDescending
                         if (object.getIsPriority()) {
                             actions.add(counter, object);
                             counter++;

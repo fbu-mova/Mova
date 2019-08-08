@@ -23,6 +23,7 @@ import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
@@ -132,6 +133,9 @@ public class GoalsFragment extends Fragment {
         // set adapter to recyclerview
         rvThumbnailGoals.setAdapter(thumbnailGoalsAdapter);
 
+        // set edge decorator
+        rvThumbnailGoals.addItemDecoration(new EdgeDecorator((int) getResources().getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal));
+
         // load thumbnail goals into recyclerview
         Log.d(TAG, "in onViewCreated");
         loadThumbNailGoals();
@@ -154,6 +158,7 @@ public class GoalsFragment extends Fragment {
 
         rvAllGoals.setLayoutManager(new LinearLayoutManager(activity));
         rvAllGoals.setAdapter(allGoalsAdapter);
+        rvAllGoals.addItemDecoration(new EdgeDecorator((int) getResources().getDimension(R.dimen.innerMargin)));
 
         Log.d(TAG, "about to call loadAllGoals");
         loadAllGoals();

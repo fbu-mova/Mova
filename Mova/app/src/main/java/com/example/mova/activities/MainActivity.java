@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.fragments.SocialFragment;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseACL;
@@ -38,6 +39,8 @@ public class MainActivity extends DelegatedResultActivity {
         ParseACL acl = new ParseACL(currUser);
         acl.setPublicReadAccess(true);
         currUser.setACL(acl);
+
+        Icons.setContext(getApplicationContext());
 
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
     }

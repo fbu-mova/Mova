@@ -246,6 +246,7 @@ public class ConfirmShareGoalDialog extends DialogFragment {
             // update group's goals and posts, then save
             group.relGoals.add(goal);
             group.relPosts.add(post);
+            group.relUsers.add(User.getCurrentUser());
 
             group.saveInBackground(new SaveCallback() {
                 @Override

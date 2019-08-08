@@ -1,6 +1,7 @@
 package com.example.mova.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,6 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.CreateActionComponent;
+import com.example.mova.components.GoalCardComponent;
+import com.example.mova.components.InvolvedSharedActionComponent;
+import com.example.mova.components.UninvolvedSharedActionComponent;
+import com.example.mova.dialogs.ConfirmShareGoalDialog;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -19,11 +26,16 @@ import com.example.mova.components.ActionComponent;
 import com.example.mova.dialogs.ConfirmShareGoalDialog;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
+import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +53,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     private Goal goal;
 
     private boolean isPersonal;
+    private boolean isUserInvolved;
 
     @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
@@ -50,10 +63,15 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
     @BindView(R.id.ivShare)         protected ImageView ivShare;
     @BindView(R.id.ivSave)          protected ImageView ivSave;
+    @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
 
-    // recyclerview
+    // recyclerview - case personal
     private List<Action> actions;
     private DataComponentAdapter<Action> actionsAdapter;
+
+    // recyclerview - case social
+    private ArrayList<SharedAction.Data> sharedActions;
+    private DataComponentAdapter<SharedAction.Data> sharedActionsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +80,19 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         ButterKnife.bind(this);
 
         goal = getIntent().getParcelableExtra("goal");
-        isPersonal = goal.getIsPersonal();
+        isUserInvolved = getIntent().getBooleanExtra("isUserInvolved", false);
 
+        isPersonal = goal.getIsPersonal();
         tvGoalName.setText(goal.getTitle());
-//        tvFromGroup.setText(goal.getGroupName()); // FIXME -- null object reference error
+
+        goal.getGroupName(() -> {
+            tvFromGroup.setVisibility(View.GONE);
+        }, (str) -> {
+            if (str == "") tvFromGroup.setVisibility(View.GONE);
+            else           tvFromGroup.setText(str); // FIXME -- null object reference error
+
+        });
+
         tvDescription.setText(goal.getDescription());
 
         ivShare.setOnClickListener(new View.OnClickListener() {
@@ -76,20 +103,21 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         });
 
         ivSave.setOnClickListener((v) -> {
-            if (goal.getIsPersonal()) {
+            if (isPersonal) {
                 // fixme -- what if not in same group as this goal? can still see in first place? ( ~this case)
                 Toast.makeText(GoalDetailsActivity.this, "You can't save someone else's personal goal!", Toast.LENGTH_LONG).show();
             }
             else {
                 // save social goal as a personal goal
-                GoalUtils.saveSocialGoal(goal);
+                GoalUtils.saveSocialGoal(goal, this);
             }
         });
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-        Glide.with(this)
+        Glide.with(this)  // fixme -- always take forever to load
                 .load(url)
                 .error(R.color.colorPrimaryDark)
+                .placeholder(R.color.orangeMid)
                 .into(ivPhoto);
 
         // update GoalProgressBar
@@ -98,26 +126,183 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             goalpb.setProgress(progress);
         });
 
-        // recyclerview
-        actions = new ArrayList<>();
+        if (isPersonal) { // FIXME -- currently social goals can't add actions (getting author User object also a callback itself...)
+            inflateAddActionComponent();
+        }
 
-        actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
+        setUpRecyclerView();
+
+    }
+
+    private void inflateAddActionComponent() {
+
+        clAddAction.inflateComponent(GoalDetailsActivity.this, new CreateActionComponent(new GoalComposeActivity.HandleCreateAction() {
             @Override
-            public Component makeComponent(Action item, Component.ViewHolder holder) {
-                Component component = new ActionComponent(item,isPersonal);
-                return component;
+            public void call(Action action) {
+                SharedAction sharedAction = new SharedAction()
+                        .setTask(action.getTask())
+                        .setIsPriority(action.getIsPriority())
+                        .setUsersDone(0)
+                        .setGoal(goal);
+
+                // save sharedAction
+                sharedAction.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            sharedAction.relChildActions.add(action);
+                            sharedAction.relUsersInvolved.add(User.getCurrentUser());
+
+                            // save sharedAction again
+                            sharedAction.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        // action needs to save parentGoal and parentSharedAction
+                                        action.setParentGoal(goal);
+                                        action.setParentSharedAction(sharedAction);
+                                        action.saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                if (e == null) {
+
+                                                    // need to update and save goal
+                                                    goal.relSharedActions.add(sharedAction);
+                                                    goal.relActions.add(action);
+
+                                                    goal.saveInBackground(new SaveCallback() {
+                                                        @Override
+                                                        public void done(ParseException e) {
+                                                            if (e == null) {
+                                                                Log.d(TAG, "create action success");
+
+                                                                // add action (or sharedAction, depending on casework...) to recyclerview
+                                                                updateRecyclerView(action, sharedAction);
+                                                            }
+                                                            else {
+                                                                Log.e(TAG, "create action failed");
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                                else {
+                                                    Log.e(TAG, "penultimate create action failed", e);
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        Log.e(TAG, "create action save 2 of shared action failed", e);
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            Log.e(TAG, "create action save 1 of shared action failed", e);
+                        }
+                    }
+                });
             }
+        }));
 
-            @Override
-            protected Component.Inflater makeInflater(Action item) {
-                return new ActionComponent.Inflater();
-            }
-        };
+    }
 
-        rvActions.setLayoutManager(new LinearLayoutManager(this));
-        rvActions.setAdapter(actionsAdapter);
+    private void updateRecyclerView(Action action, SharedAction sharedAction) {
 
-        loadAllActions();
+        if (isPersonal) {
+            actions.add(action);
+            actionsAdapter.notifyItemInserted(actions.size() - 1);
+        }
+        else if (!isPersonal) { // here, can only add if creator of social goal
+            sharedActions.add(new SharedAction.Data(sharedAction, false));
+            sharedActionsAdapter.notifyItemInserted(sharedActions.size() - 1);
+        }
+
+    }
+
+    private void setUpRecyclerView() {
+
+        // recyclerview -- casework like in GoalCardComp
+        if (isPersonal) {
+            actions = new ArrayList<>();
+
+            actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
+                @Override
+                public Component makeComponent(Action item, Component.ViewHolder holder) {
+                    Component component = new ActionComponent(item, isPersonal);
+                    return component;
+                }
+
+                @Override
+                protected Component.Inflater makeInflater(Action item) {
+                    return new ActionComponent.Inflater();
+                }
+            };
+
+            rvActions.setLayoutManager(new LinearLayoutManager(this));
+            rvActions.setAdapter(actionsAdapter);
+
+            loadAllActions(); // fixme : mentioned in method declaration, but needs to address casework
+        }
+        else if (!isPersonal && isUserInvolved) {
+            // user sees official social goal
+
+            // a social goal that the user is involved in BUT user is not author
+            // for now, user sees official social goal
+
+            // fixme -- for now, social goals can't be edited from the cards.
+            // todo -- make it so creator can edit via goal details page ?
+
+            sharedActions = new ArrayList<>();
+
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(this, sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
+                    Component component = new InvolvedSharedActionComponent(item);
+                    return component;
+                }
+
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new InvolvedSharedActionComponent.Inflater();
+                }
+            };
+
+            rvActions.setLayoutManager(new LinearLayoutManager(this));
+            rvActions.setAdapter(sharedActionsAdapter);
+
+            GoalUtils.loadGoalSharedActions(goal, (objects) -> {
+                GoalCardComponent.updateInvolvedSharedAdapter(objects, sharedActions, sharedActionsAdapter, rvActions);
+            });
+        }
+        else if (!isPersonal && !isUserInvolved) {
+            // user doesn't have checkbox functionality
+
+            // a social goal the user is not involved in
+
+            sharedActions = new ArrayList<>();
+
+            sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(this, sharedActions) {
+                @Override
+                public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
+                    Component component = new UninvolvedSharedActionComponent(item);
+                    return component;
+                }
+
+                @Override
+                protected Component.Inflater makeInflater(SharedAction.Data item) {
+                    return new UninvolvedSharedActionComponent.Inflater();
+                }
+            };
+
+            rvActions.setLayoutManager(new LinearLayoutManager(this));
+            rvActions.setAdapter(sharedActionsAdapter);
+
+            GoalUtils.loadGoalSharedActions(goal, (objects) -> {
+                GoalCardComponent.updateUninvolvedSharedAdapter(goal, objects, sharedActions, sharedActionsAdapter, rvActions);
+            });
+        }
+
     }
 
     private void confirmShare() {
@@ -126,17 +311,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         ConfirmShareGoalDialog confirmShareGoalDialog = ConfirmShareGoalDialog.newInstance(goal);
         confirmShareGoalDialog.show(fm, "showingConfirmShareGoalDialog");
 
-    }
-
-    // FIXME -- going back + refresh not happening issues
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-//        Intent intent = new Intent(this, getCallingActivity().getClass());
-//        intent.putExtra();
-//        setResult(RESULT_OK, intent);
-//        finish();
     }
 
     private void loadAllActions() { // fixme : should be same as GoalCardComp, visible even if not involved

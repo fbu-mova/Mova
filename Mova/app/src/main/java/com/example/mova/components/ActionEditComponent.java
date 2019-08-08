@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -80,13 +81,20 @@ public class ActionEditComponent extends Component {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
 
-        viewHolder.btSave.setOnClickListener(new View.OnClickListener() {
+        viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 wrapper.setMessage(viewHolder.etAction.getText().toString());
                 onActionEditSaveListener.call(action, wrapper, componentManager);
                 wrapper = new Action.Wrapper();
+            }
+        });
+
+        viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                componentManager.swap("ActionViewComponent");
             }
         });
 
@@ -136,7 +144,8 @@ public class ActionEditComponent extends Component {
         @BindView(R.id.ivIcon1)         protected ImageView recurring;
         @BindView(R.id.ivIcon2)         protected ImageView reminder;
         @BindView(R.id.ivIcon3)         protected ImageView priority;
-        @BindView(R.id.btSave)          protected Button btSave;
+        @BindView(R.id.ivSave)          protected ImageView ivSave;
+        @BindView(R.id.parentLayout)    protected LinearLayout parentLayout;
 
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);

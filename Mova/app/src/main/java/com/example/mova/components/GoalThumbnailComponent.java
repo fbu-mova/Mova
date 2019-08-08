@@ -1,14 +1,17 @@
 package com.example.mova.components;
 
 import android.content.Intent;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
@@ -81,16 +84,12 @@ public class GoalThumbnailComponent extends Component {
         checkViewHolderClass(holder, GoalThumbnailViewHolder.class);
         viewHolder = (GoalThumbnailViewHolder) holder;
 
-//        if (viewHolder == null) {
-//            Log.e(TAG, "not inflating views to viewHolder, in render");
-//            return;
-//        }
-
-        viewHolder.clLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
                 intent.putExtra("goal", goal);
+                intent.putExtra("isUserInvolved", userIsInvolved);
 
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 
@@ -100,15 +99,20 @@ public class GoalThumbnailComponent extends Component {
 
         viewHolder.tvName.setText(goal.getTitle());
 
-        viewHolder.tvFromGroup.setText(goal.getGroupName());
-
-        // how to get context for binding glide images? -- made it a field
+        goal.getGroupName(() -> {
+            viewHolder.tvFromGroup.setVisibility(View.INVISIBLE);
+            viewHolder.cvFromGroupIcon.setVisibility(View.INVISIBLE);
+        }, (str) -> {
+            int groupIcon = (str == "") ? View.INVISIBLE : View.VISIBLE;
+            viewHolder.tvFromGroup.setText(str);
+            viewHolder.cvFromGroupIcon.setVisibility(groupIcon);
+        });
 
         String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
         Glide.with(getActivity())
                 .load(url)
-                .error(R.color.colorAccent) // todo - replace to be better image, add rounded corners
-                .placeholder(R.color.colorAccent)
+                .error(R.color.blueDark) // todo - replace to be better image, add rounded corners
+                .placeholder(R.color.blueDark)
                 .into(viewHolder.ivPhoto);
 
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
@@ -128,7 +132,8 @@ public class GoalThumbnailComponent extends Component {
         @BindView(R.id.tvName)              protected TextView tvName;
         @BindView(R.id.ivPhoto)             protected ImageView ivPhoto;
         @BindView(R.id.goalProgressBar)     protected GoalProgressBar goalProgressBar;
-        @BindView(R.id.constraintLayout)    protected ConstraintLayout clLayout;
+        @BindView(R.id.parentLayout)        protected LinearLayout parentLayout;
+        @BindView(R.id.cvFromGroupIcon)     protected CardView cvFromGroupIcon;
 
         public GoalThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);

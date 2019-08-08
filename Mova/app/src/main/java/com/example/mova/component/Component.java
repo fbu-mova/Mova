@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.components.MediaImageComponent;
 
 /**
  * Bundles a view's logic, state, and binding.
