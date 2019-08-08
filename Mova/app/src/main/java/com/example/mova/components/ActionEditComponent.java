@@ -118,7 +118,7 @@ public class ActionEditComponent extends Component {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Are you sure you want to delete this event?")
+                builder.setMessage("Are you sure you want to delete this action?")
                         .setTitle("Confirm")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override

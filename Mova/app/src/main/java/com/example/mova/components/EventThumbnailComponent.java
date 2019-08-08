@@ -131,7 +131,8 @@ public class EventThumbnailComponent extends Component {
 
     private void displayGroup() {
         if (event.getParentGroup() == null) {
-            viewHolder.llGroup.setVisibility(View.GONE);
+            //viewHolder.llGroup.setVisibility(View.GONE);
+            viewHolder.cvGroup.setVisibility(View.GONE);
             return;
         }
 
