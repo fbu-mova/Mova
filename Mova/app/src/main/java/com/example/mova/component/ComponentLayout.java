@@ -16,6 +16,8 @@ public class ComponentLayout extends FrameLayout {
     private int marginRight = 0;
     private int marginBottom = 0;
 
+    private boolean autoClear = true;
+
     public ComponentLayout(@NonNull Context context) {
         super(context);
     }
@@ -34,7 +36,7 @@ public class ComponentLayout extends FrameLayout {
      * @param component The component to inflate.
      */
     public void inflateComponent(DelegatedResultActivity activity, Component component) {
-        this.clear(); // in case of RecyclerViews, discards old layout
+        if (autoClear) clear(); // in case of RecyclerViews, discards old layout
         Component.Inflater inflater = component.makeInflater();
         Component.ViewHolder holder = inflater.inflate(activity, this, true);
         ViewUtils.setMargins(holder.getView(), marginLeft, marginTop, marginRight, marginBottom);
@@ -48,6 +50,14 @@ public class ComponentLayout extends FrameLayout {
      */
     public void clear() {
         removeAllViews();
+    }
+
+    /**
+     * Determines whether or not to automatically clear the inflater on inflating a new component.
+     * @param autoClear Whether or not to automatically clear.
+     */
+    public void setAutoClear(boolean autoClear) {
+        this.autoClear = autoClear;
     }
 
     // -- MARGINS -- //
