@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:padding="@dimen/padding"
     app:cardCornerRadius="@dimen/borderRadius"
-    app:cardElevation="@dimen/shallowCardElevation">
+    app:cardElevation="@dimen/deepCardElevation">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,6 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/innerMargin"
+            android:clipChildren="true"
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
