@@ -151,7 +151,7 @@ public class PostComponent extends Component {
                 // Update content with loaded instance
                 item.setContent(fetchedContent);
 
-                Component mediaComponent = item.makeComponent();
+                Component mediaComponent = item.makeComponent(getActivity().getResources());
                 if (mediaComponent == null) {
                     holder.clMedia.setVisibility(View.GONE);
                 } else {

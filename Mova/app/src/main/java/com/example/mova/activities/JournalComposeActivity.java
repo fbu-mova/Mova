@@ -121,7 +121,7 @@ public class JournalComposeActivity extends DelegatedResultActivity {
 
         // If embedded media exists, load it into its container
         media = getIntent().getParcelableExtra(KEY_MEDIA);
-        Component mediaComponent = (media == null) ? null : media.makeComponent();
+        Component mediaComponent = (media == null) ? null : media.makeComponent(getResources());
         if (mediaComponent != null) {
             clMedia.inflateComponent(this, mediaComponent);
         }
