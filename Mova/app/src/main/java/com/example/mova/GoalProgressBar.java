@@ -3,8 +3,13 @@ package com.example.mova;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.drawable.VectorDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -16,7 +21,7 @@ public class GoalProgressBar extends View {
         // skipped custom indicator type with enums
         // skipped saving instance state (across screen rotations)
 
-    // Attributes
+    // Attributes & values
 
     private int progress;
 
@@ -32,19 +37,38 @@ public class GoalProgressBar extends View {
 
     /** Orientation of the progress bar. (0: horizontal, 1: vertical) */
     private int orientation;
-    /** Whether or not to round the first end of the progress bar. */
-    private boolean roundStart;
+    /** The end to round when maxLength is exceeded. */
+    private int autoRoundedEnd;
+    /** Whether or not to round the end of the progress bar that is not automatically rounded. */
+    private boolean roundOtherEnd;
     /** The side of the bar to round when length exceeds maxLength. (0: start, 1: end) */
     private int roundSide;
     /** The end of the bar from which to start drawing progress. (0: start, 1: end) */
     private int drawFrom;
 
-    // Animation & values
+
+    /** Whether the end of the bar should be rounded. True when the bar's parent length is greater than the maxLength. */
+    private boolean shouldAutoRound;
+
+    // Animation & drawing
 
     private ValueAnimator barAnimator;
     private Paint progressPaint;
+    private Paint erasePaint;
 
     public static final int PROGRESS_MAX = 100;
+
+    // Corners
+
+    private VectorDrawable verticalBottomRightCorner   = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vbr);
+    private VectorDrawable verticalBottomLeftCorner    = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vbl);
+    private VectorDrawable verticalTopRightCorner      = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vtr);
+    private VectorDrawable verticalTopLeftCorner       = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_vtl);
+
+    private VectorDrawable horizontalBottomRightCorner = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_hbr);
+    private VectorDrawable horizontalBottomLeftCorner  = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_hbl);
+    private VectorDrawable horizontalTopRightCorner    = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_htr);
+    private VectorDrawable horizontalTopLeftCorner     = (VectorDrawable) getResources().getDrawable(R.drawable.ic_gpb_corner_htl);
 
     public GoalProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -54,6 +78,9 @@ public class GoalProgressBar extends View {
     private void init(AttributeSet attrs) {
         progressPaint = new Paint();
         progressPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        erasePaint = new Paint();
+        erasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 
         // extract custom attributes
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.GoalProgressBar, 0, 0);
@@ -67,9 +94,11 @@ public class GoalProgressBar extends View {
             setMaxLength(typedArray.getInt(R.styleable.GoalProgressBar_maxLength, Integer.MAX_VALUE));
 
             setOrientation(typedArray.getInt(R.styleable.GoalProgressBar_barOrientation, 1));
-            setRoundStart(typedArray.getBoolean(R.styleable.GoalProgressBar_roundStart, false));
-            setRoundSide(typedArray.getInt(R.styleable.GoalProgressBar_barRoundSide, 1));
+            setAutoRoundedEnd(typedArray.getInt(R.styleable.GoalProgressBar_autoRoundedEnd, 1));
+            setRoundOtherEnd(typedArray.getBoolean(R.styleable.GoalProgressBar_roundOtherEnd, false));
+            setRoundSide(typedArray.getInt(R.styleable.GoalProgressBar_roundSide, 1));
             setDrawFrom(typedArray.getInt(R.styleable.GoalProgressBar_drawFrom, (orientation == 0) ? 0 : 1));
+            shouldAutoRound = false;
 
             setProgress(typedArray.getInt(R.styleable.GoalProgressBar_progress, 0));
         } finally {
@@ -98,9 +127,11 @@ public class GoalProgressBar extends View {
         if (orientation == 0) {
             width = Math.min(parentWidth, maxLength);
             height = meetMeasureSpec(heightMode, parentHeight, thickness);
+            shouldAutoRound = parentWidth > maxLength;
         } else {
             height = Math.min(parentHeight, maxLength);
             width = meetMeasureSpec(widthMode, parentWidth, thickness);
+            shouldAutoRound = parentHeight > maxLength;
         }
 
         setMeasuredDimension(width, height);
@@ -159,7 +190,147 @@ public class GoalProgressBar extends View {
             );
         }
 
-        // TODO: Add masking on should round
+        // Cut out corners as necessary
+
+        if (shouldAutoRound) {
+            VectorDrawable corner = getCorner(true);
+            scaleCorner(corner);
+            cutoutCorner(canvas, corner, true);
+        }
+
+        if (roundOtherEnd) {
+            VectorDrawable corner = getCorner(false);
+            scaleCorner(corner);
+            cutoutCorner(canvas, corner, false);
+        }
+    }
+
+    /**
+     * Get the corner to cut off for the current configuration.
+     * @param forAutoRoundedCorner Whether to retrieve the auto-rounded corner or the other corner.
+     * @return The corner cutoff drawable for the specified corner.
+     */
+    private VectorDrawable getCorner(boolean forAutoRoundedCorner) {
+        if (forAutoRoundedCorner) {
+            if (autoRoundedEnd == 0) {
+                if (orientation == 0) {
+                    if (roundSide == 0) {
+                        return horizontalTopLeftCorner;
+                    } else {
+                        return horizontalBottomLeftCorner;
+                    }
+                } else {
+                    if (roundSide == 0) {
+                        return verticalTopLeftCorner;
+                    } else {
+                        return verticalTopRightCorner;
+                    }
+                }
+            } else {
+                if (orientation == 0) {
+                    if (roundSide == 0) {
+                        return horizontalTopRightCorner;
+                    } else {
+                        return horizontalBottomRightCorner;
+                    }
+                } else {
+                    if (roundSide == 0) {
+                        return verticalBottomLeftCorner;
+                    } else {
+                        return verticalBottomRightCorner;
+                    }
+                }
+            }
+        } else { // If not for the auto-rounded corner, then for the other corner
+            if (autoRoundedEnd == 0) {
+                if (orientation == 0) {
+                    if (roundSide == 0) {
+                        return horizontalTopRightCorner;
+                    } else {
+                        return horizontalBottomRightCorner;
+                    }
+                } else {
+                    if (roundSide == 0) {
+                        return verticalBottomLeftCorner;
+                    } else {
+                        return verticalBottomRightCorner;
+                    }
+                }
+            } else {
+                if (orientation == 0) {
+                    if (roundSide == 0) {
+                        return horizontalTopLeftCorner;
+                    } else {
+                        return horizontalBottomLeftCorner;
+                    }
+                } else {
+                    if (roundSide == 0) {
+                        return verticalTopLeftCorner;
+                    } else {
+                        return verticalTopRightCorner;
+                    }
+                }
+            }
+        }
+    }
+
+    private void scaleCorner(VectorDrawable corner) {
+        float newWidth, newHeight;
+
+        if (orientation == 0) {
+            float aspectWH = (float) corner.getIntrinsicWidth() / (float) corner.getIntrinsicHeight();
+            newHeight = (float) thickness;
+            newWidth = newHeight * aspectWH;
+        } else {
+            float aspectHW = (float) corner.getIntrinsicHeight() / (float) corner.getIntrinsicWidth();
+            newWidth = (float) thickness;
+            newHeight = newWidth * aspectHW;
+        }
+
+        corner.setBounds(0, 0, Math.round(newWidth), Math.round(newHeight));
+    }
+
+    private void cutoutCorner(Canvas canvas, VectorDrawable corner, boolean isAutoRoundedCorner) {
+        // Convert corner to bitmap
+        Bitmap bmp = Bitmap.createBitmap(corner.getBounds().width(), corner.getBounds().height(), Bitmap.Config.ARGB_8888);
+        Canvas cornerCanvas = new Canvas(bmp);
+        corner.draw(cornerCanvas);
+
+        // Select correct position on canvas
+        Rect rect;
+
+        if (isAutoRoundedCorner) {
+            if (orientation == 0) {
+                if (autoRoundedEnd == 0) {
+                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                } else {
+                    rect = new Rect(getWidth() - bmp.getWidth(), 0, getWidth(), bmp.getHeight());
+                }
+            } else {
+                if (autoRoundedEnd == 0) {
+                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                } else {
+                    rect = new Rect(0, getHeight() - bmp.getHeight(), bmp.getWidth(), getHeight());
+                }
+            }
+        } else {
+            if (orientation == 0) {
+                if (autoRoundedEnd == 0) {
+                    rect = new Rect(getWidth() - bmp.getWidth(), 0, getWidth(), bmp.getHeight());
+                } else {
+                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                }
+            } else {
+                if (autoRoundedEnd == 0) {
+                    rect = new Rect(0, getHeight() - bmp.getHeight(), bmp.getWidth(), getHeight());
+                } else {
+                    rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+                }
+            }
+        }
+
+        // Erase bitmap from canvas at chosen coordinates
+        canvas.drawBitmap(bmp, rect.left, rect.top, erasePaint);
     }
 
     public void setFilledColor(int filledColor) {
@@ -190,8 +361,13 @@ public class GoalProgressBar extends View {
         invalidate();
     }
 
-    public void setRoundStart(boolean roundStart) {
-        this.roundStart = roundStart;
+    public void setAutoRoundedEnd(int lengthRoundedEnd) {
+        this.autoRoundedEnd = lengthRoundedEnd;
+        invalidate();
+    }
+
+    public void setRoundOtherEnd(boolean roundOtherEnd) {
+        this.roundOtherEnd = roundOtherEnd;
         invalidate();
     }
 
