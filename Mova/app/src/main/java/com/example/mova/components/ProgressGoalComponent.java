@@ -85,7 +85,7 @@ public class ProgressGoalComponent extends Component {
         viewHolder.tvGoalTitle.setTextColor(mid);
         viewHolder.goalProgressBar.setUnfilledColor(ultraLight);
         viewHolder.goalProgressBar.setFilledColor(mid);
-        Icons.displayNounIcon(goal, viewHolder.cvGoal, viewHolder.ivGoal);
+        Icons.displayNounIcon(goal, null, viewHolder.ivGoal);
 
         viewHolder.tvGoalTitle.setText(goal.getTitle());
 

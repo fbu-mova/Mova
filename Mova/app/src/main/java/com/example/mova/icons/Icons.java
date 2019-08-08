@@ -167,12 +167,12 @@ public class Icons {
         displayIdenticon(user.getUsername(), cv, iv);
     }
 
-    public static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv) {
-        displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+    public static void displayNounIcon(NounProjectClient.Icon icon, @Nullable CardView cv, ImageView iv) {
+        displayNounIcon(icon, new CustomTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                 transitionColoredIcon(iv, resource, Icons.color(icon.term));
-                cv.setCardBackgroundColor(Icons.backgroundColor(icon.term));
+                if (cv != null) cv.setCardBackgroundColor(Icons.backgroundColor(icon.term));
             }
 
             @Override
@@ -182,7 +182,7 @@ public class Icons {
         });
     }
 
-    public static void displayNounIcon(Group group, CardView cv, ImageView iv) {
+    public static void displayNounIcon(Group group, @Nullable CardView cv, ImageView iv) {
         if (group.getNounIconId() == 0) {
             Log.i("Icons", "Found noun icon 0 for goal \"" + group.getName() + "\"; displaying placeholder");
             displayPlaceholder(cv, iv);
@@ -199,7 +199,7 @@ public class Icons {
         });
     }
 
-    public static void displayNounIcon(Goal goal, CardView cv, ImageView iv) {
+    public static void displayNounIcon(Goal goal, @Nullable CardView cv, ImageView iv) {
         if (goal.getNounIconId() == 0) {
             Log.i("Icons", "Found noun icon 0 for goal \"" + goal.getTitle() + "\"; displaying placeholder");
             displayPlaceholder(cv, iv);
@@ -211,7 +211,7 @@ public class Icons {
                 Log.e("Icons", "Failed to get icon for goal " + goal.getTitle());
                 displayPlaceholder(cv, iv);
             } else {
-                displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+                displayNounIcon(icon, new CustomTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         ColorUtils.Hue hue = goal.getHue();
@@ -220,7 +220,7 @@ public class Icons {
                         int bgColor = ColorUtils.getColor(context.getResources(), hue, ColorUtils.Lightness.UltraLight);
 
                         transitionColoredIcon(iv, resource, color);
-                        cv.setCardBackgroundColor(bgColor);
+                        if (cv != null) cv.setCardBackgroundColor(bgColor);
                     }
 
                     @Override
@@ -232,13 +232,13 @@ public class Icons {
         });
     }
 
-    public static void displayPlaceholder(CardView cv, ImageView iv) {
+    public static void displayPlaceholder(@Nullable CardView cv, ImageView iv) {
         int placeholderColor = ColorUtils.randomColorInScheme(context.getResources(), false, ColorUtils.ColorType.Dark);
         iv.setImageBitmap(ImageUtils.makeTransparentBitmap(iv.getWidth(), iv.getHeight()));
-        cv.setCardBackgroundColor(placeholderColor);
+        if (cv != null) cv.setCardBackgroundColor(placeholderColor);
     }
 
-    private static void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv, CustomTarget<Bitmap> target) {
+    private static void displayNounIcon(NounProjectClient.Icon icon, CustomTarget<Bitmap> target) {
         Glide.with(context)
                 .asBitmap()
                 .load(Icons.lowestResImage(icon))
