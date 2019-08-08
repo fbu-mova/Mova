@@ -13,6 +13,13 @@
         android:layout_marginBottom="@dimen/elementMargin"
         android:orientation="horizontal">
 
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </FrameLayout>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cvGroupImage"
             android:layout_width="@dimen/profileImage"
@@ -36,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:text="Group"
             android:textColor="@color/textMain"
             android:textSize="@dimen/textSizeBody"
@@ -64,7 +71,7 @@
             <ImageView
                 android:id="@+id/ivEventPic"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="@dimen/thumbnailImageHeight"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +88,6 @@
                     android:id="@+id/tvEventName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/elementMargin"
                     android:text="Event Name"
                     android:textColor="@color/textMain"
                     android:textSize="@dimen/textSizeFocus" />
@@ -89,17 +95,18 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/elementMargin"
+                    android:layout_marginTop="@dimen/innerMargin"
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/imageView"
+                        android:id="@+id/ivWhen"
                         android:layout_width="@dimen/inlineIcon"
                         android:layout_height="@dimen/inlineIcon"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="@dimen/elementMargin"
+                        android:layout_marginRight="@dimen/iconMargin"
                         android:layout_weight="0"
-                        app:srcCompat="@color/textLight" />
+                        android:tint="@color/textLight"
+                        app:srcCompat="@drawable/ic_round_access_time_24px" />
 
                     <TextView
                         android:id="@+id/tvWhen"
@@ -109,7 +116,7 @@
                         android:layout_weight="1"
                         android:text="When"
                         android:textColor="@color/textLight"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/textSizeBody" />
 
                 </LinearLayout>
 
@@ -120,13 +127,14 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/imageView3"
+                        android:id="@+id/ivLocation"
                         android:layout_width="@dimen/inlineIcon"
                         android:layout_height="@dimen/inlineIcon"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="@dimen/elementMargin"
+                        android:layout_marginRight="@dimen/iconMargin"
                         android:layout_weight="0"
-                        app:srcCompat="@color/textLight" />
+                        android:tint="@color/textLight"
+                        app:srcCompat="@drawable/ic_round_location_on_24px" />
 
                     <TextView
                         android:id="@+id/tvEventLocation"
@@ -136,7 +144,7 @@
                         android:layout_weight="1"
                         android:text="Location"
                         android:textColor="@color/textLight"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/textSizeBody" />
                 </LinearLayout>
 
             </LinearLayout>

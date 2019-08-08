@@ -82,7 +82,7 @@ public class ProgressGoalComponent extends Component {
         if(goal.getColor() != null){
             int color = Color.parseColor(goal.getColor());
             viewHolder.ivGoalColor.setColorFilter(color);
-            viewHolder.goalProgressBar.setGoalNotReachedColor(color);
+            viewHolder.goalProgressBar.setFilledColor(color);
             viewHolder.tvGoalTitle.setTextColor(color);
         }
 

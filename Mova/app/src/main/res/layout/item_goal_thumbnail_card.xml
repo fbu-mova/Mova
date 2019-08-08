@@ -5,6 +5,7 @@
     android:id="@+id/parentLayout"
     android:layout_width="@dimen/thumbnailWidth"
     android:layout_height="wrap_content"
+    android:clipChildren="false"
     android:orientation="vertical">
 
     <LinearLayout
@@ -12,6 +13,13 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/elementMargin"
         android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </FrameLayout>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvFromGroupIcon"
@@ -35,66 +43,66 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="from Group"
+            android:layout_weight="0"
+            android:text="Group"
             android:textColor="@color/textMain"
             android:textSize="@dimen/textSizeBody" />
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/thumbnailWidth"
         android:layout_height="@dimen/thumbnailWidth"
-        android:backgroundTint="@color/blueUltraLight"
-        app:cardCornerRadius="10dp"
-        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="@dimen/borderRadius"
+        app:cardElevation="@dimen/deepCardElevation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <com.example.mova.GoalProgressBar
+            android:id="@+id/goalProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:orientation="vertical" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.example.mova.GoalProgressBar
-                android:id="@+id/goalProgressBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:barHeight="4dp"
-                app:goalIndicatorHeight="16dp"
-                app:goalIndicatorWidth="4dp"
-                app:goalNotReachedColor="@color/blueMid"
-                app:goalReachedColor="@color/blueDark"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:unfilledSectionColor="@color/blueLight" />
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/goalProgressBar">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/innerMargin"
-                    android:text="Name of Goal"
-                    android:textColor="@color/textMain" />
+                    android:layout_marginBottom="@dimen/elementMargin"
+                    android:text="Goal"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeBody" />
 
                 <ImageView
                     android:id="@+id/ivPhoto"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center_horizontal"
-                    app:srcCompat="@color/blueDark" />
+                    android:layout_width="@dimen/thumbnailIcon"
+                    android:layout_height="@dimen/thumbnailIcon"
+                    android:layout_gravity="center_horizontal" />
 
             </LinearLayout>
+
+            <com.example.mova.GoalProgressBar
+                android:id="@+id/goalProgressBar3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
