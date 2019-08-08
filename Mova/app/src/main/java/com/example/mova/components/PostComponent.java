@@ -125,7 +125,7 @@ public class PostComponent extends Component {
                 holder.ivProfileImage.setOnClickListener((view) -> {
                     // TODO: Go to profile page
                 });
-                Icons.displayIdenticon(loaded, holder.cvProfileImage, holder.ivProfileImage);
+                Icons.from(getActivity()).displayIdenticon(loaded, holder.cvProfileImage, holder.ivProfileImage);
             }
         });
     }
@@ -181,7 +181,7 @@ public class PostComponent extends Component {
                     holder.ivGroupImage.setOnClickListener((view) -> {
                         // TODO: Go to group page
                     });
-                    Icons.displayNounIcon(loaded, holder.cvGroupImage, holder.ivGroupImage);
+                    Icons.from(getActivity()).displayNounIcon(loaded, holder.cvGroupImage, holder.ivGroupImage);
                 }
             });
         }
