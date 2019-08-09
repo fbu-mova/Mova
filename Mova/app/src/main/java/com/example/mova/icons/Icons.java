@@ -193,7 +193,7 @@ public class Icons {
                                 int bgColor = ColorUtils.getColor(activity.getResources(), hue, ColorUtils.Lightness.UltraLight);
 
                                 transitionColoredIcon(iv, resource, color);
-                                cv.setCardBackgroundColor(bgColor);
+                                if(cv != null) cv.setCardBackgroundColor(bgColor);
                             });
                         }
 
@@ -210,7 +210,7 @@ public class Icons {
     public void displayPlaceholder(CardView cv, ImageView iv) {
         int placeholderColor = ColorUtils.randomColorInScheme(activity.getResources(), false, ColorUtils.ColorType.Dark);
         iv.setImageBitmap(ImageUtils.makeTransparentBitmap(100, 100));
-        cv.setCardBackgroundColor(placeholderColor);
+        if (cv != null) cv.setCardBackgroundColor(placeholderColor);
     }
 
     private void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv, CustomTarget<Bitmap> target) {

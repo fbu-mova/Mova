@@ -3,7 +3,6 @@ package com.example.mova;
 import android.app.Activity;
 import android.widget.FrameLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProgressStackManager {
@@ -12,13 +11,10 @@ public class ProgressStackManager {
 
     private int maxValue;
 
-    public ProgressStackManager(Activity activity, int numStacks) {
-        if (numStacks <= 0) throw new IllegalArgumentException("Must have at least one stack.");
+    public ProgressStackManager(Activity activity, List<ProgressStack> stacks) {
+        if (stacks.size() <= 0) throw new IllegalArgumentException("Must have at least one stack.");
         maxValue = -1;
-        stacks = new ArrayList<>();
-        for (int i = 0; i < numStacks; i++) {
-            stacks.add(new ProgressStack(activity));
-        }
+        this.stacks = stacks;
     }
 
     public List<ProgressStack> getStacks() {

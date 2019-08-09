@@ -10,8 +10,6 @@ import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
-import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -122,23 +120,7 @@ public class GoalUtils {
         return percent;
     }
 
-    public static void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ItemCallback<BarGraphSeries<DataPoint>> callback){
-        DataPoint[] dataPoints = new DataPoint[length];
-        AsyncUtils.executeMany(length, (i, cb) -> {
-            Date date = new Date();
-            //Make the day move a day earlier each iteration
-            long dif = date.getTime() - 24*60*60*1000*(length - (i+1));
-            date.setTime(dif);
-            date = TimeUtils.normalizeToDay(date);
-            Date finalDate = date;
-            getNumActionsComplete(finalDate, goal,user, (num) -> {
-                dataPoints[i] = new DataPoint(finalDate, num);
-                cb.call(null);
-            });
 
-        }, (err) -> {callback.call(new BarGraphSeries<DataPoint>(dataPoints));} );
-
-    }
 
     /**
      * Attaches a set of priority values to a list of goals based on the user's performance in each goal over a given period of time.
@@ -155,6 +137,7 @@ public class GoalUtils {
             cal.add(Calendar.DATE, -length + 1);
             Date d2 = cal.getTime();
             Goal goal = goalList.get(i);
+            //Todo- change so it takes an average;
             getNumActionsComplete(d1, goal, user, (num) -> {
                 getNumActionsComplete(d2, goal, user, (num2) -> {
                     //Compare numbers and add value
@@ -226,8 +209,9 @@ public class GoalUtils {
         goal.setAuthor(User.getCurrentUser())
                 .setTitle(goalName)
                 .setDescription(goalDescription)
-                .setIsPersonal(true); // fixme -- pass in as parameter to include Social functionality
+                .setIsPersonal(true);// fixme -- pass in as parameter to include Social functionality
 
+        goal.relUsersInvolved.add(User.getCurrentUser());
         goal.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

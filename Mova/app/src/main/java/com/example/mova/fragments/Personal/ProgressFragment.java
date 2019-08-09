@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.ProgressStack;
 import com.example.mova.ProgressStackManager;
@@ -33,19 +31,16 @@ import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Mood;
-import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
+import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +57,7 @@ public class ProgressFragment extends Fragment {
 
     //Todo- allow length to be changed
 
-    @BindView(R.id.rvGraph) protected RecyclerView rvGraph;
+
     @BindView(R.id.tvY1)    protected TextView tvY1;
     @BindView(R.id.tvY2)    protected TextView tvY2;
     @BindView(R.id.rvMood)  protected RecyclerView rvMood;
@@ -70,7 +65,20 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.rvWell)  protected RecyclerView rvWell;
     @BindView(R.id.rvWork)  protected RecyclerView rvWork;
 
+    //Progress Stacks
+    private List<ProgressStack> progressStacks;
+    @BindView(R.id.progressStack1) protected ProgressStack ps1;
+    @BindView(R.id.progressStack2) protected ProgressStack ps2;
+    @BindView(R.id.progressStack3) protected ProgressStack ps3;
+    @BindView(R.id.progressStack4) protected ProgressStack ps4;
+    @BindView(R.id.progressStack5) protected ProgressStack ps5;
+    @BindView(R.id.progressStack6) protected ProgressStack ps6;
+    @BindView(R.id.progressStack7) protected ProgressStack ps7;
+
+    private HashMap<Goal, Integer > hueMap;
+    private List<Integer> usedColors;
     private List<Goal> mGoals;
+    private List<Goal> graphGoals;
     private HashMap<Integer, Goal> colorGoals;
     private List<Goal> goodGoals;
     private List<Goal> badGoals;
@@ -79,6 +87,7 @@ public class ProgressFragment extends Fragment {
     private ProgressStackManager graphManager;
 
     private int length = 0;
+    private User user;
     private ViewAdapter<ProgressStack> graphAdapter;
     private DataComponentAdapter<Mood.Status> gridMoodAdapter;
     private DataComponentAdapter<Goal> goalsWellAdapter;
@@ -124,15 +133,38 @@ public class ProgressFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        progressStacks = new ArrayList<>();
+
+        progressStacks.add(new ProgressStack(getActivity()));
+        progressStacks.add(new ProgressStack(getActivity()));
+        progressStacks.add(new ProgressStack(getActivity()));
+        progressStacks.add(new ProgressStack(getActivity()));
+        progressStacks.add(new ProgressStack(getActivity()));
+        progressStacks.add(new ProgressStack(getActivity()));
+        progressStacks.add(ps1);
+//        progressStacks.add(ps2);
+//        progressStacks.add(ps3);
+//        progressStacks.add(ps4);
+//        progressStacks.add(ps5);
+//        progressStacks.add(ps6);
+//        progressStacks.add(ps7);
+
+
+
+
+        user = User.getCurrentUser();
         length = 7;
 
+        hueMap = new HashMap<>();
+        usedColors = new ArrayList<>();
         mGoals = new ArrayList<>();
+        graphGoals = new ArrayList<>();
         colorGoals = new HashMap<>();
         userMoods = new ArrayList<>();
         goodGoals = new ArrayList<>();
         badGoals = new ArrayList<>();
         //prioGoals = new TreeSet<>();
-        graphManager = new ProgressStackManager(getActivity(), length);
+        graphManager = new ProgressStackManager(getActivity(), progressStacks);
 
         journal = new Journal(User.getCurrentUser());
 
@@ -140,12 +172,12 @@ public class ProgressFragment extends Fragment {
 
         //create the adapter
 
-        graphAdapter = new ViewAdapter<ProgressStack>(getActivity(), graphManager.getStacks()) {
-            @Override
-            public void onBindViewHolder(@NonNull ViewHolder<ProgressStack> holder, int position) {
-
-            }
-        };
+//        graphAdapter = new ViewAdapter<ProgressStack>(getActivity(), graphManager.getStacks()) {
+//            @Override
+//            public void onBindViewHolder(@NonNull ViewHolder<ProgressStack> holder, int position) {
+//
+//            }
+//        };
 
         gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
             @Override
@@ -186,7 +218,7 @@ public class ProgressFragment extends Fragment {
             }
         };
 
-        rvGraph.setLayoutManager(new GridLayoutManager(getActivity(), length));
+//        rvGraph.setLayoutManager(new GridLayoutManager(getActivity(), length));
         rvMood.setLayoutManager(new GridLayoutManager(getActivity(), length));
         rvWell.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rvWork.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -199,6 +231,66 @@ public class ProgressFragment extends Fragment {
 
         // TODO: Adapt logic to new graph
 
+        queryGoals(()->{
+            GoalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
+                Log.e("ProgressFragment", "Were in boys");
+                //Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
+                for(int i = 0; i < mGoals.size(); i++){
+                    if(tsGoals.size() == 0) {
+                        break;
+                    }
+                    if(tsGoals.last().value >= 0 && goodGoals.size() < 3) {
+                        goodGoals.add(tsGoals.last().item);
+                        goalsWellAdapter.notifyItemInserted(i);
+                        tsGoals.remove(tsGoals.last());
+                        if(tsGoals.size() == 0){
+                            break;
+                        }
+                    }
+                    if(tsGoals.first().value < 0 && badGoals.size() < 3) {
+                        badGoals.add(tsGoals.first().item);
+                        goalsWorkAdapter.notifyItemInserted(i);
+                        tsGoals.remove(tsGoals.first());
+                    }
+
+                }
+                rvWell.scrollToPosition(0);
+                rvWork.scrollToPosition(0);
+                graphGoals.addAll(goodGoals);
+                graphGoals.addAll(badGoals);
+
+                AsyncUtils.executeMany(graphGoals.size(), (i,cb) -> {
+                    Goal goal = graphGoals.get(i);
+                    int color = getGoalGraphColor(goal);
+                    getDataForGraph(goal, user, length, (data) -> {
+                        for(int j = 0; j < data.size(); j++){
+                            graphManager.setValue(j, color, data.get(j));
+                            //graphManager.show(color);
+                        }
+                        cb.call(null);
+                    });
+                }, (err) -> {
+                    //graphAdapter.notifyDataSetChanged();
+                    if(graphManager.tallestY() == 0){
+                        tvY2.setText("10");
+                        tvY1.setText("5");
+                    }else {
+                        tvY2.setText(Integer.toString(graphManager.tallestY()));
+                        tvY1.setText(Integer.toString(graphManager.tallestY() / 2));
+                    }
+
+                    ps1.setValue(Color.RED, 1);
+
+//                    ProgressStack stack = graphManager.getStacks().get(0);
+//                    llTest.addView(stack);
+//                    llTest.setVisibility(View.VISIBLE);
+//                    stack.setVisibility(View.VISIBLE);
+//                    llTest.invalidate();
+//                    stack.invalidate();
+                });
+
+            });
+        });
 //        queryGoals(() -> setGraph(() -> {
 //            Calendar cal = Calendar.getInstance();
 //            Date d1 = cal.getTime();
@@ -218,32 +310,7 @@ public class ProgressFragment extends Fragment {
 //            //Log.e("ProgressFragment", "Were not in boys");
 //
 //            //organize goals and create adapter
-//            goalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
-//                Log.e("ProgressFragment", "Were in boys");
-//                //Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
-//                for(int i = 0; i < mGoals.size(); i++){
-//                    if(tsGoals.size() == 0) {
-//                        break;
-//                    }
-//                    if(tsGoals.first().value >= 0 && goodGoals.size() < 3) {
-//                        goodGoals.add(tsGoals.first().item);
-//                        goalsWellAdapter.notifyItemInserted(i);
-//                        tsGoals.remove(tsGoals.first());
-//                        if(tsGoals.size() == 0){
-//                            break;
-//                        }
-//                    }
-//                    if(tsGoals.last().value < 0 && badGoals.size() < 3) {
-//                        badGoals.add(tsGoals.last().item);
-//                        goalsWorkAdapter.notifyItemInserted(i);
-//                        tsGoals.remove(tsGoals.last());
-//                    }
-//
-//                }
-//                rvWell.scrollToPosition(0);
-//                rvWork.scrollToPosition(0);
-//
-//            });
+
 //
 //
 //
@@ -271,6 +338,61 @@ public class ProgressFragment extends Fragment {
 //            gridMoodAdapter.notifyDataSetChanged();
 //            gvMood.scrollTo(0,0);
 //        });
+    }
+
+    private int getGoalGraphColor(Goal goal){
+        Integer color = hueMap.get(goal);
+        if (color != null) return color;
+        // Otherwise, choose new, unused color
+        ColorUtils.Hue hue = goal.getHue();
+        if (hue == null) hue = ColorUtils.Hue.random();
+        return makeGraphColor(hue, new ArrayList<>());
+    }
+
+    private int makeGraphColor(ColorUtils.Hue hue, List<ColorUtils.Lightness> used) {
+        ColorUtils.Lightness nextLightness = getNextLightness(used);
+        used.add(nextLightness);
+        int color = ColorUtils.getColor(getResources(), hue, nextLightness);
+        if (verifyUniqueColor(color)) return color;
+        return makeGraphColor(hue, used);
+    }
+
+    private ColorUtils.Lightness getNextLightness(List<ColorUtils.Lightness> used) {
+        if (!used.contains(ColorUtils.Lightness.Light))      return ColorUtils.Lightness.Light;
+        if (!used.contains(ColorUtils.Lightness.Mid))        return ColorUtils.Lightness.Mid;
+        if (!used.contains(ColorUtils.Lightness.Dark))       return ColorUtils.Lightness.Dark;
+        if (!used.contains(ColorUtils.Lightness.UltraLight)) return ColorUtils.Lightness.UltraLight;
+        throw new IllegalArgumentException("Ran out of lightnesses.");
+    }
+
+    private boolean verifyUniqueColor(int color) {
+        if(usedColors.size() == 0){
+            return true;
+        }
+        for(int i = 0; i < usedColors.size(); i++){
+            if(usedColors.get(i) == color){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ListCallback<Integer> callback){
+        List<Integer> dataPoints = new ArrayList<>();
+        AsyncUtils.executeMany(length, (i, cb) -> {
+            Date date = new Date();
+            //Make the day move a day earlier each iteration
+            long dif = date.getTime() - 24*60*60*1000*(length - (i+1));
+            date.setTime(dif);
+            date = TimeUtils.normalizeToDay(date);
+            Date finalDate = date;
+            GoalUtils.getNumActionsComplete(finalDate, goal, user, (num) -> {
+                dataPoints.add(num);
+                cb.call(null);
+            });
+
+        }, (err) -> {callback.call(dataPoints);} );
+
     }
 
 //    private void setGraph(AsyncUtils.EmptyCallback callback){
