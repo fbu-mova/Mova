@@ -126,17 +126,20 @@ public class GoalCardComponent extends Component {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
-
         if(item.getGroup() == null){
             viewHolder.tvFrom.setVisibility(View.GONE);
             viewHolder.tvGroup.setVisibility(View.GONE);
             viewHolder.cvFromGroupIcon.setVisibility(View.GONE);
         }else{
-            item.getGroupName(()-> {}, (name) -> {
-                viewHolder.tvGroup.setText(name);
+            item.getGroupFull(() -> {}, (group) -> {
+                viewHolder.tvGroup.setText(group.getName());
+                Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
             });
-            Icons.from(getActivity()).displayNounIcon(item.getGroup(), viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
         }
+
+
+
+
 
 //            viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
 //            viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly

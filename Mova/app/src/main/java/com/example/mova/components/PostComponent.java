@@ -97,6 +97,9 @@ public class PostComponent extends Component {
 
         // Basic info
         this.holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
+        if(post.getBody().equals("") || post.getBody() == null){
+            this.holder.tvBody.setVisibility(View.GONE);
+        }
         this.holder.tvBody.setText(post.getBody());
 
         displayUser();
