@@ -178,7 +178,7 @@ public class ProgressStack extends FrameLayout {
     }
 
     public void showOnly(int color) {
-        hideAllSections();
+        hideAll();
         show(color);
     }
 
@@ -192,7 +192,7 @@ public class ProgressStack extends FrameLayout {
         }
     }
 
-    public void hideAllSections() {
+    public void hideAll() {
         if (showSections.size() > 0) {
             for (int color : showSections) {
                 showSections.remove(showSections.indexOf(color));
@@ -213,6 +213,15 @@ public class ProgressStack extends FrameLayout {
         for (int deselected : showSections) {
             if (deselected == selectedSection) continue;
             changeQueue.add(new SectionChange(deselected, ChangeType.Deselect));
+        }
+        invalidate();
+    }
+
+    public void selectNone() {
+        selectedSection = null;
+        sectionIsSelected = true;
+        for (int color : showSections) {
+            changeQueue.add(new SectionChange(color, ChangeType.Deselect));
         }
         invalidate();
     }

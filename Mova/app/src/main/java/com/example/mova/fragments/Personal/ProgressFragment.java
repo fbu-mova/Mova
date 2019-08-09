@@ -112,6 +112,7 @@ public class ProgressFragment extends Fragment {
                 psTest.hide(Color.BLUE);
                 Thread.sleep(1000);
                 Log.i("ProgressFragment", "Total: " + psTest.totalValue());
+                psTest.selectNone();
             } catch (InterruptedException e) {
 
             }
