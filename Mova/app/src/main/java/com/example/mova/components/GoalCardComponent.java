@@ -126,6 +126,8 @@ public class GoalCardComponent extends Component {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
+
+        Icons.from(getActivity()).displayNounIcon(item, viewHolder.cvGoal, viewHolder.ivGoal);
         if(item.getGroup() == null){
             viewHolder.tvFrom.setVisibility(View.GONE);
             viewHolder.tvGroup.setVisibility(View.GONE);
@@ -310,6 +312,8 @@ public class GoalCardComponent extends Component {
         @BindView(R.id.layout)          protected LinearLayout llLayout;
         @BindView(R.id.cvFromGroupIcon) protected CardView cvFromGroupIcon;
         @BindView(R.id.ivFromGroupIcon) protected ImageView ivFromGroupIcon;
+        @BindView(R.id.cvGroup)         protected CardView cvGoal;
+        @BindView(R.id.ivGroup)         protected ImageView ivGoal;
         @BindView(R.id.tvFrom) protected TextView tvFrom;
         @BindView(R.id.tvGroup) TextView tvGroup;
 

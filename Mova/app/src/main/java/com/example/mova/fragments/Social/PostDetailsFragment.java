@@ -3,13 +3,6 @@ package com.example.mova.fragments.Social;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,16 +10,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.PostComponent;
-import com.example.mova.model.Post;
 import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.containers.EndlessScrollLayout;
 import com.example.mova.containers.ScrollLoadHandler;
+import com.example.mova.model.Post;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -101,7 +100,7 @@ public class PostDetailsFragment extends Fragment {
     }
 
     private void displayPost() {
-        PostComponent component = new PostComponent(post, new PostComponent.Config(null, true, false));
+        PostComponent component = new PostComponent(post, new PostComponent.Config(null, true, false, false));
         clPost.setMargin(32);
         clPost.inflateComponent((DelegatedResultActivity) getActivity(), component);
     }
