@@ -1,10 +1,16 @@
 package com.example.mova.fragments.Personal;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +47,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -64,6 +71,7 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.rvWork)  protected RecyclerView rvWork;
 
     private List<Goal> mGoals;
+    private HashMap<Integer, Goal> colorGoals;
     private List<Goal> goodGoals;
     private List<Goal> badGoals;
     private List<Mood.Status> userMoods;
@@ -75,6 +83,8 @@ public class ProgressFragment extends Fragment {
     private DataComponentAdapter<Mood.Status> gridMoodAdapter;
     private DataComponentAdapter<Goal> goalsWellAdapter;
     private DataComponentAdapter<Goal> goalsWorkAdapter;
+
+    private boolean inSelectAnimation;
 
     private Journal journal;
 
@@ -117,6 +127,7 @@ public class ProgressFragment extends Fragment {
         length = 7;
 
         mGoals = new ArrayList<>();
+        colorGoals = new HashMap<>();
         userMoods = new ArrayList<>();
         goodGoals = new ArrayList<>();
         badGoals = new ArrayList<>();
@@ -124,6 +135,8 @@ public class ProgressFragment extends Fragment {
         graphManager = new ProgressStackManager(getActivity(), length);
 
         journal = new Journal(User.getCurrentUser());
+
+        configureGraphClick();
 
         //create the adapter
 
@@ -159,7 +172,7 @@ public class ProgressFragment extends Fragment {
                 return new ProgressGoalComponent.Inflater();
             }
         };
-        
+
         goalsWorkAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
             @Override
             public Component makeComponent(Goal item, Component.ViewHolder holder) {
@@ -181,6 +194,10 @@ public class ProgressFragment extends Fragment {
         rvMood.setAdapter(gridMoodAdapter);
         rvWell.setAdapter(goalsWellAdapter);
         rvWork.setAdapter(goalsWorkAdapter);
+
+        // TODO: Add edge decorators
+
+        // TODO: Adapt logic to new graph
 
 //        queryGoals(() -> setGraph(() -> {
 //            Calendar cal = Calendar.getInstance();
@@ -337,4 +354,65 @@ public class ProgressFragment extends Fragment {
 //            }
 //        }
 //    }
+
+    private void configureGraphClick() {
+        inSelectAnimation = false;
+
+        graphManager.setOnClick((index, color, sectionView) -> {
+            if (inSelectAnimation) return;
+            Goal goal = colorGoals.get(color);
+            if (goal == null) return;
+            goal.fetchIfNeededInBackground((loaded, e) -> {
+                if (e != null) {
+                    Log.e("ProgressFragment", "Failed to fetch group on graph item click", e);
+                    return;
+                }
+
+                inSelectAnimation = true;
+
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) sectionView.getLayoutParams();
+                FrameLayout.LayoutParams newParams = new FrameLayout.LayoutParams(params.width, params.height, Gravity.CENTER);
+                sectionView.setLayoutParams(newParams);
+
+                TextView tvSelected = new TextView(getActivity());
+                tvSelected.setText(graphManager.valueOf(index, color));
+                tvSelected.setTextColor(ColorUtils.getColor(getResources(), goal.getHue(), ColorUtils.Lightness.Dark));
+                tvSelected.setTextSize(getResources().getDimensionPixelSize(R.dimen.textSizeFocus));
+                tvSelected.setAlpha(0f);
+                sectionView.addView(tvSelected);
+
+                graphManager.select(index, color);
+
+                tvSelected.animate()
+                    .alpha(1f)
+                    .setDuration(300) // TODO: Extract
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            new Thread(() -> {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+
+                                } finally {
+                                    tvSelected.animate()
+                                        .alpha(0f)
+                                        .setDuration(300)
+                                        .setListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                sectionView.removeAllViews();
+                                                sectionView.setLayoutParams(params);
+                                                inSelectAnimation = false;
+                                            }
+                                        });
+                                }
+                            }).run();
+                        }
+                    });
+            });
+        });
+    }
 }
