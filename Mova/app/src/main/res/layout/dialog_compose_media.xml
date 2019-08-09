@@ -88,8 +88,9 @@
 
                     <ImageView
                         android:id="@+id/ivCameraLabel"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="@dimen/inlineIcon"
+                        android:layout_height="@dimen/inlineIcon"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginRight="8dp"
                         android:layout_weight="0"
                         android:foregroundGravity="center_vertical"
@@ -119,7 +120,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:cardBackgroundColor="#E6E6E6"
+                app:cardBackgroundColor="@color/dialogItem"
                 app:cardCornerRadius="@dimen/borderRadius"
                 app:cardElevation="0dp">
 
@@ -132,8 +133,9 @@
 
                     <ImageView
                         android:id="@+id/ivGalleryIcon"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="@dimen/inlineIcon"
+                        android:layout_height="@dimen/inlineIcon"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginRight="8dp"
                         android:layout_weight="0"
                         android:foregroundGravity="center_vertical"

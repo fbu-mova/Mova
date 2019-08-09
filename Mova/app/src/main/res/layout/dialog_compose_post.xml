@@ -25,13 +25,13 @@ xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/flReplyContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#eee">
+                android:background="@color/bg">
 
                 <com.example.mova.component.ComponentLayout
                     android:id="@+id/clPostToReply"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp">
+                    android:layout_margin="@dimen/innerMargin">
 
                 </com.example.mova.component.ComponentLayout>
             </FrameLayout>
@@ -51,38 +51,39 @@ xmlns:tools="http://schemas.android.com/tools"
 
                     <ImageView
                         android:id="@+id/ivTypeIndicator"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="@dimen/inlineIcon"
+                        android:layout_height="@dimen/inlineIcon"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginRight="@dimen/elementMargin"
                         android:layout_weight="0"
                         android:scaleType="fitCenter"
-                        tools:srcCompat="@color/colorPrimary" />
+                        android:tint="@color/textLight"
+                        tools:srcCompat="@drawable/ic_round_reply_24px" />
 
                     <TextView
                         android:id="@+id/tvTypeIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
+                        android:fontFamily="@font/lato_bold"
                         android:text="Verbing to What"
-                        android:textColor="#bbb"
-                        android:textSize="14dp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/textLight"
+                        android:textSize="@dimen/textSizeBody" />
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvAddMedia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    app:cardCornerRadius="8dp"
+                    android:layout_marginBottom="@dimen/innerMargin"
+                    app:cardCornerRadius="@dimen/borderRadius"
                     app:cardElevation="0dp">
 
                     <com.example.mova.component.ComponentLayout
                         android:id="@+id/clMedia"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#e6e6e6"
+                        android:background="@color/dialogItem"
                         android:minHeight="44dp">
 
                     </com.example.mova.component.ComponentLayout>
@@ -96,21 +97,22 @@ xmlns:tools="http://schemas.android.com/tools"
 
                         <ImageView
                             android:id="@+id/ivMediaIcon"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:layout_marginRight="8dp"
+                            android:layout_width="@dimen/inlineIcon"
+                            android:layout_height="@dimen/inlineIcon"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/elementMargin"
                             android:layout_weight="0"
-                            android:foregroundGravity="center_vertical"
-                            tools:srcCompat="@color/colorPrimary" />
+                            android:tint="@color/textLight"
+                            tools:srcCompat="@drawable/ic_round_add_photo_alternate_24px" />
 
                         <TextView
                             android:id="@+id/tvMediaPrompt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="0"
+                            android:fontFamily="@font/lato_bold"
                             android:text="Add media"
-                            android:textColor="#ababab"
-                            android:textStyle="bold" />
+                            android:textColor="@color/textLight" />
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
@@ -123,7 +125,8 @@ xmlns:tools="http://schemas.android.com/tools"
                     android:gravity="start|top"
                     android:hint="What's on your mind?"
                     android:inputType="textMultiLine"
-                    android:textSize="14dp" />
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeBody" />
 
             </LinearLayout>
 
@@ -132,14 +135,14 @@ xmlns:tools="http://schemas.android.com/tools"
 
     <ImageView
         android:id="@+id/ivClose"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_width="@dimen/buttonIcon"
+        android:layout_height="@dimen/buttonIcon"
+        android:layout_marginTop="@dimen/innerMargin"
+        android:layout_marginEnd="@dimen/innerMargin"
+        android:tint="@color/buttonInactive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorPrimary" />
+        app:srcCompat="@drawable/ic_round_close_24px" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPost"
