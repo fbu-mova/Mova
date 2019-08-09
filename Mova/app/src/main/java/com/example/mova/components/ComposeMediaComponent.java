@@ -154,7 +154,7 @@ public abstract class ComposeMediaComponent extends Component {
         scrapbookAdapter = new DataComponentAdapter<Post>(getActivity(), scrapbookPosts) {
             @Override
             protected Component makeComponent(Post item, Component.ViewHolder holder) {
-                PostComponent.Config config = new PostComponent.Config(null, false, false);
+                PostComponent.Config config = new PostComponent.Config(null, false, false, false);
                 config.onClick = (post) -> {
                     Media media = new Media(post);
                     returnMedia(media);

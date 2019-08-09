@@ -101,7 +101,7 @@ public class PostDetailsFragment extends Fragment {
     }
 
     private void displayPost() {
-        PostComponent component = new PostComponent(post, new PostComponent.Config(null, true, false));
+        PostComponent component = new PostComponent(post, new PostComponent.Config(null, true, true, false));
         clPost.setMargin(32);
         clPost.inflateComponent((DelegatedResultActivity) getActivity(), component);
     }

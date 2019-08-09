@@ -165,7 +165,7 @@ public class PostComponent extends Component {
 
     private void displayGroup() {
         Group group = post.getGroup();
-        if (group == null) {
+        if (!config.showGroup || group == null) {
             holder.llGroup.setVisibility(View.GONE);
         } else {
             holder.llGroup.setVisibility(View.VISIBLE);
@@ -353,6 +353,7 @@ public class PostComponent extends Component {
 
     public static class Config {
         public String subheader = null;
+        public boolean showGroup = true;
         public boolean showButtons = true;
         public boolean allowDetailsClick = true;
 
@@ -362,10 +363,11 @@ public class PostComponent extends Component {
 
         public Config() { }
 
-        public Config(String subheader, boolean showButtons, boolean allowDetailsClick) {
+        public Config(String subheader, boolean showGroup, boolean showButtons, boolean allowDetailsClick) {
             this.subheader = subheader;
             this.showButtons = showButtons;
             this.allowDetailsClick = allowDetailsClick;
+            this.showGroup = showGroup;
         }
     }
 }
