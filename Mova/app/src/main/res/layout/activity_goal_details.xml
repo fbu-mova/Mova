@@ -151,8 +151,8 @@
                 android:id="@+id/goalpb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:filledColor="@color/blueMid"
-                app:unfilledColor="@color/purpleLight" />
+                app:roundOtherEnd="true"
+                app:maxLength="@dimen/progressBarMaxLength"/>
         </LinearLayout>
 
         <LinearLayout
