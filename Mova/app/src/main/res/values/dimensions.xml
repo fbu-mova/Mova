@@ -27,4 +27,6 @@
     <dimen name="thumbnailImageHeight">100dp</dimen>
 
     <dimen name="progressBarMaxLength">120dp</dimen>
+    <dimen name="progressStackThickness">38dp</dimen>
+    <dimen name="progressStackLength">200dp</dimen>
 </resources>
