@@ -11,6 +11,10 @@ public abstract class ComposableComponent extends Component {
     protected View eventView;
     protected PostConfig config;
 
+    public ComposableComponent() {
+        this.config = new PostConfig();
+    }
+
     public ComposableComponent(PostConfig config) {
         this.config = config;
     }
