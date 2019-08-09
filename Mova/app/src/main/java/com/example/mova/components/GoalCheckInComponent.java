@@ -116,7 +116,7 @@ public class GoalCheckInComponent extends Component {
                             GoalUtils.toggleDone(item, new AsyncUtils.ItemCallback<Float>() {
                                 @Override
                                 public void call(Float item) {
-                                    GoalCheckInComponent.this.holder.pbProgress.setProgress((int) (item * PROGRESS_MAX));
+                                    GoalCheckInComponent.this.holder.pbProgress.setProgress(GoalCheckInComponent.this.holder.pbProgress.getProgress(), (int) (item * PROGRESS_MAX));
                                 }
                             } );
                         }
@@ -132,7 +132,7 @@ public class GoalCheckInComponent extends Component {
         this.holder.rvChecklist.setAdapter(adapter);
 
         // Display progress
-        this.holder.pbProgress.setProgress(GoalUtils.getProgressPercent(goalActions));
+        this.holder.pbProgress.setProgress(this.holder.pbProgress.getProgress(), GoalUtils.getProgressPercent(goalActions));
 
         // TODO: Add onclick listener for whole card to open the goal detail view for the associated goal
     }

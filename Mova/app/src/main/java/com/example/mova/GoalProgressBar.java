@@ -25,6 +25,7 @@ public class GoalProgressBar extends View {
     // Attributes & values
 
     private int progress;
+    private int start;
 
     /** Bar color for the filled section (progress completed). */
     private int filledColor;
@@ -107,7 +108,7 @@ public class GoalProgressBar extends View {
             setDrawFrom(typedArray.getInt(R.styleable.GoalProgressBar_drawFrom, (orientation == 0) ? 0 : 1));
             shouldAutoRound = false;
 
-            setProgress(typedArray.getInt(R.styleable.GoalProgressBar_progress, 0));
+            setProgress(0, typedArray.getInt(R.styleable.GoalProgressBar_progress, 0));
         } finally {
             typedArray.recycle();
         }
@@ -402,25 +403,30 @@ public class GoalProgressBar extends View {
         invalidate();
     }
 
-    public void setProgress(int progress) {
-        this.progress = progress;
-        setProgress(progress, true);
+    public int getProgress() {
+        return this.progress;
     }
 
-    private void setProgress(int progress, boolean animate) {
+    public void setProgress(int start, int progress) {
+        this.start = start;
+        this.progress = progress;
+        setProgress(start, progress, true);
+    }
+
+    private void setProgress(int start, int progress, boolean animate) {
         if (animate) {
             barAnimator = ValueAnimator.ofFloat(0, 1);
 
             barAnimator.setDuration(700);
 
             // reset progress without animating
-            setProgress(0, false);
+            setProgress(start, start, false);
 
             barAnimator.setInterpolator(new DecelerateInterpolator());
 
             barAnimator.addUpdateListener((ValueAnimator animation) -> {
                 float interpolation = (float) animation.getAnimatedValue();
-                setProgress((int) (interpolation * progress), false);
+                setProgress(start, (int) (interpolation * progress), false);
             });
 
             if (!barAnimator.isStarted()) {

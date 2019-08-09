@@ -121,7 +121,7 @@ public class GoalCardComponent extends Component {
 
         GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
-            viewHolder.goalProgressBar.setProgress(progress);
+            viewHolder.goalProgressBar.setProgress(viewHolder.goalProgressBar.getProgress(), progress);
         });
 
 //            viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
@@ -169,7 +169,7 @@ public class GoalCardComponent extends Component {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
                     Component component = new InvolvedSharedActionComponent(item, (portionDone) -> {
-                        viewHolder.goalProgressBar.setProgress((int) (portionDone * PROGRESS_MAX));
+                        viewHolder.goalProgressBar.setProgress(viewHolder.goalProgressBar.getProgress(), (int) (portionDone * PROGRESS_MAX));
                     });
                     return component;
                 }

@@ -91,7 +91,7 @@ public class ActionComponent extends Component {
 
         viewComponent = new ActionViewComponent(item, componentManager, (portionDone) -> {
 
-            pbGoal.setProgress((int) (portionDone * PROGRESS_MAX));
+            pbGoal.setProgress(pbGoal.getProgress(), (int) (portionDone * PROGRESS_MAX));
 
         });
 

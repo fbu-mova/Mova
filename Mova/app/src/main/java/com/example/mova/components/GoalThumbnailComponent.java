@@ -117,7 +117,7 @@ public class GoalThumbnailComponent extends Component {
 
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
-            viewHolder.goalProgressBar.setProgress(progress);
+            viewHolder.goalProgressBar.setProgress(viewHolder.goalProgressBar.getProgress(), progress);
         });
     }
 

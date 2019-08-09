@@ -135,7 +135,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         // update GoalProgressBar
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
-            goalpb.setProgress(progress);
+            goalpb.setProgress(goalpb.getProgress(), progress);
         });
 
         if (isPersonal) { // FIXME -- currently social goals can't add actions (getting author User object also a callback itself...)
@@ -295,7 +295,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
                     Component component = new InvolvedSharedActionComponent(item, (portionDone) -> {
-                        goalpb.setProgress((int) (portionDone * PROGRESS_MAX));
+                        goalpb.setProgress(goalpb.getProgress(), (int) (portionDone * PROGRESS_MAX));
                     });
                     return component;
                 }
