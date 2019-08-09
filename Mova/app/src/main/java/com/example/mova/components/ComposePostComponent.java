@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.example.mova.utils.Wrapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,6 +124,8 @@ public abstract class ComposePostComponent extends Component {
         type.item = "";
 
         List<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
+
+        holder.swTemp.setChecked(postConfig.isPersonal);
 
         if (postConfig.postToReply != null) {
             asyncActions.add((i, cb) ->
@@ -219,7 +223,7 @@ public abstract class ComposePostComponent extends Component {
         Post post = new Post();
         post.setBody(body);
         post.setAuthor(User.getCurrentUser());
-        post.setIsPersonal(postConfig.isPersonal);
+        post.setIsPersonal(holder.swTemp.isChecked());
 
         ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
         if (location != null) post.setLocation(location);
@@ -246,6 +250,7 @@ public abstract class ComposePostComponent extends Component {
         @BindView(R.id.etBody)          public EditText etBody;
         @BindView(R.id.ivClose)         public ImageView ivClose;
         @BindView(R.id.fabPost)         public FloatingActionButton fabPost;
+        @BindView(R.id.swTemp)          public Switch swTemp;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
