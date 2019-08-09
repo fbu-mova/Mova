@@ -1,31 +1,46 @@
 package com.example.mova.fragments.Personal;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.ProgressStack;
+import com.example.mova.ProgressStackManager;
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.adapters.ViewAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.components.ProgressGoalComponent;
+import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Mood;
+import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
-import com.example.mova.utils.GoalUtils;
+import com.example.mova.utils.TimeUtils;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,26 +55,29 @@ public class ProgressFragment extends Fragment {
 
     //Todo- allow length to be changed
 
-    @BindView(R.id.psTest) protected ProgressStack psTest;
+    @BindView(R.id.rvGraph) protected RecyclerView rvGraph;
+    @BindView(R.id.tvY1)    protected TextView tvY1;
+    @BindView(R.id.tvY2)    protected TextView tvY2;
+    @BindView(R.id.rvMood)  protected RecyclerView rvMood;
 
-//    @BindView(R.id.graphProgress)
-//    GraphView graph;
-    @BindView(R.id.rvWell)
-    RecyclerView rvWell;
-    @BindView(R.id.rvWork) RecyclerView rvWork;
-    @BindView(R.id.gvMood)
-    RecyclerView gvMood;
-    protected List<Goal> mGoals;
-    protected List<Goal> goodGoals;
-    protected List<Goal> badGoals;
-    protected List<Mood.Status> userMoods;
+    @BindView(R.id.rvWell)  protected RecyclerView rvWell;
+    @BindView(R.id.rvWork)  protected RecyclerView rvWork;
+
+    private List<Goal> mGoals;
+    private List<Goal> goodGoals;
+    private List<Goal> badGoals;
+    private List<Mood.Status> userMoods;
     //protected TreeSet<Prioritized<Goal>> prioGoals;
+    private ProgressStackManager graphManager;
+
     private int length = 0;
-    private DataComponentAdapter<Goal> goalsWellAdapter;
-    private DataComponentAdapter<Goal> goalsWorkAdaper;
+    private ViewAdapter<ProgressStack> graphAdapter;
     private DataComponentAdapter<Mood.Status> gridMoodAdapter;
-    GoalUtils goalUtils;
-    Journal journal;
+    private DataComponentAdapter<Goal> goalsWellAdapter;
+    private DataComponentAdapter<Goal> goalsWorkAdapter;
+
+    private Journal journal;
+
     public ProgressFragment() {
         // Required empty public constructor
     }
@@ -96,87 +114,74 @@ public class ProgressFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        psTest.setMaxValue(10);
-        psTest.setValue(Color.RED, 5);
-        psTest.show(Color.RED);
-        psTest.setValue(Color.BLUE, 2);
-        psTest.show(Color.BLUE);
-//        psTest.select(Color.BLUE);
-        psTest.setValue(Color.GREEN, 1);
-        psTest.show(Color.GREEN);
-        Log.i("ProgressFragment", "Total: " + psTest.totalValue());
+        length = 7;
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                psTest.hide(Color.BLUE);
-                Thread.sleep(1000);
-                Log.i("ProgressFragment", "Total: " + psTest.totalValue());
-                psTest.selectNone();
-            } catch (InterruptedException e) {
+        mGoals = new ArrayList<>();
+        userMoods = new ArrayList<>();
+        goodGoals = new ArrayList<>();
+        badGoals = new ArrayList<>();
+        //prioGoals = new TreeSet<>();
+        graphManager = new ProgressStackManager(getActivity(), length);
+
+        journal = new Journal(User.getCurrentUser());
+
+        //create the adapter
+
+        graphAdapter = new ViewAdapter<ProgressStack>(getActivity(), graphManager.getStacks()) {
+            @Override
+            public void onBindViewHolder(@NonNull ViewHolder<ProgressStack> holder, int position) {
 
             }
-        }).start();
+        };
 
-//        length = 7;
-//        mGoals = new ArrayList<>();
-//        userMoods = new ArrayList<>();
-//        goodGoals = new ArrayList<>();
-//        badGoals = new ArrayList<>();
-//        //prioGoals = new TreeSet<>();
-//        goalUtils = new GoalUtils();
-//        journal = new Journal(User.getCurrentUser());
-//
-//        //create the adapter
-//
-//        goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
-//            @Override
-//            public Component makeComponent(Goal item, Component.ViewHolder holder) {
-//                Component component = new ProgressGoalComponent(item);
-//                return component;
-//            }
-//
-//            @Override
-//            protected Component.Inflater makeInflater(Goal item) {
-//                return new ProgressGoalComponent.Inflater();
-//            }
-//        };
-//        goalsWorkAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
-//            @Override
-//            public Component makeComponent(Goal item, Component.ViewHolder holder) {
-//                Component component = new ProgressGoalComponent(item);
-//                return component;
-//            }
-//
-//            @Override
-//            protected Component.Inflater makeInflater(Goal item) {
-//                return new ProgressGoalComponent.Inflater();
-//            }
-//        };
-//
-//        gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
-//            @Override
-//            public Component makeComponent(Mood.Status item, Component.ViewHolder holder) {
-//                Component component = new ProgressGridMoodComponent(item);
-//                return component;
-//            }
-//
-//            @Override
-//            protected Component.Inflater makeInflater(Mood.Status item) {
-//                return new ProgressGridMoodComponent.Inflater();
-//            }
-//        };
-//
-//        rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 7 ));
-//
-//
-//        rvWell.setAdapter(goalsWellAdapter);
-//        rvWork.setAdapter(goalsWorkAdaper);
-//        gvMood.setAdapter(gridMoodAdapter);
-//
-//
+        gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
+            @Override
+            public Component makeComponent(Mood.Status item, Component.ViewHolder holder) {
+                Component component = new ProgressGridMoodComponent(item);
+                return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Mood.Status item) {
+                return new ProgressGridMoodComponent.Inflater();
+            }
+        };
+
+        goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
+            @Override
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
+                Component component = new ProgressGoalComponent(item);
+                return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new ProgressGoalComponent.Inflater();
+            }
+        };
+        
+        goalsWorkAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
+            @Override
+            public Component makeComponent(Goal item, Component.ViewHolder holder) {
+                Component component = new ProgressGoalComponent(item);
+                return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(Goal item) {
+                return new ProgressGoalComponent.Inflater();
+            }
+        };
+
+        rvGraph.setLayoutManager(new GridLayoutManager(getActivity(), length));
+        rvMood.setLayoutManager(new GridLayoutManager(getActivity(), length));
+        rvWell.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rvWork.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+        rvMood.setAdapter(gridMoodAdapter);
+        rvWell.setAdapter(goalsWellAdapter);
+        rvWork.setAdapter(goalsWorkAdapter);
+
 //        queryGoals(() -> setGraph(() -> {
 //            Calendar cal = Calendar.getInstance();
 //            Date d1 = cal.getTime();
@@ -213,7 +218,7 @@ public class ProgressFragment extends Fragment {
 //                    }
 //                    if(tsGoals.last().value < 0 && badGoals.size() < 3) {
 //                        badGoals.add(tsGoals.last().item);
-//                        goalsWorkAdaper.notifyItemInserted(i);
+//                        goalsWorkAdapter.notifyItemInserted(i);
 //                        tsGoals.remove(tsGoals.last());
 //                    }
 //
@@ -226,7 +231,7 @@ public class ProgressFragment extends Fragment {
 //
 //
 //        }));
-//
+
 //        journal.loadEntries((e) -> {
 //            Calendar cal = Calendar.getInstance();
 //            cal.add(Calendar.DATE, -length + 1);
@@ -244,13 +249,13 @@ public class ProgressFragment extends Fragment {
 //            gridMoodAdapter.notifyDataSetChanged();
 //            gvMood.scrollTo(0,0);
 //        });
-////        queryPosts(() -> {
-////            getListOnePostPerDay();
-////            gridMoodAdapter.notifyDataSetChanged();
-////            gvMood.scrollTo(0,0);
-////        });
-//    }
-//
+//        queryPosts(() -> {
+//            getListOnePostPerDay();
+//            gridMoodAdapter.notifyDataSetChanged();
+//            gvMood.scrollTo(0,0);
+//        });
+    }
+
 //    private void setGraph(AsyncUtils.EmptyCallback callback){
 //        AsyncUtils.executeMany(mGoals.size(), (i,cb) -> {
 //           Goal goal = mGoals.get(i);
@@ -269,8 +274,8 @@ public class ProgressFragment extends Fragment {
 //            });
 //
 //        }, (e) -> {callback.call();});
-
-    }
+//
+//    }
 
 
     public void queryGoals(AsyncUtils.EmptyCallback callback){

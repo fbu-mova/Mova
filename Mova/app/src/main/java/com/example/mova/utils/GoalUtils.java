@@ -51,7 +51,7 @@ public class GoalUtils {
         });
     }
 
-    public void getSharedActionList(AsyncUtils.ListCallback<SharedAction> callback, Goal goal){
+    public static void getSharedActionList(AsyncUtils.ListCallback<SharedAction> callback, Goal goal){
         ParseQuery<SharedAction> pqSharedAction = goal.relSharedActions.getQuery();
         pqSharedAction.findInBackground(new FindCallback<SharedAction>() {
             @Override
@@ -66,7 +66,7 @@ public class GoalUtils {
         });
     }
 
-    public void getNumActionsComplete(Date date, Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback){
+    public static void getNumActionsComplete(Date date, Goal goal, User user, AsyncUtils.ItemCallback<Integer> callback){
         getActionList((actionList) -> {
             int numAction = 0;
             for(Action action: actionList) {
@@ -122,7 +122,7 @@ public class GoalUtils {
         return percent;
     }
 
-    public void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ItemCallback<BarGraphSeries<DataPoint>> callback){
+    public static void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ItemCallback<BarGraphSeries<DataPoint>> callback){
         DataPoint[] dataPoints = new DataPoint[length];
         AsyncUtils.executeMany(length, (i, cb) -> {
             Date date = new Date();
@@ -147,7 +147,7 @@ public class GoalUtils {
      * @param user The user whose goals should be prioritized.
      * @param callback
      */
-    public void sortGoals(List<Goal> goalList, int length, User user, AsyncUtils.ItemCallback<TreeSet<Prioritized<Goal>>> callback){
+    public static void sortGoals(List<Goal> goalList, int length, User user, AsyncUtils.ItemCallback<TreeSet<Prioritized<Goal>>> callback){
         TreeSet<Prioritized<Goal>> tsGoals = new TreeSet<>();
         AsyncUtils.executeMany(goalList.size(), (i,cb) -> {
             Calendar cal = Calendar.getInstance();

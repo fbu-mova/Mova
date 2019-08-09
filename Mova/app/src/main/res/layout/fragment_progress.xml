@@ -95,7 +95,7 @@
             app:layout_constraintTop_toBottomOf="@+id/clProgress">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvMoods"
+                android:id="@+id/rvMood"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -111,7 +111,7 @@
                 android:textSize="@dimen/textSizeTitle" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvNeedsWork"
+                android:id="@+id/rvWork"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/elementMargin">
@@ -130,7 +130,7 @@
                 android:textSize="@dimen/textSizeTitle" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvGoingWell"
+                android:id="@+id/rvWell"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/elementMargin" />
