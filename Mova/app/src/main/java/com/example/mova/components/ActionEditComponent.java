@@ -34,6 +34,8 @@ public class ActionEditComponent extends Component {
     private Action.Wrapper wrapper;
     private ActionEditViewHolder viewHolder;
 
+    private boolean prioritySelected;
+
     private ComponentManager componentManager;
     private GoalUtils.onActionEditSaveListener onActionEditSaveListener;
 
@@ -45,6 +47,8 @@ public class ActionEditComponent extends Component {
         this.onActionEditSaveListener = onActionEditSaveListener;
 
         this.wrapper = new Action.Wrapper();
+
+        this.prioritySelected = (action != null) ? this.action.getIsPriority() : false;
     }
 
     @Override
@@ -80,6 +84,8 @@ public class ActionEditComponent extends Component {
     protected void onRender(ViewHolder holder) {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
+
+        if (prioritySelected)   viewHolder.priority.setColorFilter(R.color.textMain);
 
         viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,17 +124,19 @@ public class ActionEditComponent extends Component {
             @Override
             public void onClick(View v) {
                 // need to update the uncreatedAction with priority
+                prioritySelected = !prioritySelected;
 
                 if (action != null) {
-                    action.setIsPriority(true);
+                    action.setIsPriority(prioritySelected);
                 }
                 else {
                     // some action wrapper class that stores the info ?
-                    wrapper.setIsPriority(true);
+                    wrapper.setIsPriority(prioritySelected);
                 }
 
-                Toast.makeText(getActivity(), "priority selected!", Toast.LENGTH_LONG).show();
-                // fixme -- want to show onClick in UI : what would user see?
+                int id = (prioritySelected) ? R.color.buttonActive : R.color.buttonInactive;
+                viewHolder.priority.setColorFilter(getActivity().getResources().getColor(id));
+
             }
         });
     }
