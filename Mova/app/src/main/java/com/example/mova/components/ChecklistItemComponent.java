@@ -9,6 +9,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -111,6 +112,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
         @BindView(R.id.cbItem)      public CheckBox cbItem;
         @BindView(R.id.ivPriority)  public ImageView ivPriority;
+        @BindView(R.id.clLayout)    public ConstraintLayout clLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

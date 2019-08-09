@@ -139,34 +139,34 @@ public class ActionComponent extends Component {
             }
         });
 
-        viewHolder.component.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setMessage("Are you sure you want to delete this action?")
-//                        .setTitle("Confirm")
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                item.deleteInBackground();
-//                                goal.relActions.remove(item, () -> {}); // fixme - may need fetchInBackground
-//                                sharedAction.relChildActions.remove(item, ()-> {});
-//                                if(goal.getIsPersonal()){
-//                                    sharedAction.deleteInBackground();
-//                                }
-//                                GoalCardComponent.actionsAdapter.notifyDataSetChanged();
-//                            }
-//                        })
-//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                            }
-//                        });
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-            }
-        });
+//        viewHolder.component.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+////                builder.setMessage("Are you sure you want to delete this action?")
+////                        .setTitle("Confirm")
+////                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+////                            @Override
+////                            public void onClick(DialogInterface dialog, int which) {
+////                                item.deleteInBackground();
+////                                goal.relActions.remove(item, () -> {}); // fixme - may need fetchInBackground
+////                                sharedAction.relChildActions.remove(item, ()-> {});
+////                                if(goal.getIsPersonal()){
+////                                    sharedAction.deleteInBackground();
+////                                }
+////                                GoalCardComponent.actionsAdapter.notifyDataSetChanged();
+////                            }
+////                        })
+////                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+////                            @Override
+////                            public void onClick(DialogInterface dialog, int which) {
+////
+////                            }
+////                        });
+////                AlertDialog dialog = builder.create();
+////                dialog.show();
+//            }
+//        });
 
         // todo -- set icons later
 
