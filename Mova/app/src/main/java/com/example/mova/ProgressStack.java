@@ -353,6 +353,8 @@ public class ProgressStack extends FrameLayout {
 
     protected void drawValueChange(int color, int value, @Nullable Animator.AnimatorListener listener) {
         final FrameLayout view = sectionViews.get(color);
+        if (view == null) return;
+
         int fromHeight = view.getHeight();
         int toHeight = toLength(value);
 
@@ -372,6 +374,8 @@ public class ProgressStack extends FrameLayout {
 
     protected void drawSectionOpacity(int color, float opacity, @Nullable Animator.AnimatorListener listener) {
         FrameLayout view = sectionViews.get(color);
+        if (view == null) return;
+
         view.animate()
             .alpha(opacity)
             .setDuration(DURATION)
