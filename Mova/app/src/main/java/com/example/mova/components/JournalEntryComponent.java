@@ -24,6 +24,7 @@ import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
 import com.example.mova.utils.LocationUtils;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseQuery;
@@ -31,7 +32,7 @@ import com.parse.ParseQuery;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class JournalEntryComponent extends Component {
+public class JournalEntryComponent extends ComposableComponent {
 
     private Post entry;
     private DataComponentAdapter<Post> commentAdapter;
@@ -40,7 +41,16 @@ public class JournalEntryComponent extends Component {
     private ComponentManager manager;
 
     public JournalEntryComponent(Post entry) {
+        super(makePostConfig(entry));
         this.entry = entry;
+    }
+
+    protected static PostConfig makePostConfig(Post entry) {
+        PostConfig config = new PostConfig();
+        config.postToReply = entry;
+        config.isPersonal = true;
+        // TODO: Possibly handle journal prompts?
+        return config;
     }
 
     @Override
@@ -78,6 +88,7 @@ public class JournalEntryComponent extends Component {
         displayMedia();
         displayTags();
         displayComments();
+        setComposeEventView(holder.getView());
     }
 
     @Override
@@ -207,6 +218,16 @@ public class JournalEntryComponent extends Component {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onSavePost(Post post) {
+        // TODO
+    }
+
+    @Override
+    protected void onCancelCompose() {
+        // TODO
     }
 
     public static class ViewHolder extends Component.ViewHolder {

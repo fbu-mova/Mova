@@ -202,9 +202,9 @@ public class PostComponent extends ComposableComponent {
     private void displaySubheader() {
         // TODO: Maybe a more extensive check for whether subheader is all whitespace?
         if (config.subheader == null || config.subheader.equals("")) {
-            holder.tvSubheader.setVisibility(View.GONE);
+            holder.llSubheader.setVisibility(View.GONE);
         } else {
-            holder.tvSubheader.setVisibility(View.VISIBLE);
+            holder.llSubheader.setVisibility(View.VISIBLE);
             holder.tvSubheader.setText(config.subheader);
         }
     }
@@ -337,6 +337,7 @@ public class PostComponent extends ComposableComponent {
 
         // TODO: Find a way to display date without displaying username, etc.
 
+        @BindView(R.id.llSubheader)    public LinearLayout llSubheader;
         @BindView(R.id.tvSubheader)    public TextView tvSubheader;
 
         @BindView(R.id.llGroup)        public LinearLayout llGroup;

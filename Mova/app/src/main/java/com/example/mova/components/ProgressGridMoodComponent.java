@@ -99,7 +99,6 @@ public class ProgressGridMoodComponent extends Component {
         public ProgressGridViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            this.view = itemView;
         }
     }
 
