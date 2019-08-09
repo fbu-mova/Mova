@@ -151,8 +151,10 @@ public class GroupDetailsFragment extends Fragment {
                                 });
                             }else{
                                 group.relUsers.add(user);
+                                group.saveInBackground();
                                 btnJoinGroup.setText("LEAVE GROUP");
                                 user.relGroups.add(group);
+                                user.saveInBackground();
                             }
                         }
                     });
