@@ -59,16 +59,17 @@
             android:layout_width="@dimen/buttonIcon"
             android:layout_height="@dimen/buttonIcon"
             android:layout_marginRight="@dimen/elementMargin"
+            android:tint="@color/buttonInactive"
             app:layout_constraintStart_toEndOf="@+id/ivIcon3"
             app:layout_constraintTop_toTopOf="@+id/ivIcon2"
-            app:srcCompat="@color/colorPrimary" />
+            app:srcCompat="@drawable/ic_round_recurring" />
 
         <ImageView
             android:id="@+id/ivIcon3"
             android:layout_width="@dimen/buttonIcon"
             android:layout_height="@dimen/buttonIcon"
             android:layout_marginRight="@dimen/elementMargin"
-            android:tint="@color/textLight"
+            android:tint="@color/buttonInactive"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ivIcon1"
             app:srcCompat="@drawable/ic_round_priority" />
