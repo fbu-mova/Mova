@@ -405,6 +405,7 @@ public class ProgressFragment extends Fragment {
                                                 super.onAnimationEnd(animation);
                                                 sectionView.removeAllViews();
                                                 sectionView.setLayoutParams(params);
+                                                graphManager.deselect();
                                                 inSelectAnimation = false;
                                             }
                                         });
