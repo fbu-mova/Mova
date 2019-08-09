@@ -21,6 +21,7 @@ import com.example.mova.fragments.Personal.JournalFragment;
 import com.example.mova.fragments.Personal.PersonalFeedFragment;
 import com.example.mova.fragments.Personal.ProfileFragment;
 import com.example.mova.fragments.Personal.ProgressFragment;
+import com.example.mova.fragments.Social.EventsFragment;
 import com.example.mova.fragments.Social.GroupsFragment;
 import com.example.mova.fragments.Social.SocialFeedFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -131,6 +132,9 @@ public class PersonalFragment extends Fragment {
         }
         if(GroupsFragment.manager != null){
             GroupsFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        if(EventsFragment.manager != null){
+            EventsFragment.manager.popBackStack(0,FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 

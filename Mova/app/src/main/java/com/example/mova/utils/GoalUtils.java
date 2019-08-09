@@ -219,12 +219,11 @@ public class GoalUtils {
         });
     }
 
-    public static void submitGoal(String goalName, String goalDescription, List<Action> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+    public static void submitGoal(Goal goal,String goalName, String goalDescription, List<Action> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
         // todo -- include image choosing for goal image + color
         // todo -- update to also encompass Social functionality ? can share w/ group if not on personal feed
 
-        Goal goal = new Goal()
-                .setAuthor(User.getCurrentUser())
+        goal.setAuthor(User.getCurrentUser())
                 .setTitle(goalName)
                 .setDescription(goalDescription)
                 .setIsPersonal(true); // fixme -- pass in as parameter to include Social functionality

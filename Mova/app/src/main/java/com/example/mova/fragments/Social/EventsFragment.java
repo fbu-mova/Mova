@@ -7,12 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +27,7 @@ import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.fragments.SearchFragment;
 import com.example.mova.model.Event;
 import com.example.mova.model.User;
 import com.example.mova.utils.EventUtils;
@@ -48,6 +52,7 @@ import butterknife.ButterKnife;
 public class EventsFragment extends Fragment {
 
     User user;
+    public static FragmentManager manager;
 
     @BindView(R.id.ibSearch)
     ImageButton ibSearch;
@@ -114,20 +119,20 @@ public class EventsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), SearchActivity.class);
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
-                startActivity(intent, options.toBundle());
+//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), ibSearch ,"search");
+//                startActivity(intent, options.toBundle());
 
-//                Fragment frag = new SearchFragment();
-//                manager = ((AppCompatActivity)getActivity())
-//                        .getSupportFragmentManager();
-//                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
-//                //fl.removeAllViews();
-//                FragmentTransaction ft = manager
-//                        .beginTransaction();
-//                ft.add(R.id.flSocialContainer, frag);
-//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                ft.addToBackStack(null);
-//                ft.commit();
+                Fragment frag = new SearchFragment();
+                manager = ((AppCompatActivity)getActivity())
+                        .getSupportFragmentManager();
+                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+                //fl.removeAllViews();
+                FragmentTransaction ft = manager
+                        .beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
 

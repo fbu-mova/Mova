@@ -4,37 +4,35 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.example.mova.GoalProgressBar;
+import com.example.mova.R;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.ActionComponent;
 import com.example.mova.components.CreateActionComponent;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.InvolvedSharedActionComponent;
 import com.example.mova.components.UninvolvedSharedActionComponent;
 import com.example.mova.dialogs.ConfirmShareGoalDialog;
-import com.example.mova.GoalProgressBar;
-import com.example.mova.R;
-import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.component.Component;
-import com.example.mova.components.ActionComponent;
-import com.example.mova.dialogs.ConfirmShareGoalDialog;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -52,18 +50,25 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     private static final String TAG = "goal details activity";
     private Goal goal;
 
+    User user;
     private boolean isPersonal;
     private boolean isUserInvolved;
 
-    @BindView(R.id.ivPhoto)         protected ImageView ivPhoto;
+    @BindView(R.id.ivIcon)         protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
-    @BindView(R.id.tvFromGroup)     protected TextView tvFromGroup;
+    @BindView(R.id.tvGroupName)     protected TextView tvGroupName;
     @BindView(R.id.tvDescription)   protected TextView tvDescription;
     @BindView(R.id.rvActions)       protected RecyclerView rvActions;
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
     @BindView(R.id.ivShare)         protected ImageView ivShare;
     @BindView(R.id.ivSave)          protected ImageView ivSave;
     @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
+    @BindView(R.id.cvIcon)          protected CardView cvIcon;
+
+
+    @BindView(R.id.llGroupDetails)  protected LinearLayout llGroupDetails;
+    @BindView(R.id.llShareGoal)     protected LinearLayout llShareGoal;
+    @BindView(R.id.llSaveGoal)      protected LinearLayout llSaveGoal;
 
     // recyclerview - case personal
     private List<Action> actions;
@@ -79,17 +84,27 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         setContentView(R.layout.activity_goal_details);
         ButterKnife.bind(this);
 
+        user = User.getCurrentUser();
         goal = getIntent().getParcelableExtra("goal");
         isUserInvolved = getIntent().getBooleanExtra("isUserInvolved", false);
 
         isPersonal = goal.getIsPersonal();
         tvGoalName.setText(goal.getTitle());
 
+        Icons.from(GoalDetailsActivity.this).displayNounIcon(goal, cvIcon, ivPhoto);
+
         goal.getGroupName(() -> {
-            tvFromGroup.setVisibility(View.GONE);
+            tvGroupName.setVisibility(View.GONE);
+            displayHeader(false);
         }, (str) -> {
-            if (str == "") tvFromGroup.setVisibility(View.GONE);
-            else           tvFromGroup.setText(str); // FIXME -- null object reference error
+            if (str == "") {
+                tvGroupName.setVisibility(View.GONE);
+                displayHeader(false);
+            }
+            else {
+                tvGroupName.setText(str);
+                displayHeader(true);
+            }
 
         });
 
@@ -126,12 +141,36 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             goalpb.setProgress(progress);
         });
 
-        if (isPersonal) { // FIXME -- currently social goals can't add actions (getting author User object also a callback itself...)
+        if (isPersonal || user.equals(goal.getAuthor())) { // FIXME -- currently social goals can't add actions (getting author User object also a callback itself...)
             inflateAddActionComponent();
         }
 
         setUpRecyclerView();
 
+    }
+
+    private void displayHeader(boolean hasGroup) {
+        // decides which of the headers to display
+
+        if (isPersonal) {
+            llGroupDetails.setVisibility(View.GONE);
+            llSaveGoal.setVisibility(View.GONE);
+            llShareGoal.setVisibility(View.VISIBLE);
+        }
+        else if (hasGroup) {
+            llGroupDetails.setVisibility(View.VISIBLE);
+            llShareGoal.setVisibility(View.GONE);
+            if (isUserInvolved) llSaveGoal.setVisibility(View.GONE);
+            else                llSaveGoal.setVisibility(View.VISIBLE);
+        }
+        else if (!hasGroup) {
+            llGroupDetails.setVisibility(View.GONE);
+            llShareGoal.setVisibility(View.VISIBLE);
+            if (isUserInvolved) llSaveGoal.setVisibility(View.GONE);
+            else                llSaveGoal.setVisibility(View.VISIBLE);
+
+
+        }
     }
 
     private void inflateAddActionComponent() {
@@ -272,7 +311,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(goal, (objects) -> {
-                GoalCardComponent.updateInvolvedSharedAdapter(objects, sharedActions, sharedActionsAdapter, rvActions);
+                GoalCardComponent.updateInvolvedSharedAdapter(this, objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
         else if (!isPersonal && !isUserInvolved) {
@@ -299,7 +338,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(goal, (objects) -> {
-                GoalCardComponent.updateUninvolvedSharedAdapter(goal, objects, sharedActions, sharedActionsAdapter, rvActions);
+                GoalCardComponent.updateUninvolvedSharedAdapter(this, goal, objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
 

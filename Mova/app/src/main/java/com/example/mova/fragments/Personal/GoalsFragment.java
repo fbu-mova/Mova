@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,13 +25,10 @@ import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
-import com.example.mova.utils.AsyncUtils;
-import com.example.mova.utils.GoalUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +167,7 @@ public class GoalsFragment extends Fragment {
         ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
-                .setLimit(5)
+                //.setLimit(5)
                 .include(KEY_FROM_GROUP)
                 .orderByDescending(Goal.KEY_CREATED_AT);
 
@@ -183,8 +179,9 @@ public class GoalsFragment extends Fragment {
         ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
+                .setLimit(3)
                 .include(KEY_FROM_GROUP)
-                .orderByDescending(Goal.KEY_CREATED_AT);
+                .orderByDescending(Goal.KEY_UPDATED_AT);
 
         updateAdapter(allGoalsQuery, allGoals, allGoalsAdapter, rvAllGoals);
     }
@@ -195,26 +192,28 @@ public class GoalsFragment extends Fragment {
         goalsQuery.findInBackground(new FindCallback<Goal>() {
             @Override
             public void done(List<Goal> objects, ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "Goal query succeeded!");
-                    Log.d(TAG, String.format("object size: %s", objects.size()));
+                getActivity().runOnUiThread(() -> {
+                    if (e == null) {
+                        Log.d(TAG, "Goal query succeeded!");
+                        Log.d(TAG, String.format("object size: %s", objects.size()));
 
-                    for (int i = objects.size() - 1; i >= 0; i--) {
-                        // load into recyclerview
-                        // FIXME: Insert an object that stores the goal + the async boolean
-                        // FIXME: (alt) Update userIsInvolved on User object
-                        Goal goal = objects.get(i);
-                        Goal.GoalData data = new Goal.GoalData(goal, true);
-                        // for personal goal fragment, querying means user involved with all resulting goals
-                        goals.add(0, data);
-                        goalsAdapter.notifyItemInserted(0);
+                        for (int i = objects.size() - 1; i >= 0; i--) {
+                            // load into recyclerview
+                            // FIXME: Insert an object that stores the goal + the async boolean
+                            // FIXME: (alt) Update userIsInvolved on User object
+                            Goal goal = objects.get(i);
+                            Goal.GoalData data = new Goal.GoalData(goal, true);
+                            // for personal goal fragment, querying means user involved with all resulting goals
+                            goals.add(0, data);
+                            goalsAdapter.notifyDataSetChanged();
 
-                        rvGoals.scrollToPosition(0);
+                            rvGoals.scrollToPosition(0);
+                        }
+
+                    } else {
+                        Log.e(TAG, "goal query failed", e);
                     }
-
-                } else {
-                    Log.e(TAG, "goal query failed", e);
-                }
+                });
             }
         });
     }
@@ -237,10 +236,10 @@ public class GoalsFragment extends Fragment {
 
                 // update recyclerviews
                 allGoals.add(0, wrap);
-                allGoalsAdapter.notifyItemInserted(0);
+                allGoalsAdapter.notifyDataSetChanged();
 
                 thumbnailGoals.add(0, wrap);
-                thumbnailGoalsAdapter.notifyItemInserted(0);
+                thumbnailGoalsAdapter.notifyDataSetChanged();
 
                 rvAllGoals.scrollToPosition(0);
                 rvThumbnailGoals.scrollToPosition(0);

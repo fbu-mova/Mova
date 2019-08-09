@@ -108,6 +108,9 @@ public class PostComponent extends ComposableComponent {
 
         // Basic info
         this.holder.tvDate.setText(TimeUtils.toShortDateString(post.getCreatedAt()));
+        if(post.getBody().equals("") || post.getBody() == null){
+            this.holder.tvBody.setVisibility(View.GONE);
+        }
         this.holder.tvBody.setText(post.getBody());
 
         displayUser();
@@ -137,7 +140,7 @@ public class PostComponent extends ComposableComponent {
                 holder.ivProfileImage.setOnClickListener((view) -> {
                     // TODO: Go to profile page
                 });
-                Icons.displayIdenticon(loaded, holder.cvProfileImage, holder.ivProfileImage);
+                Icons.from(getActivity()).displayIdenticon(loaded, holder.cvProfileImage, holder.ivProfileImage);
             }
         });
     }
@@ -193,7 +196,7 @@ public class PostComponent extends ComposableComponent {
                     holder.ivGroupImage.setOnClickListener((view) -> {
                         // TODO: Go to group page
                     });
-                    Icons.displayNounIcon(loaded, holder.cvGroupImage, holder.ivGroupImage);
+                    Icons.from(getActivity()).displayNounIcon(loaded, holder.cvGroupImage, holder.ivGroupImage);
                 }
             });
         }

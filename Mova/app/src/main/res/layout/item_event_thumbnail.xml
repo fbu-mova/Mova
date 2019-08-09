@@ -14,13 +14,6 @@
         android:layout_marginBottom="@dimen/elementMargin"
         android:orientation="horizontal">
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-        </FrameLayout>
-
         <androidx.cardview.widget.CardView
             android:id="@+id/cvGroup"
             android:layout_width="@dimen/profileImage"
@@ -43,10 +36,10 @@
         <TextView
             android:id="@+id/tvGroup"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="0"
-            android:text="Group"
+            android:gravity="center_vertical"
             android:textColor="@color/textMain"
             android:textSize="@dimen/textSizeBody"
             app:layout_constraintEnd_toEndOf="parent"

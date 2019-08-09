@@ -144,6 +144,9 @@ public class SocialFragment extends Fragment {
                 if(GroupsFragment.manager != null){
                     GroupsFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
+                if(EventsFragment.manager != null){
+                    EventsFragment.manager.popBackStack(0,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
                 return true;
             }
         });

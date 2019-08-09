@@ -1,7 +1,6 @@
 package com.example.mova.components;
 
 import android.content.Intent;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +11,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.bumptech.glide.Glide;
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
@@ -106,7 +104,10 @@ public class GoalThumbnailComponent extends Component {
             int groupIcon = (str == "") ? View.INVISIBLE : View.VISIBLE;
             viewHolder.tvFromGroup.setText(str);
             viewHolder.cvFromGroupIcon.setVisibility(groupIcon);
+            Icons.from(getActivity()).displayNounIcon(goal.getGroup(), viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
         });
+
+        Icons.from(getActivity()).displayNounIcon(goal,viewHolder.cvGoalIcon, viewHolder.ivPhoto);
 
 //        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
 //        Glide.with(getActivity())
@@ -130,10 +131,13 @@ public class GoalThumbnailComponent extends Component {
 
         @BindView(R.id.tvFromGroup)         protected TextView tvFromGroup;
         @BindView(R.id.tvName)              protected TextView tvName;
-        @BindView(R.id.ivPhoto)             protected ImageView ivPhoto;
+        @BindView(R.id.ivIcon)          protected ImageView ivPhoto;
         @BindView(R.id.goalProgressBar)     protected GoalProgressBar goalProgressBar;
         @BindView(R.id.parentLayout)        protected LinearLayout parentLayout;
         @BindView(R.id.cvFromGroupIcon)     protected CardView cvFromGroupIcon;
+        @BindView(R.id.ivFromGroupIcon)     protected ImageView ivFromGroupIcon;
+        @BindView(R.id.cvIcon)          protected CardView cvGoalIcon;
+
 
         public GoalThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -11,10 +11,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.mova.PersonalToggle;
 import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.fragments.SocialFragment;
-import com.example.mova.icons.Icons;
 import com.example.mova.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseACL;
@@ -27,7 +27,8 @@ public class MainActivity extends DelegatedResultActivity {
     private static final int REQUEST_PERMISSIONS_CODE = 10;
     private static final String[] REQUIRED_PERMISSIONS = new String[] { Manifest.permission.CAMERA };
 
-    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
+//    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
+    @BindView(R.id.bottom_navigation) protected PersonalToggle bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,34 +41,23 @@ public class MainActivity extends DelegatedResultActivity {
         acl.setPublicReadAccess(true);
         currUser.setACL(acl);
 
-        Icons.setContext(getApplicationContext());
-
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE);
     }
 
     private void initFragments() {
-        final FragmentManager fragmentManager = getSupportFragmentManager();
+        bottomNavigationView.setOnToggle((toPersonal) -> setFragment(toPersonal));
+        setFragment(true);
+    }
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment fragment;
-                switch (menuItem.getItemId()){
-                    case R.id.action_personal:
-                        //Toast.makeText(MainActivity.this, "Switched to Personal", Toast.LENGTH_SHORT).show();
-                        fragment = new PersonalFragment();
-                        break;
-                    case R.id.action_social:
-                        //Toast.makeText(MainActivity.this, "Switched to Social", Toast.LENGTH_SHORT).show();
-                        fragment = new SocialFragment();
-                        break;
-                    default: return true;
-                }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-                return true;
-            }
-        });
-        bottomNavigationView.setSelectedItemId(R.id.action_personal);
+    protected void setFragment(boolean toPersonal) {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment;
+        if (toPersonal) {
+            fragment = new PersonalFragment();
+        } else {
+            fragment = new SocialFragment();
+        }
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
     }
 
     @Override

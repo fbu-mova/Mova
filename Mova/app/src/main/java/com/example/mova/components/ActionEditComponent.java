@@ -1,10 +1,11 @@
 package com.example.mova.components;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,10 +18,9 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
-import com.example.mova.utils.AsyncUtils;
+import com.example.mova.model.Goal;
+import com.example.mova.model.SharedAction;
 import com.example.mova.utils.GoalUtils;
-import com.parse.ParseException;
-import com.parse.SaveCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +31,8 @@ public class ActionEditComponent extends Component {
     private static final String TAG = "action edit comp";
 
     private Action action;
+    private Goal goal;
+    private SharedAction sharedAction;
     private Action.Wrapper wrapper;
     private ActionEditViewHolder viewHolder;
 
@@ -81,6 +83,11 @@ public class ActionEditComponent extends Component {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
 
+        if(action != null){
+        sharedAction = action.getParentSharedAction();
+        goal = action.getParentGoal();
+        }
+
         viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +117,29 @@ public class ActionEditComponent extends Component {
         viewHolder.reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure you want to delete this action?")
+                        .setTitle("Confirm")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                action.deleteInBackground();
+                                goal.relActions.remove(action, () -> {});
+                                sharedAction.relChildActions.remove(action, ()-> {});
+                                if(goal.getIsPersonal()){
+                                    sharedAction.deleteInBackground();
+                                }
+                                GoalCardComponent.actionsAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 

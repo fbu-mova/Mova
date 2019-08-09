@@ -159,9 +159,11 @@ public class EventComposeActivity extends AppCompatActivity {
             etTitle.setText(event.getTitle());
 
             //Add Parent Group
-            event.getParentGroupName(event.getParentGroup(), (name) -> {
-                actvParentGroup.setText(name);
-            });
+            if(event.getParentGroup() != null) {
+                event.getParentGroupName(event.getParentGroup(), (name) -> {
+                    actvParentGroup.setText(name);
+                });
+            }
 
 //            etDate.setText(event.getDate().toString());
 

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,6 +21,7 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.fragments.Social.GroupDetailsFragment;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Group;
 import com.parse.ParseFile;
 
@@ -93,6 +95,17 @@ public class GroupThumbnailComponent extends Component {
                     .into(viewHolder.ivGroupPic);
         }
 
+//        group.getNounIcon((icon, e) -> {
+//            getActivity().runOnUiThread(() -> {
+//                if(icon != null){
+//                    Icons.displayNounIcon(group, viewHolder.cvGroupIcon, viewHolder.ivGroupIcon);
+//                }
+//            });
+//        });
+        getActivity().runOnUiThread(() -> {
+            Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvGroupIcon, viewHolder.ivGroupIcon);
+        });
+
         viewHolder.ivGroupPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,6 +136,8 @@ public class GroupThumbnailComponent extends Component {
 
         @BindView(R.id.tvGroupName) protected TextView tvGroupName;
         @BindView(R.id.ivGroupPic) protected ImageView ivGroupPic;
+        @BindView(R.id.ivGroupIcon) public ImageView ivGroupIcon;
+        @BindView(R.id.cvGroupIcon) public CardView cvGroupIcon;
 
         public GroupThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
