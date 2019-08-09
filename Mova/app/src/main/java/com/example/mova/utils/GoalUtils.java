@@ -137,6 +137,7 @@ public class GoalUtils {
             cal.add(Calendar.DATE, -length + 1);
             Date d2 = cal.getTime();
             Goal goal = goalList.get(i);
+            //Todo- change so it takes an average;
             getNumActionsComplete(d1, goal, user, (num) -> {
                 getNumActionsComplete(d2, goal, user, (num2) -> {
                     //Compare numbers and add value

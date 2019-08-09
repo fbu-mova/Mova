@@ -239,18 +239,18 @@ public class ProgressFragment extends Fragment {
                     if(tsGoals.size() == 0) {
                         break;
                     }
-                    if(tsGoals.first().value >= 0 && goodGoals.size() < 3) {
-                        goodGoals.add(tsGoals.first().item);
+                    if(tsGoals.last().value >= 0 && goodGoals.size() < 3) {
+                        goodGoals.add(tsGoals.last().item);
                         goalsWellAdapter.notifyItemInserted(i);
-                        tsGoals.remove(tsGoals.first());
+                        tsGoals.remove(tsGoals.last());
                         if(tsGoals.size() == 0){
                             break;
                         }
                     }
-                    if(tsGoals.last().value < 0 && badGoals.size() < 3) {
-                        badGoals.add(tsGoals.last().item);
+                    if(tsGoals.first().value < 0 && badGoals.size() < 3) {
+                        badGoals.add(tsGoals.first().item);
                         goalsWorkAdapter.notifyItemInserted(i);
-                        tsGoals.remove(tsGoals.last());
+                        tsGoals.remove(tsGoals.first());
                     }
 
                 }
@@ -265,14 +265,19 @@ public class ProgressFragment extends Fragment {
                     getDataForGraph(goal, user, length, (data) -> {
                         for(int j = 0; j < data.size(); j++){
                             graphManager.setValue(j, color, data.get(j));
-                            graphManager.show(color);
+                            //graphManager.show(color);
                         }
                         cb.call(null);
                     });
                 }, (err) -> {
                     //graphAdapter.notifyDataSetChanged();
-                    tvY2.setText(Integer.toString(graphManager.tallestY()));
-                    tvY1.setText(Integer.toString(graphManager.tallestY()/2));
+                    if(graphManager.tallestY() == 0){
+                        tvY2.setText("10");
+                        tvY1.setText("5");
+                    }else {
+                        tvY2.setText(Integer.toString(graphManager.tallestY()));
+                        tvY1.setText(Integer.toString(graphManager.tallestY() / 2));
+                    }
 
                     ps1.setValue(Color.RED, 1);
 
