@@ -127,10 +127,10 @@ public class ActionComponent extends Component {
 
         viewHolder.component.inflateComponent(getActivity(), viewComponent);
 
-        if(item != null){
-            sharedAction = item.getParentSharedAction();
-            goal = item.getParentGoal();
-        }
+//        if(item != null){
+//            sharedAction = item.getParentSharedAction();
+//            goal = item.getParentGoal();
+//        }
 
         viewHolder.component.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +169,7 @@ public class ActionComponent extends Component {
         });
 
         // todo -- set icons later
+
     }
 
     @Override
