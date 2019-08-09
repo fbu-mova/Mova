@@ -51,7 +51,7 @@ public class ProgressStack extends FrameLayout {
 
     protected SparseIntArray sections;
     protected List<Integer> colors;
-    protected SparseArray<AsyncUtils.ItemCallback<Integer>> clickListeners;
+    protected SparseArray<AsyncUtils.TwoItemCallback<Integer, FrameLayout>> clickListeners;
     protected SparseArray<FrameLayout> sectionViews;
 
     protected List<Integer> showSections;
@@ -244,11 +244,11 @@ public class ProgressStack extends FrameLayout {
         invalidate();
     }
 
-    public void setOnClick(int color, AsyncUtils.ItemCallback<Integer> listener) {
+    public void setOnClick(int color, AsyncUtils.TwoItemCallback<Integer, FrameLayout> listener) {
         clickListeners.put(color, listener);
 
         FrameLayout view = sectionViews.get(color);
-        if (view != null) view.setOnClickListener((v) -> listener.call(color));
+        if (view != null) view.setOnClickListener((v) -> listener.call(color, view));
     }
 
     protected enum ChangeType {
@@ -376,8 +376,8 @@ public class ProgressStack extends FrameLayout {
         view.setAlpha(1f);
         view.setBackgroundColor(color);
 
-        AsyncUtils.ItemCallback<Integer> clickListener = clickListeners.get(color);
-        if (clickListener != null) view.setOnClickListener((v) -> clickListener.call(color));
+        AsyncUtils.TwoItemCallback<Integer, FrameLayout> clickListener = clickListeners.get(color);
+        if (clickListener != null) view.setOnClickListener((v) -> clickListener.call(color, view));
 
         sectionViews.put(color, view);
         llSections.addView(view, 0);
