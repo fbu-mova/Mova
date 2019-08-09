@@ -10,38 +10,22 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.ProgressStack;
 import com.example.mova.R;
-import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
-import com.example.mova.component.Component;
-import com.example.mova.components.ProgressGoalComponent;
-import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Mood;
-import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GoalUtils;
-import com.example.mova.utils.TimeUtils;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -112,10 +96,23 @@ public class ProgressFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        psTest.setMaxValue(100);
-        psTest.add(Color.RED);
-        psTest.setValue(Color.RED, 50);
+        psTest.setMaxValue(10);
+        psTest.setValue(Color.RED, 5);
         psTest.show(Color.RED);
+        psTest.setValue(Color.BLUE, 2);
+        psTest.show(Color.BLUE);
+//        psTest.select(Color.BLUE);
+        psTest.setValue(Color.GREEN, 1);
+        psTest.show(Color.GREEN);
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                psTest.hide(Color.BLUE);
+            } catch (InterruptedException e) {
+
+            }
+        }).start();
 
 //        length = 7;
 //        mGoals = new ArrayList<>();

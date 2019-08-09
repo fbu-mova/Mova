@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -22,11 +21,9 @@ import androidx.cardview.widget.CardView;
 import com.example.mova.utils.AsyncUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.SynchronousQueue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +35,11 @@ public class ProgressStack extends FrameLayout {
     @BindView(R.id.flRoot)     protected FrameLayout flRoot;
     @BindView(R.id.cvMask)     protected CardView cvMask;
     @BindView(R.id.llSections) protected LinearLayout llSections;
+
+    private static final float SELECTED_OPACITY = 1f;
+    private static final float DESELECTED_OPACITY = 0.5f;
+    private static final int VALUE_CHANGE_DURATION = 700;
+    private static final int SELECTED_CHANGE_DURATION = 300;
 
     // -- MANAGING STATE -- //
 
@@ -147,8 +149,9 @@ public class ProgressStack extends FrameLayout {
     }
 
     public void hide(int color) {
-        if (showSections.contains(color)) {
-            showSections.remove(color);
+        int index = showSections.indexOf(color);
+        if (index >= 0) {
+            showSections.remove(index);
             changeQueue.add(new SectionChange(color, ChangeType.Hide));
             invalidate();
         }
@@ -157,7 +160,7 @@ public class ProgressStack extends FrameLayout {
     public void hideAllSections() {
         if (showSections.size() > 0) {
             for (int color : showSections) {
-                showSections.remove(color);
+                showSections.remove(showSections.indexOf(color));
                 changeQueue.add(new SectionChange(color, ChangeType.Remove));
             }
             invalidate();
@@ -168,11 +171,12 @@ public class ProgressStack extends FrameLayout {
         return showSections.contains(color);
     }
 
-    public void selectSection(int color) {
+    public void select(int color) {
         selectedSection = color;
         sectionIsSelected = true;
-        changeQueue.add(new SectionChange(color, ChangeType.Select));
+        changeQueue.add(new SectionChange(selectedSection, ChangeType.Select));
         for (int deselected : showSections) {
+            if (deselected == selectedSection) continue;
             changeQueue.add(new SectionChange(deselected, ChangeType.Deselect));
         }
         invalidate();
@@ -258,10 +262,6 @@ public class ProgressStack extends FrameLayout {
 
     // -- DRAWING -- //
 
-    private static final float SELECTED_OPACITY = 1f;
-    private static final float DESELECTED_OPACITY = 0.5f;
-    private static final int DURATION = 700;
-
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
@@ -284,28 +284,20 @@ public class ProgressStack extends FrameLayout {
                 case Add:
                     addSection(color);
                 case Show:
-                    if (!isShown(color)) {
-                        drawValueChange(color, valueOf(color), null);
-                    }
+                    drawValueChange(color, valueOf(color), null);
                     break;
 
                 case Hide:
-                    if (isShown(color)) {
-                        drawValueChange(color, 0, null);
-                    }
+                    drawValueChange(color, 0, null);
                     break;
 
                 case Remove:
-                    if (isShown(color)) {
-                        removeSection(color);
-                    } else {
-                        drawValueChange(color, 0, new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                removeSection(color);
-                            }
-                        });
-                    }
+                    drawValueChange(color, 0, new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            removeSection(color);
+                        }
+                    });
                     break;
 
                 case Select:
@@ -366,7 +358,7 @@ public class ProgressStack extends FrameLayout {
             view.setLayoutParams(params);
         });
 
-        animator.setDuration(DURATION);
+        animator.setDuration(VALUE_CHANGE_DURATION);
         if (listener != null) animator.addListener(listener);
 
         animator.start();
@@ -378,7 +370,7 @@ public class ProgressStack extends FrameLayout {
 
         view.animate()
             .alpha(opacity)
-            .setDuration(DURATION)
+            .setDuration(SELECTED_CHANGE_DURATION)
             .setListener(listener);
     }
 
