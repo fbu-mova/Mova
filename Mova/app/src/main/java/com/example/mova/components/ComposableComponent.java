@@ -18,6 +18,7 @@ public abstract class ComposableComponent extends Component {
 
     public ComposableComponent(PostConfig config) {
         this.config = config;
+        allowCompose = true;
     }
 
     public void setComposeEventView(View eventView) {

@@ -35,7 +35,7 @@ import com.parse.ParseQuery;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PostComponent extends Component {
+public class PostComponent extends ComposableComponent {
 
     private Post post;
     private Config config;
@@ -48,8 +48,20 @@ public class PostComponent extends Component {
     }
 
     public PostComponent(Post post, Config config) {
+        this(post, makePostConfig(post), config);
+    }
+
+    protected PostComponent(Post post, PostConfig postConfig, Config config) {
+        super(postConfig);
         this.post = post;
         this.config = config;
+    }
+
+    protected static PostConfig makePostConfig(Post post) {
+        PostConfig postConfig = new PostConfig();
+        postConfig.postToReply = post;
+        postConfig.isPersonal = true; // TODO: Determine this based on current tab
+        return postConfig;
     }
 
     public Config getConfig() {
@@ -87,7 +99,6 @@ public class PostComponent extends Component {
 
     @Override
     protected void onLaunch() {
-
     }
 
     @Override
@@ -102,6 +113,7 @@ public class PostComponent extends Component {
         displayUser();
         configureButtons();
         configurePostClick();
+        setComposeEventView(this.holder.card);
         displayMedia();
         displayGroup();
         displaySubheader();
@@ -307,6 +319,18 @@ public class PostComponent extends Component {
         int id = (active) ? R.color.buttonActive : R.color.buttonInactive;
         int tintColor = res.getColor(id);
         ivIcon.setColorFilter(tintColor);
+    }
+
+    @Override
+    protected void onSavePost(Post post) {
+        Toast.makeText(getActivity(), "Saved post with this post as media!", Toast.LENGTH_SHORT).show();
+        // TODO
+    }
+
+    @Override
+    protected void onCancelCompose() {
+        Toast.makeText(getActivity(), "Canceled post with this post as media.", Toast.LENGTH_SHORT).show();
+        // TODO
     }
 
     public static class ViewHolder extends Component.ViewHolder {
