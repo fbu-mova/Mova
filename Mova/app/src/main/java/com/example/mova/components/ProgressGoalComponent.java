@@ -9,14 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.example.mova.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
@@ -45,7 +48,7 @@ public class ProgressGoalComponent extends Component {
         if(viewHolder != null){
             return viewHolder;
         }
-        Log.e(TAG, "viewholder not inflating");
+        Log.e(TAG, "viewholder not inflated");
         return null;
     }
 
@@ -74,24 +77,22 @@ public class ProgressGoalComponent extends Component {
         checkViewHolderClass(holder, ProgressGoalViewHolder.class);
         viewHolder = (ProgressGoalViewHolder) holder;
 
-//        if(viewHolder == null){
-//            Log.e(TAG, "Not inflating views in render");
-//            return;
-//        }
+        ColorUtils.Hue hue = goal.getHue();
+        if (hue == null) hue = ColorUtils.Hue.random();
+        int ultraLight = ColorUtils.getColor(getActivity().getResources(), hue, ColorUtils.Lightness.UltraLight);
+        int mid = ColorUtils.getColor(getActivity().getResources(), hue, ColorUtils.Lightness.Mid);
 
-        if(goal.getColor() != null){
-            int color = Color.parseColor(goal.getColor());
-            viewHolder.ivGoalColor.setColorFilter(color);
-            viewHolder.goalProgressBar.setFilledColor(color);
-            viewHolder.tvGoalTitle.setTextColor(color);
-        }
+        viewHolder.tvGoalTitle.setTextColor(mid);
+        viewHolder.goalProgressBar.setUnfilledColor(ultraLight);
+        viewHolder.goalProgressBar.setFilledColor(mid);
+        Icons.displayNounIcon(goal, null, viewHolder.ivGoal);
+
+        viewHolder.tvGoalTitle.setText(goal.getTitle());
 
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
-
-        viewHolder.tvGoalTitle.setText(goal.getTitle());
     }
 
     @Override
@@ -102,8 +103,9 @@ public class ProgressGoalComponent extends Component {
     public static class ProgressGoalViewHolder extends Component.ViewHolder{
 
         @BindView(R.id.tvGoalTitle) protected TextView tvGoalTitle;
-        @BindView(R.id.ivGoalColor) protected ImageView ivGoalColor;
-        @BindView(R.id.goalProgressBar2) protected GoalProgressBar goalProgressBar;
+        @BindView(R.id.ivGoal) protected ImageView ivGoal;
+        @BindView(R.id.cvGoal) protected CardView cvGoal;
+        @BindView(R.id.goalProgressBar) protected GoalProgressBar goalProgressBar;
 
         public ProgressGoalViewHolder(@NonNull View itemView) {
             super(itemView);

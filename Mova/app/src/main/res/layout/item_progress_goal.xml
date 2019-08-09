@@ -10,48 +10,64 @@
     app:cardCornerRadius="@dimen/borderRadius"
     app:cardElevation="@dimen/shallowCardElevation">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="true"
         android:orientation="vertical">
 
         <com.example.mova.GoalProgressBar
-            android:id="@+id/goalProgressBar2"
-            android:layout_width="match_parent"
-            android:layout_height="7dp" />
+            android:id="@+id/goalProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/innerMargin"
-            android:orientation="horizontal">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/goalProgressBar"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="@dimen/profileImage"
-                android:layout_height="@dimen/profileImage"
-                android:layout_marginRight="@dimen/elementMargin"
-                app:cardCornerRadius="@dimen/borderRadius"
-                app:cardElevation="0dp">
-
-                <ImageView
-                    android:id="@+id/ivGoalColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:srcCompat="@android:color/background_dark" />
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/tvGoalTitle"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="TextView"
-                android:textColor="@color/textMain"
-                android:textSize="@dimen/textSizeBody" />
+                android:layout_margin="@dimen/innerMargin"
+                android:orientation="horizontal">
 
-        </LinearLayout>
-    </LinearLayout>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvGoal"
+                    android:layout_width="@dimen/profileImage"
+                    android:layout_height="@dimen/profileImage"
+                    android:layout_marginRight="@dimen/elementMargin"
+                    app:cardCornerRadius="@dimen/borderRadius"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivGoal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/iconMargin"
+                        app:srcCompat="@color/blueMid" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvGoalTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/lato_bold"
+                    android:text="Goal"
+                    android:textColor="@color/blueMid"
+                    android:textSize="@dimen/textSizeFocus" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

@@ -12,6 +12,7 @@
     <dimen name="borderRadiusCircle">1000dp</dimen>
 
     <dimen name="textSizeAnnotation">10dp</dimen>
+    <dimen name="textSizeInfo">12dp</dimen>
     <dimen name="textSizeBody">14dp</dimen>
     <dimen name="textSizeFocus">18dp</dimen>
     <dimen name="textSizeTitle">24dp</dimen>
@@ -27,4 +28,6 @@
     <dimen name="thumbnailImageHeight">100dp</dimen>
 
     <dimen name="progressBarMaxLength">120dp</dimen>
+    <dimen name="progressStackThickness">38dp</dimen>
+    <dimen name="progressStackLength">200dp</dimen>
 </resources>

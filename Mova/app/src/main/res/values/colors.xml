@@ -21,6 +21,7 @@
 
     <color name="textMain">#222</color>
     <color name="textLight">#999</color>
+    <color name="textProgressGraph">#8F97D6</color>
 
     <color name="bg">#EEEEEE</color>
 

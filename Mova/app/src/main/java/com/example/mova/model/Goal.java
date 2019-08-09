@@ -22,8 +22,6 @@ public class Goal extends HashableParseObject {
 
     public static final String KEY_TITLE = "title";
     public static final String KEY_AUTHOR = "author";
-    public static final String KEY_COLOR = "color";
-    public static final String KEY_IMAGE = "image";
     public static final String KEY_IS_PERSONAL = "isPersonal";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_FROM_GROUP = "fromGroup";
@@ -79,28 +77,6 @@ public class Goal extends HashableParseObject {
 
     public Goal setAuthor(User user){
         put(KEY_AUTHOR, user);
-        return this;
-    }
-
-    //Color
-    public String getColor(){
-        return getString(KEY_COLOR);
-    }
-
-    public Goal setColor(String color){
-        put(KEY_COLOR, color);
-        return this;
-    }
-
-
-    //Image
-
-    public ParseFile getImage() {
-        return getParseFile(KEY_IMAGE);
-    }
-
-    public Goal setImage(ParseFile file){
-        put(KEY_IMAGE, file);
         return this;
     }
 

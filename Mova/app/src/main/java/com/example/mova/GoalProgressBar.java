@@ -53,7 +53,6 @@ public class GoalProgressBar extends View {
 
     // Animation & drawing
 
-    private ValueAnimator barAnimator;
     private Paint progressPaint;
     private Paint erasePaint;
 
@@ -403,29 +402,21 @@ public class GoalProgressBar extends View {
     }
 
     public void setProgress(int progress) {
-        this.progress = progress;
         setProgress(progress, true);
     }
 
     private void setProgress(int progress, boolean animate) {
         if (animate) {
-            barAnimator = ValueAnimator.ofFloat(0, 1);
+            ValueAnimator animator = ValueAnimator.ofInt(this.progress, progress);
+            this.progress = progress;
 
-            barAnimator.setDuration(700);
-
-            // reset progress without animating
-            setProgress(0, false);
-
-            barAnimator.setInterpolator(new DecelerateInterpolator());
-
-            barAnimator.addUpdateListener((ValueAnimator animation) -> {
-                float interpolation = (float) animation.getAnimatedValue();
-                setProgress((int) (interpolation * progress), false);
+            animator.addUpdateListener((animation) -> {
+                int val = (Integer) animation.getAnimatedValue();
+                setProgress(val, false);
             });
 
-            if (!barAnimator.isStarted()) {
-                barAnimator.start();
-            }
+            animator.setDuration(700);
+            animator.start();
         } else {
             this.progress = progress;
             postInvalidate();

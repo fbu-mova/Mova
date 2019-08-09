@@ -184,11 +184,6 @@ public abstract class ComposePostComponent extends Component {
             holder.clMedia.clear();
         } else {
             holder.llAddMedia.setVisibility(View.GONE);
-            if (postConfig.media.getType() == Media.ContentType.Post) {
-                PostComponent.Config oldConfig = ((PostComponent) mediaComponent).getConfig();
-                PostComponent.Config newConfig = new PostComponent.Config(oldConfig.subheader, false, false, false);
-                ((PostComponent) mediaComponent).setConfig(newConfig);
-            }
             holder.clMedia.inflateComponent(getActivity(), mediaComponent);
             holder.clMedia.setVisibility(View.VISIBLE);
         }
