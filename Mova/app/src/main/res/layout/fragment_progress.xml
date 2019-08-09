@@ -20,6 +20,117 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <com.example.mova.ProgressStack
+                android:id="@+id/progressStack2"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/progressStackLength"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="0"
+                android:visibility="visible"
+                app:layout_constraintStart_toEndOf="@+id/progressStack1"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+            <com.example.mova.ProgressStack
+                android:id="@+id/progressStack1"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/progressStackLength"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="0"
+                android:visibility="visible"
+                app:layout_constraintStart_toEndOf="@+id/tvY1"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+
+            </com.example.mova.ProgressStack>
+
+            <LinearLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/progressStackLength"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="@dimen/outerMargin"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@+id/ivGraphBG"
+                app:layout_constraintEnd_toEndOf="@+id/ivGraphBG"
+                app:layout_constraintStart_toEndOf="@+id/progressStack2"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </FrameLayout>
+
+                <com.example.mova.ProgressStack
+                    android:id="@+id/progressStack3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/progressStackLength"
+                    android:layout_weight="0" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </FrameLayout>
+
+                <com.example.mova.ProgressStack
+                    android:id="@+id/progressStack4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/progressStackLength"
+                    android:layout_weight="0" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </FrameLayout>
+
+                <com.example.mova.ProgressStack
+                    android:id="@+id/progressStack5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/progressStackLength"
+                    android:layout_weight="0" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </FrameLayout>
+
+                <com.example.mova.ProgressStack
+                    android:id="@+id/progressStack6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/progressStackLength"
+                    android:layout_weight="0" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </FrameLayout>
+
+                <com.example.mova.ProgressStack
+                    android:id="@+id/progressStack7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/progressStackLength"
+                    android:layout_weight="0" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </FrameLayout>
+
+            </LinearLayout>
+
             <ImageView
                 android:id="@+id/ivGraphBG"
                 android:layout_width="match_parent"
@@ -42,19 +153,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvGraph"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/progressStackLength"
-                android:layout_marginLeft="@dimen/outerMargin"
-                android:layout_marginTop="@dimen/innerMargin"
-                android:layout_marginRight="@dimen/outerMargin"
-                android:scrollbars="none"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
-
             <TextView
                 android:id="@+id/tvY1"
                 android:layout_width="wrap_content"
@@ -63,10 +161,9 @@
                 android:text="Y1"
                 android:textColor="@color/textProgressGraph"
                 android:textSize="@dimen/textSizeInfo"
-                app:layout_constraintBottom_toBottomOf="@+id/rvGraph"
-                app:layout_constraintEnd_toStartOf="@+id/rvGraph"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/rvGraph" />
+                app:layout_constraintTop_toTopOf="@+id/linearLayout6" />
 
             <TextView
                 android:id="@+id/tvY2"
@@ -76,9 +173,8 @@
                 android:text="Y2"
                 android:textColor="@color/textProgressGraph"
                 android:textSize="@dimen/textSizeInfo"
-                app:layout_constraintEnd_toStartOf="@+id/rvGraph"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/rvGraph" />
+                app:layout_constraintTop_toTopOf="@+id/linearLayout6" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
