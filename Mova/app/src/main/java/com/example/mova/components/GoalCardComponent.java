@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -123,8 +124,10 @@ public class GoalCardComponent extends Component {
 //        viewHolder.tvDescription.setText(item.getDescription());
 
         GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
-            int progress = (int) (portionDone * PROGRESS_MAX);
-            viewHolder.goalProgressBar.setProgress(progress);
+            getActivity().runOnUiThread(() -> {
+                int progress = (int) (portionDone * PROGRESS_MAX);
+                viewHolder.goalProgressBar.setProgress(progress);
+            });
         });
 
         Icons.from(getActivity()).displayNounIcon(item, viewHolder.cvGoal, viewHolder.ivGoal);
@@ -134,14 +137,12 @@ public class GoalCardComponent extends Component {
             viewHolder.cvFromGroupIcon.setVisibility(View.GONE);
         }else{
             item.getGroupFull(() -> {}, (group) -> {
-                viewHolder.tvGroup.setText(group.getName());
-                Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
+                getActivity().runOnUiThread(() -> {
+                    viewHolder.tvGroup.setText(group.getName());
+                    Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
+                });
             });
         }
-
-
-
-
 
 //            viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
 //            viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
@@ -172,7 +173,9 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setAdapter(actionsAdapter);
 
             GoalUtils.loadGoalActions(item, (objects) -> {
-                updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
+                getActivity().runOnUiThread(() -> {
+                    updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
+                });
             });
         }
         else if (!isPersonal && isUserInvolved) {
@@ -201,7 +204,9 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                updateInvolvedSharedAdapter(objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                getActivity().runOnUiThread(() -> {
+                    updateInvolvedSharedAdapter(getActivity(), objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                });
             });
         }
         else if (!isPersonal && !isUserInvolved) {
@@ -226,7 +231,9 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(item, (objects) -> {
-                updateUninvolvedSharedAdapter(item, objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                getActivity().runOnUiThread(() -> {
+                    updateUninvolvedSharedAdapter(getActivity(), item, objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                });
             });
         }
     }
@@ -236,7 +243,7 @@ public class GoalCardComponent extends Component {
 
     }
 
-    public static void updateInvolvedSharedAdapter(List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
+    public static void updateInvolvedSharedAdapter(Activity activity, List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
         // fixme -- similar to updateAdapter in GoalFragments; merge with that or the generic-typed updateAdapter?
 
         /* first need to find SharedAction.Data isUserDone boolean:
@@ -254,41 +261,46 @@ public class GoalCardComponent extends Component {
                     .findInBackground(new FindCallback<Action>() {
                         @Override
                         public void done(List<Action> objects, ParseException e) {
-                            if (e == null && objects.size() == 1) {
-                                Log.d(TAG, "found child action");
+                            activity.runOnUiThread(() -> {
+                                if (e == null && objects.size() == 1) {
+                                    Log.d(TAG, "found child action");
 
-                                Action action = objects.get(0);
-                                boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
-                                SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
-                                sharedActions.add(0, data);
-                                sharedActionsAdapter.notifyItemInserted(0);
+                                    Action action = objects.get(0);
+                                    boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
+                                    SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
+                                    sharedActions.add(0, data);
+                                    sharedActionsAdapter.notifyItemInserted(0);
 
-                            }
-                            else {
-                                Log.e(TAG, "either size(actions) wrong or error", e);
-                            }
-                            callback.call(e);
+                                }
+                                else {
+                                    Log.e(TAG, "either size(actions) wrong or error", e);
+                                }
+                                callback.call(e);
+                            });
                         }
                     });
         }, (e) -> {
-            rvActions.scrollToPosition(0);
+            activity.runOnUiThread(() -> {
+                rvActions.scrollToPosition(0);
+            });
         });
     }
 
-    public static void updateUninvolvedSharedAdapter(Goal goal, List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
+    public static void updateUninvolvedSharedAdapter(Activity activity, Goal goal, List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {
         // don't need to check user completion / connection. only need to display order of SharedActions given priority
+        activity.runOnUiThread(() -> {
+            GoalUtils.loadGoalSharedActions(goal, (sharedActionsList) -> {
 
-        GoalUtils.loadGoalSharedActions(goal, (sharedActionsList) -> {
-            for (SharedAction sharedAction : sharedActionsList) {
-                sharedActions.add(0, new SharedAction.Data(sharedAction, false));
-                sharedActionsAdapter.notifyItemInserted(0);
-            }
-            rvActions.scrollToPosition(0);
+                for (SharedAction sharedAction : sharedActionsList) {
+                    sharedActions.add(0, new SharedAction.Data(sharedAction, false));
+                    sharedActionsAdapter.notifyItemInserted(0);
+                }
+                rvActions.scrollToPosition(0);
+            });
         });
     }
 
     private < E > void updateAdapter(List< E > objects, ArrayList< E > actions, DataComponentAdapter< E > actionsAdapter, RecyclerView rvActions) {
-
         for (int i = 0; i < objects.size(); i++) {
             // load into recyclerview
             E action = objects.get(i);
@@ -297,7 +309,6 @@ public class GoalCardComponent extends Component {
         }
 
         rvActions.scrollToPosition(0);
-
     }
 
     public static class GoalCardViewHolder extends Component.ViewHolder {

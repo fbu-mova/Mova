@@ -192,26 +192,28 @@ public class GoalsFragment extends Fragment {
         goalsQuery.findInBackground(new FindCallback<Goal>() {
             @Override
             public void done(List<Goal> objects, ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "Goal query succeeded!");
-                    Log.d(TAG, String.format("object size: %s", objects.size()));
+                getActivity().runOnUiThread(() -> {
+                    if (e == null) {
+                        Log.d(TAG, "Goal query succeeded!");
+                        Log.d(TAG, String.format("object size: %s", objects.size()));
 
-                    for (int i = objects.size() - 1; i >= 0; i--) {
-                        // load into recyclerview
-                        // FIXME: Insert an object that stores the goal + the async boolean
-                        // FIXME: (alt) Update userIsInvolved on User object
-                        Goal goal = objects.get(i);
-                        Goal.GoalData data = new Goal.GoalData(goal, true);
-                        // for personal goal fragment, querying means user involved with all resulting goals
-                        goals.add(0, data);
-                        goalsAdapter.notifyItemInserted(0);
+                        for (int i = objects.size() - 1; i >= 0; i--) {
+                            // load into recyclerview
+                            // FIXME: Insert an object that stores the goal + the async boolean
+                            // FIXME: (alt) Update userIsInvolved on User object
+                            Goal goal = objects.get(i);
+                            Goal.GoalData data = new Goal.GoalData(goal, true);
+                            // for personal goal fragment, querying means user involved with all resulting goals
+                            goals.add(0, data);
+                            goalsAdapter.notifyItemInserted(0);
 
-                        rvGoals.scrollToPosition(0);
+                            rvGoals.scrollToPosition(0);
+                        }
+
+                    } else {
+                        Log.e(TAG, "goal query failed", e);
                     }
-
-                } else {
-                    Log.e(TAG, "goal query failed", e);
-                }
+                });
             }
         });
     }

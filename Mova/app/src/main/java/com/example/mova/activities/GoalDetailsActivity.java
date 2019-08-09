@@ -311,7 +311,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(goal, (objects) -> {
-                GoalCardComponent.updateInvolvedSharedAdapter(objects, sharedActions, sharedActionsAdapter, rvActions);
+                GoalCardComponent.updateInvolvedSharedAdapter(this, objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
         else if (!isPersonal && !isUserInvolved) {
@@ -338,7 +338,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             rvActions.setAdapter(sharedActionsAdapter);
 
             GoalUtils.loadGoalSharedActions(goal, (objects) -> {
-                GoalCardComponent.updateUninvolvedSharedAdapter(goal, objects, sharedActions, sharedActionsAdapter, rvActions);
+                GoalCardComponent.updateUninvolvedSharedAdapter(this, goal, objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
 
