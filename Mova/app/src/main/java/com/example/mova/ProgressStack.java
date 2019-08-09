@@ -38,13 +38,15 @@ public class ProgressStack extends FrameLayout {
 
     private static final float SELECTED_OPACITY = 1f;
     private static final float DESELECTED_OPACITY = 0.5f;
-    private static final int VALUE_CHANGE_DURATION = 700;
-    private static final int SELECTED_CHANGE_DURATION = 300;
+
+    private int valueAnimDuration;
+    private int selectAnimDuration;
 
     // -- MANAGING STATE -- //
 
     // Orientation is currently fixed, but naming is flexible for variable orientation
-    protected int thickness, length, totalValue, totalValueShown;
+    protected int thickness, length;
+    protected int totalValue, totalValueShown;
     protected int maxValue; // -1 if no maximum
 
     protected SparseIntArray sections;
@@ -101,17 +103,24 @@ public class ProgressStack extends FrameLayout {
             length = typedArray.getDimensionPixelOffset(
                     R.styleable.ProgressStack_stackLength,
                     res.getDimensionPixelOffset(R.dimen.progressStackLength));
+
+            valueAnimDuration = typedArray.getInt(R.styleable.ProgressStack_valueAnimDuration, 700);
+            selectAnimDuration = typedArray.getInt(R.styleable.ProgressStack_selectAnimDuration, 300);
         } finally {
             typedArray.recycle();
         }
 
         // Offset cardview to hide bottom corners
         int borderRadius = getResources().getDimensionPixelOffset(R.dimen.borderRadius);
-        CardView.LayoutParams params = (CardView.LayoutParams) cvMask.getLayoutParams();
-        params.bottomMargin = -1 * borderRadius;
+        CardView.LayoutParams cvParams = (CardView.LayoutParams) cvMask.getLayoutParams();
+        cvParams.bottomMargin = -1 * borderRadius;
+        cvMask.setLayoutParams(cvParams);
 
-        // TODO: Modify size based on parameters
-        // TODO: Add animation parameters
+        // Modify size based on parameters
+        LayoutParams flParams = (LayoutParams) flRoot.getLayoutParams();
+        flParams.width = thickness;
+        flParams.height = length;
+        flRoot.setLayoutParams(flParams);
     }
 
     public void add(int color) {
@@ -395,7 +404,7 @@ public class ProgressStack extends FrameLayout {
             view.setLayoutParams(params);
         });
 
-        animator.setDuration(VALUE_CHANGE_DURATION);
+        animator.setDuration(valueAnimDuration);
         if (listener != null) animator.addListener(listener);
 
         animator.start();
@@ -407,7 +416,7 @@ public class ProgressStack extends FrameLayout {
 
         view.animate()
             .alpha(opacity)
-            .setDuration(SELECTED_CHANGE_DURATION)
+            .setDuration(selectAnimDuration)
             .setListener(listener);
     }
 

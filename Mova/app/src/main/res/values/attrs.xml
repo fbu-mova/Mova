@@ -37,6 +37,8 @@
     <declare-styleable name="ProgressStack">
         <attr name="stackThickness" format="dimension"/>
         <attr name="stackLength" format="dimension"/>
+        <attr name="valueAnimDuration" format="integer"/>
+        <attr name="selectAnimDuration" format="integer"/>
     </declare-styleable>
 
 </resources>
