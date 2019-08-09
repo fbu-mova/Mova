@@ -71,6 +71,7 @@
             android:visibility="gone">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cvShare"
                 android:layout_width="@dimen/profileImage"
                 android:layout_height="@dimen/profileImage"
                 android:layout_marginRight="@dimen/elementMargin"
@@ -106,6 +107,7 @@
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cvSave"
                 android:layout_width="@dimen/profileImage"
                 android:layout_height="@dimen/profileImage"
                 android:layout_marginRight="@dimen/elementMargin"
@@ -175,6 +177,7 @@
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cvIcon"
                     android:layout_width="@dimen/profileImage"
                     android:layout_height="@dimen/profileImage"
                     android:layout_marginLeft="@dimen/elementMargin"
@@ -182,7 +185,7 @@
                     app:cardElevation="0dp">
 
                     <ImageView
-                        android:id="@+id/ivPhoto"
+                        android:id="@+id/ivIcon"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"

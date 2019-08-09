@@ -1,38 +1,34 @@
 package com.example.mova.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.adapters.ComposeActionsAdapter;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
-import com.example.mova.components.ActionComponent;
 import com.example.mova.components.CreateActionComponent;
+import com.example.mova.components.ImageComponent;
+import com.example.mova.icons.Icons;
+import com.example.mova.icons.NounProjectClient;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
-import com.example.mova.model.SharedAction;
-import com.example.mova.model.User;
-import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -56,9 +52,12 @@ public class GoalComposeActivity extends DelegatedResultActivity {
     @BindView(R.id.rvComposeAction)     protected RecyclerView rvComposeAction;
 //    @BindView(R.id.etAddAction)         protected EditText etAddAction;
     @BindView(R.id.clAddAction)         protected ComponentLayout clAddAction;
+    @BindView(R.id.cvIcon)              protected CardView cvIcon;
+    @BindView(R.id.ivIcon)              protected ImageView ivIcon;
 
     ComposeActionsAdapter actionAdapter;
     List<String> actions;
+    Goal goal;
 
     // TODO : current updates
 
@@ -70,6 +69,7 @@ public class GoalComposeActivity extends DelegatedResultActivity {
         setContentView(R.layout.activity_goal_compose); // fixme: layout is jank when adding many actions
         ButterKnife.bind(this);
 
+        goal = new Goal();
         actions = new ArrayList<>();
         unsavedActions = new ArrayList<>();
         actionAdapter = new ComposeActionsAdapter(unsavedActions);
@@ -82,7 +82,9 @@ public class GoalComposeActivity extends DelegatedResultActivity {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
 
-                GoalUtils.submitGoal(goalName, goalDescription, unsavedActions, true, (goal) -> endActivity(goal));
+                GoalUtils.submitGoal(goal ,goalName, goalDescription, unsavedActions, true, (item) -> {
+
+                    endActivity(item);});
             }
         });
 
@@ -93,6 +95,7 @@ public class GoalComposeActivity extends DelegatedResultActivity {
             }
         }));
 
+        configureIconClick();
     }
 
     private void endActivity(Goal goal) {
@@ -114,5 +117,64 @@ public class GoalComposeActivity extends DelegatedResultActivity {
 
         unsavedActions.add(action);
         actionAdapter.notifyItemInserted(unsavedActions.size() - 1);
+    }
+
+    private void configureIconClick() {
+        cvIcon.setOnClickListener((v) -> {
+            String term = etGoalName.getText().toString().toLowerCase();
+            if (term.equals("")) {
+                Toast.makeText(this, "Give your group a name first!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            View view = getLayoutInflater().inflate(R.layout.layout_recycler_view, null);
+            RecyclerView rv = view.findViewById(R.id.rv);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setTitle("Choose an icon")
+                    .setView(view)
+                    .setNegativeButton("Cancel", (dialog, which) -> {})
+                    .create();
+
+            List<NounProjectClient.Icon> icons = new ArrayList<>();
+            DataComponentAdapter<NounProjectClient.Icon> adapter = new DataComponentAdapter<NounProjectClient.Icon>(this, icons) {
+                @Override
+                protected Component makeComponent(NounProjectClient.Icon item, Component.ViewHolder holder) {
+                    ImageComponent component = new ImageComponent(Icons.highestResImage(item));
+                    component.setOnClick(() -> {
+                        alertDialog.dismiss();
+                        goal.setNounIcon(item);
+                        Icons.from(GoalComposeActivity.this).displayNounIcon(item, cvIcon, ivIcon);
+                    });
+                    return component;
+                }
+
+                @Override
+                protected Component.Inflater makeInflater(NounProjectClient.Icon item) {
+                    return new ImageComponent.Inflater();
+                }
+            };
+
+            rv.setLayoutManager(new GridLayoutManager(this, 4));
+            rv.setAdapter(adapter);
+            // TODO: Add padding
+
+            Icons.from(this).nounIcons(term, 20, (suggestedIcons, e) -> {
+                runOnUiThread(() -> {
+                    if (e != null) {
+                        Log.e("GroupComposeActivity", "Failed to load suggested group icons", e);
+                        Toast.makeText(this, "Couldn't find any icons for \"" + term + "\"", Toast.LENGTH_LONG).show();
+                        // TODO: Create friendlier UI for this
+                        // TODO: Differentiate between network errors and no icons found
+                        return;
+                    }
+
+                    Collections.addAll(icons, suggestedIcons);
+                    adapter.notifyDataSetChanged();
+                });
+            });
+
+            alertDialog.show();
+        });
     }
 }

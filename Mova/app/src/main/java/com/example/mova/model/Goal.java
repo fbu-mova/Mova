@@ -14,7 +14,6 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.List;
 
@@ -39,6 +38,7 @@ public class Goal extends HashableParseObject {
 
     public static final String KEY_ICON_ID = "nounIconId";
     public static final String KEY_HUE = "hue";
+    public static final String KEY_UPDATED_AT = "updatedAt";
 
     public final RelationFrame<User> relUsersInvolved = new RelationFrame<>(this, KEY_USERS_INVOLVED);
     public final RelationFrame<Action> relActions = new RelationFrame<>(this, KEY_ACTIONS);
@@ -130,6 +130,25 @@ public class Goal extends HashableParseObject {
     public Group getGroup(){
 
         return (Group) getParseObject(KEY_FROM_GROUP);
+    }
+
+    public void getGroupFull(AsyncUtils.EmptyCallback empty, AsyncUtils.ItemCallback<Group> callback){
+        Group group = getGroup();
+        if(group == null){
+            empty.call();
+            return;
+        }
+        group.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if(e != null){
+                    Log.e("GoalUtils", "Error with  user list query");
+                    e.printStackTrace();
+                    return;
+                }
+                callback.call((Group) object);
+            }
+        });
     }
 
     public void getGroupName(AsyncUtils.EmptyCallback empty, AsyncUtils.ItemCallback<String> callback) {

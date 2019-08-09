@@ -5,10 +5,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +21,7 @@ import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
@@ -123,6 +126,20 @@ public class GoalCardComponent extends Component {
             int progress = (int) (portionDone * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
+        if(item.getGroup() == null){
+            viewHolder.tvFrom.setVisibility(View.GONE);
+            viewHolder.tvGroup.setVisibility(View.GONE);
+            viewHolder.cvFromGroupIcon.setVisibility(View.GONE);
+        }else{
+            item.getGroupFull(() -> {}, (group) -> {
+                viewHolder.tvGroup.setText(group.getName());
+                Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
+            });
+        }
+
+
+
+
 
 //            viewHolder.tvQuote.setVisibility(View.GONE); // fixme -- to include quotes
 //            viewHolder.tvNumDone.setVisibility(View.GONE); // fixme -- can add personal bool, alter accordingly
@@ -291,6 +308,10 @@ public class GoalCardComponent extends Component {
 //        @BindView(R.id.tvNumDone)       protected TextView tvNumDone; // fixme -- in personal, only one person ?
 //        @BindView(R.id.tvTag)           protected TextView tvTag; // fixme -- what about multiple tags?
         @BindView(R.id.layout)          protected LinearLayout llLayout;
+        @BindView(R.id.cvFromGroupIcon) protected CardView cvFromGroupIcon;
+        @BindView(R.id.ivFromGroupIcon) protected ImageView ivFromGroupIcon;
+        @BindView(R.id.tvFrom) protected TextView tvFrom;
+        @BindView(R.id.tvGroup) TextView tvGroup;
 
         public GoalCardViewHolder(@NonNull View itemView) {
             super(itemView);

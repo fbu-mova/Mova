@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,13 +25,10 @@ import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
-import com.example.mova.utils.AsyncUtils;
-import com.example.mova.utils.GoalUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +167,7 @@ public class GoalsFragment extends Fragment {
         ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
-                .setLimit(5)
+                //.setLimit(5)
                 .include(KEY_FROM_GROUP)
                 .orderByDescending(Goal.KEY_CREATED_AT);
 
@@ -183,8 +179,9 @@ public class GoalsFragment extends Fragment {
         ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
                 .relGoals
                 .getQuery()
+                .setLimit(3)
                 .include(KEY_FROM_GROUP)
-                .orderByDescending(Goal.KEY_CREATED_AT);
+                .orderByDescending(Goal.KEY_UPDATED_AT);
 
         updateAdapter(allGoalsQuery, allGoals, allGoalsAdapter, rvAllGoals);
     }

@@ -103,7 +103,7 @@ public class GroupThumbnailComponent extends Component {
 //            });
 //        });
         getActivity().runOnUiThread(() -> {
-            Icons.displayNounIcon(group, viewHolder.cvGroupIcon, viewHolder.ivGroupIcon);
+            Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvGroupIcon, viewHolder.ivGroupIcon);
         });
 
         viewHolder.ivGroupPic.setOnClickListener(new View.OnClickListener() {
