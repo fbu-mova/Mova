@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.ProgressStack;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -55,8 +56,10 @@ public class ProgressFragment extends Fragment {
 
     //Todo- allow length to be changed
 
-    @BindView(R.id.graphProgress)
-    GraphView graph;
+    @BindView(R.id.psTest) protected ProgressStack psTest;
+
+//    @BindView(R.id.graphProgress)
+//    GraphView graph;
     @BindView(R.id.rvWell)
     RecyclerView rvWell;
     @BindView(R.id.rvWork) RecyclerView rvWork;
@@ -108,161 +111,163 @@ public class ProgressFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        length = 7;
-        mGoals = new ArrayList<>();
-        userMoods = new ArrayList<>();
-        goodGoals = new ArrayList<>();
-        badGoals = new ArrayList<>();
-        //prioGoals = new TreeSet<>();
-        goalUtils = new GoalUtils();
-        journal = new Journal(User.getCurrentUser());
 
-        //create the adapter
+        psTest.setMaxValue(100);
+        psTest.add(Color.RED);
+        psTest.setValue(Color.RED, 50);
+        psTest.show(Color.RED);
 
-        goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
-            @Override
-            public Component makeComponent(Goal item, Component.ViewHolder holder) {
-                Component component = new ProgressGoalComponent(item);
-                return component;
-            }
-
-            @Override
-            protected Component.Inflater makeInflater(Goal item) {
-                return new ProgressGoalComponent.Inflater();
-            }
-        };
-        goalsWorkAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
-            @Override
-            public Component makeComponent(Goal item, Component.ViewHolder holder) {
-                Component component = new ProgressGoalComponent(item);
-                return component;
-            }
-
-            @Override
-            protected Component.Inflater makeInflater(Goal item) {
-                return new ProgressGoalComponent.Inflater();
-            }
-        };
-
-        gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
-            @Override
-            public Component makeComponent(Mood.Status item, Component.ViewHolder holder) {
-                Component component = new ProgressGridMoodComponent(item);
-                return component;
-            }
-
-            @Override
-            protected Component.Inflater makeInflater(Mood.Status item) {
-                return new ProgressGridMoodComponent.Inflater();
-            }
-        };
-
-        rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
-        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 7 ));
-
-
-        rvWell.setAdapter(goalsWellAdapter);
-        rvWork.setAdapter(goalsWorkAdaper);
-        gvMood.setAdapter(gridMoodAdapter);
-
-
-        queryGoals(() -> setGraph(() -> {
-            Calendar cal = Calendar.getInstance();
-            Date d1 = cal.getTime();
-            cal.add(Calendar.DATE, -length + 1);
-            Date d2 = cal.getTime();
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),new SimpleDateFormat("MM/dd")));
-            graph.getViewport().setXAxisBoundsManual(true);
-            graph.getViewport().setMinX(Long.valueOf(d2.getTime()).doubleValue());
-            graph.getViewport().setMaxX(Long.valueOf(d1.getTime()).doubleValue());
-            graph.getGridLabelRenderer().setHumanRounding(false);
-            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
-            graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-            //graph.getGridLabelRenderer().setVerticalAxisTitle("Actions Completed");
-
-
-            //Toast.makeText(getContext(), "Graph created", Toast.LENGTH_SHORT).show();
-            //Log.e("ProgressFragment", "Were not in boys");
-
-            //organize goals and create adapter
-            goalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
-                Log.e("ProgressFragment", "Were in boys");
-                //Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
-                for(int i = 0; i < mGoals.size(); i++){
-                    if(tsGoals.size() == 0) {
-                        break;
-                    }
-                    if(tsGoals.first().value >= 0 && goodGoals.size() < 3) {
-                        goodGoals.add(tsGoals.first().item);
-                        goalsWellAdapter.notifyItemInserted(i);
-                        tsGoals.remove(tsGoals.first());
-                        if(tsGoals.size() == 0){
-                            break;
-                        }
-                    }
-                    if(tsGoals.last().value < 0 && badGoals.size() < 3) {
-                        badGoals.add(tsGoals.last().item);
-                        goalsWorkAdaper.notifyItemInserted(i);
-                        tsGoals.remove(tsGoals.last());
-                    }
-
-                }
-                rvWell.scrollToPosition(0);
-                rvWork.scrollToPosition(0);
-
-            });
-
-
-
-        }));
-
-        journal.loadEntries((e) -> {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -length + 1);
-            Date d1 = cal.getTime();
-            for(int i = 0; i < length; i++){
-                SortedList<Post> posts = journal.getEntriesByDate(TimeUtils.normalizeToDay(d1));
-                if(posts.size() == 0){
-                    userMoods.add(Mood.Status.Empty);
-                }else {
-                    userMoods.add(posts.get(0).getMood());
-                }
-                cal.add(Calendar.DATE, 1);
-                d1 = cal.getTime();
-            }
-            gridMoodAdapter.notifyDataSetChanged();
-            gvMood.scrollTo(0,0);
-        });
-//        queryPosts(() -> {
-//            getListOnePostPerDay();
+//        length = 7;
+//        mGoals = new ArrayList<>();
+//        userMoods = new ArrayList<>();
+//        goodGoals = new ArrayList<>();
+//        badGoals = new ArrayList<>();
+//        //prioGoals = new TreeSet<>();
+//        goalUtils = new GoalUtils();
+//        journal = new Journal(User.getCurrentUser());
+//
+//        //create the adapter
+//
+//        goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
+//            @Override
+//            public Component makeComponent(Goal item, Component.ViewHolder holder) {
+//                Component component = new ProgressGoalComponent(item);
+//                return component;
+//            }
+//
+//            @Override
+//            protected Component.Inflater makeInflater(Goal item) {
+//                return new ProgressGoalComponent.Inflater();
+//            }
+//        };
+//        goalsWorkAdaper = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
+//            @Override
+//            public Component makeComponent(Goal item, Component.ViewHolder holder) {
+//                Component component = new ProgressGoalComponent(item);
+//                return component;
+//            }
+//
+//            @Override
+//            protected Component.Inflater makeInflater(Goal item) {
+//                return new ProgressGoalComponent.Inflater();
+//            }
+//        };
+//
+//        gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
+//            @Override
+//            public Component makeComponent(Mood.Status item, Component.ViewHolder holder) {
+//                Component component = new ProgressGridMoodComponent(item);
+//                return component;
+//            }
+//
+//            @Override
+//            protected Component.Inflater makeInflater(Mood.Status item) {
+//                return new ProgressGridMoodComponent.Inflater();
+//            }
+//        };
+//
+//        rvWell.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        rvWork.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        gvMood.setLayoutManager(new GridLayoutManager(getActivity(), 7 ));
+//
+//
+//        rvWell.setAdapter(goalsWellAdapter);
+//        rvWork.setAdapter(goalsWorkAdaper);
+//        gvMood.setAdapter(gridMoodAdapter);
+//
+//
+//        queryGoals(() -> setGraph(() -> {
+//            Calendar cal = Calendar.getInstance();
+//            Date d1 = cal.getTime();
+//            cal.add(Calendar.DATE, -length + 1);
+//            Date d2 = cal.getTime();
+//            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),new SimpleDateFormat("MM/dd")));
+//            graph.getViewport().setXAxisBoundsManual(true);
+//            graph.getViewport().setMinX(Long.valueOf(d2.getTime()).doubleValue());
+//            graph.getViewport().setMaxX(Long.valueOf(d1.getTime()).doubleValue());
+//            graph.getGridLabelRenderer().setHumanRounding(false);
+//            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
+//            graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+//            //graph.getGridLabelRenderer().setVerticalAxisTitle("Actions Completed");
+//
+//
+//            //Toast.makeText(getContext(), "Graph created", Toast.LENGTH_SHORT).show();
+//            //Log.e("ProgressFragment", "Were not in boys");
+//
+//            //organize goals and create adapter
+//            goalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
+//                Log.e("ProgressFragment", "Were in boys");
+//                //Toast.makeText(getContext(), "We entered", Toast.LENGTH_SHORT).show();
+//                for(int i = 0; i < mGoals.size(); i++){
+//                    if(tsGoals.size() == 0) {
+//                        break;
+//                    }
+//                    if(tsGoals.first().value >= 0 && goodGoals.size() < 3) {
+//                        goodGoals.add(tsGoals.first().item);
+//                        goalsWellAdapter.notifyItemInserted(i);
+//                        tsGoals.remove(tsGoals.first());
+//                        if(tsGoals.size() == 0){
+//                            break;
+//                        }
+//                    }
+//                    if(tsGoals.last().value < 0 && badGoals.size() < 3) {
+//                        badGoals.add(tsGoals.last().item);
+//                        goalsWorkAdaper.notifyItemInserted(i);
+//                        tsGoals.remove(tsGoals.last());
+//                    }
+//
+//                }
+//                rvWell.scrollToPosition(0);
+//                rvWork.scrollToPosition(0);
+//
+//            });
+//
+//
+//
+//        }));
+//
+//        journal.loadEntries((e) -> {
+//            Calendar cal = Calendar.getInstance();
+//            cal.add(Calendar.DATE, -length + 1);
+//            Date d1 = cal.getTime();
+//            for(int i = 0; i < length; i++){
+//                SortedList<Post> posts = journal.getEntriesByDate(TimeUtils.normalizeToDay(d1));
+//                if(posts.size() == 0){
+//                    userMoods.add(Mood.Status.Empty);
+//                }else {
+//                    userMoods.add(posts.get(0).getMood());
+//                }
+//                cal.add(Calendar.DATE, 1);
+//                d1 = cal.getTime();
+//            }
 //            gridMoodAdapter.notifyDataSetChanged();
 //            gvMood.scrollTo(0,0);
 //        });
-
-
-
-
-    }
-
-    private void setGraph(AsyncUtils.EmptyCallback callback){
-        AsyncUtils.executeMany(mGoals.size(), (i,cb) -> {
-           Goal goal = mGoals.get(i);
-            goalUtils.getDataForGraph(goal, User.getCurrentUser(), length , (series) -> {
-                series.setTitle(goal.getTitle());
-                series.setSpacing(10);
-
-                ColorUtils.Hue hue = goal.getHue();
-                if (hue == null) hue = ColorUtils.Hue.random();
-                int mid = ColorUtils.getColor(getResources(), hue, ColorUtils.Lightness.Mid);
-                
-                series.setColor(mid);
-                graph.addSeries(series);
-                cb.call(null);
-//                        graph.getViewport().setMinX(-1*length);
-            });
-
-        }, (e) -> {callback.call();});
+////        queryPosts(() -> {
+////            getListOnePostPerDay();
+////            gridMoodAdapter.notifyDataSetChanged();
+////            gvMood.scrollTo(0,0);
+////        });
+//    }
+//
+//    private void setGraph(AsyncUtils.EmptyCallback callback){
+//        AsyncUtils.executeMany(mGoals.size(), (i,cb) -> {
+//           Goal goal = mGoals.get(i);
+//            goalUtils.getDataForGraph(goal, User.getCurrentUser(), length , (series) -> {
+//                series.setTitle(goal.getTitle());
+//                series.setSpacing(10);
+//
+//                ColorUtils.Hue hue = goal.getHue();
+//                if (hue == null) hue = ColorUtils.Hue.random();
+//                int mid = ColorUtils.getColor(getResources(), hue, ColorUtils.Lightness.Mid);
+//
+//                series.setColor(mid);
+//                graph.addSeries(series);
+//                cb.call(null);
+////                        graph.getViewport().setMinX(-1*length);
+//            });
+//
+//        }, (e) -> {callback.call();});
 
     }
 

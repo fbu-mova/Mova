@@ -71,6 +71,7 @@ public class ProgressStack extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        inflate(getContext(), R.layout.layout_progress_stack, this);
         ButterKnife.bind(this);
 
         // Offset cardview to hide bottom corners
@@ -259,17 +260,23 @@ public class ProgressStack extends FrameLayout {
 
     private static final float SELECTED_OPACITY = 1f;
     private static final float DESELECTED_OPACITY = 0.5f;
-    private static final int DURATION = 200;
+    private static final int DURATION = 700;
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        draw();
+    }
 
+    protected void draw() {
         while (changeQueue.size() > 0) {
             Change change = changeQueue.remove();
 
             if (change.type == ChangeType.SetMaxValue) {
-                // TODO
+                for (int color : showSections) {
+                    drawValueChange(color, valueOf(color), null);
+                }
+                continue;
             }
 
             int color = ((SectionChange) change).color;
@@ -328,10 +335,11 @@ public class ProgressStack extends FrameLayout {
     }
 
     protected void addSection(int color) {
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         FrameLayout view = new FrameLayout(getContext());
         view.setLayoutParams(params);
         view.setAlpha(1f);
+        view.setBackgroundColor(color);
 
         sectionViews.put(color, view);
         llSections.addView(view, 0);
@@ -345,19 +353,19 @@ public class ProgressStack extends FrameLayout {
 
     protected void drawValueChange(int color, int value, @Nullable Animator.AnimatorListener listener) {
         final FrameLayout view = sectionViews.get(color);
-        int fromHeight = view.getMeasuredHeight();
+        int fromHeight = view.getHeight();
         int toHeight = toLength(value);
 
         ValueAnimator animator = ValueAnimator.ofInt(fromHeight, toHeight);
         animator.addUpdateListener((ValueAnimator animation) -> {
             int val = (Integer) animation.getAnimatedValue();
-            LayoutParams params = (LayoutParams) view.getLayoutParams();
+            ViewGroup.LayoutParams params = view.getLayoutParams();
             params.height = val;
             view.setLayoutParams(params);
         });
 
-        animator.setDuration(DURATION)
-                .addListener(listener);
+        animator.setDuration(DURATION);
+        if (listener != null) animator.addListener(listener);
 
         animator.start();
     }
