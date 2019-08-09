@@ -253,8 +253,9 @@ public class JournalFragment extends Fragment {
 
         // On fab click, open compose activity
         fabCompose.setOnClickListener((clickedView) -> {
-            Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
-            startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
+//            Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
+//            startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
+            // TODO
         });
 
         displayEntries(currDate);

@@ -13,6 +13,7 @@ public class PostConfig {
     public List<Tag> tags;
     public Media media;
     public boolean isPersonal;
+    public boolean displayMoodSelector;
 
     public PostConfig() {
         this.post = null;
