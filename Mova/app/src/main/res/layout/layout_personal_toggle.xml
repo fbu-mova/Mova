@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/outerMargin"
-    android:orientation="horizontal">
+    android:layout_height="28dp"
+    android:orientation="horizontal"
+    tools:context="">
 
     <FrameLayout
         android:id="@+id/flPersonal"
@@ -11,28 +13,6 @@
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:background="@drawable/animation_toggle_personal">
-
-        <LinearLayout
-            android:id="@+id/llGradPP"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-            </FrameLayout>
-
-            <ImageView
-                android:id="@+id/ivGradPP"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/gradient_toggle_pp" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/llGradPS"
@@ -43,7 +23,7 @@
             <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="2">
 
             </FrameLayout>
 
@@ -55,14 +35,46 @@
                 app:srcCompat="@drawable/gradient_toggle_ps" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/llGradPP"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/ivGradPP"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/gradient_toggle_pp" />
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/tvPersonal"
+            android:id="@+id/tvPS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/lato_black"
             android:text="Personal"
-            android:textColor="@color/blueUltraLight" />
+            android:textColor="@color/blueMid"
+            android:textSize="@dimen/textSizeBody" />
+
+        <TextView
+            android:id="@+id/tvPP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/lato_black"
+            android:text="Personal"
+            android:textColor="@color/blueUltraLight"
+            android:textSize="@dimen/textSizeBody" />
     </FrameLayout>
 
     <FrameLayout
@@ -88,7 +100,7 @@
             <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="2">
 
             </FrameLayout>
 
@@ -96,9 +108,8 @@
 
         <LinearLayout
             android:id="@+id/llGradSP"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:orientation="horizontal">
 
             <ImageView
@@ -111,20 +122,31 @@
             <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="2">
 
             </FrameLayout>
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tvSocial"
+            android:id="@+id/tvSS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/lato_black"
             android:text="Social"
-            android:textColor="@color/purpleMid" />
+            android:textColor="@color/purpleUltraLight"
+            android:textSize="@dimen/textSizeBody" />
+
+        <TextView
+            android:id="@+id/tvSP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/lato_black"
+            android:text="Social"
+            android:textColor="@color/purpleMid"
+            android:textSize="@dimen/textSizeBody" />
 
     </FrameLayout>
 </LinearLayout>

@@ -109,7 +109,7 @@ public class GoalThumbnailComponent extends Component {
 
         Icons.from(getActivity()).displayNounIcon(goal,viewHolder.cvGoalIcon, viewHolder.ivPhoto);
 
-        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
+//        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
 //        Glide.with(getActivity())
 //                .load(url)
 //                .error(R.color.blueDark) // todo - replace to be better image, add rounded corners

@@ -16,16 +16,19 @@ import androidx.annotation.Nullable;
 import com.example.mova.utils.AsyncUtils;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class PersonalToggle extends FrameLayout {
+public class PersonalToggle extends LinearLayout {
 
     @BindView(R.id.flPersonal) protected FrameLayout flPersonal;
-    @BindView(R.id.tvPersonal) protected TextView tvPersonal;
+    @BindView(R.id.tvPP) protected TextView tvPP;
+    @BindView(R.id.tvPS) protected TextView tvPS;
     @BindView(R.id.ivGradPP)   protected ImageView ivGradPP;
     @BindView(R.id.ivGradPS)   protected ImageView ivGradPS;
 
     @BindView(R.id.flSocial)   protected FrameLayout flSocial;
-    @BindView(R.id.tvSocial)   protected TextView tvSocial;
+    @BindView(R.id.tvSP) protected TextView tvSP;
+    @BindView(R.id.tvSS) protected TextView tvSS;
     @BindView(R.id.ivGradSS)   protected ImageView ivGradSS;
     @BindView(R.id.ivGradSP)   protected ImageView ivGradSP;
 
@@ -53,11 +56,17 @@ public class PersonalToggle extends FrameLayout {
 
     private void init(Context context, @Nullable AttributeSet attrs) {
         inflate(getContext(), R.layout.layout_personal_toggle, this);
+        ButterKnife.bind(this);
 
         ivGradPP.setAlpha(1f);
         ivGradPS.setAlpha(0f);
         ivGradSP.setAlpha(1f);
         ivGradSS.setAlpha(0f);
+
+        tvPP.setAlpha(1f);
+        tvPS.setAlpha(0f);
+        tvSP.setAlpha(1f);
+        tvSS.setAlpha(0f);
 
         configureClicks();
         setState(true);
@@ -89,6 +98,11 @@ public class PersonalToggle extends FrameLayout {
                 alphaAnimate(ivGradSP, 1f);
                 alphaAnimate(ivGradSS, 0f);
 
+                alphaAnimate(tvPP, 1f);
+                alphaAnimate(tvPS, 0f);
+                alphaAnimate(tvSP, 1f);
+                alphaAnimate(tvSS, 0f);
+
                 personalTransition.reverseTransition(DURATION);
                 socialTransition.reverseTransition(DURATION);
             } else {
@@ -99,6 +113,11 @@ public class PersonalToggle extends FrameLayout {
                 alphaAnimate(ivGradPS, 1f);
                 alphaAnimate(ivGradSP, 0f);
                 alphaAnimate(ivGradSS, 1f);
+
+                alphaAnimate(tvPP, 0f);
+                alphaAnimate(tvPS, 1f);
+                alphaAnimate(tvSP, 0f);
+                alphaAnimate(tvSS, 1f);
 
                 personalTransition.startTransition(DURATION);
                 socialTransition.startTransition(DURATION);
