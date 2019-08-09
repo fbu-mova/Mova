@@ -10,6 +10,7 @@ import com.example.mova.utils.PostConfig;
 public abstract class ComposableComponent extends Component {
     protected View eventView;
     protected PostConfig config;
+    protected boolean allowCompose;
 
     public ComposableComponent() {
         this.config = new PostConfig();
@@ -24,20 +25,26 @@ public abstract class ComposableComponent extends Component {
         addListeners();
     }
 
+    public void allowCompose(boolean allow) {
+        this.allowCompose = allow;
+    }
+
     private void addListeners() {
         eventView.setOnLongClickListener((v) -> {
-            ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
-                @Override
-                protected void onCancel() {
-                    onCancelCompose();
-                }
+            if (allowCompose) {
+                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
+                    @Override
+                    protected void onCancel() {
+                        onCancelCompose();
+                    }
 
-                @Override
-                protected void onPost(PostConfig config) {
-                    config.savePost((post) -> onSavePost(post));
-                }
-            };
-            dialog.show();
+                    @Override
+                    protected void onPost(PostConfig config) {
+                        config.savePost((post) -> onSavePost(post));
+                    }
+                };
+                dialog.show();
+            }
             return false;
         });
     }
