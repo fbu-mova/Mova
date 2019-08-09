@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.example.mova.model.Mood;
 import com.example.mova.R;
@@ -24,24 +26,28 @@ public class ProgressGridMoodComponent extends Component {
 
     private ProgressGridViewHolder viewHolder;
     private Mood.Status mood;
+    private String date;
     private ComponentManager componentManager;
 
-    public ProgressGridMoodComponent(Mood.Status item){
-        super();
-        if(item != null){
-            this.mood = item;
-        }else{
+    public ProgressGridMoodComponent(Mood.Status mood) {
+        this(mood, null);
+    }
+
+    public ProgressGridMoodComponent(Mood.Status mood, String date) {
+        if (mood != null){
+            this.mood = mood;
+        } else {
             this.mood = Mood.Status.Empty;
         }
+        this.date = date;
     }
 
     @Override
     public ViewHolder getViewHolder() {
-//        viewHolder = new ProgressGridViewHolder(view);
         if(viewHolder != null){
             return viewHolder;
         }
-        Log.e(TAG, "viewholder not inflating");
+        Log.e(TAG, "viewholder not inflated");
         return null;
     }
 
@@ -52,7 +58,7 @@ public class ProgressGridMoodComponent extends Component {
 
     @Override
     public String getName() {
-        return "ProgressGridMoodComponent";
+        return "ProgressGridMood_" + mood.toString() + "_" + date;
     }
 
     @Override
@@ -70,12 +76,14 @@ public class ProgressGridMoodComponent extends Component {
         checkViewHolderClass(holder, ProgressGridViewHolder.class);
         viewHolder = (ProgressGridViewHolder) holder;
 
-//        if(viewHolder == null){
-//            Log.e(TAG, "Not inflating views in render");
-//            return;
-//        }
+        viewHolder.cvMood.setCardBackgroundColor(Mood.getColor(mood));
 
-        viewHolder.ivMood.setColorFilter(Mood.getColor(mood));
+        if (date == null) {
+            viewHolder.tvDate.setVisibility(View.GONE);
+        } else {
+            viewHolder.tvDate.setVisibility(View.VISIBLE);
+            viewHolder.tvDate.setText(date);
+        }
     }
 
     @Override
@@ -85,12 +93,13 @@ public class ProgressGridMoodComponent extends Component {
 
     public static class ProgressGridViewHolder extends Component.ViewHolder{
 
-        @BindView(R.id.ivMood)
-        ImageView ivMood;
+        @BindView(R.id.cvMood) public CardView cvMood;
+        @BindView(R.id.tvDate) public TextView tvDate;
 
         public ProgressGridViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.view = itemView;
         }
     }
 
