@@ -31,8 +31,6 @@ public class ActionEditComponent extends Component {
     private static final String TAG = "action edit comp";
 
     private Action action;
-    private Goal goal;
-    private SharedAction sharedAction;
     private Action.Wrapper wrapper;
     private ActionEditViewHolder viewHolder;
 
@@ -83,11 +81,6 @@ public class ActionEditComponent extends Component {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
 
-        if(action != null){
-        sharedAction = action.getParentSharedAction();
-        goal = action.getParentGoal();
-        }
-
         viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +94,7 @@ public class ActionEditComponent extends Component {
         viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                componentManager.swap("ActionViewComponent");
+                componentManager.swap("CreateActionViewComponent");
             }
         });
 
@@ -114,32 +107,10 @@ public class ActionEditComponent extends Component {
             }
         });
 
-        viewHolder.reminder.setOnClickListener(new View.OnClickListener() {
+        viewHolder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Are you sure you want to delete this action?")
-                        .setTitle("Confirm")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                action.deleteInBackground();
-                                goal.relActions.remove(action, () -> {});
-                                sharedAction.relChildActions.remove(action, ()-> {});
-                                if(goal.getIsPersonal()){
-                                    sharedAction.deleteInBackground();
-                                }
-                                GoalCardComponent.actionsAdapter.notifyDataSetChanged();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                componentManager.swap("CreateActionViewComponent");
             }
         });
 
@@ -171,7 +142,7 @@ public class ActionEditComponent extends Component {
 
         @BindView(R.id.etAction)        protected EditText etAction;
         @BindView(R.id.ivIcon1)         protected ImageView recurring;
-        @BindView(R.id.ivIcon2)         protected ImageView reminder;
+        @BindView(R.id.ivIcon2)         protected ImageView cancel;
         @BindView(R.id.ivIcon3)         protected ImageView priority;
         @BindView(R.id.ivSave)          protected ImageView ivSave;
         @BindView(R.id.parentLayout)    protected LinearLayout parentLayout;

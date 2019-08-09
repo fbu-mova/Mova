@@ -11,6 +11,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical|end"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivIcon2"
+            android:layout_width="@dimen/buttonIcon"
+            android:layout_height="@dimen/buttonIcon"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/elementMargin"
+            android:tint="@color/textLight"
+            app:layout_constraintBottom_toBottomOf="@id/ivSave"
+            app:layout_constraintStart_toEndOf="@+id/ivIcon1"
+            app:layout_constraintTop_toTopOf="@id/ivSave"
+            app:srcCompat="@drawable/ic_round_close" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/elementMargin"
         android:orientation="horizontal">
 
@@ -45,23 +64,14 @@
             app:srcCompat="@color/colorPrimary" />
 
         <ImageView
-            android:id="@+id/ivIcon2"
-            android:layout_width="@dimen/buttonIcon"
-            android:layout_height="@dimen/buttonIcon"
-            android:layout_marginRight="@dimen/elementMargin"
-            app:layout_constraintBottom_toBottomOf="@+id/btSave"
-            app:layout_constraintStart_toEndOf="@+id/ivIcon1"
-            app:layout_constraintTop_toTopOf="@+id/btSave"
-            app:srcCompat="@color/purpleDark" />
-
-        <ImageView
             android:id="@+id/ivIcon3"
             android:layout_width="@dimen/buttonIcon"
             android:layout_height="@dimen/buttonIcon"
             android:layout_marginRight="@dimen/elementMargin"
+            android:tint="@color/textLight"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ivIcon1"
-            app:srcCompat="@color/colorAccent" />
+            app:srcCompat="@drawable/ic_round_priority" />
 
         <ImageView
             android:id="@+id/ivSave"
@@ -69,7 +79,8 @@
             android:layout_height="@dimen/buttonIcon"
             android:layout_marginLeft="@dimen/elementMargin"
             android:layout_marginRight="@dimen/elementMargin"
-            app:srcCompat="@color/blueDark" />
+            android:tint="@color/textLight"
+            app:srcCompat="@drawable/ic_round_check" />
 
     </LinearLayout>
 

@@ -68,13 +68,14 @@
             android:layout_height="match_parent"
             android:gravity="end"
             android:orientation="horizontal"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/ivShare"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/profileImage"
+                android:layout_height="@dimen/profileImage"
                 android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/elementMargin"
                 android:tint="@color/textLight"
                 android:visibility="visible"
                 app:srcCompat="@drawable/ic_round_share" />
@@ -98,22 +99,16 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvSave"
+            <ImageView
+                android:id="@+id/ivSave"
                 android:layout_width="@dimen/profileImage"
                 android:layout_height="@dimen/profileImage"
+                android:layout_gravity="center_vertical"
                 android:layout_marginRight="@dimen/elementMargin"
-                app:cardCornerRadius="@dimen/borderRadiusCircle">
-
-                <ImageView
-                    android:id="@+id/ivSave"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    app:srcCompat="@color/colorPrimaryDark" />
-            </androidx.cardview.widget.CardView>
+                android:tint="@color/textLight"
+                app:srcCompat="@drawable/ic_round_save" />
 
             <TextView
                 android:id="@+id/tvSaveText"
