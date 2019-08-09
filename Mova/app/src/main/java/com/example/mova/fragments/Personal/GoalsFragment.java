@@ -205,7 +205,7 @@ public class GoalsFragment extends Fragment {
                             Goal.GoalData data = new Goal.GoalData(goal, true);
                             // for personal goal fragment, querying means user involved with all resulting goals
                             goals.add(0, data);
-                            goalsAdapter.notifyItemInserted(0);
+                            goalsAdapter.notifyDataSetChanged();
 
                             rvGoals.scrollToPosition(0);
                         }
@@ -236,10 +236,10 @@ public class GoalsFragment extends Fragment {
 
                 // update recyclerviews
                 allGoals.add(0, wrap);
-                allGoalsAdapter.notifyItemInserted(0);
+                allGoalsAdapter.notifyDataSetChanged();
 
                 thumbnailGoals.add(0, wrap);
-                thumbnailGoalsAdapter.notifyItemInserted(0);
+                thumbnailGoalsAdapter.notifyDataSetChanged();
 
                 rvAllGoals.scrollToPosition(0);
                 rvThumbnailGoals.scrollToPosition(0);

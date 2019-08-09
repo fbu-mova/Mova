@@ -269,7 +269,7 @@ public class GoalCardComponent extends Component {
                                     boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
                                     SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
                                     sharedActions.add(0, data);
-                                    sharedActionsAdapter.notifyItemInserted(0);
+                                    sharedActionsAdapter.notifyDataSetChanged();
 
                                 }
                                 else {
@@ -293,7 +293,7 @@ public class GoalCardComponent extends Component {
 
                 for (SharedAction sharedAction : sharedActionsList) {
                     sharedActions.add(0, new SharedAction.Data(sharedAction, false));
-                    sharedActionsAdapter.notifyItemInserted(0);
+                    sharedActionsAdapter.notifyDataSetChanged();
                 }
                 rvActions.scrollToPosition(0);
             });
@@ -305,7 +305,7 @@ public class GoalCardComponent extends Component {
             // load into recyclerview
             E action = objects.get(i);
             actions.add(0, action);
-            actionsAdapter.notifyItemInserted(0);
+            actionsAdapter.notifyDataSetChanged();
         }
 
         rvActions.scrollToPosition(0);
