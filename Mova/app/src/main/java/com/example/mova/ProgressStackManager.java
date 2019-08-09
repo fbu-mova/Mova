@@ -10,8 +10,11 @@ public class ProgressStackManager {
     private List<ProgressStack> stacks;
     private OnClickListener clickListener;
 
+    private int maxValue;
+
     public ProgressStackManager(Activity activity, int numStacks) {
         if (numStacks <= 0) throw new IllegalArgumentException("Must have at least one stack.");
+        maxValue = -1;
         stacks = new ArrayList<>();
         for (int i = 0; i < numStacks; i++) {
             stacks.add(new ProgressStack(activity));
@@ -23,9 +26,14 @@ public class ProgressStackManager {
     }
 
     public void setMaxValue(int maxValue) {
+        this.maxValue = maxValue;
         for (ProgressStack stack : stacks) {
             stack.setMaxValue(maxValue);
         }
+    }
+
+    public int getMaxValue() {
+        return maxValue;
     }
 
     public void add(int color) {
@@ -40,6 +48,7 @@ public class ProgressStackManager {
         for (ProgressStack stack : stacks) {
             stack.remove(color);
         }
+        updateDisplayMax();
     }
 
     public boolean contains(int color) {
@@ -52,6 +61,7 @@ public class ProgressStackManager {
 
     public void setValue(int index, int color, int value) {
         stacks.get(index).setValue(color, value);
+        updateDisplayMax();
     }
 
     public void show(int color) {
@@ -104,8 +114,35 @@ public class ProgressStackManager {
         return stacks.get(index).totalValue();
     }
 
+    public int maxTotalValue() {
+        int max = 0;
+        for (ProgressStack stack : stacks) {
+            max = Math.max(max, stack.totalValue());
+        }
+        return max;
+    }
+
     public int totalValueShown(int index) {
         return stacks.get(index).totalValueShown();
+    }
+
+    public int maxTotalValueShown() {
+        int max = 0;
+        for (ProgressStack stack : stacks) {
+            max = Math.max(max, stack.totalValueShown());
+        }
+        return max;
+    }
+
+    public int tallestY() {
+        return (maxValue == -1) ? maxTotalValue() : getMaxValue();
+    }
+
+    private void updateDisplayMax() {
+        int max = (maxValue == -1) ? maxTotalValue() : getMaxValue();
+        for (ProgressStack stack : stacks) {
+            stack.setMaxValue(max);
+        }
     }
 
     public void setOnClick(OnClickListener clickListener) {

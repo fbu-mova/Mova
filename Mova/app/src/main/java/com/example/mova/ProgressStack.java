@@ -253,6 +253,10 @@ public class ProgressStack extends FrameLayout {
         invalidate();
     }
 
+    public int getMaxValue() {
+        return maxValue;
+    }
+
     public void setOnClick(int color, AsyncUtils.TwoItemCallback<Integer, FrameLayout> listener) {
         clickListeners.put(color, listener);
 
