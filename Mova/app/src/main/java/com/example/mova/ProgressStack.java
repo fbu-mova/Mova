@@ -45,19 +45,19 @@ public class ProgressStack extends FrameLayout {
     // -- MANAGING STATE -- //
 
     // Orientation is currently fixed, but naming is flexible for variable orientation
-    protected int thickness, length;
-    protected int totalValue, totalValueShown;
-    protected int maxValue; // -1 if no maximum
+    private int thickness, length;
+    private int totalValue, totalValueShown;
+    private int maxValue; // -1 if no maximum
 
-    protected SparseIntArray sections;
-    protected List<Integer> colors;
-    protected SparseArray<AsyncUtils.TwoItemCallback<Integer, FrameLayout>> clickListeners;
-    protected SparseArray<FrameLayout> sectionViews;
+    private SparseIntArray sections;
+    private List<Integer> colors;
+    private SparseArray<AsyncUtils.TwoItemCallback<Integer, FrameLayout>> clickListeners;
+    private SparseArray<FrameLayout> sectionViews;
 
-    protected List<Integer> showSections;
-    protected Integer selectedSection;
-    protected boolean sectionIsSelected;
-    protected Queue<Change> changeQueue;
+    private List<Integer> showSections;
+    private Integer selectedSection;
+    private boolean sectionIsSelected;
+    private Queue<Change> changeQueue;
 
     public ProgressStack(@NonNull Context context) {
         super(context);
