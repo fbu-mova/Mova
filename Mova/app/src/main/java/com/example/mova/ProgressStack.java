@@ -44,7 +44,7 @@ public class ProgressStack extends FrameLayout {
     // -- MANAGING STATE -- //
 
     // Orientation is currently fixed, but naming is flexible for variable orientation
-    protected int thickness, length, totalValue;
+    protected int thickness, length, totalValue, totalValueShown;
     protected int maxValue; // -1 if no maximum
 
     protected SparseIntArray sections;
@@ -76,13 +76,9 @@ public class ProgressStack extends FrameLayout {
         inflate(getContext(), R.layout.layout_progress_stack, this);
         ButterKnife.bind(this);
 
-        // Offset cardview to hide bottom corners
-        int borderRadius = getResources().getDimensionPixelOffset(R.dimen.borderRadius);
-        CardView.LayoutParams params = (CardView.LayoutParams) cvMask.getLayoutParams();
-        params.bottomMargin = -1 * borderRadius;
-
         // Set all state values
         totalValue = 0;
+        totalValueShown = 0;
         maxValue = -1;
 
         sections = new SparseIntArray();
@@ -108,6 +104,14 @@ public class ProgressStack extends FrameLayout {
         } finally {
             typedArray.recycle();
         }
+
+        // Offset cardview to hide bottom corners
+        int borderRadius = getResources().getDimensionPixelOffset(R.dimen.borderRadius);
+        CardView.LayoutParams params = (CardView.LayoutParams) cvMask.getLayoutParams();
+        params.bottomMargin = -1 * borderRadius;
+
+        // TODO: Modify size based on parameters
+        // TODO: Add animation parameters
     }
 
     public void add(int color) {
@@ -115,6 +119,26 @@ public class ProgressStack extends FrameLayout {
         sections.put(color, 0);
         colors.add(color);
         changeQueue.add(new SectionChange(color, ChangeType.Add));
+    }
+
+    public void remove(int color) {
+        if (!contains(color)) return;
+
+        int value = valueOf(color);
+        boolean wasShown = showSections.contains(color);
+
+        sections.removeAt(color);
+        colors.remove(colors.indexOf(color));
+        clickListeners.remove(color);
+        sectionViews.remove(color);
+        showSections.remove(color);
+
+        totalValue -= value;
+        if (wasShown) totalValueShown -= value;
+
+        changeQueue.add(new SectionChange(color, ChangeType.Remove));
+
+        invalidate();
     }
 
     public boolean contains(int color) {
@@ -138,6 +162,7 @@ public class ProgressStack extends FrameLayout {
     public void show(int color) {
         if (!showSections.contains(color)) {
             showSections.add(color);
+            totalValueShown += valueOf(color);
             changeQueue.add(new SectionChange(color, ChangeType.Show));
             invalidate();
         }
@@ -152,6 +177,7 @@ public class ProgressStack extends FrameLayout {
         int index = showSections.indexOf(color);
         if (index >= 0) {
             showSections.remove(index);
+            totalValueShown -= valueOf(color);
             changeQueue.add(new SectionChange(color, ChangeType.Hide));
             invalidate();
         }
@@ -161,7 +187,7 @@ public class ProgressStack extends FrameLayout {
         if (showSections.size() > 0) {
             for (int color : showSections) {
                 showSections.remove(showSections.indexOf(color));
-                changeQueue.add(new SectionChange(color, ChangeType.Remove));
+                changeQueue.add(new SectionChange(color, ChangeType.Hide));
             }
             invalidate();
         }
@@ -199,6 +225,10 @@ public class ProgressStack extends FrameLayout {
         return totalValue;
     }
 
+    public int totalValueShown() {
+        return totalValueShown;
+    }
+
     public void setMaxValue(int value) {
         changeQueue.add(new ValueChange(maxValue, value, ChangeType.SetMaxValue));
         maxValue = value;
@@ -207,6 +237,9 @@ public class ProgressStack extends FrameLayout {
 
     public void setOnClick(int color, AsyncUtils.ItemCallback<Integer> listener) {
         clickListeners.put(color, listener);
+
+        FrameLayout view = sectionViews.get(color);
+        if (view != null) view.setOnClickListener((v) -> listener.call(color));
     }
 
     protected enum ChangeType {
@@ -329,9 +362,13 @@ public class ProgressStack extends FrameLayout {
     protected void addSection(int color) {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         FrameLayout view = new FrameLayout(getContext());
+
         view.setLayoutParams(params);
         view.setAlpha(1f);
         view.setBackgroundColor(color);
+
+        AsyncUtils.ItemCallback<Integer> clickListener = clickListeners.get(color);
+        if (clickListener != null) view.setOnClickListener((v) -> clickListener.call(color));
 
         sectionViews.put(color, view);
         llSections.addView(view, 0);

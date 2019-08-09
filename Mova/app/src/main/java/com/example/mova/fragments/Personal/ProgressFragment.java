@@ -104,11 +104,14 @@ public class ProgressFragment extends Fragment {
 //        psTest.select(Color.BLUE);
         psTest.setValue(Color.GREEN, 1);
         psTest.show(Color.GREEN);
+        Log.i("ProgressFragment", "Total: " + psTest.totalValue());
 
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
                 psTest.hide(Color.BLUE);
+                Thread.sleep(1000);
+                Log.i("ProgressFragment", "Total: " + psTest.totalValue());
             } catch (InterruptedException e) {
 
             }
