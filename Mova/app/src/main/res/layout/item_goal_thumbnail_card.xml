@@ -78,7 +78,7 @@
                     android:layout_height="@dimen/thumbnailIcon"
                     android:layout_gravity="center_horizontal"
                     android:clipChildren="true"
-                    app:cardCornerRadius="@dimen/borderRadiusCircle"
+                    app:cardCornerRadius="0dp"
                     app:cardElevation="0dp">
 
                     <ImageView

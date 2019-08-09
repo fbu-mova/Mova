@@ -261,6 +261,7 @@ public class EventComposeActivity extends AppCompatActivity {
                             Group group = groups.get(i);
                             event.relGroup.add(group);
                             event.setParentGroup(group);
+                            event.saveInBackground();
                             group.relEvents.add(event);
                             group.saveInBackground();
                         }
