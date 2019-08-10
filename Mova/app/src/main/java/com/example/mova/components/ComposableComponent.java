@@ -1,5 +1,8 @@
 package com.example.mova.components;
 
+import android.app.Activity;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 
 import com.example.mova.component.Component;
@@ -33,6 +36,7 @@ public abstract class ComposableComponent extends Component {
     private void addListeners() {
         eventView.setOnLongClickListener((v) -> {
             if (allowCompose) {
+//                vibrate();
                 ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
                     @Override
                     protected void onCancel() {
@@ -48,6 +52,11 @@ public abstract class ComposableComponent extends Component {
             }
             return false;
         });
+    }
+
+    private void vibrate() {
+        Vibrator vib = (Vibrator) getActivity().getSystemService(Activity.VIBRATOR_SERVICE);
+        vib.vibrate(50);
     }
 
     protected abstract void onSavePost(Post post);
