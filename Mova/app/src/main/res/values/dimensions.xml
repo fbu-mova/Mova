@@ -24,6 +24,11 @@
     <dimen name="iconPadding">4dp</dimen>
     <dimen name="iconMargin">4dp</dimen>
 
+    <dimen name="checkboxSize">10dp</dimen>
+    <dimen name="checkboxStrokeSize">1dp</dimen>
+    <dimen name="checkboxDashWidth">2dp</dimen>
+    <dimen name="checkboxDashGap">2dp</dimen>
+
     <dimen name="thumbnailWidth">160dp</dimen>
     <dimen name="thumbnailImageHeight">100dp</dimen>
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:id="@+id/flToggle"
+        android:layout_width="@dimen/textSizeFocus"
+        android:layout_height="@dimen/textSizeFocus"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="@dimen/iconMargin"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="auto">
+
+        <ImageView
+            android:id="@+id/ivToggle"
+            android:layout_width="@dimen/checkboxSize"
+            android:layout_height="@dimen/checkboxSize"
+            android:layout_gravity="center"
+            android:layerType="software"
+            app:srcCompat="@drawable/action_incomplete" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:text="Action text"
+        android:textColor="@color/textMain"
+        android:textSize="@dimen/textSizeBody" />
+</LinearLayout>

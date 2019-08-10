@@ -55,4 +55,18 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="ActionView">
+        <attr name="text" value="string"/>
+        <attr name="enabled" value="boolean"/>
+        <attr name="completed" value="boolean"/>
+
+        <attr name="colorBoxComplete" value="color"/>
+        <attr name="colorBoxIncomplete" value="color"/>
+        <attr name="colorBoxDisabled" value="color"/>
+
+        <attr name="colorTextComplete" value="color"/>
+        <attr name="colorTextIncomplete" value="color"/>
+        <attr name="colorTextDisabled" value="color"/>
+    </declare-styleable>
+
 </resources>
