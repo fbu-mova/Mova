@@ -48,6 +48,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -354,17 +355,21 @@ public class ProgressFragment extends Fragment {
     }
 
     public void getDataForGraph(Goal goal, AsyncUtils.ListCallback<Integer> callback){
-        List<Integer> dataPoints = new ArrayList<>();
-        AsyncUtils.waterfall(
+        Integer[] dataPoints = new Integer[length];
+        AsyncUtils.executeMany(
             length,
             (i, cb) -> {
                 Date date = getDate(length - i);
                 GoalUtils.getNumActionsComplete(date, goal, user, (num) -> {
-                    dataPoints.add(num);
+                    dataPoints[i] = num;
                     cb.call(null);
                 });
             },
-            (err) -> {callback.call(dataPoints);}
+            (err) -> {
+                List<Integer> result = new ArrayList<>();
+                Collections.addAll(result, dataPoints);
+                callback.call(result);
+            }
         );
     }
 
