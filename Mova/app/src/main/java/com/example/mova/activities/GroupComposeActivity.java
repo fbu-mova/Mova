@@ -216,59 +216,18 @@ public class GroupComposeActivity extends DelegatedResultActivity {
     private void configureIconClick() {
         cvIcon.setOnClickListener((v) -> {
             String term = etGroupName.getText().toString().toLowerCase();
-            if (term.equals("")) {
-                Toast.makeText(this, "Give your group a name first!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            View view = getLayoutInflater().inflate(R.layout.layout_recycler_view, null);
-            RecyclerView rv = view.findViewById(R.id.rv);
-
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle("Choose an icon")
-                    .setView(view)
-                    .setNegativeButton("Cancel", (dialog, which) -> {})
-                    .create();
-
-            List<NounProjectClient.Icon> icons = new ArrayList<>();
-            DataComponentAdapter<NounProjectClient.Icon> adapter = new DataComponentAdapter<NounProjectClient.Icon>(this, icons) {
+            Icons.from(this).showNounIconDialog(term, "Give your group a name first!", new Icons.NounIconDialogHandler() {
                 @Override
-                protected Component makeComponent(NounProjectClient.Icon item, Component.ViewHolder holder) {
-                    ImageComponent component = new ImageComponent(Icons.highestResImage(item));
-                    component.setOnClick(() -> {
-                        alertDialog.dismiss();
-                        group.setNounIcon(item);
-                        Icons.from(GroupComposeActivity.this).displayNounIcon(item, cvIcon, ivIcon);
-                    });
-                    return component;
+                public void onSelect(NounProjectClient.Icon icon) {
+                    group.setNounIcon(icon);
+                    Icons.from(GroupComposeActivity.this).displayNounIcon(icon, cvIcon, ivIcon);
                 }
 
                 @Override
-                protected Component.Inflater makeInflater(NounProjectClient.Icon item) {
-                    return new ImageComponent.Inflater();
+                public void onCancel() {
+
                 }
-            };
-
-            rv.setLayoutManager(new GridLayoutManager(this, 4));
-            rv.setAdapter(adapter);
-            // TODO: Add padding
-
-            Icons.from(this).nounIcons(term, 20, (suggestedIcons, e) -> {
-                runOnUiThread(() -> {
-                    if (e != null) {
-                        Log.e("GroupComposeActivity", "Failed to load suggested group icons", e);
-                        Toast.makeText(this, "Couldn't find any icons for \"" + term + "\"", Toast.LENGTH_LONG).show();
-                        // TODO: Create friendlier UI for this
-                        // TODO: Differentiate between network errors and no icons found
-                        return;
-                    }
-
-                    Collections.addAll(icons, suggestedIcons);
-                    adapter.notifyDataSetChanged();
-                });
             });
-
-            alertDialog.show();
         });
     }
 
