@@ -1,6 +1,7 @@
 package com.example.mova;
 
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
@@ -129,40 +130,74 @@ public class PersonalSocialToggle extends LinearLayout {
             TransitionDrawable socialTransition = (TransitionDrawable) flSocial.getBackground();
 
             if (toPersonal) {
-                weightAnimate(flPersonal, SELECTED_WEIGHT);
-                weightAnimate(flSocial, UNSELECTED_WEIGHT);
-
-                alphaAnimate(ivGradPP, 1f);
-                alphaAnimate(ivGradPS, 0f);
-                alphaAnimate(ivGradSP, 1f);
-                alphaAnimate(ivGradSS, 0f);
-
-                alphaAnimate(tvPP, 1f);
-                alphaAnimate(tvPS, 0f);
-                alphaAnimate(tvSP, 1f);
-                alphaAnimate(tvSS, 0f);
-
+                animateToPersonal();
                 personalTransition.reverseTransition(DURATION);
                 socialTransition.reverseTransition(DURATION);
             } else {
-                weightAnimate(flPersonal, UNSELECTED_WEIGHT);
-                weightAnimate(flSocial, SELECTED_WEIGHT);
-
-                alphaAnimate(ivGradPP, 0f);
-                alphaAnimate(ivGradPS, 1f);
-                alphaAnimate(ivGradSP, 0f);
-                alphaAnimate(ivGradSS, 1f);
-
-                alphaAnimate(tvPP, 0f);
-                alphaAnimate(tvPS, 1f);
-                alphaAnimate(tvSP, 0f);
-                alphaAnimate(tvSS, 1f);
-
+                animateToSocial();
                 personalTransition.startTransition(DURATION);
                 socialTransition.startTransition(DURATION);
             }
         }
     }
+
+    private void animateToPersonal() {
+        float origPersonalWeight = getWeight(flPersonal);
+        float origSocialWeight = getWeight(flSocial);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addUpdateListener(animation -> {
+            float val = (Float) animation.getAnimatedValue();
+            setCrossfadeAlpha(ivGradPS, ivGradPP, val);
+            setCrossfadeAlpha(ivGradSS, ivGradSP, val);
+            setCrossfadeAlpha(tvPS, tvPP, val);
+            setCrossfadeAlpha(tvSS, tvSP, val);
+            setAnimatedWeight(flPersonal, origPersonalWeight, SELECTED_WEIGHT, val);
+            setAnimatedWeight(flSocial, origSocialWeight, UNSELECTED_WEIGHT, val);
+        });
+        animator.setDuration(DURATION);
+        animator.start();
+    }
+
+    private void animateToSocial() {
+        float origPersonalWeight = getWeight(flPersonal);
+        float origSocialWeight = getWeight(flSocial);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addUpdateListener(animation -> {
+            float val = (Float) animation.getAnimatedValue();
+            setCrossfadeAlpha(ivGradPP, ivGradPS, val);
+            setCrossfadeAlpha(ivGradSP, ivGradSS, val);
+            setCrossfadeAlpha(tvPP, tvPS, val);
+            setCrossfadeAlpha(tvSP, tvSS, val);
+            setAnimatedWeight(flPersonal, origPersonalWeight, UNSELECTED_WEIGHT, val);
+            setAnimatedWeight(flSocial, origSocialWeight, SELECTED_WEIGHT, val);
+        });
+        animator.setDuration(DURATION);
+        animator.start();
+    }
+
+    private static void setCrossfadeAlpha(View out, View in, float inValue) {
+        out.setAlpha(1f - inValue);
+        in.setAlpha(inValue);
+    }
+
+    private static void setAnimatedWeight(View view, float from, float to, float val) {
+        float diff = to - from;
+        setWeight(view, from + (diff * val));
+    }
+
+    private static void setWeight(View view, float weight) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        params.weight = weight;
+        view.getParent().requestLayout();
+    }
+
+    private static float getWeight(View view) {
+        return ((LinearLayout.LayoutParams) view.getLayoutParams()).weight;
+    }
+
+    // ------ //
 
     private void alphaAnimate(View view, float alpha) {
         view.animate()
