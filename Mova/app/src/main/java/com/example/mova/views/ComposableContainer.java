@@ -1,10 +1,13 @@
 package com.example.mova.views;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -48,28 +51,15 @@ public class ComposableContainer extends FrameLayout {
         detector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public void onLongPress(MotionEvent e) {
-                if (allowCompose) {
-                    performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                    ComposePostDialog dialog = new ComposePostDialog((DelegatedResultActivity) getContext(), config) {
-                        @Override
-                        protected void onCancel() {
-                            onCancel.call();
-                        }
-
-                        @Override
-                        protected void onPost(PostConfig config) {
-                            config.savePost((post) -> onPost.call(post));
-                        }
-                    };
-                    dialog.show();
-                }
+                Log.d("ComposableContainer", "Hit");
+                showDialog();
             }
         });
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        // FIXME: Will this allow click pass-through, or should I unconditionally return true?
+//        // FIXME: Will this allow click pass-through, or should I unconditionally return true?
         detector.onTouchEvent(ev);
         return true;
     }
@@ -100,5 +90,23 @@ public class ComposableContainer extends FrameLayout {
     public ComposableContainer setOnCancel(AsyncUtils.EmptyCallback onCancel) {
         this.onCancel = onCancel;
         return this;
+    }
+
+    private void showDialog() {
+        if (allowCompose) {
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            ComposePostDialog dialog = new ComposePostDialog((DelegatedResultActivity) getContext(), config) {
+                @Override
+                protected void onCancel() {
+                    onCancel.call();
+                }
+
+                @Override
+                protected void onPost(PostConfig config) {
+                    config.savePost((post) -> onPost.call(post));
+                }
+            };
+            dialog.show();
+        }
     }
 }
