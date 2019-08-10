@@ -202,7 +202,7 @@ public class GoalUtils {
         });
     }
 
-    public static void submitGoal(Goal goal,String goalName, String goalDescription, List<Action> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
+    public static void submitGoal(Goal goal, String goalName, String goalDescription, List<Action> actions, boolean created, AsyncUtils.ItemCallback<Goal> finalCallback) {
         // todo -- include image choosing for goal image + color
         // todo -- update to also encompass Social functionality ? can share w/ group if not on personal feed
 
@@ -210,6 +210,9 @@ public class GoalUtils {
                 .setTitle(goalName)
                 .setDescription(goalDescription)
                 .setIsPersonal(true);// fixme -- pass in as parameter to include Social functionality
+
+        // FIXME: Temporarily sets random hue, allow user to choose hue
+        goal.setHue(ColorUtils.Hue.random());
 
         goal.relUsersInvolved.add(User.getCurrentUser());
         goal.saveInBackground(new SaveCallback() {

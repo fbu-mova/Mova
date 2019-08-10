@@ -136,7 +136,7 @@ public class SocialProfileFragment extends Fragment {
         friendUtils = new FriendUtils();
         currentUser = User.getCurrentUser();
 
-        Icons.from(getActivity()).displayIdenticon(user,cvSocialPic,ivSocialPic);
+        Icons.from((DelegatedResultActivity) getActivity()).displayIdenticon(user,cvSocialPic,ivSocialPic);
         currentUser.isFriendsWith(user, (bool) -> {
             Toast.makeText(getContext(), "Inside", Toast.LENGTH_SHORT).show();
             if(!bool){

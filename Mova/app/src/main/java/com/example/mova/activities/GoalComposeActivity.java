@@ -82,9 +82,7 @@ public class GoalComposeActivity extends DelegatedResultActivity {
                 String goalName = etGoalName.getText().toString();
                 String goalDescription = etGoalDescription.getText().toString();
 
-                GoalUtils.submitGoal(goal ,goalName, goalDescription, unsavedActions, true, (item) -> {
-
-                    endActivity(item);});
+                GoalUtils.submitGoal(goal, goalName, goalDescription, unsavedActions, true, (item) -> endActivity(item));
             }
         });
 
