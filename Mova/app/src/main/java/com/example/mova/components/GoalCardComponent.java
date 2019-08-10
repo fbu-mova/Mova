@@ -274,12 +274,13 @@ public class GoalCardComponent extends Component {
                                 Log.e(TAG, "either size(actions) wrong or error", e);
                             }
                             callback.call(e);
+                            });
                         }
                     });
         }, (e) -> {
             activity.runOnUiThread(() -> {
             sharedActionsAdapter.notifyItemRangeInserted(0, objects.size());
-                rvActions.scrollToPosition(0);
+            rvActions.scrollToPosition(0);
             });
         });
     }
@@ -289,12 +290,12 @@ public class GoalCardComponent extends Component {
         activity.runOnUiThread(() -> {
             GoalUtils.loadGoalSharedActions(goal, (sharedActionsList) -> {
 
-        GoalUtils.loadGoalSharedActions(goal, (sharedActionsList) -> {
-            for (SharedAction sharedAction : sharedActionsList) {
-                sharedActions.add(0, new SharedAction.Data(sharedAction, false));
-            }
+                for (SharedAction sharedAction : sharedActionsList) {
+                    sharedActions.add(0, new SharedAction.Data(sharedAction, false));
+                }
             sharedActionsAdapter.notifyItemRangeInserted(0, sharedActionsList.size());
-            rvActions.scrollToPosition(0);
+                rvActions.scrollToPosition(0);
+            });
         });
     }
 
