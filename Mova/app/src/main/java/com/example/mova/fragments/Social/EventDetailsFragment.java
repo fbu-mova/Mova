@@ -250,16 +250,18 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
         }
         map.setMyLocationEnabled(true);
         float zoomLevel = 14.0f;
-        LatLng latLng = new LatLng(event.getLocation().getLatitude(),event.getLocation().getLongitude());
-        map.addMarker(new MarkerOptions().position(latLng).title(event.getLocation().toString()));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-        map.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-            //Dont allow the camera to move
-            @Override
-            public void onCameraMove() {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-            }
-        });
+        if(event.getLocation() != null) {
+            LatLng latLng = new LatLng(event.getLocation().getLatitude(), event.getLocation().getLongitude());
+            map.addMarker(new MarkerOptions().position(latLng).title(event.getLocation().toString()));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+            map.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+                //Dont allow the camera to move
+                @Override
+                public void onCameraMove() {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+                }
+            });
+        }
     }
 
     @Override

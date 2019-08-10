@@ -54,14 +54,16 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     private boolean isPersonal;
     private boolean isUserInvolved;
 
-    @BindView(R.id.ivIcon)         protected ImageView ivPhoto;
+    @BindView(R.id.ivIcon)          protected ImageView ivPhoto;
     @BindView(R.id.tvName)          protected TextView tvGoalName;
     @BindView(R.id.tvGroupName)     protected TextView tvGroupName;
     @BindView(R.id.tvDescription)   protected TextView tvDescription;
     @BindView(R.id.rvActions)       protected RecyclerView rvActions;
     @BindView(R.id.goalpb)          protected GoalProgressBar goalpb;
     @BindView(R.id.ivShare)         protected ImageView ivShare;
+    @BindView(R.id.tvShareText)     protected TextView tvShareText;
     @BindView(R.id.ivSave)          protected ImageView ivSave;
+    @BindView(R.id.tvSaveText)      protected TextView tvSaveText;
     @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
     @BindView(R.id.cvIcon)          protected CardView cvIcon;
 
@@ -117,15 +119,19 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             }
         });
 
+        tvShareText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirmShare();
+            }
+        });
+
         ivSave.setOnClickListener((v) -> {
-            if (isPersonal) {
-                // fixme -- what if not in same group as this goal? can still see in first place? ( ~this case)
-                Toast.makeText(GoalDetailsActivity.this, "You can't save someone else's personal goal!", Toast.LENGTH_LONG).show();
-            }
-            else {
-                // save social goal as a personal goal
-                GoalUtils.saveSocialGoal(goal, this);
-            }
+            onSaveClick();
+        });
+
+        tvSaveText.setOnClickListener((v) -> {
+            onSaveClick();
         });
 
 //        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
@@ -147,6 +153,17 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
         setUpRecyclerView();
 
+    }
+
+    private void onSaveClick() {
+        if (isPersonal) {
+            // fixme -- what if not in same group as this goal? can still see in first place? ( ~this case)
+            Toast.makeText(GoalDetailsActivity.this, "You can't save someone else's personal goal!", Toast.LENGTH_LONG).show();
+        }
+        else {
+            // save social goal as a personal goal
+            GoalUtils.saveSocialGoal(goal, this);
+        }
     }
 
     private void displayHeader(boolean hasGroup) {
