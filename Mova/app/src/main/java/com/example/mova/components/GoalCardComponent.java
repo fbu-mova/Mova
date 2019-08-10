@@ -15,7 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mova.GoalProgressBar;
+import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.GoalDetailsActivity;
@@ -38,7 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
+import static com.example.mova.views.GoalProgressBar.PROGRESS_MAX;
 import static com.example.mova.model.Action.KEY_PARENT_USER;
 import static com.example.mova.model.User.getCurrentUser;
 

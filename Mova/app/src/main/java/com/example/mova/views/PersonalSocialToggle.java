@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.views;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.mova.R;
 import com.example.mova.containers.GestureLayout;
 import com.example.mova.containers.GestureListener;
 import com.example.mova.utils.AsyncUtils;

@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.R;
 import com.example.mova.utils.AsyncUtils;
 
 import java.util.ArrayList;

@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:clipChildren="false">
 
-            <com.example.mova.GoalProgressBar
+            <com.example.mova.views.GoalProgressBar
                 android:id="@+id/goalProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"

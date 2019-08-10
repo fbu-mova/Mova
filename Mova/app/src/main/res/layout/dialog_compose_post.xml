@@ -36,7 +36,7 @@ xmlns:tools="http://schemas.android.com/tools"
                 </com.example.mova.component.ComponentLayout>
             </FrameLayout>
 
-            <com.example.mova.PersonalSocialToggle
+            <com.example.mova.views.PersonalSocialToggle
                 android:id="@+id/psToggle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

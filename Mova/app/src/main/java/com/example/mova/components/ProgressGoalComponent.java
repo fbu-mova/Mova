@@ -8,9 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 
-import com.example.mova.GoalProgressBar;
+import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
@@ -24,7 +23,7 @@ import com.example.mova.utils.GoalUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
+import static com.example.mova.views.GoalProgressBar.PROGRESS_MAX;
 
 public class ProgressGoalComponent extends Component {
 

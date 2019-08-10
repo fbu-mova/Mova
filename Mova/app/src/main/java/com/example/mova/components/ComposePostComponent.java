@@ -8,14 +8,13 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
-import com.example.mova.PersonalSocialToggle;
+import com.example.mova.views.PersonalSocialToggle;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -32,7 +31,6 @@ import com.example.mova.utils.Wrapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 
-import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 

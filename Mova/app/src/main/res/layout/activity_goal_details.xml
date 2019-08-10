@@ -142,7 +142,7 @@
             android:layout_weight="0"
             android:orientation="horizontal">
 
-            <com.example.mova.GoalProgressBar
+            <com.example.mova.views.GoalProgressBar
                 android:id="@+id/goalpb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
