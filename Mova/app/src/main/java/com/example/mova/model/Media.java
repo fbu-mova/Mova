@@ -196,25 +196,38 @@ public class Media extends HashableParseObject {
     }
 
     // TODO: Possibly pipe configs as dynamically typed objects through makeComponent
-    public Component makeComponent(Resources res) {
+    public void makeComponent(Resources res, AsyncUtils.TwoItemCallback<Component, Throwable> callback) {
         switch (getType()) {
             case Text:
-                return new MediaTextComponent(this);
+                callback.call(new MediaTextComponent(this), null);
+                break;
             case Image:
                 int borderRadius = res.getDimensionPixelOffset(R.dimen.borderRadius);
-                return new ImageComponent(getContentImage(), borderRadius);
+                callback.call(new ImageComponent(getContentImage(), borderRadius), null);
+                break;
             case Post:
                 PostComponent.Config config = new PostComponent.Config();
                 config.subheader = null;
                 config.showButtons = false;
                 config.showGroup = false;
-                return new PostComponent(getContentPost(), config);
+                PostComponent postComponent = new PostComponent(getContentPost(), config);
+                postComponent.allowCompose(false);
+                callback.call(postComponent, null);
+                break;
             case Goal:
-                // FIXME: Find a better way to handle async data on GoalData
                 Goal.GoalData data = new Goal.GoalData(getContentGoal(), false);
-                return new GoalCardComponent(data);
+                data.goal.fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    data.goal = (Goal) obj;;
+                    callback.call(new GoalCardComponent(data), null);
+                });
+                break;
             default:
-                return null;
+                callback.call(null, null);
+                break;
         }
     }
 

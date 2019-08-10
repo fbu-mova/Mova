@@ -187,14 +187,29 @@ public abstract class ComposePostComponent extends Component {
 
     private void displayMedia() {
         // FIXME: Should media be fetched in background if needed?
-        Component mediaComponent = (postConfig.media == null) ? null : postConfig.media.makeComponent(getActivity().getResources());
-        if (mediaComponent == null) {
+        Runnable hide = () -> {
             holder.llAddMedia.setVisibility(View.VISIBLE);
             holder.clMedia.clear();
+        };
+
+        if (postConfig.media == null) {
+            hide.run();
         } else {
-            holder.llAddMedia.setVisibility(View.GONE);
-            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
-            holder.clMedia.setVisibility(View.VISIBLE);
+            postConfig.media.makeComponent(getActivity().getResources(), (mediaComponent, e) -> {
+                if (e != null) {
+                    Toast.makeText(getActivity(), "Failed to load media", Toast.LENGTH_LONG).show();
+                    hide.run();
+                    return;
+                }
+                if (mediaComponent == null) {
+                    hide.run();
+                    return;
+                }
+
+                holder.llAddMedia.setVisibility(View.GONE);
+                holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+                holder.clMedia.setVisibility(View.VISIBLE);
+            });
         }
     }
 

@@ -127,12 +127,12 @@ public class JournalEntryComponent extends ComposableComponent {
 
     private void displayMedia() {
         Media media = entry.getMedia();
-        Component mediaComponent = (media == null) ? null : media.makeComponent(getActivity().getResources());
-        holder.clMedia.clear();
-        if (mediaComponent != null) {
+        if (media == null) return;
+        media.makeComponent(getActivity().getResources(), (mediaComponent, e) -> {
+            if (e != null || mediaComponent == null) return;
             holder.clMedia.setMarginTop(16).setMarginBottom(16);
             holder.clMedia.inflateComponent(getActivity(), mediaComponent);
-        }
+        });
     }
 
     private void displayTags() {

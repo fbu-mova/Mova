@@ -146,9 +146,11 @@ public class PostComponent extends ComposableComponent {
     }
 
     private void displayMedia() {
+        Runnable hide = () -> holder.clMedia.setVisibility(View.GONE);
+
         Media media = post.getMedia();
         if (media == null) {
-            holder.clMedia.setVisibility(View.GONE);
+            hide.run();
             return;
         }
 
@@ -161,19 +163,31 @@ public class PostComponent extends ComposableComponent {
 
             Media item = (Media) fetchedMedia;
             media.fetchContentIfNeededInBackground((fetchedContent, e1) -> {
+                if (e1 != null) {
+                    hide.run();
+                    return;
+                }
+
                 // Update content with loaded instance
                 item.setContent(fetchedContent);
 
-                Component mediaComponent = item.makeComponent(getActivity().getResources());
-                if (mediaComponent == null) {
-                    holder.clMedia.setVisibility(View.GONE);
-                } else {
+                media.makeComponent(getActivity().getResources(), (mediaComponent, e2) -> {
+                    if (e2 != null) {
+                        Toast.makeText(getActivity(), "Failed to load media", Toast.LENGTH_LONG).show();
+                        hide.run();
+                        return;
+                    }
+                    if (mediaComponent == null) {
+                        hide.run();
+                        return;
+                    }
+
                     int elementMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.elementMargin);
                     holder.clMedia.setMarginTop(elementMargin);
                     holder.clMedia.setMarginBottom(elementMargin);
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
                     holder.clMedia.setVisibility(View.VISIBLE);
-                }
+                });
             });
         });
     }

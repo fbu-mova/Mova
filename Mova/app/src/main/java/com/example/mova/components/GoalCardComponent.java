@@ -68,7 +68,7 @@ public class GoalCardComponent extends Component {
         super();
         this.item = bundle.goal;
         this.isUserInvolved = bundle.userIsInvolved;
-        this.isPersonal = item.getIsPersonal(); // false; // FIXME: item.getIsPersonal(); (why need fix?)
+        this.isPersonal = item.getIsPersonal();
     }
 
     @Override
