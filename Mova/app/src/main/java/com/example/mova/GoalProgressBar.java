@@ -288,11 +288,11 @@ public class GoalProgressBar extends View {
         if (orientation == 0) {
             float aspectWH = (float) corner.getIntrinsicWidth() / (float) corner.getIntrinsicHeight();
             newHeight = (float) thickness + 1f;
-            newWidth = newHeight * aspectWH;
+            newWidth = newHeight * aspectWH + 1f;
         } else {
             float aspectHW = (float) corner.getIntrinsicHeight() / (float) corner.getIntrinsicWidth();
             newWidth = (float) thickness + 1f;
-            newHeight = newWidth * aspectHW;
+            newHeight = newWidth * aspectHW + 1f;
         }
 
         Rect rect = new Rect(0, 0, Math.round(newWidth), Math.round(newHeight));

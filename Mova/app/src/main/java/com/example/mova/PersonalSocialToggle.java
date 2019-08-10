@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -13,7 +15,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.containers.GestureListener;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.DataEvent;
+
+import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,16 +29,18 @@ import butterknife.ButterKnife;
 public class PersonalSocialToggle extends LinearLayout {
 
     @BindView(R.id.flPersonal) protected FrameLayout flPersonal;
-    @BindView(R.id.tvPP) protected TextView tvPP;
-    @BindView(R.id.tvPS) protected TextView tvPS;
+    @BindView(R.id.tvPP)       protected TextView tvPP;
+    @BindView(R.id.tvPS)       protected TextView tvPS;
     @BindView(R.id.ivGradPP)   protected ImageView ivGradPP;
     @BindView(R.id.ivGradPS)   protected ImageView ivGradPS;
 
     @BindView(R.id.flSocial)   protected FrameLayout flSocial;
-    @BindView(R.id.tvSP) protected TextView tvSP;
-    @BindView(R.id.tvSS) protected TextView tvSS;
+    @BindView(R.id.tvSP)       protected TextView tvSP;
+    @BindView(R.id.tvSS)       protected TextView tvSS;
     @BindView(R.id.ivGradSS)   protected ImageView ivGradSS;
     @BindView(R.id.ivGradSP)   protected ImageView ivGradSP;
+
+    @BindView(R.id.glRoot)     protected GestureLayout glRoot;
 
     private static int DURATION = 300;
     private static int SELECTED_WEIGHT = 2;
@@ -38,6 +48,7 @@ public class PersonalSocialToggle extends LinearLayout {
 
     private boolean isPersonal = true;
     private AsyncUtils.ItemCallback<Boolean> onToggle = (toPersonal) -> {};
+    private GestureDetector gestureDetector;
 
     public PersonalSocialToggle(@NonNull Context context) {
         super(context);
@@ -69,16 +80,12 @@ public class PersonalSocialToggle extends LinearLayout {
         tvSS.setAlpha(0f);
 
         configureClicks();
+        configureGestureHandling();
         setState(true);
     }
 
     public void setOnToggle(AsyncUtils.ItemCallback<Boolean> onToggle) {
         this.onToggle = onToggle;
-    }
-
-    private void configureClicks() {
-        flPersonal.setOnClickListener((v) -> setState(true));
-        flSocial.setOnClickListener((v) -> setState(false));
     }
 
     public boolean isPersonal() {
@@ -87,6 +94,40 @@ public class PersonalSocialToggle extends LinearLayout {
 
     public void setPersonal(boolean isPersonal) {
         setState(isPersonal);
+    }
+
+    private void configureClicks() {
+//        flPersonal.setOnClickListener((v) -> setState(true));
+//        flSocial.setOnClickListener((v) -> setState(false));
+
+        flPersonal.setOnTouchListener((v, event) -> {
+            setState(true);
+            return false;
+        });
+
+        flSocial.setOnTouchListener((v, event) -> {
+            setState(false);
+            return false;
+        });
+    }
+
+    private void configureGestureHandling() {
+        gestureDetector = new GestureDetector(getContext(), new GestureListener(glRoot) {
+            @Override
+            public boolean onTouch() {
+                return false;
+            }
+
+            @Override
+            public boolean onSwipe(List<Direction> directions) {
+                if (directions.contains(Direction.Left)) setState(true);
+                else if (directions.contains(Direction.Right)) setState(false);
+                return false;
+            }
+        });
+
+        glRoot.setOnTouchListener((View v, MotionEvent event) -> !gestureDetector.onTouchEvent(event));
+        glRoot.setGestureDetector(gestureDetector);
     }
 
     private void setState(boolean toPersonal) {
