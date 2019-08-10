@@ -6,4 +6,5 @@
         android:width="@dimen/checkboxStrokeSize"
         android:dashWidth="@dimen/checkboxDashWidth"
         android:dashGap="@dimen/checkboxDashGap"/>
+    <solid android:color="#00000000"/>
 </shape>

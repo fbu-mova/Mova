@@ -70,6 +70,8 @@ public class ActionView extends LinearLayout {
         } finally {
             typedArray.recycle();
         }
+
+        setOnClickListener((v) -> {});
     }
 
     public void setColors(ColorConfig config) {
@@ -171,13 +173,13 @@ public class ActionView extends LinearLayout {
         }
 
         public static ColorConfig defaultFromHue(Resources res, ColorUtils.Hue hue) {
-            int mid = ColorUtils.getColor(res, hue, ColorUtils.Lightness.Mid);
+            int color = ColorUtils.getColor(res, hue, ColorUtils.Lightness.Light);
             int textMain = res.getColor(R.color.textMain);
             int textLight = res.getColor(R.color.textLight);
 
             return new ColorConfig()
-                    .setCompleteColors(mid, mid)
-                    .setIncompleteColors(mid, textMain)
+                    .setCompleteColors(color, color)
+                    .setIncompleteColors(color, textMain)
                     .setDisabledColors(textLight, textLight);
         }
 
