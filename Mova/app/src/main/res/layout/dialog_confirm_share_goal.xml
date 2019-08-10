@@ -1,117 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:clipChildren="true"
+    android:clipToPadding="true"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvShareTItle"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/elementMargin"
+        android:gravity="center_vertical|end"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="@dimen/buttonIcon"
+            android:layout_height="@dimen/buttonIcon"
+            android:layout_marginRight="@dimen/elementMargin"
+            android:tint="@color/buttonInactive"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_round_close" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvShareTItle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/elementMargin"
+            android:text="Share"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/textMain"
+            android:textSize="@dimen/textSizeTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvGoalName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/elementMargin"
+            android:text="Your Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/textMain"
+            android:textSize="@dimen/textSizeTitle"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tvShareTItle"
+            app:layout_constraintStart_toEndOf="@+id/tvShareTItle"
+            app:layout_constraintTop_toTopOf="@+id/tvShareTItle" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Goal Sharing:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="@dimen/elementMargin"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tvWarning"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tvGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/elementMargin"
+            android:text="Where do you want to share it to?"
+            android:textColor="@color/textMain"
+            android:textSize="@dimen/textSizeBody" />
+
+        <Spinner
+            android:id="@+id/groupSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textMain" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Close this window if you don't want to share your goal."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvShareTItle" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tvGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
-        android:text="Where do you want to share it to?"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWarning" />
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/elementMargin"
+            android:text="Add a description: "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvGroup" />
 
-    <Spinner
-        android:id="@+id/groupSpinner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvGroup"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/tvGroup"
-        app:layout_constraintTop_toTopOf="@+id/tvGroup" />
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/elementMargin"
+            android:layout_marginRight="@dimen/elementMargin"
+            android:ems="10"
+            android:hint="I describe"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="@+id/tvDescription"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvDescription"
+            app:layout_constraintTop_toTopOf="@+id/tvDescription" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
-        android:text="Add a description."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvGroup" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|end"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/etDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:ems="10"
-        android:hint="I describe"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/tvDescription"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvDescription"
-        app:layout_constraintTop_toTopOf="@+id/tvDescription" />
+        <Button
+            android:id="@+id/btShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/elementMargin"
+            android:layout_marginRight="@dimen/elementMargin"
+            android:layout_marginBottom="@dimen/elementMargin"
+            android:text="Share"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etDescription" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btShare"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="Share"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDescription" />
-
-    <TextView
-        android:id="@+id/tvGoalName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="Your Name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="@+id/tvShareTItle"
-        app:layout_constraintStart_toEndOf="@+id/tvShareTItle"
-        app:layout_constraintTop_toTopOf="@+id/tvShareTItle" />
-
-    <ImageView
-        android:id="@+id/ivClose"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorAccent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

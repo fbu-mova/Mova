@@ -2,6 +2,7 @@ package com.example.mova.components;
 
 import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
@@ -65,6 +66,11 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
         // FIXME: Will this ever be called, given polymorphic structure? (adapters call the most generic component possible, I think)
         // todo -- implement icons
+
+        if (action.getIsPriority()) {
+            // set icon next to checklist item
+            viewHolder.ivPriority.setVisibility(View.VISIBLE);
+        }
 
     }
 

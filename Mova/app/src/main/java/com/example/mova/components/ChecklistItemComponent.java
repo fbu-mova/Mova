@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -83,6 +85,8 @@ public abstract class ChecklistItemComponent<T> extends Component {
         this.holder.cbItem.setChecked(getDone.call(item));
         this.allowCheckedEvent = true;
 
+        this.holder.ivPriority.setVisibility(View.GONE);
+
         // TODO: Handle color changes properly
         // TODO: Use custom layout for checkbox
     }
@@ -106,7 +110,9 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     public static class ViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.cbItem) public CheckBox cbItem;
+        @BindView(R.id.cbItem)      public CheckBox cbItem;
+        @BindView(R.id.ivPriority)  public ImageView ivPriority;
+        @BindView(R.id.clLayout)    public ConstraintLayout clLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

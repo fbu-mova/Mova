@@ -27,8 +27,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:tint="@color/textLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/blueUltraLight" />
+        app:srcCompat="@drawable/ic_round_add" />
 </androidx.constraintlayout.widget.ConstraintLayout>
