@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.example.mova.component.Component;
 import com.example.mova.components.ProfileFriendComponent;
 import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.components.ProfileShowMoreGroupsComponent;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
@@ -55,6 +57,8 @@ public class SocialProfileFragment extends Fragment {
 
     @BindView(R.id.ivSocialPic)
     ImageView ivSocialPic;
+    @BindView(R.id.cvSocialPic)
+    CardView cvSocialPic;
     @BindView(R.id.tvName)
     TextView tvName;
     @BindView(R.id.btnAddFriend)
@@ -131,6 +135,8 @@ public class SocialProfileFragment extends Fragment {
         groupUtils = new GroupUtils();
         friendUtils = new FriendUtils();
         currentUser = User.getCurrentUser();
+
+        Icons.from(getActivity()).displayIdenticon(user,cvSocialPic,ivSocialPic);
         currentUser.isFriendsWith(user, (bool) -> {
             Toast.makeText(getContext(), "Inside", Toast.LENGTH_SHORT).show();
             if(!bool){

@@ -139,7 +139,7 @@ public class SearchFragment extends Fragment {
                 i++;
             }
             ArrayAdapter<String> adapter = new ArrayAdapter(getContext(), R.layout.support_simple_spinner_dropdown_item, tagArr);
-            acSearch.setThreshold(1);
+            acSearch.setThreshold(0);
             adapter.notifyDataSetChanged();
             acSearch.setAdapter(adapter);
 
@@ -148,6 +148,12 @@ public class SearchFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     tvClick.setVisibility(View.GONE);
+                    tagGroups.clear();
+                    tagGroupsAdapter.notifyDataSetChanged();
+                    tagEvents.clear();
+                    tagEventsAdapter.notifyDataSetChanged();
+                    tagGoals.clear();
+                    tagGoalsAdapter.notifyDataSetChanged();
                     getData(acSearch.getText().toString());
                 }
             });
@@ -220,7 +226,19 @@ public class SearchFragment extends Fragment {
         rvSearchGoals.setAdapter(tagGoalsAdapter);
 
 
-
+        ibSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvClick.setVisibility(View.GONE);
+                tagGroups.clear();
+                tagGroupsAdapter.notifyDataSetChanged();
+                tagEvents.clear();
+                tagEventsAdapter.notifyDataSetChanged();
+                tagGoals.clear();
+                tagGoalsAdapter.notifyDataSetChanged();
+                getData(acSearch.getText().toString());
+            }
+        });
 
 
 
