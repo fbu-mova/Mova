@@ -3,9 +3,12 @@ package com.example.mova.views;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.HapticFeedbackConstants;
+import android.view.TouchDelegate;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -71,6 +74,7 @@ public class ActionView extends LinearLayout {
             typedArray.recycle();
         }
 
+        expandTouchArea();
         setOnClickListener((v) -> {});
     }
 
@@ -130,6 +134,23 @@ public class ActionView extends LinearLayout {
             tvText.setTextColor(config.colorTextIncomplete);
             ivToggle.setColorFilter(config.colorBoxIncomplete);
         }
+    }
+
+    private void expandTouchArea() {
+        final View parent = (View) flToggle.getParent();  // button: the view you want to enlarge hit area
+        parent.post( new Runnable() {
+            public void run() {
+                Resources res = getResources();
+                int area = res.getDimensionPixelOffset(R.dimen.elementMargin);
+                final Rect rect = new Rect();
+                flToggle.getHitRect(rect);
+//                rect.top -= 100;    // increase top hit area
+                rect.left -= area;   // increase left hit area
+//                rect.bottom += 100; // increase bottom hit area
+                rect.right += area;  // increase right hit area
+                parent.setTouchDelegate(new TouchDelegate(rect, flToggle));
+            }
+        });
     }
 
     @Override

@@ -8,9 +8,10 @@
 
     <FrameLayout
         android:id="@+id/flToggle"
-        android:layout_width="@dimen/profileImage"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/profileImage"
         android:layout_gravity="center_vertical"
+        android:layout_marginRight="@dimen/elementMargin"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="auto">
