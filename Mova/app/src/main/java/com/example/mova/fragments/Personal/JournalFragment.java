@@ -306,6 +306,10 @@ public class JournalFragment extends Fragment {
 
     private void loadMoreEntries() {
         journal.loadMoreEntries((e) -> {
+            // If the current date is not yet added, add it
+            Date today = TimeUtils.normalizeToDay(new Date());
+            if (journal.getDates().indexOf(today) < 0) journal.addEmptyDate(today);
+
             displayEntries(currDate);
             esrlEntries.setRefreshing(false);
         });

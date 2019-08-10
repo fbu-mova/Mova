@@ -65,6 +65,10 @@ public class Journal {
         return entriesFromDate;
     }
 
+    public void addEmptyDate(Date date) {
+        getEntriesByDate(date);
+    }
+
     /**
      * Gets the date after the given date.
      * If the date does not exist or there is no date after the given date, returns the given date.
