@@ -149,15 +149,15 @@ xmlns:tools="http://schemas.android.com/tools"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_round_close_24px" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabPost"
+    <com.example.mova.views.EdgeFloatingActionButton
+        android:id="@+id/efabPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
-        android:layout_marginEnd="@dimen/innerMargin"
-        android:layout_marginBottom="@dimen/innerMargin"
-        android:clickable="true"
-        app:backgroundTint="@color/blueLight"
+        android:layout_marginTop="164dp"
+        android:layout_marginBottom="@dimen/elementMargin"
+        app:backgroundTint="@color/blueMid"
+        app:image="@drawable/ic_round_email_whoosh_24px"
+        app:imageMargin="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

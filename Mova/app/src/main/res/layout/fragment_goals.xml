@@ -77,18 +77,14 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabComposeGoal"
+    <com.example.mova.views.EdgeFloatingActionButton
+        android:id="@+id/efabCompose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:adjustViewBounds="false"
-        android:src="@drawable/goals"
-        app:fabSize="normal"
+        android:layout_marginBottom="@dimen/elementMargin"
+        app:backgroundTint="@color/blueMid"
+        app:image="@drawable/ic_round_add"
+        app:imageTint="@color/blueUltraLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

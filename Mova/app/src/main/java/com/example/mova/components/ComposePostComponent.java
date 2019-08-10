@@ -1,5 +1,7 @@
 package com.example.mova.components;
 
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.example.mova.views.PersonalSocialToggle;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
@@ -28,7 +31,6 @@ import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.Wrapper;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
@@ -116,7 +118,9 @@ public abstract class ComposePostComponent extends Component {
         if (postConfig.postToReply == null) {
             holder.flReplyContent.setVisibility(View.GONE);
         } else {
-            PostComponent postComponent = new PostComponent(postConfig.postToReply, new PostComponent.Config(null, true, false, false));
+            PostComponent.Config config = new PostComponent.Config(null, true, false, false);
+            config.showMedia = false;
+            PostComponent postComponent = new PostComponent(postConfig.postToReply, config);
             holder.flReplyContent.setVisibility(View.VISIBLE);
             holder.clPostToReply.setMargin(32);
             holder.clPostToReply.inflateComponent(getActivity(), postComponent);
@@ -124,9 +128,20 @@ public abstract class ComposePostComponent extends Component {
     }
 
     private void displayPostType() {
-        // TODO: Set correct icons
         Wrapper<String> type = new Wrapper<>();
         type.item = "";
+
+        Wrapper<Boolean> wroteGroup = new Wrapper<>(false);
+        Wrapper<Boolean> wroteReply = new Wrapper<>(false);
+
+        Resources res = getActivity().getResources();
+        if (postConfig.isPersonal) {
+            holder.efabPost.setImageTint(res.getColor(R.color.blueUltraLight));
+            holder.efabPost.setBackgroundTint(res.getColor(R.color.blueMid));
+        } else {
+            holder.efabPost.setImageTint(res.getColor(R.color.purpleUltraLight));
+            holder.efabPost.setBackgroundTint(res.getColor(R.color.purpleMid));
+        }
 
         List<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
 
@@ -145,6 +160,7 @@ public abstract class ComposePostComponent extends Component {
                                 + (author.equals(User.getCurrentUser())
                                     ? "yourself"
                                     : author.getUsername());
+                        wroteReply.item = true;
                     }
                     cb.call(errResult);
             }));
@@ -164,6 +180,7 @@ public abstract class ComposePostComponent extends Component {
                     } else {
                         Group group = (Group) parseObject;
                         type.item += " in " + group.getName();
+                        wroteGroup.item = true;
                     }
                     cb.call(errResult);
             }));
@@ -178,7 +195,18 @@ public abstract class ComposePostComponent extends Component {
             } else {
                 holder.llTypeIndicator.setVisibility(View.VISIBLE);
                 holder.tvTypeIndicator.setText(type.item);
-                // TODO: Set image
+
+                Drawable icon;
+                if (wroteReply.item) {
+                    icon = res.getDrawable(R.drawable.ic_round_reply_24px);
+                } else if (wroteGroup.item) {
+                    icon = res.getDrawable(R.drawable.ic_highfive);
+                } else if (postConfig.isPersonal) {
+                    icon = res.getDrawable(R.drawable.ic_round_person_24px);
+                } else {
+                    icon = res.getDrawable(R.drawable.ic_round_people_24px);
+                }
+                holder.ivTypeIndicator.setImageDrawable(icon);
             }
         });
     }
@@ -214,7 +242,7 @@ public abstract class ComposePostComponent extends Component {
     private void configureClickEvents() {
         holder.ivClose.setOnClickListener((view) -> onCancel());
 
-        holder.fabPost.setOnClickListener((view) -> {
+        holder.efabPost.setOnClickListener((view) -> {
             Post post = makePost();
             if (post != null) {
                 postConfig.post = post;
@@ -267,7 +295,7 @@ public abstract class ComposePostComponent extends Component {
 
         @BindView(R.id.etBody)          public EditText etBody;
         @BindView(R.id.ivClose)         public ImageView ivClose;
-        @BindView(R.id.fabPost)         public FloatingActionButton fabPost;
+        @BindView(R.id.efabPost)        public EdgeFloatingActionButton efabPost;
         @BindView(R.id.psToggle)        public PersonalSocialToggle psToggle;
 
         public ViewHolder(@NonNull View itemView) {

@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.mova.containers.GestureLayout;
 import com.example.mova.containers.GestureListener;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -40,6 +40,7 @@ import com.example.mova.utils.DataEvent;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.activities.JournalComposeActivity;
 import com.example.mova.model.Post;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class JournalFragment extends Fragment {
     @BindView(R.id.tvDate)      protected TextView tvDate;
     @BindView(R.id.eslDates)    protected EndlessScrollLayout<Component.ViewHolder> eslDates;
     @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
-    @BindView(R.id.fabCompose)  protected FloatingActionButton fabCompose;
+    @BindView(R.id.efabCompose)  protected EdgeFloatingActionButton efabCompose;
 
     public JournalFragment() {
         // Required empty public constructor
@@ -252,10 +253,27 @@ public class JournalFragment extends Fragment {
         esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 64));
 
         // On fab click, open compose activity
-        fabCompose.setOnClickListener((clickedView) -> {
-//            Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
-//            startActivityForResult(intent, JournalComposeActivity.COMPOSE_REQUEST_CODE);
-            // TODO
+        efabCompose.setOnClickListener((clickedView) -> {
+            PostConfig config = new PostConfig();
+            config.isPersonal = true;
+            config.displayMoodSelector = true;
+
+            ComposePostDialog dialog = new ComposePostDialog((DelegatedResultActivity) getActivity(), config) {
+                @Override
+                protected void onCancel() {
+
+                }
+
+                @Override
+                protected void onPost(PostConfig config) {
+                    config.savePost((entry) -> {
+                        journal.addEntry(config.post.getCreatedAt(), config.post);
+                        displayEntries(new Date());
+                    });
+                }
+            };
+
+            dialog.show();
         });
 
         displayEntries(currDate);

@@ -34,11 +34,10 @@ public class EdgeFloatingActionButton extends FrameLayout {
     @BindView(R.id.flPadded) protected FrameLayout flPadded;
     @BindView(R.id.space)    protected Space space;
 
-    private int cornerRadius;
+    private int cornerRadius, imageMargin, padding;
     private Drawable image;
     private int imageTint, backgroundTint;
     private int edge;
-    private int padding;
 
     private enum Edge {
         Left(1),
@@ -119,9 +118,8 @@ public class EdgeFloatingActionButton extends FrameLayout {
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.EdgeFloatingActionButton, 0, 0);
         Resources res = getContext().getResources();
         try {
-            cornerRadius = typedArray.getDimensionPixelOffset(
-                    R.styleable.EdgeFloatingActionButton_cornerRadius,
-                    res.getDimensionPixelOffset(R.dimen.borderRadius));
+            cornerRadius = typedArray.getDimensionPixelOffset(R.styleable.EdgeFloatingActionButton_cornerRadius, res.getDimensionPixelOffset(R.dimen.borderRadius));
+            imageMargin = typedArray.getDimensionPixelOffset(R.styleable.EdgeFloatingActionButton_imageMargin, res.getDimensionPixelOffset(R.dimen.iconMargin));
 
             image = typedArray.getDrawable(R.styleable.EdgeFloatingActionButton_image);
             imageTint = typedArray.getColor(R.styleable.EdgeFloatingActionButton_imageTint, res.getColor(R.color.blueUltraLight));
@@ -134,6 +132,7 @@ public class EdgeFloatingActionButton extends FrameLayout {
 
         padding = res.getDimensionPixelOffset(R.dimen.elementMargin); // FIXME: Likely temp until fetched live
 
+        resizeImage();
         offsetEdge();
         constrainOffsetEdge();
         cvMask.setRadius(cornerRadius);
@@ -141,6 +140,22 @@ public class EdgeFloatingActionButton extends FrameLayout {
         iv.setImageDrawable(image);
         iv.setColorFilter(imageTint);
         cvMask.setCardBackgroundColor(backgroundTint);
+    }
+
+    public void setImageTint(int color) {
+        imageTint = color;
+        iv.setColorFilter(color);
+    }
+
+    public void setBackgroundTint(int color) {
+        backgroundTint = color;
+        cvMask.setCardBackgroundColor(color);
+    }
+
+    private void resizeImage() {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv.getLayoutParams();
+        params.setMargins(imageMargin, imageMargin, imageMargin, imageMargin);
+        iv.setLayoutParams(params);
     }
 
     private void offsetEdge() {

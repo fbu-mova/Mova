@@ -148,6 +148,11 @@ public class PostComponent extends ComposableComponent {
     private void displayMedia() {
         Runnable hide = () -> holder.clMedia.setVisibility(View.GONE);
 
+        if (!config.showMedia) {
+            hide.run();
+            return;
+        }
+
         Media media = post.getMedia();
         if (media == null) {
             hide.run();
@@ -395,6 +400,7 @@ public class PostComponent extends ComposableComponent {
     public static class Config {
         public String subheader = null;
         public boolean showGroup = true;
+        public boolean showMedia = true;
         public boolean showButtons = true;
         public boolean allowDetailsClick = true;
 
@@ -407,6 +413,7 @@ public class PostComponent extends ComposableComponent {
         public Config(String subheader, boolean showGroup, boolean showButtons, boolean allowDetailsClick) {
             this.subheader = subheader;
             this.showButtons = showButtons;
+            this.showMedia = true;
             this.allowDetailsClick = allowDetailsClick;
             this.showGroup = showGroup;
         }

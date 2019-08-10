@@ -25,6 +25,7 @@ import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -54,15 +55,15 @@ public class GoalsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @BindView(R.id.fabComposeGoal)      protected FloatingActionButton fabComposeGoal;
+    @BindView(R.id.efabCompose) protected EdgeFloatingActionButton fabComposeGoal;
 
     // thumbnail recyclerview
-    @BindView(R.id.rvThumbnailGoals)    protected RecyclerView rvThumbnailGoals;
+    @BindView(R.id.rvThumbnailGoals) protected RecyclerView rvThumbnailGoals;
     private ArrayList<Goal.GoalData> thumbnailGoals;
     private DataComponentAdapter<Goal.GoalData> thumbnailGoalsAdapter;
 
     // allGoals recyclerview
-    @BindView(R.id.rvAllGoals)          protected RecyclerView rvAllGoals;
+    @BindView(R.id.rvAllGoals) protected RecyclerView rvAllGoals;
     private ArrayList<Goal.GoalData> allGoals;
     private DataComponentAdapter<Goal.GoalData> allGoalsAdapter;
 

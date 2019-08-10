@@ -44,6 +44,8 @@
         app:edge="right"
         app:image="@drawable/ic_round_add"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@color/purpleMid"
+        app:imageTint="@color/purpleUltraLight"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

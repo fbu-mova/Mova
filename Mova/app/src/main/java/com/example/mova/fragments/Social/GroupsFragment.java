@@ -35,6 +35,7 @@ import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -63,8 +64,8 @@ public class GroupsFragment extends Fragment {
     @BindView(R.id.nsvGroups)
     NestedScrollView nsvGroups;
 
-    @BindView(R.id.fabCreateGroup)
-    FloatingActionButton fabCreateGroup;
+    @BindView(R.id.efabCompose)
+    EdgeFloatingActionButton fabCreateGroup;
 
     @BindView(R.id.rvGroups) RecyclerView rvGroups;
     protected List<Group> userGroups;

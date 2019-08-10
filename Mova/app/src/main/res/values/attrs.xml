@@ -43,7 +43,8 @@
 
     <declare-styleable name="EdgeFloatingActionButton">
         <attr name="cornerRadius" format="dimension"/>
-        <attr name="image" format="integer"/>
+        <attr name="image" format="reference"/>
+        <attr name="imageMargin" format="dimension"/>
         <attr name="imageTint" format="color"/>
         <attr name="backgroundTint" format="color"/>
         <attr name="edge">

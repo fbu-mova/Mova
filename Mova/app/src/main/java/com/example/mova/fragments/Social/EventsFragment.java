@@ -32,6 +32,7 @@ import com.example.mova.model.Event;
 import com.example.mova.model.User;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 
@@ -57,8 +58,8 @@ public class EventsFragment extends Fragment {
     @BindView(R.id.ibSearch)
     ImageButton ibSearch;
 
-    @BindView(R.id.fabAdd)
-    FloatingActionButton fabAdd;
+    @BindView(R.id.efabCompose)
+    EdgeFloatingActionButton fabAdd;
 
     @BindView(R.id.rvYourEvents) RecyclerView rvYourEvents;
     protected List<Event> yourEvents;
