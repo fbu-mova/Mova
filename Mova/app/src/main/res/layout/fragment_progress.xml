@@ -28,7 +28,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_bold"
-            android:text="Y1"
             android:textAlignment="center"
             android:textColor="@color/textProgressGraph"
             android:textSize="@dimen/textSizeInfo"
@@ -55,7 +54,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_bold"
-            android:text="Y2"
             android:textAlignment="center"
             android:textColor="@color/textProgressGraph"
             android:textSize="@dimen/textSizeInfo"
@@ -169,7 +167,7 @@
                 android:layout_marginRight="@dimen/outerMargin"
                 android:text="Needs Work"
                 android:textColor="@color/textMain"
-                android:textSize="@dimen/textSizeTitle" />
+                android:textSize="@dimen/textSizeFocus" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvWork"
@@ -188,7 +186,7 @@
                 android:layout_marginRight="@dimen/outerMargin"
                 android:text="Going Well"
                 android:textColor="@color/textMain"
-                android:textSize="@dimen/textSizeTitle" />
+                android:textSize="@dimen/textSizeFocus" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvWell"

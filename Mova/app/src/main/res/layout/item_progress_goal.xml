@@ -38,21 +38,13 @@
                 android:layout_margin="@dimen/innerMargin"
                 android:orientation="horizontal">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvGoal"
-                    android:layout_width="@dimen/profileImage"
-                    android:layout_height="@dimen/profileImage"
+                <ImageView
+                    android:id="@+id/ivGoal"
+                    android:layout_width="@dimen/buttonIcon"
+                    android:layout_height="@dimen/buttonIcon"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginRight="@dimen/elementMargin"
-                    app:cardCornerRadius="@dimen/borderRadius"
-                    app:cardElevation="0dp">
-
-                    <ImageView
-                        android:id="@+id/ivGoal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="@dimen/iconMargin"
-                        app:srcCompat="@color/blueMid" />
-                </androidx.cardview.widget.CardView>
+                    app:srcCompat="@android:color/transparent" />
 
                 <TextView
                     android:id="@+id/tvGoalTitle"
@@ -60,10 +52,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:fontFamily="@font/lato_bold"
+                    android:fontFamily="@font/lato"
                     android:text="Goal"
-                    android:textColor="@color/blueMid"
-                    android:textSize="@dimen/textSizeFocus" />
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeBody" />
 
             </LinearLayout>
         </FrameLayout>

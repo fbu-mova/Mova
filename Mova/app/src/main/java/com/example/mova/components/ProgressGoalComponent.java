@@ -81,7 +81,7 @@ public class ProgressGoalComponent extends Component {
         int ultraLight = ColorUtils.getColor(getActivity().getResources(), hue, ColorUtils.Lightness.UltraLight);
         int mid = ColorUtils.getColor(getActivity().getResources(), hue, ColorUtils.Lightness.Mid);
 
-        viewHolder.tvGoalTitle.setTextColor(mid);
+//        viewHolder.tvGoalTitle.setTextColor(mid);
         viewHolder.goalProgressBar.setUnfilledColor(ultraLight);
         viewHolder.goalProgressBar.setFilledColor(mid);
         Icons.from(getActivity()).displayNounIcon(goal, null, viewHolder.ivGoal);
@@ -103,7 +103,7 @@ public class ProgressGoalComponent extends Component {
 
         @BindView(R.id.tvGoalTitle) protected TextView tvGoalTitle;
         @BindView(R.id.ivGoal) protected ImageView ivGoal;
-        @BindView(R.id.cvGoal) protected CardView cvGoal;
+//        @BindView(R.id.cvGoal) protected CardView cvGoal;
         @BindView(R.id.goalProgressBar) protected GoalProgressBar goalProgressBar;
 
         public ProgressGoalViewHolder(@NonNull View itemView) {
