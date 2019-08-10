@@ -11,8 +11,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCards"
         android:layout_width="match_parent"
-        android:layout_height="454dp"
-        android:layout_gravity="bottom" />
+        android:layout_height="match_parent" />
 
     <com.example.mova.component.ComponentLayout
         android:id="@+id/component"
@@ -20,11 +19,5 @@
         android:layout_height="wrap_content">
 
     </com.example.mova.component.ComponentLayout>
-
-    <com.example.mova.views.ActionView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/outerMargin"
-        app:text="Test Thing!" />
 
 </FrameLayout>
