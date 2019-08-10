@@ -1,38 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/flRoot"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:orientation="vertical"
-    android:padding="0dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clRoot"
+    android:layout_width="56dp"
+    android:layout_height="56dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvMask"
+    <FrameLayout
+        android:id="@+id/flPadded"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/blueMid"
-        app:cardCornerRadius="@dimen/borderRadius"
-        app:cardElevation="@dimen/shallowCardElevation">
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="@+id/space"
+        app:layout_constraintEnd_toEndOf="@+id/space"
+        app:layout_constraintStart_toStartOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/space">
 
         <FrameLayout
-            android:id="@+id/flImage"
-            android:layout_width="@dimen/fabSize"
-            android:layout_height="@dimen/fabSize"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true">
+            android:id="@+id/flRoot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:padding="@dimen/elementMargin">
 
-            <ImageView
-                android:id="@+id/iv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/iconMargin"
-                android:tint="@color/blueUltraLight" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvMask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/blueMid"
+                app:cardCornerRadius="@dimen/borderRadius"
+                app:cardElevation="@dimen/shallowCardElevation">
+
+                <FrameLayout
+                    android:id="@+id/flImage"
+                    android:layout_width="@dimen/fabSize"
+                    android:layout_height="@dimen/fabSize"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:id="@+id/iv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/iconMargin"
+                        android:tint="@color/blueUltraLight" />
+                </FrameLayout>
+
+            </androidx.cardview.widget.CardView>
+
         </FrameLayout>
+    </FrameLayout>
 
-    </androidx.cardview.widget.CardView>
+    <Space
+        android:id="@+id/space"
+        android:layout_width="@dimen/fabSize"
+        android:layout_height="@dimen/fabSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
 
-</FrameLayout>
+        android:layout_marginTop="@dimen/elementMargin"
+        android:layout_marginBottom="@dimen/elementMargin"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
