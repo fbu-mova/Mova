@@ -35,11 +35,13 @@ public class ActionEditComponent extends Component {
     private ActionEditViewHolder viewHolder;
 
     private boolean prioritySelected;
+    private boolean isCreate;
+    private String key;
 
     private ComponentManager componentManager;
     private GoalUtils.onActionEditSaveListener onActionEditSaveListener;
 
-    public ActionEditComponent(Action action, ComponentManager componentManager, GoalUtils.onActionEditSaveListener onActionEditSaveListener) {
+    public ActionEditComponent(boolean isCreate, Action action, ComponentManager componentManager, GoalUtils.onActionEditSaveListener onActionEditSaveListener) {
         super();
 
         this.action = action;
@@ -49,6 +51,8 @@ public class ActionEditComponent extends Component {
         this.wrapper = new Action.Wrapper();
 
         this.prioritySelected = (action != null) ? this.action.getIsPriority() : false;
+
+        this.isCreate = isCreate;
     }
 
     @Override
@@ -85,6 +89,9 @@ public class ActionEditComponent extends Component {
         checkViewHolderClass(holder, ActionEditViewHolder.class);
         this.viewHolder = (ActionEditViewHolder) holder;
 
+        key = (isCreate) ? "CreateActionViewComponent" : "ActionViewComponent";
+
+
         if (prioritySelected)   viewHolder.priority.setColorFilter(R.color.textMain);
 
         viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +107,7 @@ public class ActionEditComponent extends Component {
         viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                componentManager.swap("CreateActionViewComponent");
+                componentManager.swap(key);
             }
         });
 
@@ -116,7 +123,7 @@ public class ActionEditComponent extends Component {
         viewHolder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                componentManager.swap("CreateActionViewComponent");
+                componentManager.swap(key);
             }
         });
 
