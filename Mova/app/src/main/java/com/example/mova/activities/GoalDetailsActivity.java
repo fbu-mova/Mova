@@ -383,8 +383,8 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
                 for (int i = 0; i < objects.size(); i++) {
                     Action action = objects.get(i);
                     actions.add(0, action);
-                    actionsAdapter.notifyItemInserted(0);
                 }
+                actionsAdapter.notifyItemRangeInserted(0, objects.size());
                 rvActions.scrollToPosition(0);
             }
         });

@@ -253,16 +253,14 @@ public class GoalCardComponent extends Component {
                     .whereEqualTo(KEY_PARENT_USER, getCurrentUser())
                     .findInBackground(new FindCallback<Action>() {
                         @Override
-                        public void done(List<Action> objects, ParseException e) {
+                        public void done(List<Action> objectsList, ParseException e) {
                             if (e == null && objects.size() == 1) {
                                 Log.d(TAG, "found child action");
 
-                                Action action = objects.get(0);
+                                Action action = objectsList.get(0);
                                 boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
                                 SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
                                 sharedActions.add(0, data);
-                                sharedActionsAdapter.notifyItemInserted(0);
-
                             }
                             else {
                                 Log.e(TAG, "either size(actions) wrong or error", e);
@@ -271,6 +269,7 @@ public class GoalCardComponent extends Component {
                         }
                     });
         }, (e) -> {
+            sharedActionsAdapter.notifyItemRangeInserted(0, objects.size());
             rvActions.scrollToPosition(0);
         });
     }
@@ -281,8 +280,8 @@ public class GoalCardComponent extends Component {
         GoalUtils.loadGoalSharedActions(goal, (sharedActionsList) -> {
             for (SharedAction sharedAction : sharedActionsList) {
                 sharedActions.add(0, new SharedAction.Data(sharedAction, false));
-                sharedActionsAdapter.notifyItemInserted(0);
             }
+            sharedActionsAdapter.notifyItemRangeInserted(0, sharedActionsList.size());
             rvActions.scrollToPosition(0);
         });
     }
@@ -293,9 +292,8 @@ public class GoalCardComponent extends Component {
             // load into recyclerview
             E action = objects.get(i);
             actions.add(0, action);
-            actionsAdapter.notifyItemInserted(0);
         }
-
+        actionsAdapter.notifyItemRangeInserted(0, objects.size());
         rvActions.scrollToPosition(0);
 
     }

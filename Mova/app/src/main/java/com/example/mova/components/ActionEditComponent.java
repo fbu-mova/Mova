@@ -92,7 +92,7 @@ public class ActionEditComponent extends Component {
         key = (isCreate) ? "CreateActionViewComponent" : "ActionViewComponent";
 
 
-        if (prioritySelected)   viewHolder.priority.setColorFilter(R.color.textMain);
+        if (prioritySelected)   viewHolder.priority.setColorFilter(R.color.buttonActive);
 
         viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
             @Override
