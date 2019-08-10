@@ -95,7 +95,7 @@
                         android:layout_weight="0"
                         android:foregroundGravity="center_vertical"
                         android:tint="@android:color/white"
-                        tools:srcCompat="@drawable/ic_round_camera_alt_24px" />
+                        app:srcCompat="@drawable/ic_round_camera_alt_24px" />
 
                     <TextView
                         android:id="@+id/tvCameraLabel"

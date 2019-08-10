@@ -64,7 +64,7 @@ xmlns:tools="http://schemas.android.com/tools"
                         android:layout_weight="0"
                         android:scaleType="fitCenter"
                         android:tint="@color/textLight"
-                        tools:srcCompat="@drawable/ic_round_reply_24px" />
+                        app:srcCompat="@drawable/ic_round_reply_24px" />
 
                     <TextView
                         android:id="@+id/tvTypeIndicator"
@@ -109,7 +109,7 @@ xmlns:tools="http://schemas.android.com/tools"
                             android:layout_marginRight="@dimen/elementMargin"
                             android:layout_weight="0"
                             android:tint="@color/textLight"
-                            tools:srcCompat="@drawable/ic_round_add_photo_alternate_24px" />
+                            app:srcCompat="@drawable/ic_round_add_photo_alternate_24px" />
 
                         <TextView
                             android:id="@+id/tvMediaPrompt"
