@@ -77,7 +77,7 @@ public class CreateActionComponent extends Component {
         });
 
         viewComponent = new CreateActionViewComponent(componentManager);
-        editComponent = new ActionEditComponent(null, componentManager, new GoalUtils.onActionEditSaveListener() {
+        editComponent = new ActionEditComponent(true, null, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {
                 // todo -- want to save the string task and the updated icons logic to the unsavedAction

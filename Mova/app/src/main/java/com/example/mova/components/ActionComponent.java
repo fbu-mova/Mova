@@ -90,7 +90,7 @@ public class ActionComponent extends Component {
         });
 
         viewComponent = new ActionViewComponent(item, componentManager);
-        editComponent = new ActionEditComponent(item, componentManager, new GoalUtils.onActionEditSaveListener() {
+        editComponent = new ActionEditComponent(false, item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {
                 // editing a social goal - two cases (if author, if not author)
