@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.ProgressStack;
 import com.example.mova.ProgressStackManager;
@@ -81,7 +82,7 @@ public class ProgressFragment extends Fragment {
     private List<Goal> graphGoals;
     private List<Goal> goodGoals;
     private List<Goal> badGoals;
-    private List<Post> userMoods;
+    private List<MoodWrapper> userMoods;
 
     private ProgressStackManager graphManager;
     private HashMap<Goal, Integer> hueMap;
@@ -91,7 +92,7 @@ public class ProgressFragment extends Fragment {
     private int length = 0;
     private User user;
     private ViewAdapter<ProgressStack> graphAdapter;
-    private DataComponentAdapter<Post> gridMoodAdapter;
+    private DataComponentAdapter<MoodWrapper> gridMoodAdapter;
     private DataComponentAdapter<Goal> goalsWellAdapter;
     private DataComponentAdapter<Goal> goalsWorkAdapter;
 
@@ -163,14 +164,14 @@ public class ProgressFragment extends Fragment {
 
         // Create adapters
 
-        gridMoodAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), userMoods) {
+        gridMoodAdapter = new DataComponentAdapter<MoodWrapper>((DelegatedResultActivity) getActivity(), userMoods) {
             @Override
-            public Component makeComponent(Post item, Component.ViewHolder holder) {
-                return new ProgressGridMoodComponent(item);
+            public Component makeComponent(MoodWrapper item, Component.ViewHolder holder) {
+                return new ProgressGridMoodComponent(item.mood, item.date);
             }
 
             @Override
-            protected Component.Inflater makeInflater(Post item) {
+            protected Component.Inflater makeInflater(MoodWrapper item) {
                 return new ProgressGridMoodComponent.Inflater();
             }
         };
@@ -242,7 +243,7 @@ public class ProgressFragment extends Fragment {
                 AsyncUtils.executeMany(graphGoals.size(), (i,cb) -> {
                     Goal goal = graphGoals.get(i);
                     int color = getGoalGraphColor(goal);
-                    getDataForGraph(goal, user, length, (data) -> {
+                    getDataForGraph(goal, (data) -> {
                         for (int j = 0; j < data.size(); j++){
                             graphManager.show(color);
                             graphManager.setValue(j, color, data.get(j));
@@ -261,6 +262,34 @@ public class ProgressFragment extends Fragment {
                 });
 
             });
+        });
+
+        getDailyFirstPost((map, e) -> {
+            if (e != null) return;
+            AsyncUtils.executeMany(
+                length,
+                (i, cb) -> {
+                    Date date = getDate(i);
+                    Post post = map.get(date);
+                    if (post == null) {
+                        userMoods.add(new MoodWrapper(Mood.Status.Empty, date));
+                        cb.call(null);
+                        return;
+                    }
+                    post.fetchIfNeededInBackground((obj, e1) -> {
+                        if (e1 != null) {
+                            Log.e("ProgressFragment", "Failed to fetch post for mood", e);
+                            cb.call(e1);
+                            return;
+                        }
+                        userMoods.add(new MoodWrapper(post.getMood(), post.getCreatedAt()));
+                        cb.call(null);
+                    });
+                },
+                (e1) -> {
+                    gridMoodAdapter.notifyDataSetChanged();
+                }
+            );
         });
     }
 
@@ -304,25 +333,48 @@ public class ProgressFragment extends Fragment {
         return true;
     }
 
-    public static void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ListCallback<Integer> callback){
+    public void getDataForGraph(Goal goal, AsyncUtils.ListCallback<Integer> callback){
         List<Integer> dataPoints = new ArrayList<>();
         AsyncUtils.waterfall(
             length,
             (i, cb) -> {
-                Date date = new Date();
-                //Make the day move a day earlier each iteration
-                long dif = date.getTime() - 24*60*60*1000*(length - (i+1));
-                date.setTime(dif);
-                date = TimeUtils.normalizeToDay(date);
-                Date finalDate = date;
-                GoalUtils.getNumActionsComplete(finalDate, goal, user, (num) -> {
+                Date date = getDate(length - i);
+                GoalUtils.getNumActionsComplete(date, goal, user, (num) -> {
                     dataPoints.add(num);
                     cb.call(null);
                 });
             },
             (err) -> {callback.call(dataPoints);}
         );
+    }
 
+    private void getDailyFirstPost(AsyncUtils.TwoItemCallback<HashMap<Date, Post>, Throwable> callback) {
+        HashMap<Date, Post> posts = new HashMap<>();
+        journal.loadEntries(
+            (query) -> {
+                Date date = getDate(length);
+                query.whereGreaterThanOrEqualTo(Post.KEY_CREATED_AT, date);
+            },
+            (e) -> {
+                if (e != null) {
+                    callback.call(posts, e);
+                    return;
+                }
+
+                for (int i = 0; i < length; i++) {
+                    Date date = getDate(i);
+                    SortedList<Post> onDate = journal.getEntriesByDate(date);
+                    Post post = (onDate.size() == 0) ? null : onDate.get(0);
+                    posts.put(date, post);
+                }
+
+                callback.call(posts, null);
+            }
+        );
+    }
+
+    private Date getDate(int daysAgo) {
+        return TimeUtils.normalizeToDay(TimeUtils.getDaysAgo(new Date(), daysAgo));
     }
 
     public void queryGoals(AsyncUtils.EmptyCallback callback){
@@ -407,5 +459,15 @@ public class ProgressFragment extends Fragment {
                 });
             });
         });
+    }
+
+    private static class MoodWrapper {
+        Mood.Status mood;
+        Date date;
+
+        MoodWrapper(Mood.Status mood, Date date) {
+            this.mood = mood;
+            this.date = date;
+        }
     }
 }

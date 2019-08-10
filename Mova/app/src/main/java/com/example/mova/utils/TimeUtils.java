@@ -128,4 +128,9 @@ public class TimeUtils {
     public static long getManyDaysInMillis(int numDays) {
         return getDayInMillis() * numDays;
     }
+
+    public static Date getDaysAgo(Date fromDate, int numDaysAgo) {
+        long days = TimeUtils.getManyDaysInMillis(numDaysAgo);
+        return new Date(fromDate.getTime() - days);
+    }
 }

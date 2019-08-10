@@ -32,12 +32,12 @@ public class ProgressGridMoodComponent extends Component {
     private ProgressGridViewHolder viewHolder;
     private ComponentManager componentManager;
 
-    private Post post;
     private Mood.Status mood;
     private Date date;
 
-    public ProgressGridMoodComponent(Post post) {
-        this.post = post;
+    public ProgressGridMoodComponent(Mood.Status mood, Date date) {
+        this.mood = mood;
+        this.date = date;
     }
 
     @Override
@@ -66,15 +66,7 @@ public class ProgressGridMoodComponent extends Component {
 
     @Override
     protected void onLaunch() {
-        if (mood != null && date != null) return;
-        post.fetchIfNeededInBackground((obj, e) -> {
-            if (e != null) {
-                Log.e("ProgressGridMoodComp", "Failed to fetch post for mood", e);
-                return;
-            }
-            mood = post.getMood();
-            date = post.getCreatedAt();
-        });
+
     }
 
     @Override
