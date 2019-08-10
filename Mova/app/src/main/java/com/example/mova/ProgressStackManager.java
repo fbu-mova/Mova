@@ -56,6 +56,7 @@ public class ProgressStackManager {
     }
 
     public void setValue(int index, int color, int value) {
+        if (!contains(color)) add(color);
         stacks.get(index).setValue(color, value);
         updateDisplayMax();
     }
