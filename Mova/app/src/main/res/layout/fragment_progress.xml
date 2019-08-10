@@ -156,7 +156,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMood"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/outerMargin"
+                android:layout_marginRight="@dimen/outerMargin" />
 
             <TextView
                 android:id="@+id/tvNeedsWork"

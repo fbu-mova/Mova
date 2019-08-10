@@ -3,6 +3,7 @@ package com.example.mova.fragments.Personal;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ import com.example.mova.adapters.ViewAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.components.ProgressGridMoodComponent;
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Mood;
@@ -211,6 +213,7 @@ public class ProgressFragment extends Fragment {
         rvWork.setAdapter(goalsWorkAdapter);
 
         // TODO: Add edge decorators
+        rvMood.addItemDecoration(new RemoveEndMarginDecoration());
 
         queryGoals(() -> {
             GoalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
@@ -266,13 +269,14 @@ public class ProgressFragment extends Fragment {
 
         getDailyFirstPost((map, e) -> {
             if (e != null) return;
+            MoodWrapper[] arr = new MoodWrapper[length];
             AsyncUtils.executeMany(
                 length,
                 (i, cb) -> {
                     Date date = getDate(i);
                     Post post = map.get(date);
                     if (post == null) {
-                        userMoods.add(new MoodWrapper(Mood.Status.Empty, date));
+                        arr[i] = new MoodWrapper(Mood.Status.Empty, date);
                         cb.call(null);
                         return;
                     }
@@ -282,11 +286,14 @@ public class ProgressFragment extends Fragment {
                             cb.call(e1);
                             return;
                         }
-                        userMoods.add(new MoodWrapper(post.getMood(), post.getCreatedAt()));
+                        arr[i] = new MoodWrapper(post.getMood(), post.getCreatedAt());
                         cb.call(null);
                     });
                 },
                 (e1) -> {
+                    for (int i = length - 1; i >= 0; i--) {
+                        userMoods.add(arr[i]);
+                    }
                     gridMoodAdapter.notifyDataSetChanged();
                 }
             );
@@ -468,6 +475,17 @@ public class ProgressFragment extends Fragment {
         MoodWrapper(Mood.Status mood, Date date) {
             this.mood = mood;
             this.date = date;
+        }
+    }
+
+    private static class RemoveEndMarginDecoration extends RecyclerView.ItemDecoration {
+        @Override
+        public void getItemOffsets(Rect outRect, View view,
+                                   RecyclerView parent, RecyclerView.State state) {
+            // Add top margin only for the first item to avoid double space between items
+            if (parent.getChildLayoutPosition(view) == state.getItemCount() - 1) {
+                outRect.right = 0;
+            }
         }
     }
 }
