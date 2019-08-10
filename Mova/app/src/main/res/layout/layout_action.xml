@@ -1,28 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <FrameLayout
-        android:id="@+id/flToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/profileImage"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight="@dimen/elementMargin"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="auto">
+    <Space
+        android:id="@+id/space"
+        android:layout_width="@dimen/buttonIcon"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/ivToggle"
-            android:layout_width="@dimen/checkboxSize"
-            android:layout_height="@dimen/checkboxSize"
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="@dimen/profileImage"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <com.lnikkila.extendedtouchview.ExtendedTouchView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layerType="software"
-            app:srcCompat="@drawable/action_incomplete" />
+            app:touchWidth="@dimen/profileImage">
+
+            <FrameLayout
+                android:id="@+id/flToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/profileImage"
+                android:layout_gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="auto">
+
+                <ImageView
+                    android:id="@+id/ivToggle"
+                    android:layout_width="@dimen/checkboxSize"
+                    android:layout_height="@dimen/checkboxSize"
+                    android:layout_gravity="center"
+                    android:layerType="software"
+                    app:srcCompat="@drawable/action_incomplete" />
+            </FrameLayout>
+
+        </com.lnikkila.extendedtouchview.ExtendedTouchView>
     </FrameLayout>
 
     <TextView
@@ -33,5 +59,8 @@
         android:layout_weight="1"
         android:text="Action text"
         android:textColor="@color/textMain"
-        android:textSize="@dimen/textSizeBody" />
-</LinearLayout>
+        android:textSize="@dimen/textSizeBody"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/frameLayout"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
