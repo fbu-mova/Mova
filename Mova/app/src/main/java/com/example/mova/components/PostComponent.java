@@ -30,12 +30,13 @@ import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
+import com.example.mova.views.ComposableContainer;
 import com.parse.ParseQuery;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PostComponent extends ComposableComponent {
+public class PostComponent extends Component {
 
     private Post post;
     private Config config;
@@ -48,11 +49,6 @@ public class PostComponent extends ComposableComponent {
     }
 
     public PostComponent(Post post, Config config) {
-        this(post, makePostConfig(post), config);
-    }
-
-    protected PostComponent(Post post, PostConfig postConfig, Config config) {
-        super(postConfig);
         this.post = post;
         this.config = config;
     }
@@ -113,10 +109,17 @@ public class PostComponent extends ComposableComponent {
         }
         this.holder.tvBody.setText(post.getBody());
 
+        this.holder.composable
+                .setConfig(makePostConfig(post))
+                .setAllowCompose(true)
+                .setOnPost((toPost) -> {
+                    Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                    // TODO
+                });
+
         displayUser();
         configureButtons();
         configurePostClick();
-        setComposeEventView(this.holder.card);
         displayMedia();
         displayGroup();
         displaySubheader();
@@ -343,17 +346,6 @@ public class PostComponent extends ComposableComponent {
         ivIcon.setColorFilter(tintColor);
     }
 
-    @Override
-    protected void onSavePost(Post post) {
-        Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
-        // TODO
-    }
-
-    @Override
-    protected void onCancelCompose() {
-        // TODO
-    }
-
     public static class ViewHolder extends Component.ViewHolder {
 
         // TODO: Find a way to display date without displaying username, etc.
@@ -381,6 +373,8 @@ public class PostComponent extends ComposableComponent {
         @BindView(R.id.ivReply)        public ImageView ivReply;
         @BindView(R.id.ivSave)         public ImageView ivSave;
 
+        @BindView(R.id.composable)     public ComposableContainer composable;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -402,6 +396,7 @@ public class PostComponent extends ComposableComponent {
         public boolean showGroup = true;
         public boolean showMedia = true;
         public boolean showButtons = true;
+        public boolean allowCompose = true;
         public boolean allowDetailsClick = true;
 
         public AsyncUtils.ItemCallback<Post> onReply = (post) -> {};

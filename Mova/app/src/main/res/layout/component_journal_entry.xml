@@ -5,113 +5,126 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.example.mova.views.ComposableContainer
+        android:id="@+id/composable"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/elementMargin"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tvTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:fontFamily="@font/lato_bold"
-            android:text="0:00 XM"
-            android:textColor="@color/textMain"
-            android:textSize="@dimen/textSizeBody" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/ivLocation"
-            android:layout_width="@dimen/inlineIcon"
-            android:layout_height="@dimen/inlineIcon"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="3dp"
-            android:layout_weight="0"
-            android:scaleType="fitCenter"
-            android:tint="@color/textLight"
-            app:srcCompat="@drawable/ic_place_black_24dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/elementMargin"
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Place, State, Country"
-            android:textColor="@color/textLight"
-            android:textSize="@dimen/textSizeBody" />
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/lato_bold"
+                    android:text="0:00 XM"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeBody" />
 
-        <ImageView
-            android:id="@+id/ivMood"
-            android:layout_width="@dimen/textSizeBody"
-            android:layout_height="@dimen/textSizeBody"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="0"
-            android:tint="@color/blueMid"
-            app:srcCompat="@drawable/mood_circle" />
+                <ImageView
+                    android:id="@+id/ivLocation"
+                    android:layout_width="@dimen/inlineIcon"
+                    android:layout_height="@dimen/inlineIcon"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight="0"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/textLight"
+                    app:srcCompat="@drawable/ic_place_black_24dp" />
 
-        <TextView
-            android:id="@+id/tvMood"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_weight="0"
-            android:text="Mood"
-            android:textColor="@color/blueMid"
-            android:textSize="@dimen/textSizeBody" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="Place, State, Country"
+                    android:textColor="@color/textLight"
+                    android:textSize="@dimen/textSizeBody" />
 
-    <com.example.mova.component.ComponentLayout
-        android:id="@+id/clMedia"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/ivMood"
+                    android:layout_width="@dimen/textSizeBody"
+                    android:layout_height="@dimen/textSizeBody"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="0"
+                    android:tint="@color/blueMid"
+                    app:srcCompat="@drawable/mood_circle" />
 
-    </com.example.mova.component.ComponentLayout>
+                <TextView
+                    android:id="@+id/tvMood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="0"
+                    android:text="Mood"
+                    android:textColor="@color/blueMid"
+                    android:textSize="@dimen/textSizeBody" />
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Lorem ipsum body"
-        android:textColor="@color/textMain"
-        android:textSize="@dimen/textSizeBody" />
+            <com.example.mova.component.ComponentLayout
+                android:id="@+id/clMedia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/llTags"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/elementMargin"
-        android:orientation="horizontal">
+            </com.example.mova.component.ComponentLayout>
 
-        <ImageView
-            android:id="@+id/ivTags"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="6dp"
-            android:layout_weight="0"
-            android:tint="@color/textLight"
-            app:srcCompat="@drawable/ic_local_offer_black_24dp" />
+            <TextView
+                android:id="@+id/tvBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum body"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeBody" />
 
-        <TextView
-            android:id="@+id/tvTags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="No tags"
-            android:textColor="@color/textLight"
-            android:textSize="@dimen/textSizeBody" />
+            <LinearLayout
+                android:id="@+id/llTags"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/elementMargin"
+                android:orientation="horizontal">
 
-        <Switch
-            android:id="@+id/sComments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Comments" />
+                <ImageView
+                    android:id="@+id/ivTags"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="6dp"
+                    android:layout_weight="0"
+                    android:tint="@color/textLight"
+                    app:srcCompat="@drawable/ic_local_offer_black_24dp" />
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tvTags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="No tags"
+                    android:textColor="@color/textLight"
+                    android:textSize="@dimen/textSizeBody" />
+
+                <Switch
+                    android:id="@+id/sComments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="Comments" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.example.mova.views.ComposableContainer>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvComments"

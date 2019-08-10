@@ -210,8 +210,8 @@ public class Media extends HashableParseObject {
                 config.subheader = null;
                 config.showButtons = false;
                 config.showGroup = false;
+                config.allowCompose = false;
                 PostComponent postComponent = new PostComponent(getContentPost(), config);
-                postComponent.allowCompose(false);
                 callback.call(postComponent, null);
                 break;
             case Goal:
