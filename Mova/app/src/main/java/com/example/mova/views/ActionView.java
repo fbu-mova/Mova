@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mova.R;
 import com.example.mova.utils.ColorUtils;
@@ -22,9 +23,9 @@ import com.example.mova.utils.ColorUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ActionView extends LinearLayout {
+public class ActionView extends ConstraintLayout {
 
-    @BindView(R.id.llRoot)   protected LinearLayout llRoot;
+//    @BindView(R.id.llRoot)   protected LinearLayout llRoot;
     @BindView(R.id.flToggle) protected FrameLayout flToggle;
     @BindView(R.id.ivToggle) protected ImageView ivToggle;
     @BindView(R.id.tvText)   protected TextView tvText;
@@ -74,7 +75,7 @@ public class ActionView extends LinearLayout {
             typedArray.recycle();
         }
 
-        expandTouchArea();
+//        expandTouchArea();
         setOnClickListener((v) -> {});
     }
 
