@@ -33,6 +33,7 @@ import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Mood;
+import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
@@ -76,20 +77,21 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.progressStack6) protected ProgressStack ps6;
     @BindView(R.id.progressStack7) protected ProgressStack ps7;
 
-    private HashMap<Goal, Integer> hueMap;
-    private HashMap<Integer, Goal> colorGoals;
-    private List<Integer> usedColors;
     private List<Goal> mGoals;
     private List<Goal> graphGoals;
     private List<Goal> goodGoals;
     private List<Goal> badGoals;
-    private List<Mood.Status> userMoods;
+    private List<Post> userMoods;
+
     private ProgressStackManager graphManager;
+    private HashMap<Goal, Integer> hueMap;
+    private HashMap<Integer, Goal> colorGoals;
+    private List<Integer> usedColors;
 
     private int length = 0;
     private User user;
     private ViewAdapter<ProgressStack> graphAdapter;
-    private DataComponentAdapter<Mood.Status> gridMoodAdapter;
+    private DataComponentAdapter<Post> gridMoodAdapter;
     private DataComponentAdapter<Goal> goalsWellAdapter;
     private DataComponentAdapter<Goal> goalsWorkAdapter;
 
@@ -161,15 +163,14 @@ public class ProgressFragment extends Fragment {
 
         // Create adapters
 
-        gridMoodAdapter = new DataComponentAdapter<Mood.Status>((DelegatedResultActivity) getActivity(), userMoods) {
+        gridMoodAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), userMoods) {
             @Override
-            public Component makeComponent(Mood.Status item, Component.ViewHolder holder) {
-                Component component = new ProgressGridMoodComponent(item);
-                return component;
+            public Component makeComponent(Post item, Component.ViewHolder holder) {
+                return new ProgressGridMoodComponent(item);
             }
 
             @Override
-            protected Component.Inflater makeInflater(Mood.Status item) {
+            protected Component.Inflater makeInflater(Post item) {
                 return new ProgressGridMoodComponent.Inflater();
             }
         };

@@ -103,9 +103,8 @@ public class Mood {
             case Supported:
                 return Color.RED;
             case Empty:
-                return Color.WHITE;
             default:
-                return Color.BLACK;
+                return Color.WHITE;
         }
     }
 

@@ -86,7 +86,7 @@ public class Post extends HashableParseObject {
     //mood
     public Mood.Status getMood() {
         String moodValue = getString(KEY_MOOD);
-        return (moodValue == null) ? null : Mood.Status.valueOf(moodValue);
+        return (moodValue == null) ? Mood.Status.Empty : Mood.Status.valueOf(moodValue);
     }
 
     public Post setMood(Mood.Status mood) {

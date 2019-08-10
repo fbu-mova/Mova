@@ -15,6 +15,11 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.model.Post;
+import com.example.mova.utils.TimeUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,21 +30,14 @@ public class ProgressGridMoodComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_grid_mood;
 
     private ProgressGridViewHolder viewHolder;
-    private Mood.Status mood;
-    private String date;
     private ComponentManager componentManager;
 
-    public ProgressGridMoodComponent(Mood.Status mood) {
-        this(mood, null);
-    }
+    private Post post;
+    private Mood.Status mood;
+    private Date date;
 
-    public ProgressGridMoodComponent(Mood.Status mood, String date) {
-        if (mood != null){
-            this.mood = mood;
-        } else {
-            this.mood = Mood.Status.Empty;
-        }
-        this.date = date;
+    public ProgressGridMoodComponent(Post post) {
+        this.post = post;
     }
 
     @Override
@@ -68,7 +66,15 @@ public class ProgressGridMoodComponent extends Component {
 
     @Override
     protected void onLaunch() {
-
+        if (mood != null && date != null) return;
+        post.fetchIfNeededInBackground((obj, e) -> {
+            if (e != null) {
+                Log.e("ProgressGridMoodComp", "Failed to fetch post for mood", e);
+                return;
+            }
+            mood = post.getMood();
+            date = post.getCreatedAt();
+        });
     }
 
     @Override
@@ -82,7 +88,7 @@ public class ProgressGridMoodComponent extends Component {
             viewHolder.tvDate.setVisibility(View.GONE);
         } else {
             viewHolder.tvDate.setVisibility(View.VISIBLE);
-            viewHolder.tvDate.setText(date);
+            viewHolder.tvDate.setText(TimeUtils.toShortWeekdayString(date));
         }
     }
 

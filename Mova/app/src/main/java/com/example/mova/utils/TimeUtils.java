@@ -30,6 +30,12 @@ public class TimeUtils {
         return dateFmt.format(date);
     }
 
+    public static String toShortWeekdayString(Date date) {
+        String fmtStr = "E";
+        SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
+        return Character.toString(dateFmt.format(date).charAt(0));
+    }
+
     // -- DATE NORMALIZATION, COMPARISON, AND KEYING -- //
 
     /**
