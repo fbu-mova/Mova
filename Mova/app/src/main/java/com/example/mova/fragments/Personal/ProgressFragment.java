@@ -135,19 +135,19 @@ public class ProgressFragment extends Fragment {
 
         progressStacks = new ArrayList<>();
 
-        progressStacks.add(new ProgressStack(getActivity()));
-        progressStacks.add(new ProgressStack(getActivity()));
-        progressStacks.add(new ProgressStack(getActivity()));
-        progressStacks.add(new ProgressStack(getActivity()));
-        progressStacks.add(new ProgressStack(getActivity()));
-        progressStacks.add(new ProgressStack(getActivity()));
+//        progressStacks.add(new ProgressStack(getActivity()));
+//        progressStacks.add(new ProgressStack(getActivity()));
+//        progressStacks.add(new ProgressStack(getActivity()));
+//        progressStacks.add(new ProgressStack(getActivity()));
+//        progressStacks.add(new ProgressStack(getActivity()));
+//        progressStacks.add(new ProgressStack(getActivity()));
         progressStacks.add(ps1);
-//        progressStacks.add(ps2);
-//        progressStacks.add(ps3);
-//        progressStacks.add(ps4);
-//        progressStacks.add(ps5);
-//        progressStacks.add(ps6);
-//        progressStacks.add(ps7);
+        progressStacks.add(ps2);
+        progressStacks.add(ps3);
+        progressStacks.add(ps4);
+        progressStacks.add(ps5);
+        progressStacks.add(ps6);
+        progressStacks.add(ps7);
 
 
 
@@ -278,66 +278,10 @@ public class ProgressFragment extends Fragment {
                         tvY2.setText(Integer.toString(graphManager.tallestY()));
                         tvY1.setText(Integer.toString(graphManager.tallestY() / 2));
                     }
-
-                    ps1.setValue(Color.RED, 1);
-
-//                    ProgressStack stack = graphManager.getStacks().get(0);
-//                    llTest.addView(stack);
-//                    llTest.setVisibility(View.VISIBLE);
-//                    stack.setVisibility(View.VISIBLE);
-//                    llTest.invalidate();
-//                    stack.invalidate();
                 });
 
             });
         });
-//        queryGoals(() -> setGraph(() -> {
-//            Calendar cal = Calendar.getInstance();
-//            Date d1 = cal.getTime();
-//            cal.add(Calendar.DATE, -length + 1);
-//            Date d2 = cal.getTime();
-//            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),new SimpleDateFormat("MM/dd")));
-//            graph.getViewport().setXAxisBoundsManual(true);
-//            graph.getViewport().setMinX(Long.valueOf(d2.getTime()).doubleValue());
-//            graph.getViewport().setMaxX(Long.valueOf(d1.getTime()).doubleValue());
-//            graph.getGridLabelRenderer().setHumanRounding(false);
-//            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
-//            graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-//            //graph.getGridLabelRenderer().setVerticalAxisTitle("Actions Completed");
-//
-//
-//            //Toast.makeText(getContext(), "Graph created", Toast.LENGTH_SHORT).show();
-//            //Log.e("ProgressFragment", "Were not in boys");
-//
-//            //organize goals and create adapter
-
-//
-//
-//
-//        }));
-
-//        journal.loadEntries((e) -> {
-//            Calendar cal = Calendar.getInstance();
-//            cal.add(Calendar.DATE, -length + 1);
-//            Date d1 = cal.getTime();
-//            for(int i = 0; i < length; i++){
-//                SortedList<Post> posts = journal.getEntriesByDate(TimeUtils.normalizeToDay(d1));
-//                if(posts.size() == 0){
-//                    userMoods.add(Mood.Status.Empty);
-//                }else {
-//                    userMoods.add(posts.get(0).getMood());
-//                }
-//                cal.add(Calendar.DATE, 1);
-//                d1 = cal.getTime();
-//            }
-//            gridMoodAdapter.notifyDataSetChanged();
-//            gvMood.scrollTo(0,0);
-//        });
-//        queryPosts(() -> {
-//            getListOnePostPerDay();
-//            gridMoodAdapter.notifyDataSetChanged();
-//            gvMood.scrollTo(0,0);
-//        });
     }
 
     private int getGoalGraphColor(Goal goal){
@@ -395,28 +339,6 @@ public class ProgressFragment extends Fragment {
 
     }
 
-//    private void setGraph(AsyncUtils.EmptyCallback callback){
-//        AsyncUtils.executeMany(mGoals.size(), (i,cb) -> {
-//           Goal goal = mGoals.get(i);
-//            goalUtils.getDataForGraph(goal, User.getCurrentUser(), length , (series) -> {
-//                series.setTitle(goal.getTitle());
-//                series.setSpacing(10);
-//
-//                ColorUtils.Hue hue = goal.getHue();
-//                if (hue == null) hue = ColorUtils.Hue.random();
-//                int mid = ColorUtils.getColor(getResources(), hue, ColorUtils.Lightness.Mid);
-//
-//                series.setColor(mid);
-//                graph.addSeries(series);
-//                cb.call(null);
-////                        graph.getViewport().setMinX(-1*length);
-//            });
-//
-//        }, (e) -> {callback.call();});
-//
-//    }
-
-
     public void queryGoals(AsyncUtils.EmptyCallback callback){
         User user = User.getCurrentUser();
         ParseQuery<Goal> goalQuery = new ParseQuery<Goal>(Goal.class);
@@ -438,44 +360,6 @@ public class ProgressFragment extends Fragment {
             }
         });
     }
-
-//    public void queryPosts(AsyncUtils.EmptyCallback callback){
-//        User user = (User) ParseUser.getCurrentUser();
-//        ParseQuery<Post> postQuery = new ParseQuery<Post>(Post.class);
-//        postQuery.whereEqualTo("author", user);
-//        postQuery.whereEqualTo("isPersonal", true);
-//        postQuery.orderByDescending("createdAt");
-//        postQuery.findInBackground(new FindCallback<Post>() {
-//            @Override
-//            public void done(List<Post> objects, ParseException e) {
-//                if(e != null){
-//                    Log.e("ProgressFragment", "Error with queryPosts");
-//                    e.printStackTrace();
-//                    return;
-//                }
-//                userPosts.addAll(objects);
-//                callback.call();
-//            }
-//        });
-//    }
-//
-//    public void getListOnePostPerDay(){
-//        Date date = new Date();
-//        for(int i  = 0; i < userPosts.size(); i++){
-//            //Intialize date as the date of the first entry
-//            if(i == 0){
-//                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
-//            }
-//            //If the date of the next element is equal to the previouis one, delete it
-//            else if(date == TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt())){
-//                userPosts.remove(i);
-//            }
-//            //If the date is less, make this the new date
-//            else{
-//                date = TimeUtils.normalizeToDay(userPosts.get(i).getCreatedAt());
-//            }
-//        }
-//    }
 
     private void configureGraphClick() {
         inSelectAnimation = false;
