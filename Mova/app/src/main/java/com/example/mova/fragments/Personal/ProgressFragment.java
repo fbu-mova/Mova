@@ -242,7 +242,7 @@ public class ProgressFragment extends Fragment {
                     Goal goal = graphGoals.get(i);
                     int color = getGoalGraphColor(goal);
                     getDataForGraph(goal, user, length, (data) -> {
-                        for(int j = 0; j < data.size(); j++){
+                        for (int j = 0; j < data.size(); j++){
                             graphManager.show(color);
                             graphManager.setValue(j, color, data.get(j));
                         }
@@ -305,19 +305,22 @@ public class ProgressFragment extends Fragment {
 
     public static void getDataForGraph(Goal goal, User user, int length, AsyncUtils.ListCallback<Integer> callback){
         List<Integer> dataPoints = new ArrayList<>();
-        AsyncUtils.executeMany(length, (i, cb) -> {
-            Date date = new Date();
-            //Make the day move a day earlier each iteration
-            long dif = date.getTime() - 24*60*60*1000*(length - (i+1));
-            date.setTime(dif);
-            date = TimeUtils.normalizeToDay(date);
-            Date finalDate = date;
-            GoalUtils.getNumActionsComplete(finalDate, goal, user, (num) -> {
-                dataPoints.add(num);
-                cb.call(null);
-            });
-
-        }, (err) -> {callback.call(dataPoints);} );
+        AsyncUtils.waterfall(
+            length,
+            (i, cb) -> {
+                Date date = new Date();
+                //Make the day move a day earlier each iteration
+                long dif = date.getTime() - 24*60*60*1000*(length - (i+1));
+                date.setTime(dif);
+                date = TimeUtils.normalizeToDay(date);
+                Date finalDate = date;
+                GoalUtils.getNumActionsComplete(finalDate, goal, user, (num) -> {
+                    dataPoints.add(num);
+                    cb.call(null);
+                });
+            },
+            (err) -> {callback.call(dataPoints);}
+        );
 
     }
 
