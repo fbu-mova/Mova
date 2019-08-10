@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -99,6 +100,7 @@ public class ProgressFragment extends Fragment {
     private DataComponentAdapter<Goal> goalsWorkAdapter;
 
     private boolean inSelectAnimation;
+    private boolean hasDisplayedMood;
 
     private Journal journal;
 
@@ -204,7 +206,7 @@ public class ProgressFragment extends Fragment {
             }
         };
 
-        rvMood.setLayoutManager(new GridLayoutManager(getActivity(), length));
+        rvMood.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rvWell.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rvWork.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -213,7 +215,6 @@ public class ProgressFragment extends Fragment {
         rvWork.setAdapter(goalsWorkAdapter);
 
         // TODO: Add edge decorators
-        rvMood.addItemDecoration(new RemoveEndMarginDecoration());
 
         queryGoals(() -> {
             GoalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
@@ -267,36 +268,48 @@ public class ProgressFragment extends Fragment {
             });
         });
 
-        getDailyFirstPost((map, e) -> {
-            if (e != null) return;
-            MoodWrapper[] arr = new MoodWrapper[length];
-            AsyncUtils.executeMany(
-                length,
-                (i, cb) -> {
-                    Date date = getDate(i);
-                    Post post = map.get(date);
-                    if (post == null) {
-                        arr[i] = new MoodWrapper(Mood.Status.Empty, date);
-                        cb.call(null);
-                        return;
-                    }
-                    post.fetchIfNeededInBackground((obj, e1) -> {
-                        if (e1 != null) {
-                            Log.e("ProgressFragment", "Failed to fetch post for mood", e);
-                            cb.call(e1);
-                            return;
-                        }
-                        arr[i] = new MoodWrapper(post.getMood(), post.getCreatedAt());
-                        cb.call(null);
-                    });
-                },
-                (e1) -> {
-                    for (int i = length - 1; i >= 0; i--) {
-                        userMoods.add(arr[i]);
-                    }
-                    gridMoodAdapter.notifyDataSetChanged();
-                }
-            );
+        hasDisplayedMood = false;
+        view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (!hasDisplayedMood) {
+                hasDisplayedMood = true;
+
+                int moodContainerWidth = rvMood.getWidth();
+                int moodWidth = getResources().getDimensionPixelOffset(R.dimen.progressStackThickness);
+                int moodMargin = (moodContainerWidth - (moodWidth * length)) / (length - 1);
+                rvMood.addItemDecoration(new EdgeDecorator(0, 0, moodMargin, 0, EdgeDecorator.Orientation.Horizontal));
+
+                getDailyFirstPost((map, e) -> {
+                    if (e != null) return;
+                    MoodWrapper[] arr = new MoodWrapper[length];
+                    AsyncUtils.executeMany(
+                            length,
+                            (i, cb) -> {
+                                Date date = getDate(i);
+                                Post post = map.get(date);
+                                if (post == null) {
+                                    arr[i] = new MoodWrapper(Mood.Status.Empty, date);
+                                    cb.call(null);
+                                    return;
+                                }
+                                post.fetchIfNeededInBackground((obj, e1) -> {
+                                    if (e1 != null) {
+                                        Log.e("ProgressFragment", "Failed to fetch post for mood", e);
+                                        cb.call(e1);
+                                        return;
+                                    }
+                                    arr[i] = new MoodWrapper(post.getMood(), post.getCreatedAt());
+                                    cb.call(null);
+                                });
+                            },
+                            (e1) -> {
+                                for (int i = length - 1; i >= 0; i--) {
+                                    userMoods.add(arr[i]);
+                                }
+                                gridMoodAdapter.notifyDataSetChanged();
+                            }
+                    );
+                });
+            }
         });
     }
 
