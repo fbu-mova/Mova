@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.PersonalSocialToggle;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -90,7 +91,12 @@ public abstract class ComposePostComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
-        this.holder.swTemp.setChecked(postConfig.isPersonal);
+        this.holder.psToggle.setPersonal(postConfig.isPersonal);
+        this.holder.psToggle.setOnToggle((isPersonal) -> {
+            postConfig.isPersonal = isPersonal;
+            displayPostType();
+        });
+
         displayToReplyTo();
         displayPostType();
         displayMedia();
@@ -125,8 +131,6 @@ public abstract class ComposePostComponent extends Component {
         type.item = "";
 
         List<AsyncUtils.ExecuteManyCallback> asyncActions = new ArrayList<>();
-
-        holder.swTemp.setChecked(postConfig.isPersonal);
 
         if (postConfig.postToReply != null) {
             asyncActions.add((i, cb) ->
@@ -166,7 +170,7 @@ public abstract class ComposePostComponent extends Component {
                     cb.call(errResult);
             }));
         } else if (postConfig.postToReply == null) {
-            type.item += "to friends";
+            type.item += (postConfig.isPersonal) ? "to yourself" : "to friends";
         }
 
         AsyncUtils.waterfall(asyncActions, (e) -> {
@@ -224,7 +228,7 @@ public abstract class ComposePostComponent extends Component {
         Post post = new Post();
         post.setBody(body);
         post.setAuthor(User.getCurrentUser());
-        post.setIsPersonal(holder.swTemp.isChecked());
+        post.setIsPersonal(holder.psToggle.isPersonal());
 
         ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
         if (location != null) post.setLocation(location);
@@ -251,7 +255,7 @@ public abstract class ComposePostComponent extends Component {
         @BindView(R.id.etBody)          public EditText etBody;
         @BindView(R.id.ivClose)         public ImageView ivClose;
         @BindView(R.id.fabPost)         public FloatingActionButton fabPost;
-        @BindView(R.id.swTemp)          public Switch swTemp;
+        @BindView(R.id.psToggle)        public PersonalSocialToggle psToggle;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

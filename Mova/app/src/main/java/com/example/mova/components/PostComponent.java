@@ -326,13 +326,12 @@ public class PostComponent extends ComposableComponent {
 
     @Override
     protected void onSavePost(Post post) {
-        Toast.makeText(getActivity(), "Saved post with this post as media!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
         // TODO
     }
 
     @Override
     protected void onCancelCompose() {
-        Toast.makeText(getActivity(), "Canceled post with this post as media.", Toast.LENGTH_SHORT).show();
         // TODO
     }
 

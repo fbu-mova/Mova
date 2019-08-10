@@ -3,7 +3,6 @@ package com.example.mova.activities;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -11,12 +10,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.mova.PersonalToggle;
+import com.example.mova.PersonalSocialToggle;
 import com.example.mova.R;
 import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.fragments.SocialFragment;
 import com.example.mova.model.User;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseACL;
 
 import butterknife.BindView;
@@ -28,7 +26,7 @@ public class MainActivity extends DelegatedResultActivity {
     private static final String[] REQUIRED_PERMISSIONS = new String[] { Manifest.permission.CAMERA };
 
 //    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
-    @BindView(R.id.bottom_navigation) protected PersonalToggle bottomNavigationView;
+    @BindView(R.id.bottom_navigation) protected PersonalSocialToggle bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

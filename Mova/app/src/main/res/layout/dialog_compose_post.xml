@@ -21,12 +21,6 @@ xmlns:tools="http://schemas.android.com/tools"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Switch
-                android:id="@+id/swTemp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Temp Personal -> Social" />
-
             <FrameLayout
                 android:id="@+id/flReplyContent"
                 android:layout_width="match_parent"
@@ -41,6 +35,11 @@ xmlns:tools="http://schemas.android.com/tools"
 
                 </com.example.mova.component.ComponentLayout>
             </FrameLayout>
+
+            <com.example.mova.PersonalSocialToggle
+                android:id="@+id/psToggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <LinearLayout
                 android:layout_width="match_parent"

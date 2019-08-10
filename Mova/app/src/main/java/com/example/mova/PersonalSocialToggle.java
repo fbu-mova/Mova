@@ -18,7 +18,7 @@ import com.example.mova.utils.AsyncUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PersonalToggle extends LinearLayout {
+public class PersonalSocialToggle extends LinearLayout {
 
     @BindView(R.id.flPersonal) protected FrameLayout flPersonal;
     @BindView(R.id.tvPP) protected TextView tvPP;
@@ -39,23 +39,23 @@ public class PersonalToggle extends LinearLayout {
     private boolean isPersonal = true;
     private AsyncUtils.ItemCallback<Boolean> onToggle = (toPersonal) -> {};
 
-    public PersonalToggle(@NonNull Context context) {
+    public PersonalSocialToggle(@NonNull Context context) {
         super(context);
         init(context, null);
     }
 
-    public PersonalToggle(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public PersonalSocialToggle(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public PersonalToggle(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public PersonalSocialToggle(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
-        inflate(getContext(), R.layout.layout_personal_toggle, this);
+        inflate(getContext(), R.layout.layout_personal_social_toggle, this);
         ButterKnife.bind(this);
 
         ivGradPP.setAlpha(1f);
@@ -79,6 +79,14 @@ public class PersonalToggle extends LinearLayout {
     private void configureClicks() {
         flPersonal.setOnClickListener((v) -> setState(true));
         flSocial.setOnClickListener((v) -> setState(false));
+    }
+
+    public boolean isPersonal() {
+        return isPersonal;
+    }
+
+    public void setPersonal(boolean isPersonal) {
+        setState(isPersonal);
     }
 
     private void setState(boolean toPersonal) {
