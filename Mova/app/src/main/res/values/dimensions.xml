@@ -30,4 +30,6 @@
     <dimen name="progressBarMaxLength">120dp</dimen>
     <dimen name="progressStackThickness">38dp</dimen>
     <dimen name="progressStackLength">200dp</dimen>
+
+    <dimen name="fabSize">40dp</dimen>
 </resources>

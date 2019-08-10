@@ -192,7 +192,7 @@ public class GoalsFragment extends Fragment {
         goalsQuery.findInBackground(new FindCallback<Goal>() {
             @Override
             public void done(List<Goal> objects, ParseException e) {
-                getActivity().runOnUiThread(() -> {
+                Runnable f = () -> {
                     if (e == null) {
                         Log.d(TAG, "Goal query succeeded!");
                         Log.d(TAG, String.format("object size: %s", objects.size()));
@@ -213,7 +213,10 @@ public class GoalsFragment extends Fragment {
                     } else {
                         Log.e(TAG, "goal query failed", e);
                     }
-                });
+                };
+
+                if (getActivity() == null) f.run();
+                else getActivity().runOnUiThread(f);
             }
         });
     }

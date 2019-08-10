@@ -8,17 +8,6 @@
     android:backgroundTint="@color/bg"
     tools:context=".fragments.Social.SocialFeedFragment">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCompose"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:src="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ImageButton
         android:id="@+id/ibSearch"
         android:layout_width="30dp"
@@ -43,4 +32,26 @@
         app:layout_constraintTop_toBottomOf="@+id/ibSearch">
 
     </com.example.mova.containers.EndlessScrollRefreshLayout>
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="@dimen/fabSize"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/innerMargin"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/efabCompose" />
+
+    <com.example.mova.views.EdgeFloatingActionButton
+        android:id="@+id/efabCompose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="@dimen/innerMargin"
+        app:edge="right"
+        app:image="@drawable/ic_round_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/space" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

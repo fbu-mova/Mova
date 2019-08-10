@@ -41,4 +41,17 @@
         <attr name="selectAnimDuration" format="integer"/>
     </declare-styleable>
 
+    <declare-styleable name="EdgeFloatingActionButton">
+        <attr name="cornerRadius" format="dimension"/>
+        <attr name="image" format="integer"/>
+        <attr name="imageTint" format="color"/>
+        <attr name="backgroundTint" format="color"/>
+        <attr name="edge">
+            <flag name="left" value="1"/>
+            <flag name="top" value="2"/>
+            <flag name="right" value="4"/>
+            <flag name="bottom" value="8"/>
+        </attr>
+    </declare-styleable>
+
 </resources>

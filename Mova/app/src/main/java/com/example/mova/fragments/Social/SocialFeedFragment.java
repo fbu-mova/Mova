@@ -34,6 +34,7 @@ import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.PostConfig;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseQuery;
 
@@ -57,7 +58,7 @@ public class SocialFeedFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @BindView(R.id.fabCompose) protected FloatingActionButton fabCompose;
+    @BindView(R.id.efabCompose) protected EdgeFloatingActionButton efabCompose;
     @BindView(R.id.esrlPosts)  protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlPosts;
     @BindView(R.id.ibSearch) protected ImageButton ibSearch;
     public static FragmentManager manager;
@@ -123,8 +124,8 @@ public class SocialFeedFragment extends Fragment {
                 ft.commit();
             }
         });
-        // Temporary fabCompose press for testing ComposePostComponent
-        fabCompose.setOnClickListener((v) -> {
+
+        efabCompose.setOnClickListener((v) -> {
             ComposePostDialog dialog = new ComposePostDialog((DelegatedResultActivity) getActivity()) {
                 @Override
                 protected void onCancel() {
