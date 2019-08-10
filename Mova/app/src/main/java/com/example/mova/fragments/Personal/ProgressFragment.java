@@ -72,6 +72,9 @@ public class ProgressFragment extends Fragment {
     @BindView(R.id.rvWell)  protected RecyclerView rvWell;
     @BindView(R.id.rvWork)  protected RecyclerView rvWork;
 
+    @BindView(R.id.tvGoingWell) protected TextView tvWell;
+    @BindView(R.id.tvNeedsWork) protected TextView tvWork;
+
     //Progress Stacks
     private List<ProgressStack> progressStacks;
     @BindView(R.id.progressStack1) protected ProgressStack ps1;
@@ -215,7 +218,7 @@ public class ProgressFragment extends Fragment {
         rvWell.setAdapter(goalsWellAdapter);
         rvWork.setAdapter(goalsWorkAdapter);
 
-        // TODO: Add edge decorators
+        rvWell.addItemDecoration(new EdgeDecorator(24));
 
         queryGoals(() -> {
             GoalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
@@ -238,12 +241,21 @@ public class ProgressFragment extends Fragment {
                         goalsWorkAdapter.notifyItemInserted(i);
                         tsGoals.remove(tsGoals.first());
                     }
-
                 }
                 rvWell.scrollToPosition(0);
                 rvWork.scrollToPosition(0);
                 graphGoals.addAll(goodGoals);
                 graphGoals.addAll(badGoals);
+
+                if (goodGoals.size() == 0) {
+                    tvWell.setVisibility(View.GONE);
+                    rvWell.setVisibility(View.GONE);
+                }
+
+                if (badGoals.size() == 0) {
+                    tvWork.setVisibility(View.GONE);
+                    rvWork.setVisibility(View.GONE);
+                }
 
                 AsyncUtils.executeMany(graphGoals.size(), (i,cb) -> {
                     Goal goal = graphGoals.get(i);

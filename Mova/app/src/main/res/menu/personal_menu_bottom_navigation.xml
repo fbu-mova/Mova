@@ -4,27 +4,31 @@
 
     <item
         android:id="@+id/action_progress"
-        android:icon="@drawable/clock"
+        android:icon="@drawable/ic_round_bar_chart_24px"
         android:title="Progress"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/action_journal"
-        android:icon="@drawable/journal"
-        android:title="Journal"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_personal_feed"
-        android:icon="@drawable/home"
-        android:title="Home"
-        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_goals"
-        android:icon="@drawable/goals"
+        android:icon="@drawable/ic_round_check_circle_24px"
         android:title="Goals"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_personal_feed"
+        android:icon="@drawable/ic_round_home_24px"
+        android:title="Home"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_journal"
+        android:icon="@drawable/ic_round_book_24px"
+        android:title="Journal"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_profile"
-        android:icon="@drawable/profile"
+        android:icon="@drawable/ic_round_person_24px"
         android:title="Profile"
         app:showAsAction="always" />
 

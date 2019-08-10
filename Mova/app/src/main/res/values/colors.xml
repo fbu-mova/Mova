@@ -26,6 +26,6 @@
     <color name="bg">#EEEEEE</color>
     <color name="dialogItem">#E6E6E6</color>
 
-    <color name="buttonInactive">#CCC</color>
-    <color name="buttonActive">#777</color>
+    <color name="buttonInactive">#AAA</color>
+    <color name="buttonActive">#666</color>
 </resources>

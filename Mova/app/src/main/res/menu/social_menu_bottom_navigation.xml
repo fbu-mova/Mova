@@ -4,28 +4,33 @@
 
 
     <item
-        android:id="@+id/action_scrapbook"
-        android:icon="@drawable/scrapbook"
-        android:title="Scrapbook"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_events"
-        android:icon="@drawable/events"
-        android:title="Events"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_social_feed"
-        android:icon="@drawable/home"
-        android:title="Feed"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_groups"
-        android:icon="@drawable/groups"
-        android:title="Groups"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_explore"
-        android:icon="@drawable/explore"
+        android:icon="@drawable/ic_round_explore_24px"
         android:title="Explore"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_events"
+        android:icon="@drawable/ic_round_calendar_today_24px"
+        android:title="Events"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_social_feed"
+        android:icon="@drawable/ic_round_home_24px"
+        android:title="Feed"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_groups"
+        android:icon="@drawable/ic_round_people_24px"
+        android:title="Groups"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_scrapbook"
+        android:icon="@drawable/ic_round_bookmark_24px"
+        android:title="Scrapbook"
+        app:showAsAction="always" />
+
 </menu>
