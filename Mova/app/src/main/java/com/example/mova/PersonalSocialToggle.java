@@ -97,18 +97,8 @@ public class PersonalSocialToggle extends LinearLayout {
     }
 
     private void configureClicks() {
-//        flPersonal.setOnClickListener((v) -> setState(true));
-//        flSocial.setOnClickListener((v) -> setState(false));
-
-        flPersonal.setOnTouchListener((v, event) -> {
-            setState(true);
-            return false;
-        });
-
-        flSocial.setOnTouchListener((v, event) -> {
-            setState(false);
-            return false;
-        });
+        flPersonal.setOnClickListener((v) -> setState(true));
+        flSocial.setOnClickListener((v) -> setState(false));
     }
 
     private void configureGestureHandling() {
