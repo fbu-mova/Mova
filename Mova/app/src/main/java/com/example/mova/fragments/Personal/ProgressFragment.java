@@ -91,6 +91,7 @@ public class ProgressFragment extends Fragment {
     private HashMap<Goal, Integer> hueMap;
     private HashMap<Integer, Goal> colorGoals;
     private List<Integer> usedColors;
+    private List<Integer> lastShownColors;
 
     private int length = 0;
     private User user;
@@ -157,6 +158,7 @@ public class ProgressFragment extends Fragment {
         mGoals = new ArrayList<>();
         graphGoals = new ArrayList<>();
         colorGoals = new HashMap<>();
+        lastShownColors = new ArrayList<>();
         userMoods = new ArrayList<>();
         goodGoals = new ArrayList<>();
         badGoals = new ArrayList<>();
@@ -183,7 +185,8 @@ public class ProgressFragment extends Fragment {
         goalsWellAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), goodGoals) {
             @Override
             public Component makeComponent(Goal item, Component.ViewHolder holder) {
-                Component component = new ProgressGoalComponent(item);
+                ProgressGoalComponent component = new ProgressGoalComponent(item);
+                component.setOnClickListener((goal) -> toggleShowOnly(goal));
                 return component;
             }
 
@@ -196,7 +199,8 @@ public class ProgressFragment extends Fragment {
         goalsWorkAdapter = new DataComponentAdapter<Goal>((DelegatedResultActivity) getActivity(), badGoals) {
             @Override
             public Component makeComponent(Goal item, Component.ViewHolder holder) {
-                Component component = new ProgressGoalComponent(item);
+                ProgressGoalComponent component = new ProgressGoalComponent(item);
+                component.setOnClickListener((goal) -> toggleShowOnly(goal));
                 return component;
             }
 
@@ -518,6 +522,19 @@ public class ProgressFragment extends Fragment {
                 });
             });
         });
+    }
+
+    private void toggleShowOnly(Goal goal) {
+        int color = getGoalGraphColor(goal);
+        if (graphManager.isOnlyShown(color)) {
+            graphManager.hideAll();
+            for (Integer toShow : lastShownColors) {
+                graphManager.show(toShow);
+            }
+        } else {
+            lastShownColors = graphManager.getShown();
+            graphManager.showOnly(color);
+        }
     }
 
     private static class MoodWrapper {

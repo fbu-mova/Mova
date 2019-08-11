@@ -91,6 +91,14 @@ public class ProgressStackManager {
         return stacks.get(0).isShown(color);
     }
 
+    public boolean isOnlyShown(int color) {
+        return stacks.get(0).isOnlyShown(color);
+    }
+
+    public List<Integer> getShown() {
+        return stacks.get(0).getShown();
+    }
+
     public void select(int index, int color) {
         stacks.get(index).select(color);
         for (int i = 0; i < stacks.size(); i++) {

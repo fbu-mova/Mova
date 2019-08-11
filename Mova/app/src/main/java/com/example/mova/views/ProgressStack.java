@@ -200,15 +200,23 @@ public class ProgressStack extends FrameLayout {
     public void hideAll() {
         if (shownSections.size() > 0) {
             for (int color : shownSections) {
-                shownSections.remove(shownSections.indexOf(color));
                 changeQueue.add(new SectionChange(color, ChangeType.Hide));
             }
+            shownSections.clear();
             invalidate();
         }
     }
 
     public boolean isShown(int color) {
         return shownSections.contains(color);
+    }
+
+    public boolean isOnlyShown(int color) {
+        return shownSections.size() == 1 && isShown(color);
+    }
+
+    public List<Integer> getShown() {
+        return new ArrayList<>(shownSections);
     }
 
     public void select(int color) {
