@@ -6,18 +6,18 @@ import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
-import android.view.TouchDelegate;
-import android.view.View;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mova.R;
+import com.example.mova.containers.GestureLayout;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.ViewUtils;
@@ -27,10 +27,12 @@ import butterknife.ButterKnife;
 
 public class ActionView extends ConstraintLayout {
 
-//    @BindView(R.id.llRoot)   protected LinearLayout llRoot;
     @BindView(R.id.flToggle) protected FrameLayout flToggle;
     @BindView(R.id.ivToggle) protected ImageView ivToggle;
     @BindView(R.id.tvText)   protected TextView tvText;
+
+    @BindView(R.id.glToggle) protected GestureLayout glToggle;
+    @BindView(R.id.glText)   protected GestureLayout glText;
 
     private ColorConfig config;
     private String text;
@@ -40,6 +42,9 @@ public class ActionView extends ConstraintLayout {
     private Drawable boxCompleted;
     private Drawable boxIncomplete;
     private Drawable boxDisabled;
+
+    private AsyncUtils.ItemCallback<Boolean> onCheckedChangeListener;
+    private AsyncUtils.EmptyCallback onTextClickedListener;
 
     public ActionView(Context context) {
         super(context);
@@ -77,10 +82,34 @@ public class ActionView extends ConstraintLayout {
             typedArray.recycle();
         }
 
-        int area = res.getDimensionPixelOffset(R.dimen.elementMargin);
-        ViewUtils.expandTouchArea(flToggle, new Rect(area, 0, area, 0));
+        configureClicks();
 
-        setOnClickListener((v) -> {});
+//        setOnClickListener((v) -> {});
+    }
+
+    private void configureClicks() {
+        int area = getResources().getDimensionPixelOffset(R.dimen.elementMargin);
+        ViewUtils.expandTouchArea(glToggle, new Rect(area, 0, area, 0));
+
+        glToggle.setGestureDetector(new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (isEnabled) {
+                    setComplete(!isComplete);
+                    performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                    if (onCheckedChangeListener != null) onCheckedChangeListener.call(isComplete);
+                }
+                return false;
+            }
+        }));
+
+        glText.setGestureDetector(new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                onTextClickedListener.call();
+                return false;
+            }
+        }));
     }
 
     public void setColors(ColorConfig config) {
@@ -142,18 +171,11 @@ public class ActionView extends ConstraintLayout {
     }
 
     public void setOnCheckedChangeListener(@Nullable AsyncUtils.ItemCallback<Boolean> listener) {
-        // FIXME: May be the wrong type of haptic feedback, and image might not be clickable.
-        flToggle.setOnClickListener((v) -> {
-            if (isEnabled) {
-                setComplete(!isComplete);
-                performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                if (listener != null) listener.call(isComplete);
-            }
-        });
+        onCheckedChangeListener = listener;
     }
 
     public void setOnTextClickListener(AsyncUtils.EmptyCallback listener) {
-        tvText.setOnClickListener((v) -> listener.call());
+        onTextClickedListener = listener;
     }
 
     public static class ColorConfig {

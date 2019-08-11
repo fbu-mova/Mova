@@ -174,6 +174,7 @@ public class GoalCardComponent extends Component {
                     @Override
                     protected Component makeComponent(Action item, ViewHolder holder) {
                         ActionComponent component = new ActionComponent(goal, item, GoalCardComponent.this.isPersonal);
+                        component.setAllowEdit(false);
                         component.setOnSuccessfullyToggled((completed) -> {
                             getActivity().runOnUiThread(() -> {
                                 numDone += (completed) ? 1 : -1;

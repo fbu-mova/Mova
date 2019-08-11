@@ -139,24 +139,48 @@ public class Post extends HashableParseObject {
             config.tags,
             (tag, cb) -> this.relTags.add(tag, (sameTag) -> cb.call()),
             (err) -> {
+                if (err != null) {
+                    Log.e("Post", "Failed to save post", err);
+                    return;
+                }
+
+                AsyncUtils.ItemCallback<AsyncUtils.ItemCallback<Throwable>> saveAsReply = (cb) -> {
+                    // Save as reply if reply
+                    if (config.postToReply != null) {
+                        this.setParent(config.postToReply);
+                        config.postToReply.relComments.add(this);
+                        config.postToReply.saveInBackground((e) -> {
+                            if (e != null) {
+                                Log.e("Post", "Failed to save postToReply", e);
+                                cb.call(e);
+                            } else {
+                                cb.call(null);
+                            }
+                        });
+                    } else {
+                        cb.call(null);
+                    }
+                };
+
+                AsyncUtils.ItemCallback<AsyncUtils.ItemCallback<Throwable>> saveInJournal = (cb) -> {
+                    if (config.isPersonal && config.postToReply == null) {
+                        User.getCurrentUser().relJournal.add(config.post, (saved) -> {
+                            cb.call(null);
+                        });
+                    }
+                };
+
                 AsyncUtils.EmptyCallback doSavePost = () -> this.saveInBackground((e) -> {
                     if (e != null) {
                         Log.e("User", "Failed to save entry", e);
                     } else {
-                        // Save as reply if reply
-                        if (config.postToReply != null) {
-                            this.setParent(config.postToReply);
-                            config.postToReply.relComments.add(this);
-                            config.postToReply.saveInBackground((e1) -> {
-                                if (e1 != null) {
-                                    Log.e("User", "Failed to save postToReply", e);
-                                } else {
-                                    callback.call(this);
-                                }
+                        saveAsReply.call((e1) -> {
+                            if (e1 != null) return;
+                            saveInJournal.call((e2) -> {
+                                if (e2 != null) return;
+                                callback.call(this);
                             });
-                        } else {
-                            callback.call(this);
-                        }
+                        });
                     }
                 });
 

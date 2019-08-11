@@ -532,7 +532,7 @@ public class ProgressFragment extends Fragment {
                 graphManager.show(toShow);
             }
         } else {
-            lastShownColors = graphManager.getShown();
+            if (!graphManager.inShowOnlyMode()) lastShownColors = graphManager.getShown();
             graphManager.showOnly(color);
         }
     }

@@ -59,6 +59,7 @@ public class ProgressStack extends FrameLayout {
     private Integer selectedSection;
     private boolean sectionIsSelected;
     private Queue<Change> changeQueue;
+    private boolean inShowOnlyMode;
 
     public ProgressStack(@NonNull Context context) {
         super(context);
@@ -93,6 +94,7 @@ public class ProgressStack extends FrameLayout {
         selectedSection = null;
         sectionIsSelected = false;
         changeQueue = new LinkedList<>();
+        inShowOnlyMode = false;
 
         // Extract xml attributes
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.GoalProgressBar, 0, 0);
@@ -174,6 +176,7 @@ public class ProgressStack extends FrameLayout {
             shownSections.add(color);
             totalValueShown += valueOf(color);
             changeQueue.add(new SectionChange(color, ChangeType.Show));
+            inShowOnlyMode = false;
             invalidate();
         }
     }
@@ -182,6 +185,7 @@ public class ProgressStack extends FrameLayout {
         if (contains(color)) {
             hideAll();
             show(color);
+            inShowOnlyMode = true;
         }
     }
 
@@ -192,6 +196,7 @@ public class ProgressStack extends FrameLayout {
                 shownSections.remove(index);
                 totalValueShown -= valueOf(color);
                 changeQueue.add(new SectionChange(color, ChangeType.Hide));
+                inShowOnlyMode = false;
                 invalidate();
             }
         }
@@ -203,6 +208,7 @@ public class ProgressStack extends FrameLayout {
                 changeQueue.add(new SectionChange(color, ChangeType.Hide));
             }
             shownSections.clear();
+            inShowOnlyMode = false;
             invalidate();
         }
     }
@@ -217,6 +223,14 @@ public class ProgressStack extends FrameLayout {
 
     public List<Integer> getShown() {
         return new ArrayList<>(shownSections);
+    }
+
+    public int numShown() {
+        return shownSections.size();
+    }
+
+    public boolean inShowOnlyMode() {
+        return inShowOnlyMode;
     }
 
     public void select(int color) {

@@ -99,6 +99,14 @@ public class ProgressStackManager {
         return stacks.get(0).getShown();
     }
 
+    public int numShown() {
+        return stacks.get(0).numShown();
+    }
+
+    public boolean inShowOnlyMode() {
+        return stacks.get(0).inShowOnlyMode();
+    }
+
     public void select(int index, int color) {
         stacks.get(index).select(color);
         for (int i = 0; i < stacks.size(); i++) {

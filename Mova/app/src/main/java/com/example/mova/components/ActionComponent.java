@@ -40,17 +40,24 @@ public class ActionComponent extends Component {
     private ComponentManager componentManager;
 
     private boolean isPersonal;
+    private boolean allowEdit;
 
     private Goal goal;
     private SharedAction sharedAction;
 
     private AsyncUtils.ItemCallback<Boolean> onSuccessfullyToggled = completed -> {};
+    private AsyncUtils.EmptyCallback onTextClicked = () -> {};
 
     public ActionComponent(Goal goal, Action item, boolean isPersonal) {
         super();
         this.goal = goal;
         this.item = item;
         this.isPersonal = isPersonal;
+        this.allowEdit = true;
+    }
+
+    public void setAllowEdit(boolean allowEdit) {
+        this.allowEdit = allowEdit;
     }
 
     // overrides bc type of viewHolder is different from type of holder in checklistItemComp
@@ -97,6 +104,9 @@ public class ActionComponent extends Component {
 
         viewComponent = new ActionViewComponent(item, goal.getHue(), componentManager);
         viewComponent.setOnSuccessfullyToggled(onSuccessfullyToggled);
+        viewComponent.setOnTextClickListener(() -> {
+            if (allowEdit) componentManager.swap(editComponent.getName());
+        });
 
         editComponent = new ActionEditComponent(false, item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
