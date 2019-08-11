@@ -1,13 +1,17 @@
 package com.example.mova.components;
 
+import android.gesture.Gesture;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,11 +25,15 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.fragments.Social.EventDetailsFragment;
 import com.example.mova.icons.Icons;
 import com.example.mova.model.Event;
 import com.example.mova.model.Group;
+import com.example.mova.model.Media;
 import com.example.mova.utils.LocationUtils;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseFile;
 
@@ -132,6 +140,39 @@ public class EventThumbnailComponent extends Component {
             }
         });
 
+        viewHolder.glRoot.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                Fragment frag = EventDetailsFragment.newInstance(event);
+                manager = ((AppCompatActivity)getActivity())
+                        .getSupportFragmentManager();
+                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+                //fl.removeAllViews();
+                FragmentTransaction ft = manager
+                        .beginTransaction();
+                ft.add(R.id.flSocialContainer, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                PostConfig config = new PostConfig();
+                config.isPersonal = true;
+                config.media = new Media(event);
+
+                new ComposePostDialog.Builder(getActivity())
+                        .setConfig(config)
+                        .setOnPost((post) -> {
+                            Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                            // TODO: Go to post
+                        })
+                        .show(viewHolder.glRoot);
+            }
+        }));
+
         displayGroup();
     }
 
@@ -165,6 +206,7 @@ public class EventThumbnailComponent extends Component {
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.llRoot) public LinearLayout llRoot;
+        @BindView(R.id.glRoot) GestureLayout glRoot;
 
         @BindView(R.id.ivEventPic) ImageView ivEventPic;
         @BindView(R.id.tvEventName) TextView tvEventName;

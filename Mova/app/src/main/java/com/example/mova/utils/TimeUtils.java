@@ -18,14 +18,14 @@ public class TimeUtils {
     }
 
     public static String toDateString(Date date, boolean includeYear) {
-        String fmtStr = "MMMM dd";
+        String fmtStr = "MMMM d";
         if (includeYear) fmtStr += ", yyyy";
         SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
         return dateFmt.format(date);
     }
 
     public static String toShortDateString(Date date) {
-        String fmtStr = "MMM dd";
+        String fmtStr = "MMM d";
         SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
         return dateFmt.format(date);
     }

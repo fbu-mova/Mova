@@ -64,93 +64,103 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
+        <com.example.mova.containers.GestureLayout
+            android:id="@+id/glRoot"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/ivEventPic"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/thumbnailImageHeight"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:longClickable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/innerMargin"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:longClickable="true"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvEventName"
+                <ImageView
+                    android:id="@+id/ivEventPic"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Event Name"
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/textSizeFocus" />
+                    android:layout_height="@dimen/thumbnailImageHeight"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/innerMargin"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/ivWhen"
-                        android:layout_width="@dimen/inlineIcon"
-                        android:layout_height="@dimen/inlineIcon"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="@dimen/iconMargin"
-                        android:layout_weight="0"
-                        android:tint="@color/textLight"
-                        app:srcCompat="@drawable/ic_round_access_time_24px" />
+                    android:layout_margin="@dimen/innerMargin"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvWhen"
-                        android:layout_width="0dp"
+                        android:id="@+id/tvEventName"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:text="When"
-                        android:textColor="@color/textLight"
-                        android:textSize="@dimen/textSizeBody" />
+                        android:text="Event Name"
+                        android:textColor="@color/textMain"
+                        android:textSize="@dimen/textSizeFocus" />
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/elementMargin"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/ivLocation"
-                        android:layout_width="@dimen/inlineIcon"
-                        android:layout_height="@dimen/inlineIcon"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="@dimen/iconMargin"
-                        android:layout_weight="0"
-                        android:tint="@color/textLight"
-                        app:srcCompat="@drawable/ic_round_location_on_24px" />
-
-                    <TextView
-                        android:id="@+id/tvEventLocation"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:text="Location"
-                        android:textColor="@color/textLight"
-                        android:textSize="@dimen/textSizeBody" />
+                        android:layout_marginTop="@dimen/innerMargin"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/ivWhen"
+                            android:layout_width="@dimen/inlineIcon"
+                            android:layout_height="@dimen/inlineIcon"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/iconMargin"
+                            android:layout_weight="0"
+                            android:tint="@color/textLight"
+                            app:srcCompat="@drawable/ic_round_access_time_24px" />
+
+                        <TextView
+                            android:id="@+id/tvWhen"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:text="When"
+                            android:textColor="@color/textLight"
+                            android:textSize="@dimen/textSizeBody" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/elementMargin"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/ivLocation"
+                            android:layout_width="@dimen/inlineIcon"
+                            android:layout_height="@dimen/inlineIcon"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/iconMargin"
+                            android:layout_weight="0"
+                            android:tint="@color/textLight"
+                            app:srcCompat="@drawable/ic_round_location_on_24px" />
+
+                        <TextView
+                            android:id="@+id/tvEventLocation"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:text="Location"
+                            android:textColor="@color/textLight"
+                            android:textSize="@dimen/textSizeBody" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
-
-        </LinearLayout>
+        </com.example.mova.containers.GestureLayout>
 
     </androidx.cardview.widget.CardView>
 
