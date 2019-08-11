@@ -258,63 +258,55 @@ public class PostComponent extends Component {
         if (config.showButtons) {
             showButtons();
 
-            holder.ivRepost.setOnClickListener((view) -> {
-                PostConfig config = new PostConfig();
-                config.media = new Media(post);
+            holder.glRepost.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    PostConfig config = new PostConfig();
+                    config.media = new Media(post);
 
-                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
-                    @Override
-                    protected void onCancel() {
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(config)
+                            .setOnPost(PostComponent.this.config.onRepost)
+                            .show(holder.glRepost);
 
-                    }
+                    return false;
+                }
+            }));
 
-                    @Override
-                    protected void onPost(PostConfig config) {
-                        config.savePost((savedPost) -> {
-                            PostComponent.this.config.onRepost.call(savedPost);
-                        });
-                    }
-                };
+            holder.glReply.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    PostConfig config = new PostConfig();
+                    config.postToReply = post;
 
-                dialog.show();
-            });
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(config)
+                            .setOnPost(PostComponent.this.config.onReply)
+                            .show(holder.glReply);
 
-            holder.ivReply.setOnClickListener((view) -> {
-                PostConfig config = new PostConfig();
-                config.postToReply = post;
+                    return false;
+                }
+            }));
 
-                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
-                    @Override
-                    protected void onCancel() {
-
-                    }
-
-                    @Override
-                    protected void onPost(PostConfig config) {
-                        config.savePost((savedPost) -> {
-                            PostComponent.this.config.onReply.call(savedPost);
-                        });
-                    }
-                };
-
-                dialog.show();
-            });
-
-            holder.ivSave.setOnClickListener((view) -> {
-                isSavedToScrapbook((saved) -> {
-                    if (!saved) {
-                        User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
-                            Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
-                            toggleIcon(holder.ivSave, true);
-                        });
-                    } else {
-                        User.getCurrentUser().relScrapbook.remove(post, () -> {
-                            Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
-                            toggleIcon(holder.ivSave, false);
-                        });
-                    }
-                });
-            });
+            holder.glSave.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    isSavedToScrapbook((saved) -> {
+                        if (!saved) {
+                            User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
+                                Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
+                                toggleIcon(holder.ivSave, true);
+                            });
+                        } else {
+                            User.getCurrentUser().relScrapbook.remove(post, () -> {
+                                Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
+                                toggleIcon(holder.ivSave, false);
+                            });
+                        }
+                    });
+                    return false;
+                }
+            }));
 
             isSavedToScrapbook((saved) -> toggleIcon(holder.ivSave, saved));
         } else {
@@ -401,8 +393,11 @@ public class PostComponent extends Component {
 
         @BindView(R.id.llButtons)      public LinearLayout llButtons;
         @BindView(R.id.ivRepost)       public ImageView ivRepost;
+        @BindView(R.id.glRepost)       public GestureLayout glRepost;
         @BindView(R.id.ivReply)        public ImageView ivReply;
+        @BindView(R.id.glReply)        public GestureLayout glReply;
         @BindView(R.id.ivSave)         public ImageView ivSave;
+        @BindView(R.id.glSave)         public GestureLayout glSave;
 
         @BindView(R.id.glCompose)      public GestureLayout glCompose;
         @BindView(R.id.llRoot)         public LinearLayout llRoot;
