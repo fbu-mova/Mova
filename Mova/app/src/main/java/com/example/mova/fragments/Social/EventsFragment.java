@@ -168,7 +168,8 @@ public class EventsFragment extends Fragment {
         //Toast.makeText(getContext(), userLocation.toString() , Toast.LENGTH_SHORT).show();
 
         Resources resources = getResources();
-        EdgeDecorator decorator = new EdgeDecorator((int) resources.getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal);
+        EdgeDecorator decorator = new EdgeDecorator(new EdgeDecorator.Config(resources.getDimensionPixelOffset(R.dimen.innerMargin))
+                .setOrientation(EdgeDecorator.Orientation.Horizontal));
 
         rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvNearYou.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));

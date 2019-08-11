@@ -131,7 +131,8 @@ public class GoalsFragment extends Fragment {
         rvThumbnailGoals.setAdapter(thumbnailGoalsAdapter);
 
         // set edge decorator
-        rvThumbnailGoals.addItemDecoration(new EdgeDecorator((int) getResources().getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal));
+        rvThumbnailGoals.addItemDecoration(new EdgeDecorator(new EdgeDecorator.Config(getResources().getDimensionPixelOffset(R.dimen.innerMargin))
+                .setOrientation(EdgeDecorator.Orientation.Horizontal)));
 
         // load thumbnail goals into recyclerview
         Log.d(TAG, "in onViewCreated");
@@ -155,7 +156,7 @@ public class GoalsFragment extends Fragment {
 
         rvAllGoals.setLayoutManager(new LinearLayoutManager(activity));
         rvAllGoals.setAdapter(allGoalsAdapter);
-        rvAllGoals.addItemDecoration(new EdgeDecorator((int) getResources().getDimension(R.dimen.innerMargin)));
+        rvAllGoals.addItemDecoration(new EdgeDecorator(getResources().getDimensionPixelOffset(R.dimen.innerMargin)));
 
         Log.d(TAG, "about to call loadAllGoals");
         loadAllGoals();

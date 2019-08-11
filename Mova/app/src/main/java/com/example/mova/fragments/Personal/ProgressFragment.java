@@ -284,7 +284,8 @@ public class ProgressFragment extends Fragment {
                 int moodContainerWidth = rvMood.getWidth();
                 int moodWidth = getResources().getDimensionPixelOffset(R.dimen.progressStackThickness);
                 int moodMargin = (moodContainerWidth - (moodWidth * length)) / (length - 1);
-                rvMood.addItemDecoration(new EdgeDecorator(0, 0, moodMargin, 0, EdgeDecorator.Orientation.Horizontal));
+                rvMood.addItemDecoration(new EdgeDecorator(new EdgeDecorator.Config(0, 0, moodMargin, 0)
+                        .setOrientation(EdgeDecorator.Orientation.Horizontal)));
 
                 getDailyFirstPost((map, e) -> {
                     if (e != null) return;

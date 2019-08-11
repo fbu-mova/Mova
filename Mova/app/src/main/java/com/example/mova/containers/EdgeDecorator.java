@@ -5,6 +5,8 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.utils.AsyncUtils;
+
 /**
  * Created by anthonykiniyalocts on 12/8/16.
  * Credit: https://gist.github.com/AKiniyalocts/5a00d66f03f1c3393c1302bea73749b2
@@ -14,37 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
-    private final int topMargin, bottomMargin, leftMargin, rightMargin;
-    private final Orientation orientation;
-    private final Start start;
+    private final Config config;
+
+    public EdgeDecorator() {
+        this(new Config());
+    }
 
     public EdgeDecorator(int margin) {
-        this(margin, Orientation.Vertical);
+        this(new Config(margin));
     }
 
-    public EdgeDecorator(int margin, Orientation orientation) {
-        this(margin, orientation, Start.Natural);
+    public EdgeDecorator(int left, int top, int right, int bottom) {
+        this(new Config(left, top, right, bottom));
     }
 
-    public EdgeDecorator(int margin, Orientation orientation, Start start) {
-        this(margin, margin, margin, margin, orientation, start);
-    }
-
-    public EdgeDecorator(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
-        this(leftMargin, topMargin, rightMargin, bottomMargin, Orientation.Vertical);
-    }
-
-    public EdgeDecorator(int leftMargin, int topMargin, int rightMargin, int bottomMargin, Orientation orientation) {
-        this(leftMargin, topMargin, rightMargin, bottomMargin, orientation, Start.Natural);
-    }
-
-    public EdgeDecorator(int leftMargin, int topMargin, int rightMargin, int bottomMargin, Orientation orientation, Start start) {
-        this.topMargin = topMargin;
-        this.bottomMargin = bottomMargin;
-        this.leftMargin = leftMargin;
-        this.rightMargin = rightMargin;
-        this.orientation = orientation;
-        this.start = start;
+    public EdgeDecorator(Config config) {
+        this.config = config;
     }
 
     @Override
@@ -55,32 +42,94 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
         final int itemPosition = parent.getChildAdapterPosition(view);
 
-        // no position, leave it alone
+        // No position, leave it alone
         if (itemPosition == RecyclerView.NO_POSITION) {
             return;
         }
 
-        // first item (start and end padding)
+        int left = view.getPaddingLeft() + config.leftMargin;
+        int top = view.getPaddingTop() + config.topMargin;
+        int right = view.getPaddingRight() + config.rightMargin;
+        int bottom = view.getPaddingBottom() + config.bottomMargin;
+        outRect.set(left, top, right, bottom);
+
+        // First item (keep start and end padding)
         if (itemPosition == 0) {
-            outRect.set(view.getPaddingLeft() + leftMargin, view.getPaddingTop() + topMargin, view.getPaddingRight() + rightMargin, view.getPaddingBottom() + bottomMargin);
-        }
-        // every other item (only end padding)
-        else {
-            // Remove the correct start padding based on start and orientation
-            int left = view.getPaddingLeft() + leftMargin;
-            int top = view.getPaddingTop() + topMargin;
-            int right = view.getPaddingRight() + rightMargin;
-            int bottom = view.getPaddingBottom() + bottomMargin;
-
-            if (orientation == Orientation.Vertical) {
-                if (start == Start.Natural) top -= topMargin;
-                else                        bottom -= bottomMargin;
-            } else {
-                if (start == Start.Natural) left -= leftMargin;
-                else                        right -= rightMargin;
+            if (config.useFirstMargin) {
+                addTo(view, outRect, getStart(), -1 * getMargin(getStart()));
+                addTo(view, outRect, getStart(), config.firstMargin);
             }
+            return;
+        }
 
-            outRect.set(left, top, right, bottom);
+        // Last item
+        if (itemPosition == state.getItemCount() - 1) {
+            if (config.useLastMargin) {
+                addTo(view, outRect, getEnd(), -1 * getMargin(getEnd()));
+                addTo(view, outRect, getEnd(), config.lastMargin);
+            }
+            return;
+        }
+
+        // For all other items, remove the correct start padding (only keep end padding)
+        addTo(view, outRect, getStart(), -1 * getMargin(getStart()));
+    }
+
+    private Side getStart() {
+        if (config.orientation == Orientation.Vertical) {
+            if (config.start == Start.Natural) return Side.Top;
+            return Side.Bottom;
+        } else {
+            if (config.start == Start.Natural) return Side.Left;
+            return Side.Right;
+        }
+    }
+
+    private Side getEnd() {
+        return getStart().opposite();
+    }
+
+    private int getMargin(Side side) {
+        switch (side) {
+            case Left: return config.leftMargin;
+            case Top: return config.topMargin;
+            case Right: return config.rightMargin;
+            case Bottom:
+            default:
+                return config.bottomMargin;
+        }
+    }
+
+    private void addTo(View view, Rect rect, Side side, int value) {
+        switch (side) {
+            case Left:
+                rect.left += view.getPaddingLeft() + value;
+                break;
+            case Top:
+                rect.top += view.getPaddingTop() + value;
+                break;
+            case Right:
+                rect.right += view.getPaddingRight() + value;
+                break;
+            case Bottom:
+            default:
+                rect.bottom += view.getPaddingBottom() + value;
+                break;
+        }
+    }
+
+    private enum Side {
+        Left, Top, Right, Bottom;
+
+        public Side opposite() {
+            switch (this) {
+                case Left: return Right;
+                case Top: return Bottom;
+                case Right: return Left;
+                case Bottom:
+                default:
+                    return Top;
+            }
         }
     }
 
@@ -92,5 +141,67 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
     public enum Start {
         Natural,
         Reverse
+    }
+
+    public static class Config {
+        private int topMargin = 0, bottomMargin = 0, leftMargin = 0, rightMargin = 0;
+
+        private int firstMargin = 0, lastMargin = 0;
+        private boolean useFirstMargin = false, useLastMargin = false;
+
+        private Orientation orientation = Orientation.Vertical;
+        private Start start = Start.Natural;
+
+        private AsyncUtils.ItemReturnCallback<View, View> getViewToDecorate = view -> view;
+
+        public Config() {}
+
+        public Config(int margin) {
+            this.topMargin = margin;
+            this.bottomMargin = margin;
+            this.leftMargin = margin;
+            this.rightMargin = margin;
+        }
+
+        public Config(int horizontal, int vertical) {
+            this.topMargin = vertical;
+            this.bottomMargin = vertical;
+            this.leftMargin = horizontal;
+            this.rightMargin = horizontal;
+        }
+
+        public Config(int left, int top, int right, int bottom) {
+            this.topMargin = top;
+            this.bottomMargin = bottom;
+            this.leftMargin = left;
+            this.rightMargin = right;
+        }
+
+        public Config setFirstMargin(int margin) {
+            this.useFirstMargin = true;
+            this.firstMargin = margin;
+            return this;
+        }
+
+        public Config setLastMargin(int margin) {
+            this.useLastMargin = true;
+            this.lastMargin = margin;
+            return this;
+        }
+
+        public Config setOrientation(Orientation orientation) {
+            this.orientation = orientation;
+            return this;
+        }
+
+        public Config setStart(Start start) {
+            this.start = start;
+            return this;
+        }
+
+        public Config setGetViewToDecorate(AsyncUtils.ItemReturnCallback<View, View> getViewToDecorate) {
+            this.getViewToDecorate = getViewToDecorate;
+            return this;
+        }
     }
 }

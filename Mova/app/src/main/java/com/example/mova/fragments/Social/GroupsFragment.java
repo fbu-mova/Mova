@@ -163,7 +163,8 @@ public class GroupsFragment extends Fragment {
             }
         };
         Resources resources = getResources();
-        EdgeDecorator decorator = new EdgeDecorator((int) resources.getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal);
+        EdgeDecorator decorator = new EdgeDecorator(new EdgeDecorator.Config(resources.getDimensionPixelOffset(R.dimen.innerMargin))
+                .setOrientation(EdgeDecorator.Orientation.Horizontal));
 
         rvGroups.setLayoutManager(new GridLayoutManager(getContext(), 1,  GridLayoutManager.HORIZONTAL,false));
         rvActiveGoals.setLayoutManager(new LinearLayoutManager(getContext()));
