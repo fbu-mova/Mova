@@ -269,8 +269,8 @@ public class JournalFragment extends Fragment {
                 @Override
                 protected void onPost(PostConfig config) {
                     config.savePost((entry) -> {
-                        journal.addEntry(config.post.getCreatedAt(), config.post);
-                        displayEntries(new Date());
+                        journal.addEntry(TimeUtils.normalizeToDay(config.post.getCreatedAt()), config.post);
+                        displayEntries(TimeUtils.normalizeToDay(new Date()));
                     });
                 }
             };
@@ -280,29 +280,6 @@ public class JournalFragment extends Fragment {
 
         displayEntries(currDate);
         loadEntries();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == JournalComposeActivity.COMPOSE_REQUEST_CODE
-                && resultCode == Activity.RESULT_OK) {
-            Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
-            ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
-            postJournalEntry(journalEntry, tags);
-        }
-    }
-
-    private void postJournalEntry(Post journalEntry, List<Tag> tags) {
-        PostConfig config = new PostConfig(journalEntry);
-        config.tags = tags;
-
-        journal.postEntry(config, (e) -> {
-            Toast.makeText(getActivity(), "Saved entry!", Toast.LENGTH_SHORT).show();
-            if (currDate.equals(TimeUtils.getToday())) {
-                entryAdapter.notifyItemInserted(journal.getEntriesByDate(currDate).size() - 1);
-            }
-        });
     }
 
     private void displayEntries(Date date) {
