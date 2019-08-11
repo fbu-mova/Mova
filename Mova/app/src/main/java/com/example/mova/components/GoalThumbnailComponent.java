@@ -150,6 +150,10 @@ public class GoalThumbnailComponent extends Component {
 
     }
 
+    public void setProgress(int progress) {
+        viewHolder.goalProgressBar.setProgress(progress);
+    }
+
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.llRoot)              public LinearLayout llRoot;

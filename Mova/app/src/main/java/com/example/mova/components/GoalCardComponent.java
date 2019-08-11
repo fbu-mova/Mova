@@ -62,6 +62,8 @@ public class GoalCardComponent extends Component {
     private ArrayList<SharedAction.Data> sharedActions;
     private DataComponentAdapter<SharedAction.Data> sharedActionsAdapter;
 
+    private AsyncUtils.TwoItemCallback<Action, Integer> onSuccessfullyToggled = (action, progress) -> {};
+
     private ComponentManager componentManager;
 
     private boolean isUserInvolved;
@@ -178,6 +180,7 @@ public class GoalCardComponent extends Component {
                                 float percent = (float) numDone / (float) numTotal;
                                 int progress = (int) (percent * PROGRESS_MAX);
                                 viewHolder.goalProgressBar.setProgress(progress);
+                                onSuccessfullyToggled.call(item, progress);
                             });
                         });
                         return component;
@@ -261,6 +264,10 @@ public class GoalCardComponent extends Component {
     @Override
     protected void onDestroy() {
 
+    }
+
+    public void setOnSuccessfullyToggled(AsyncUtils.TwoItemCallback<Action, Integer> listener) {
+        onSuccessfullyToggled = listener;
     }
 
     public static void updateInvolvedSharedAdapter(Activity activity, List<SharedAction> objects, ArrayList<SharedAction.Data> sharedActions, DataComponentAdapter<SharedAction.Data> sharedActionsAdapter, RecyclerView rvActions) {

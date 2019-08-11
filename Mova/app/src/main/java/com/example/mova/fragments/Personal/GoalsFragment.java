@@ -32,6 +32,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -68,6 +69,7 @@ public class GoalsFragment extends Fragment {
     private DataComponentAdapter<Goal.GoalData> allGoalsAdapter;
 
     private Wrapper<Boolean> thumbnailShowGroup;
+    private HashMap<Goal, GoalThumbnailComponent> thumbnailComponents;
 
     public GoalsFragment() {
         // Required empty public constructor
@@ -112,12 +114,15 @@ public class GoalsFragment extends Fragment {
         // thumbnail
         thumbnailGoals = new ArrayList<>();
         thumbnailShowGroup = new Wrapper<>(true);
+        thumbnailComponents = new HashMap<>();
 
         // assigns the adapter w/ anonymous class
         thumbnailGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(activity, thumbnailGoals) {
             @Override
             public Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
-                return new GoalThumbnailComponent(item, thumbnailShowGroup);
+                GoalThumbnailComponent component = new GoalThumbnailComponent(item, thumbnailShowGroup);
+                thumbnailComponents.put(item.goal, component);
+                return component;
             }
 
             @Override
@@ -155,7 +160,12 @@ public class GoalsFragment extends Fragment {
         allGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(activity, allGoals) {
             @Override
             public Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
-                Component component = new GoalCardComponent(item);
+                GoalCardComponent component = new GoalCardComponent(item);
+                component.setOnSuccessfullyToggled((action, progress) -> {
+                    GoalThumbnailComponent thumb = thumbnailComponents.get(item.goal);
+                    if (thumb == null) return;
+                    thumb.setProgress(progress);
+                });
                 return component;
             }
 
