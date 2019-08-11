@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mova.R;
 import com.example.mova.utils.ColorUtils;
+import com.example.mova.utils.ViewUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,7 +76,9 @@ public class ActionView extends ConstraintLayout {
             typedArray.recycle();
         }
 
-//        expandTouchArea();
+        int area = res.getDimensionPixelOffset(R.dimen.elementMargin);
+        ViewUtils.expandTouchArea(flToggle, new Rect(area, 0, area, 0));
+
         setOnClickListener((v) -> {});
     }
 
@@ -135,23 +138,6 @@ public class ActionView extends ConstraintLayout {
             tvText.setTextColor(config.colorTextIncomplete);
             ivToggle.setColorFilter(config.colorBoxIncomplete);
         }
-    }
-
-    private void expandTouchArea() {
-        final View parent = (View) flToggle.getParent();  // button: the view you want to enlarge hit area
-        parent.post( new Runnable() {
-            public void run() {
-                Resources res = getResources();
-                int area = res.getDimensionPixelOffset(R.dimen.elementMargin);
-                final Rect rect = new Rect();
-                flToggle.getHitRect(rect);
-//                rect.top -= 100;    // increase top hit area
-                rect.left -= area;   // increase left hit area
-//                rect.bottom += 100; // increase bottom hit area
-                rect.right += area;  // increase right hit area
-                parent.setTouchDelegate(new TouchDelegate(rect, flToggle));
-            }
-        });
     }
 
     @Override

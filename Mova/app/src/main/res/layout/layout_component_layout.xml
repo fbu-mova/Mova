@@ -3,4 +3,5 @@
     android:id="@+id/componentLayout"
     android:layout_width="match_parent"
     android:layout_height="500dp"
-    android:clipChildren="false"></com.example.mova.component.ComponentLayout>
+    android:clipChildren="false"
+    android:clipToPadding="false"></com.example.mova.component.ComponentLayout>

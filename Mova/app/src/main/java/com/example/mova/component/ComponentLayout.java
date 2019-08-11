@@ -39,7 +39,9 @@ public class ComponentLayout extends FrameLayout {
         if (autoClear) clear(); // in case of RecyclerViews, discards old layout
         Component.Inflater inflater = component.makeInflater();
         Component.ViewHolder holder = inflater.inflate(activity, this, true);
-        ViewUtils.setMargins(holder.getView(), marginLeft, marginTop, marginRight, marginBottom);
+//        ViewUtils.setMargins(holder.getView(), marginLeft, marginTop, marginRight, marginBottom);
+        holder.getView().setClipToOutline(false);
+        setPadding(marginLeft, marginTop, marginRight, marginBottom);
         component.render(activity, holder);
     }
 

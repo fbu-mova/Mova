@@ -185,9 +185,19 @@ public class PostComponent extends Component {
                     }
 
                     int elementMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.elementMargin);
-                    holder.clMedia.setMarginTop(elementMargin);
-                    holder.clMedia.setMarginBottom(elementMargin);
+                    int innerMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+
+                    if (media.getType() != Media.ContentType.Post) {
+                        holder.clMedia.setMargin(innerMargin, elementMargin, innerMargin, elementMargin);
+                    }
+
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+
+                    if (media.getType() == Media.ContentType.Post) {
+                        ViewHolder mediaHolder = (ViewHolder) mediaComponent.getViewHolder();
+                        mediaHolder.llRoot.setPadding(innerMargin, elementMargin, innerMargin, elementMargin);
+                    }
+
                     holder.clMedia.setVisibility(View.VISIBLE);
                 });
             });
@@ -317,19 +327,6 @@ public class PostComponent extends Component {
     }
 
     private void configureEvents() {
-//        holder.card.setOnClickListener((view) -> {
-//            if (config.allowDetailsClick) {
-//                PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
-//                FragmentManager manager = getActivity().getSupportFragmentManager();
-//                FragmentTransaction ft = manager.beginTransaction();
-//                ft.add(R.id.flSocialContainer, frag);
-//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                ft.addToBackStack(null);
-//                ft.commit();
-//            }
-//            config.onClick.call(post);
-//        });
-
         GestureDetector detector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -400,6 +397,7 @@ public class PostComponent extends Component {
         @BindView(R.id.ivSave)         public ImageView ivSave;
 
         @BindView(R.id.glCompose)      public GestureLayout glCompose;
+        @BindView(R.id.llRoot)         public LinearLayout llRoot;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

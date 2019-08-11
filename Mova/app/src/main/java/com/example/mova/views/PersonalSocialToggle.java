@@ -3,6 +3,7 @@ package com.example.mova.views;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -21,6 +22,7 @@ import com.example.mova.containers.GestureLayout;
 import com.example.mova.containers.GestureListener;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.DataEvent;
+import com.example.mova.utils.ViewUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -117,6 +119,9 @@ public class PersonalSocialToggle extends LinearLayout {
                 return false;
             }
         });
+
+        int area = getResources().getDimensionPixelOffset(R.dimen.profileImage);
+        ViewUtils.expandTouchArea(glRoot, new Rect(0, area, 0, area));
 
         glRoot.setOnTouchListener((View v, MotionEvent event) -> !gestureDetector.onTouchEvent(event));
         glRoot.setGestureDetector(gestureDetector);
