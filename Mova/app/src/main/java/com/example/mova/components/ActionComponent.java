@@ -21,6 +21,7 @@ import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
@@ -42,6 +43,8 @@ public class ActionComponent extends Component {
 
     private Goal goal;
     private SharedAction sharedAction;
+
+    private AsyncUtils.ItemCallback<Boolean> onSuccessfullyToggled = completed -> {};
 
     public ActionComponent(Goal goal, Action item, boolean isPersonal) {
         super();
@@ -93,6 +96,8 @@ public class ActionComponent extends Component {
         });
 
         viewComponent = new ActionViewComponent(item, goal.getHue(), componentManager);
+        viewComponent.setOnSuccessfullyToggled(onSuccessfullyToggled);
+
         editComponent = new ActionEditComponent(false, item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {
@@ -167,7 +172,6 @@ public class ActionComponent extends Component {
 //        });
 
         // todo -- set icons later
-
     }
 
     @Override
@@ -180,6 +184,10 @@ public class ActionComponent extends Component {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         ConfirmEditSocialActionDialog confirmEditSocialActionDialog = ConfirmEditSocialActionDialog.newInstance(item, isAuthor, new_task);
         confirmEditSocialActionDialog.show(fm, "showingConfirmEditSocialActionDialog");
+    }
+
+    public void setOnSuccessfullyToggled(AsyncUtils.ItemCallback<Boolean> listener) {
+        onSuccessfullyToggled = listener;
     }
 
     public static class ViewHolder extends Component.ViewHolder {

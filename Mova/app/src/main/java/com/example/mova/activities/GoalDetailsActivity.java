@@ -51,6 +51,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
     private static final String TAG = "goal details activity";
     private Goal goal;
+    private int numDone = 0, numTotal = 0;
 
     User user;
     private boolean isPersonal;
@@ -139,8 +140,11 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         });
 
         // update GoalProgressBar
-        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
-            int progress = (int) (portionDone * PROGRESS_MAX);
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (numDone, numTotal) -> {
+            this.numDone = numDone;
+            this.numTotal = numTotal;
+            float percent = (float) numDone / (float) numTotal;
+            int progress = (int) (percent * PROGRESS_MAX);
             goalpb.setProgress(progress);
         });
 
@@ -281,7 +285,14 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
                 @Override
                 public Component makeComponent(Action item, Component.ViewHolder holder) {
-                    return new ActionComponent(goal, item, isPersonal);
+                    ActionComponent component = new ActionComponent(goal, item, isPersonal);
+                    component.setOnSuccessfullyToggled(completed -> {
+                        numDone += (completed) ? 1 : -1;
+                        float percent = (float) numDone / (float) numTotal;
+                        int progress = (int) (percent * PROGRESS_MAX);
+                        goalpb.setProgress(progress);
+                    });
+                    return component;
                 }
 
                 @Override

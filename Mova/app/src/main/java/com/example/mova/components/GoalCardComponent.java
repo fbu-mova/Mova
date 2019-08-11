@@ -53,6 +53,7 @@ public class GoalCardComponent extends Component {
 
     private Goal goal;
     public GoalCardViewHolder viewHolder;
+    private int numDone = 0, numTotal = 0;
 
     // for action recyclerview in the card
     private ArrayList<Action> actions;
@@ -125,9 +126,12 @@ public class GoalCardComponent extends Component {
         viewHolder.tvName.setText(goal.getTitle());
 //        viewHolder.tvDescription.setText(goal.getDescription());
 
-        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (done, outOf) -> {
             getActivity().runOnUiThread(() -> {
-                int progress = (int) (portionDone * PROGRESS_MAX);
+                this.numDone = done;
+                this.numTotal = outOf;
+                float percent = (float) done / (float) outOf;
+                int progress = (int) (percent * PROGRESS_MAX);
                 viewHolder.goalProgressBar.setProgress(progress);
             });
         });
@@ -167,7 +171,16 @@ public class GoalCardComponent extends Component {
 
                     @Override
                     protected Component makeComponent(Action item, ViewHolder holder) {
-                        return new ActionComponent(goal, item, GoalCardComponent.this.isPersonal);
+                        ActionComponent component = new ActionComponent(goal, item, GoalCardComponent.this.isPersonal);
+                        component.setOnSuccessfullyToggled((completed) -> {
+                            getActivity().runOnUiThread(() -> {
+                                numDone += (completed) ? 1 : -1;
+                                float percent = (float) numDone / (float) numTotal;
+                                int progress = (int) (percent * PROGRESS_MAX);
+                                viewHolder.goalProgressBar.setProgress(progress);
+                            });
+                        });
+                        return component;
                     }
 
                     @Override

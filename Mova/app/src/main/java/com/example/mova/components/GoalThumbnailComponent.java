@@ -138,8 +138,9 @@ public class GoalThumbnailComponent extends Component {
         viewHolder.goalProgressBar.setUnfilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.UltraLight));
         viewHolder.goalProgressBar.setFilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.Mid));
 
-        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
-            int progress = (int) (portionDone * PROGRESS_MAX);
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (numDone, numTotal) -> {
+            float percent = (float) numDone / (float) numTotal;
+            int progress = (int) (percent * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
     }

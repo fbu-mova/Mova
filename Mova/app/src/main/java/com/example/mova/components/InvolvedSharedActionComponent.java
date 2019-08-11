@@ -12,6 +12,7 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.model.SharedAction;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.views.ActionView;
@@ -27,6 +28,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     protected ColorUtils.Hue hue;
     protected static int viewLayoutRes = R.layout.item_involved_shared_action;
     protected ViewHolder holder;
+    private AsyncUtils.ItemCallback<Boolean> onSuccessfullyToggled;
 
     private int complete;
     private int total;
@@ -38,6 +40,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
                 return data.isUserDone;
             });
 
+        onSuccessfullyToggled = completed -> {};
         this.sharedAction = data.sharedAction;
         this.hue = hue;
     }
@@ -86,6 +89,9 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
             GoalUtils.toggleDone(action, (e) -> {
                 if (e == null) {
                     Log.d(TAG, "toggled action done");
+                    complete += (isChecked) ? 1 : -1;
+                    updateNumDone(complete, total);
+                    onSuccessfullyToggled.call(isChecked);
                 }
                 else {
                     Log.e(TAG, "toggled action failed", e);
@@ -94,13 +100,17 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
             });
         });
 
-        if (isChecked) {
-            complete++;
-        }
-        else {
-            complete--;
-        }
-        updateNumDone(complete, total); // updates UI without calling database
+//        if (isChecked) {
+//            complete++;
+//        }
+//        else {
+//            complete--;
+//        }
+//        updateNumDone(complete, total); // updates UI without calling database
+    }
+
+    public void setOnSuccessfullyToggled(AsyncUtils.ItemCallback<Boolean> listener) {
+        onSuccessfullyToggled = listener;
     }
 
     @Override

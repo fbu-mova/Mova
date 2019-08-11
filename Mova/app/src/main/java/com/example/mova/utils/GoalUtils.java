@@ -85,16 +85,16 @@ public class GoalUtils {
      * @param user The user whose actions we want to track / progress we want to measure.
      * @param callback The callback to execute once the query is complete and we have the progress.
      */
-    public static void getNumActionsComplete(Goal goal, User user, AsyncUtils.ItemCallback<Float> callback) {
+    public static void getNumActionsComplete(Goal goal, User user, AsyncUtils.TwoItemCallback<Integer, Integer> callback) {
         getActionList((actionList) -> {
-            float totalAction = actionList.size();
-            float doneAction = 0;
+            int totalAction = actionList.size();
+            int doneAction = 0;
             for (Action action: actionList) {
                 if (action.getIsDone()) {
                     doneAction++;
                 }
             }
-            callback.call(doneAction / totalAction);
+            callback.call(doneAction, totalAction);
         }, goal, user);
     }
 

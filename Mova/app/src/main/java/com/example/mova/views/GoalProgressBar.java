@@ -406,6 +406,10 @@ public class GoalProgressBar extends View {
         setProgress(progress, true);
     }
 
+    public int getProgress() {
+        return progress;
+    }
+
     private void setProgress(int progress, boolean animate) {
         if (animate) {
             ValueAnimator animator = ValueAnimator.ofInt(this.progress, progress);

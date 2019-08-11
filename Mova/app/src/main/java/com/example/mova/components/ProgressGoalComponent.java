@@ -87,8 +87,9 @@ public class ProgressGoalComponent extends Component {
 
         viewHolder.tvGoalTitle.setText(goal.getTitle());
 
-        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
-            int progress = (int) (portionDone * PROGRESS_MAX);
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (numDone, numTotal) -> {
+            float percent = (float) numDone / (float) numTotal;
+            int progress = (int) (percent * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
     }

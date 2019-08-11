@@ -36,6 +36,7 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
     private Action action;
     private ColorUtils.Hue hue;
     private AsyncUtils.EmptyCallback onTextClickListener;
+    private AsyncUtils.ItemCallback<Boolean> onSuccessfullyToggled;
 
     private ViewHolder viewHolder;
 
@@ -43,6 +44,7 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
 
     public ActionViewComponent(Action action, ColorUtils.Hue hue, ComponentManager componentManager) {
         super(action, (item) -> item.getTask(), (item) -> (item.getIsDone()));
+        onSuccessfullyToggled = completed -> {};
         this.action = action;
         this.hue = hue;
         setManager(componentManager);
@@ -97,12 +99,17 @@ public class ActionViewComponent extends ChecklistItemComponent<Action> {
         GoalUtils.toggleDone(item, (e) -> {
             if (e == null) {
                 Log.d(TAG, "toggled action done");
+                onSuccessfullyToggled.call(isChecked);
             }
             else {
                 Log.e(TAG, "toggled action failed", e);
                 Toast.makeText(getActivity(), "Toggling action failed", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void setOnSuccessfullyToggled(AsyncUtils.ItemCallback<Boolean> listener) {
+        onSuccessfullyToggled = listener;
     }
 
     @Override
