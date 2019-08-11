@@ -103,7 +103,6 @@ public class EventThumbnailComponent extends Component {
             viewHolder.tvEventLocation.setText(locationsplit[j] + ", "+ state[1]);
         }
 
-
         //viewHolder.tvGroupName.setText();
         viewHolder.tvEventName.setText(event.getTitle());
 

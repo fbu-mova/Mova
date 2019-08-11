@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.example.mova.R;
 import com.example.mova.component.Component;
 import com.example.mova.components.ActionMediaComponent;
+import com.example.mova.components.EventCardComponent;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.components.ImageComponent;
@@ -244,6 +245,20 @@ public class Media extends HashableParseObject {
                         Goal goal = (Goal) obj1;
                         callback.call(new ActionMediaComponent(goal, action), null);
                     });
+                });
+                break;
+            case Event:
+                getContentEvent().fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    Event event = (Event) obj;
+                    EventCardComponent component = new EventCardComponent(event);
+                    component.setAllowDetailsClick(false);
+                    component.setAllowCompose(false);
+                    component.setShowDescription(false);
+                    callback.call(component, null);
                 });
                 break;
             default:

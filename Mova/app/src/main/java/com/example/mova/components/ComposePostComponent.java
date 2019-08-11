@@ -233,7 +233,12 @@ public abstract class ComposePostComponent extends Component {
                     return;
                 }
 
-                holder.llAddMedia.setVisibility(View.GONE);
+                if (postConfig.media.getType() == Media.ContentType.Event) {
+                    ((EventCardComponent) mediaComponent).setAllowDetailsClick(false);
+                }
+
+                holder.cvAddMedia.setVisibility(View.GONE);
+                holder.clMedia.setMargin(getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin));
                 holder.clMedia.inflateComponent(getActivity(), mediaComponent);
                 holder.clMedia.setVisibility(View.VISIBLE);
             });

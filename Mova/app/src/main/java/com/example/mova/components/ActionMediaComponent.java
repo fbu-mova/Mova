@@ -1,6 +1,7 @@
 package com.example.mova.components;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.icons.Icons;
 import com.example.mova.model.Action;
@@ -42,7 +44,7 @@ public class ActionMediaComponent extends ChecklistItemComponent<Action> {
 
     }
 
-    public class ViewHolder extends ChecklistItemComponent.ViewHolder {
+    public static class ViewHolder extends ChecklistItemComponent.ViewHolder {
 
         @BindView(R.id.llGoal) protected LinearLayout llGoal;
         @BindView(R.id.cvGoal) protected CardView cvGoal;
@@ -56,7 +58,16 @@ public class ActionMediaComponent extends ChecklistItemComponent<Action> {
         }
     }
 
-    public class Inflater extends ChecklistItemComponent.Inflater {
+    public static class Inflater extends ChecklistItemComponent.Inflater {
 
+        public Inflater() {
+            super(R.layout.component_action_media);
+        }
+
+        @Override
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+            Component.ViewHolder holder = super.inflate(activity, parent, attachToRoot);
+            return new ViewHolder(holder.getView());
+        }
     }
 }
