@@ -109,18 +109,10 @@ public class PostComponent extends Component {
         }
         this.holder.tvBody.setText(post.getBody());
 
-        new ComposePostDialog.Builder(getActivity())
-                .setConfig(makePostConfig(post))
-                .setAllowCompose(true)
-                .setOnPost((toPost) -> {
-                    Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
-                    // TODO
-                })
-                .setGestureLayout(this.holder.glCompose);
-
         displayUser();
         configureButtons();
         configurePostClick();
+        configureCompose();
         displayMedia();
         displayGroup();
         displaySubheader();
@@ -336,6 +328,19 @@ public class PostComponent extends Component {
             }
             config.onClick.call(post);
         });
+    }
+
+    private void configureCompose() {
+        if (config.allowCompose) {
+            new ComposePostDialog.Builder(getActivity())
+                    .setConfig(makePostConfig(post))
+                    .setAllowCompose(true)
+                    .setOnPost((toPost) -> {
+                        Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                        // TODO
+                    })
+                    .setGestureLayout(this.holder.glCompose);
+        }
     }
 
     private void toggleIcon(ImageView ivIcon, boolean active) {

@@ -120,6 +120,7 @@ public abstract class ComposePostComponent extends Component {
         } else {
             PostComponent.Config config = new PostComponent.Config(null, true, false, false);
             config.showMedia = false;
+            config.allowCompose = false;
             PostComponent postComponent = new PostComponent(postConfig.postToReply, config);
             holder.flReplyContent.setVisibility(View.VISIBLE);
             holder.clPostToReply.setMargin(32);

@@ -155,6 +155,7 @@ public abstract class ComposeMediaComponent extends Component {
             @Override
             protected Component makeComponent(Post item, Component.ViewHolder holder) {
                 PostComponent.Config config = new PostComponent.Config(null, false, false, false);
+                config.allowCompose = false;
                 config.onClick = (post) -> {
                     Media media = new Media(post);
                     returnMedia(media);
