@@ -189,8 +189,14 @@ public class PostComponent extends Component {
 
                     if (media.getType() != Media.ContentType.Post) {
                         holder.clMedia.setMargin(innerMargin, elementMargin, innerMargin, elementMargin);
-                    } else {
+                    }
+
+                    if (media.getType() == Media.ContentType.Post) {
                         ((PostComponent) mediaComponent).config.allowDetailsClick = config.allowMediaDetailsClick;
+                    }
+
+                    if (media.getType() == Media.ContentType.Event) {
+                        ((EventCardComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
                     }
 
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);

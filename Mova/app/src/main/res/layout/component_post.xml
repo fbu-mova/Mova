@@ -99,11 +99,15 @@
             android:id="@+id/glCompose"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:longClickable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -177,7 +181,8 @@
                     android:id="@+id/clMedia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clipChildren="false">
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                 </com.example.mova.component.ComponentLayout>
 
