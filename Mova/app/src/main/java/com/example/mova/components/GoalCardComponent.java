@@ -51,7 +51,7 @@ public class GoalCardComponent extends Component {
     private static final String TAG = "goal card comp";
     private static final int viewLayoutRes = R.layout.item_goal_card;
 
-    private Goal item;
+    private Goal goal;
     public GoalCardViewHolder viewHolder;
 
     // for action recyclerview in the card
@@ -68,9 +68,9 @@ public class GoalCardComponent extends Component {
 
     public GoalCardComponent(Goal.GoalData bundle) {
         super();
-        this.item = bundle.goal;
+        this.goal = bundle.goal;
         this.isUserInvolved = bundle.userIsInvolved;
-        this.isPersonal = item.getIsPersonal();
+        this.isPersonal = goal.getIsPersonal();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class GoalCardComponent extends Component {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
-                intent.putExtra("goal", item);
+                intent.putExtra("goal", goal);
                 intent.putExtra("isUserInvolved", isUserInvolved);
 
                     // fixme -- add ability to alter priority of goals as go back to goals fragment
@@ -122,28 +122,28 @@ public class GoalCardComponent extends Component {
             }
         });
 
-        viewHolder.tvName.setText(item.getTitle());
-//        viewHolder.tvDescription.setText(item.getDescription());
+        viewHolder.tvName.setText(goal.getTitle());
+//        viewHolder.tvDescription.setText(goal.getDescription());
 
-        GoalUtils.getNumActionsComplete(item, User.getCurrentUser(), (portionDone) -> {
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             getActivity().runOnUiThread(() -> {
                 int progress = (int) (portionDone * PROGRESS_MAX);
                 viewHolder.goalProgressBar.setProgress(progress);
             });
         });
 
-        Icons.from(getActivity()).displayNounIcon(item, viewHolder.cvGoal, viewHolder.ivGoal);
+        Icons.from(getActivity()).displayNounIcon(goal, viewHolder.cvGoal, viewHolder.ivGoal);
 
         Resources res = getActivity().getResources();
-        viewHolder.goalProgressBar.setUnfilledColor(ColorUtils.getColor(res, item.getHue(), ColorUtils.Lightness.UltraLight));
-        viewHolder.goalProgressBar.setFilledColor(ColorUtils.getColor(res, item.getHue(), ColorUtils.Lightness.Mid));
+        viewHolder.goalProgressBar.setUnfilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.UltraLight));
+        viewHolder.goalProgressBar.setFilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.Mid));
 
-        if(item.getGroup() == null){
+        if(goal.getGroup() == null){
             viewHolder.tvFrom.setVisibility(View.GONE);
             viewHolder.tvGroup.setVisibility(View.GONE);
             viewHolder.cvFromGroupIcon.setVisibility(View.GONE);
         }else{
-            item.getGroupFull(() -> {}, (group) -> {
+            goal.getGroupFull(() -> {}, (group) -> {
                 getActivity().runOnUiThread(() -> {
                     viewHolder.tvGroup.setText(group.getName());
                     Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
@@ -167,7 +167,7 @@ public class GoalCardComponent extends Component {
 
                     @Override
                     protected Component makeComponent(Action item, ViewHolder holder) {
-                        return new ActionComponent(item, GoalCardComponent.this.isPersonal);
+                        return new ActionComponent(goal, item, GoalCardComponent.this.isPersonal);
                     }
 
                     @Override
@@ -179,7 +179,7 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
             viewHolder.rvActions.setAdapter(actionsAdapter);
 
-            GoalUtils.loadGoalActions(item, (objects) -> {
+            GoalUtils.loadGoalActions(goal, (objects) -> {
                 getActivity().runOnUiThread(() -> {
                     updateAdapter(objects, actions, actionsAdapter, viewHolder.rvActions);
                 });
@@ -197,7 +197,7 @@ public class GoalCardComponent extends Component {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new InvolvedSharedActionComponent(item);
+                    Component component = new InvolvedSharedActionComponent(item, goal.getHue());
                     return component;
                 }
 
@@ -210,7 +210,7 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
-            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+            GoalUtils.loadGoalSharedActions(goal, (objects) -> {
                 getActivity().runOnUiThread(() -> {
                     updateInvolvedSharedAdapter(getActivity(), objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
                 });
@@ -237,9 +237,9 @@ public class GoalCardComponent extends Component {
             viewHolder.rvActions.setLayoutManager(new LinearLayoutManager(getActivity()));
             viewHolder.rvActions.setAdapter(sharedActionsAdapter);
 
-            GoalUtils.loadGoalSharedActions(item, (objects) -> {
+            GoalUtils.loadGoalSharedActions(goal, (objects) -> {
                 getActivity().runOnUiThread(() -> {
-                    updateUninvolvedSharedAdapter(getActivity(), item, objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
+                    updateUninvolvedSharedAdapter(getActivity(), goal, objects, sharedActions, sharedActionsAdapter, viewHolder.rvActions);
                 });
             });
         }

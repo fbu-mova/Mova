@@ -149,7 +149,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         }
 
         setUpRecyclerView();
-
     }
 
     private void onSaveClick() {
@@ -282,8 +281,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
                 @Override
                 public Component makeComponent(Action item, Component.ViewHolder holder) {
-                    Component component = new ActionComponent(item, isPersonal);
-                    return component;
+                    return new ActionComponent(goal, item, isPersonal);
                 }
 
                 @Override
@@ -297,7 +295,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
             loadAllActions(); // fixme : mentioned in method declaration, but needs to address casework
         }
-        else if (!isPersonal && isUserInvolved) {
+        else if (isUserInvolved) {
             // user sees official social goal
 
             // a social goal that the user is involved in BUT user is not author
@@ -311,8 +309,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(this, sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new InvolvedSharedActionComponent(item);
-                    return component;
+                    return new InvolvedSharedActionComponent(item, goal.getHue());
                 }
 
                 @Override
@@ -328,7 +325,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
                 GoalCardComponent.updateInvolvedSharedAdapter(this, objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
-        else if (!isPersonal && !isUserInvolved) {
+        else {
             // user doesn't have checkbox functionality
 
             // a social goal the user is not involved in
@@ -338,8 +335,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(this, sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new UninvolvedSharedActionComponent(item);
-                    return component;
+                    return new UninvolvedSharedActionComponent(item);
                 }
 
                 @Override

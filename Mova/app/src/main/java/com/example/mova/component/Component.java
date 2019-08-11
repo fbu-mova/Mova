@@ -149,8 +149,14 @@ public abstract class Component {
      * @throws ClassCastException Throws if the holder is not of the correct class.
      */
     public static void checkViewHolderClass(ViewHolder holder, Class klass) throws ClassCastException {
-        if (holder.getClass() != klass) {
-            throw new ClassCastException("Provided ViewHolder is of invalid type. Expected " + klass.getCanonicalName() + ", received " + holder.getClass().getCanonicalName() + ".");
+        Class holderClass = holder.getClass();
+        while (holderClass != klass) {
+            if (holderClass == Component.class
+                || holderClass == Object.class
+                || holderClass == null) {
+                throw new ClassCastException("Provided ViewHolder is of invalid type. Expected " + klass.getCanonicalName() + ", received " + holder.getClass().getCanonicalName() + ".");
+            }
+            holderClass = holderClass.getSuperclass();
         }
     }
 }

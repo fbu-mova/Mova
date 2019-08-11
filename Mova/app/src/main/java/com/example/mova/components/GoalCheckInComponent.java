@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.utils.ColorUtils;
+import com.example.mova.views.ActionView;
 import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -111,11 +112,10 @@ public class GoalCheckInComponent extends Component {
 
             @Override
             protected Component makeComponent(Action item, Component.ViewHolder holder) {
-                return new ChecklistItemComponent<Action>(item,
-                    Color.parseColor("#999999"), Color.parseColor("#222222"), false,
+                ChecklistItemComponent<Action> component = new ChecklistItemComponent<Action>(item,
                     (action) -> action.getTask(), (action) -> action.getIsDone()) {
                         @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        public void onCheckedChanged(boolean isChecked) {
                             GoalUtils.toggleDone(item, (e) -> {
                                 if (e != null) {
                                     Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
@@ -126,6 +126,8 @@ public class GoalCheckInComponent extends Component {
                             });
                         }
                 };
+                component.setColors(ActionView.ColorConfig.defaultFromHue(getActivity().getResources(), goal.getHue()));
+                return component;
             }
 
             @Override

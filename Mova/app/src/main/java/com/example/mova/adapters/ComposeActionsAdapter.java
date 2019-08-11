@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mova.R;
 import com.example.mova.model.Action;
+import com.example.mova.views.ActionView;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
         // fixme -- needs to be actions to get the icon logic, or needs to get those info somewhere
             // fixme -- also, how would UI look for recurring / reminder?
 
-        holder.cbItem.setText(action.getTask());
+        holder.avItem.setText(action.getTask());
 
         int visible = (action.getIsPriority()) ? View.VISIBLE : View.GONE;
         holder.ivPriority.setVisibility(visible);
@@ -61,7 +62,7 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.cbItem)      public CheckBox cbItem;
+        @BindView(R.id.avItem)      public ActionView avItem;
         @BindView(R.id.ivPriority)  public ImageView ivPriority;
 
         public ViewHolder(@NonNull View itemView) {

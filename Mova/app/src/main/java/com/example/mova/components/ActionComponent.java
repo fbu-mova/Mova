@@ -43,8 +43,9 @@ public class ActionComponent extends Component {
     private Goal goal;
     private SharedAction sharedAction;
 
-    public ActionComponent(Action item, boolean isPersonal) {
+    public ActionComponent(Goal goal, Action item, boolean isPersonal) {
         super();
+        this.goal = goal;
         this.item = item;
         this.isPersonal = isPersonal;
     }
@@ -85,11 +86,13 @@ public class ActionComponent extends Component {
                 if (toKey.equals(editComponent.getName())) {
                     ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
                             .setText(item.getTask());
+                } else {
+                    viewComponent.setOnTextClickListener(() -> componentManager.swap(editComponent.getName()));
                 }
             }
         });
 
-        viewComponent = new ActionViewComponent(item, componentManager);
+        viewComponent = new ActionViewComponent(item, goal.getHue(), componentManager);
         editComponent = new ActionEditComponent(false, item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {
@@ -112,7 +115,7 @@ public class ActionComponent extends Component {
                     });
 //                }
 
-                manager.swap("ActionViewComponent");
+                manager.swap(viewComponent.getName());
             }
         });
 
@@ -132,12 +135,7 @@ public class ActionComponent extends Component {
 //            goal = item.getParentGoal();
 //        }
 
-        viewHolder.component.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                componentManager.swap("ActionEditComponent");
-            }
-        });
+        componentManager.swap(viewComponent.getName());
 
 //        viewHolder.component.setOnClickListener(new View.OnClickListener() {
 //            @Override

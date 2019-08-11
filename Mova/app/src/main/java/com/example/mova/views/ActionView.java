@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mova.R;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.ViewUtils;
 
@@ -140,16 +141,19 @@ public class ActionView extends ConstraintLayout {
         }
     }
 
-    @Override
-    public void setOnClickListener(@Nullable OnClickListener l) {
+    public void setOnCheckedChangeListener(@Nullable AsyncUtils.ItemCallback<Boolean> listener) {
         // FIXME: May be the wrong type of haptic feedback, and image might not be clickable.
         flToggle.setOnClickListener((v) -> {
             if (isEnabled) {
                 setComplete(!isComplete);
                 performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                if (l != null) l.onClick(v);
+                if (listener != null) listener.call(isComplete);
             }
         });
+    }
+
+    public void setOnTextClickListener(AsyncUtils.EmptyCallback listener) {
+        tvText.setOnClickListener((v) -> listener.call());
     }
 
     public static class ColorConfig {

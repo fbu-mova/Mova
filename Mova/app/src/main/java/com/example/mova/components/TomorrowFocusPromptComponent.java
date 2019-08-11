@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
+import com.example.mova.views.ActionView;
 import com.parse.ParseQuery;
 
 import java.util.List;
@@ -111,14 +113,20 @@ public abstract class TomorrowFocusPromptComponent extends Component {
         adapter = new DataComponentAdapter<Goal>(getActivity(), goals) {
             @Override
             protected Component makeComponent(Goal item, Component.ViewHolder holder) {
-                return new ChecklistItemComponent<Goal>(item,
-                        Color.parseColor("#FFFFFF"), Color.parseColor("#C9DBFF"), true,
-                        (o) -> o.getTitle(), (o) -> false) { // fixme - made goals always not done
+                ChecklistItemComponent<Goal> component = new ChecklistItemComponent<Goal>(item, (o) -> o.getTitle(), (o) -> false) { // fixme - made goals always not done
                     @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    public void onCheckedChanged(boolean isChecked) {
                         // TODO: Prevent more than three goals from being selected at any given time
                     }
                 };
+                Resources res = getActivity().getResources();
+                int selected = Color.WHITE;
+                int unselected = res.getColor(R.color.blueLight);
+                component.setColors(new ActionView.ColorConfig()
+                    .setCompleteColors(selected, selected)
+                    .setIncompleteColors(unselected, unselected)
+                    .setDisabledColors(unselected, unselected));
+                return component;
             }
 
             @Override
