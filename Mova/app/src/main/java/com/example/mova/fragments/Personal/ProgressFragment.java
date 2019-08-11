@@ -2,7 +2,6 @@ package com.example.mova.fragments.Personal;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -259,18 +258,22 @@ public class ProgressFragment extends Fragment {
                 graphGoals.addAll(goodGoals);
                 graphGoals.addAll(badGoals);
 
+                List<Integer>[] dataList = new List[graphGoals.size()];
                 AsyncUtils.executeMany(graphGoals.size(), (i,cb) -> {
                     Goal goal = graphGoals.get(i);
-                    int color = getGoalGraphColor(goal);
                     getDataForGraph(goal, user, length, (data) -> {
-                        for(int j = 0; j < data.size(); j++){
-                            graphManager.setValue(j, color, data.get(j));
-                            //graphManager.show(color);
-                        }
+                        dataList[i] = data;
                         cb.call(null);
                     });
                 }, (err) -> {
                     //graphAdapter.notifyDataSetChanged();
+                    for(int z = 0; z < graphGoals.size(); z++){
+                        int color = getGoalGraphColor(graphGoals.get(z));
+                        for(int j = 0; j < dataList[z].size(); j++){
+                            graphManager.setValue(j, color, dataList[z].get(j));
+                            //graphManager.show(color);
+                        }
+                    }
                     if(graphManager.tallestY() == 0){
                         tvY2.setText("10");
                         tvY1.setText("5");
