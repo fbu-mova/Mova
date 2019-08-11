@@ -169,7 +169,7 @@
                     android:id="@+id/cvIcon"
                     android:layout_width="@dimen/profileImage"
                     android:layout_height="@dimen/profileImage"
-                    android:layout_marginLeft="@dimen/elementMargin"
+                    android:layout_gravity="center_vertical"
                     app:cardCornerRadius="@dimen/borderRadiusCircle"
                     app:cardElevation="0dp">
 
@@ -178,9 +178,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/iconMargin"
                         android:adjustViewBounds="false"
-                        android:scaleType="fitXY"
-                        app:srcCompat="@android:color/holo_purple" />
+                        android:scaleType="fitCenter" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
@@ -189,10 +189,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/elementMargin"
+                    android:fontFamily="@font/lato_medium"
                     android:text="Goal Name"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="@dimen/textSizeTitle"
-                    android:textStyle="bold" />
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeTitle" />
 
             </LinearLayout>
 

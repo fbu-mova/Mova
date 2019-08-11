@@ -2,6 +2,7 @@ package com.example.mova.components;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -131,6 +133,11 @@ public class GoalCardComponent extends Component {
         });
 
         Icons.from(getActivity()).displayNounIcon(item, viewHolder.cvGoal, viewHolder.ivGoal);
+
+        Resources res = getActivity().getResources();
+        viewHolder.goalProgressBar.setUnfilledColor(ColorUtils.getColor(res, item.getHue(), ColorUtils.Lightness.UltraLight));
+        viewHolder.goalProgressBar.setFilledColor(ColorUtils.getColor(res, item.getHue(), ColorUtils.Lightness.Mid));
+
         if(item.getGroup() == null){
             viewHolder.tvFrom.setVisibility(View.GONE);
             viewHolder.tvGroup.setVisibility(View.GONE);

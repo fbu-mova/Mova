@@ -44,8 +44,8 @@
                 android:layout_marginLeft="@dimen/outerMargin"
                 android:layout_marginTop="@dimen/elementMargin"
                 android:text="Your Groups"
-                android:textColor="#020000"
-                android:textSize="24sp"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,8 +65,8 @@
                 android:layout_marginLeft="@dimen/outerMargin"
                 android:layout_marginTop="@dimen/innerMargin"
                 android:text="Active Goals"
-                android:textColor="#000000"
-                android:textSize="24sp"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvGroups" />
 

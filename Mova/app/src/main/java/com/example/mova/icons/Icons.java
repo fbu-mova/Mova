@@ -1,6 +1,5 @@
 package com.example.mova.icons;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -23,7 +22,6 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
-import com.example.mova.activities.GoalComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
 import com.example.mova.components.ImageComponent;
@@ -147,7 +145,7 @@ public class Icons {
     }
 
     public void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv) {
-        displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+        displayNounIcon(icon, cv != null, new CustomTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                 activity.runOnUiThread(() -> {
@@ -193,7 +191,7 @@ public class Icons {
                     Log.e("Icons", "Failed to get icon for goal " + goal.getTitle());
                     displayPlaceholder(cv, iv);
                 } else {
-                    displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+                    displayNounIcon(icon, cv != null, new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             activity.runOnUiThread(() -> {
@@ -223,10 +221,10 @@ public class Icons {
         if (cv != null) cv.setCardBackgroundColor(placeholderColor);
     }
 
-    private void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv, CustomTarget<Bitmap> target) {
+    private void displayNounIcon(NounProjectClient.Icon icon, boolean useLowRes, CustomTarget<Bitmap> target) {
         Glide.with(activity)
              .asBitmap()
-             .load(Icons.lowestResImage(icon))
+             .load((useLowRes) ? Icons.lowestResImage(icon) : Icons.highestResImage(icon))
              .into(target);
     }
 

@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -99,6 +101,10 @@ public class GoalCheckInComponent extends Component {
         // Display goal title and message
         this.holder.tvGoalTitle.setText(goal.getTitle());
         this.holder.tvSubheader.setText(message);
+
+        Resources res = getActivity().getResources();
+        this.holder.pbProgress.setUnfilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.UltraLight));
+        this.holder.pbProgress.setFilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.Mid));
 
         // Set up actions checklist
         adapter = new DataComponentAdapter<Action>(getActivity(), goalActions) {

@@ -1,5 +1,6 @@
 package com.example.mova.activities;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -67,7 +69,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
     @BindView(R.id.cvIcon)          protected CardView cvIcon;
 
-
     @BindView(R.id.llGroupDetails)  protected LinearLayout llGroupDetails;
     @BindView(R.id.llShareGoal)     protected LinearLayout llShareGoal;
     @BindView(R.id.llSaveGoal)      protected LinearLayout llSaveGoal;
@@ -94,6 +95,9 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         tvGoalName.setText(goal.getTitle());
 
         Icons.from(GoalDetailsActivity.this).displayNounIcon(goal, cvIcon, ivPhoto);
+
+        goalpb.setUnfilledColor(ColorUtils.getColor(getResources(), goal.getHue(), ColorUtils.Lightness.UltraLight));
+        goalpb.setFilledColor(ColorUtils.getColor(getResources(), goal.getHue(), ColorUtils.Lightness.Mid));
 
         goal.getGroupName(() -> {
             tvGroupName.setVisibility(View.GONE);
@@ -133,13 +137,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         tvSaveText.setOnClickListener((v) -> {
             onSaveClick();
         });
-
-//        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-//        Glide.with(this)  // fixme -- always take forever to load
-//                .load(url)
-//                .error(R.color.colorPrimaryDark)
-//                .placeholder(R.color.orangeMid)
-//                .into(ivPhoto);
 
         // update GoalProgressBar
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {

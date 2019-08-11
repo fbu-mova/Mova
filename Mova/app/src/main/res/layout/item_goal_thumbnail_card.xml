@@ -70,24 +70,13 @@
                     android:layout_marginBottom="@dimen/elementMargin"
                     android:text="Goal"
                     android:textColor="@color/textMain"
-                    android:textSize="@dimen/textSizeBody" />
+                    android:textSize="@dimen/textSizeFocus" />
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvIcon"
+                <ImageView
+                    android:id="@+id/ivIcon"
                     android:layout_width="@dimen/thumbnailIcon"
                     android:layout_height="@dimen/thumbnailIcon"
-                    android:layout_gravity="center_horizontal"
-                    android:clipChildren="true"
-                    app:cardCornerRadius="0dp"
-                    app:cardElevation="0dp">
-
-                    <ImageView
-                        android:id="@+id/ivIcon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_margin="@dimen/iconMargin" />
-                </androidx.cardview.widget.CardView>
+                    android:layout_gravity="center_horizontal" />
 
             </LinearLayout>
 

@@ -29,6 +29,8 @@
                 android:fontFamily="@font/lato_medium"
                 android:text="Goals"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,6 +53,8 @@
                 android:fontFamily="@font/lato_medium"
                 android:text="Recent"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvThumbnailGoals" />
 

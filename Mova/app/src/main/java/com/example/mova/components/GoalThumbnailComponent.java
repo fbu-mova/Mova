@@ -1,6 +1,7 @@
 package com.example.mova.components;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.Wrapper;
 import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
@@ -130,14 +132,11 @@ public class GoalThumbnailComponent extends Component {
             }
         });
 
-        Icons.from(getActivity()).displayNounIcon(goal,viewHolder.cvGoalIcon, viewHolder.ivPhoto);
+        Icons.from(getActivity()).displayNounIcon(goal, null, viewHolder.ivPhoto);
 
-//        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-//        Glide.with(getActivity())
-//                .load(url)
-//                .error(R.color.blueDark) // todo - replace to be better image, add rounded corners
-//                .placeholder(R.color.blueDark)
-//                .into(viewHolder.ivPhoto);
+        Resources res = getActivity().getResources();
+        viewHolder.goalProgressBar.setUnfilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.UltraLight));
+        viewHolder.goalProgressBar.setFilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.Mid));
 
         GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
             int progress = (int) (portionDone * PROGRESS_MAX);
@@ -159,8 +158,6 @@ public class GoalThumbnailComponent extends Component {
         @BindView(R.id.goalProgressBar)     protected GoalProgressBar goalProgressBar;
         @BindView(R.id.cvFromGroupIcon)     protected CardView cvFromGroupIcon;
         @BindView(R.id.ivFromGroupIcon)     protected ImageView ivFromGroupIcon;
-        @BindView(R.id.cvIcon)              protected CardView cvGoalIcon;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
