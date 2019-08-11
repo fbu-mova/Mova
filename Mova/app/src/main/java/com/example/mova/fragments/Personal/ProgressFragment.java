@@ -205,7 +205,17 @@ public class ProgressFragment extends Fragment {
             }
         };
 
-        rvMood.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rvMood.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false) {
+            @Override
+            public boolean canScrollHorizontally() {
+                return false;
+            }
+
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         rvWell.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rvWork.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -213,7 +223,16 @@ public class ProgressFragment extends Fragment {
         rvWell.setAdapter(goalsWellAdapter);
         rvWork.setAdapter(goalsWorkAdapter);
 
-        rvWell.addItemDecoration(new EdgeDecorator(24));
+        int margin = getResources().getDimensionPixelOffset(R.dimen.elementMargin);
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        EdgeDecorator thumbnailDecorator = new EdgeDecorator.Config(margin)
+                .setFirstMargin(outerMargin)
+                .setLastMargin(outerMargin)
+                .setOrientation(EdgeDecorator.Orientation.Horizontal)
+                .build();
+
+        rvWell.addItemDecoration(thumbnailDecorator);
+        rvWork.addItemDecoration(thumbnailDecorator);
 
         queryGoals(() -> {
             GoalUtils.sortGoals(mGoals, length, User.getCurrentUser(), (tsGoals) -> {
@@ -285,6 +304,7 @@ public class ProgressFragment extends Fragment {
                 int moodWidth = getResources().getDimensionPixelOffset(R.dimen.progressStackThickness);
                 int moodMargin = (moodContainerWidth - (moodWidth * length)) / (length - 1);
                 rvMood.addItemDecoration(new EdgeDecorator(new EdgeDecorator.Config(0, 0, moodMargin, 0)
+                        .setLastMargin(0)
                         .setOrientation(EdgeDecorator.Orientation.Horizontal)));
 
                 getDailyFirstPost((map, e) -> {

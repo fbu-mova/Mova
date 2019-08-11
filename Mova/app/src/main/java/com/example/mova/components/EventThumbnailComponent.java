@@ -38,7 +38,7 @@ public class EventThumbnailComponent extends Component {
     private static final int viewLayoutRes = R.layout.item_event_thumbnail;
 
     private Event event;
-    private EventThumbnailViewHolder viewHolder;
+    private ViewHolder viewHolder;
     public static FragmentManager manager;
     private ComponentManager componentManager;
 
@@ -48,8 +48,8 @@ public class EventThumbnailComponent extends Component {
     }
 
     @Override
-    public ViewHolder getViewHolder() {
-        // viewHolder = new EventThumbnailViewHolder(view);
+    public Component.ViewHolder getViewHolder() {
+        // viewHolder = new ViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -78,13 +78,13 @@ public class EventThumbnailComponent extends Component {
     }
 
     @Override
-    protected void onRender(ViewHolder holder) {
+    protected void onRender(Component.ViewHolder holder) {
 //        if (viewHolder == null) {
 //            Log.e(TAG, "not inflating views to viewHolder, in render");
 //            return;
 //        }
-        checkViewHolderClass(holder, EventThumbnailViewHolder.class);
-        viewHolder = (EventThumbnailViewHolder) holder;
+        checkViewHolderClass(holder, ViewHolder.class);
+        viewHolder = (ViewHolder) holder;
 
 
         String location = LocationUtils.makeLocationText(getActivity(),event.getLocation(), true);
@@ -164,7 +164,9 @@ public class EventThumbnailComponent extends Component {
 
     }
 
-    public static class EventThumbnailViewHolder extends Component.ViewHolder{
+    public static class ViewHolder extends Component.ViewHolder {
+
+        @BindView(R.id.llRoot) public LinearLayout llRoot;
 
         @BindView(R.id.ivEventPic) ImageView ivEventPic;
         @BindView(R.id.tvEventName) TextView tvEventName;
@@ -176,7 +178,7 @@ public class EventThumbnailComponent extends Component {
         @BindView(R.id.cvGroup) CardView cvGroup;
         @BindView(R.id.tvGroup) TextView tvGroup;
 
-        public EventThumbnailViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -185,10 +187,10 @@ public class EventThumbnailComponent extends Component {
     public static class Inflater extends Component.Inflater {
 
         @Override
-        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
             LayoutInflater inflater = activity.getLayoutInflater();
             View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
-            return new EventThumbnailViewHolder(view);
+            return new ViewHolder(view);
         }
     }
 }

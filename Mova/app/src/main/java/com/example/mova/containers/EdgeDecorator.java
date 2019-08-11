@@ -73,6 +73,11 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
         // For all other items, remove the correct start padding (only keep end padding)
         addTo(useView, outRect, getStart(), -1 * getMargin(getStart()));
+
+        // If act as margin, let RecyclerView handle sizing; otherwise, force set padding
+        if (config.mode == Mode.Margin) return;
+        useView.setPadding(outRect.left, outRect.top, outRect.right, outRect.bottom);
+        outRect.set(0, 0, 0, 0);
     }
 
     private Side getStart() {
@@ -143,6 +148,11 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
         Reverse
     }
 
+    public enum Mode {
+        Padding,
+        Margin
+    }
+
     public static class Config {
         private int topMargin = 0, bottomMargin = 0, leftMargin = 0, rightMargin = 0;
 
@@ -151,6 +161,7 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
 
         private Orientation orientation = Orientation.Vertical;
         private Start start = Start.Natural;
+        private Mode mode = Mode.Margin;
 
         private AsyncUtils.ItemReturnCallback<View, View> getViewToDecorate = view -> view;
 
@@ -199,9 +210,18 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
             return this;
         }
 
+        public Config setMode(Mode type) {
+            this.mode = type;
+            return this;
+        }
+
         public Config setGetViewToDecorate(AsyncUtils.ItemReturnCallback<View, View> getViewToDecorate) {
             this.getViewToDecorate = getViewToDecorate;
             return this;
+        }
+
+        public EdgeDecorator build() {
+            return new EdgeDecorator(this);
         }
     }
 }

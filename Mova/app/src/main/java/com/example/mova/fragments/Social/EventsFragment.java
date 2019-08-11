@@ -33,7 +33,6 @@ import com.example.mova.model.User;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
 import com.example.mova.views.EdgeFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
@@ -168,8 +167,14 @@ public class EventsFragment extends Fragment {
         //Toast.makeText(getContext(), userLocation.toString() , Toast.LENGTH_SHORT).show();
 
         Resources resources = getResources();
-        EdgeDecorator decorator = new EdgeDecorator(new EdgeDecorator.Config(resources.getDimensionPixelOffset(R.dimen.innerMargin))
-                .setOrientation(EdgeDecorator.Orientation.Horizontal));
+        EdgeDecorator decorator = new EdgeDecorator.Config(resources.getDimensionPixelOffset(R.dimen.innerMargin))
+                .setOrientation(EdgeDecorator.Orientation.Horizontal)
+                .setGetViewToDecorate((v) -> {
+                    EventThumbnailComponent.ViewHolder holder = new EventThumbnailComponent.ViewHolder(v);
+                    return holder.llRoot;
+                })
+                .setMode(EdgeDecorator.Mode.Padding)
+                .build();
 
         rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvNearYou.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
