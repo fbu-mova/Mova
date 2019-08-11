@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/innerMargin"
-                android:fontFamily="@font/lato_bold"
+                android:fontFamily="@font/lato_medium"
                 android:text="Journal"
                 android:textColor="@color/textMain"
                 android:textSize="@dimen/textSizeTitle" />

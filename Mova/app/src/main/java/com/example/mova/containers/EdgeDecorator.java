@@ -200,6 +200,12 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
             return this;
         }
 
+        public Config setSpecialMargins(int margin) {
+            setFirstMargin(margin);
+            setLastMargin(margin);
+            return this;
+        }
+
         public Config setOrientation(Orientation orientation) {
             this.orientation = orientation;
             return this;

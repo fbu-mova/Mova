@@ -43,6 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/outerMargin"
             android:layout_marginTop="@dimen/outerMargin"
+            android:fontFamily="@font/lato_medium"
             android:text="Progress"
             android:textColor="@color/textMain"
             android:textSize="@dimen/textSizeTitle"

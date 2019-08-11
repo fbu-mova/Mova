@@ -167,20 +167,19 @@ public class EventsFragment extends Fragment {
         //Toast.makeText(getContext(), userLocation.toString() , Toast.LENGTH_SHORT).show();
 
         Resources resources = getResources();
-        EdgeDecorator decorator = new EdgeDecorator.Config(resources.getDimensionPixelOffset(R.dimen.innerMargin))
+        EdgeDecorator decorator = new EdgeDecorator.Config(0)
                 .setOrientation(EdgeDecorator.Orientation.Horizontal)
-                .setGetViewToDecorate((v) -> {
-                    EventThumbnailComponent.ViewHolder holder = new EventThumbnailComponent.ViewHolder(v);
-                    return holder.llRoot;
-                })
-                .setMode(EdgeDecorator.Mode.Padding)
+//                .setGetViewToDecorate((v) -> {
+//                    EventThumbnailComponent.ViewHolder holder = new EventThumbnailComponent.ViewHolder(v);
+//                    return holder.llRoot;
+//                })
+                .setSpecialMargins(resources.getDimensionPixelOffset(R.dimen.elementMargin))
                 .build();
 
         rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvNearYou.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         rvYourEvents.addItemDecoration(decorator);
-
         rvNearYou.addItemDecoration(decorator);
 
         rvYourEvents.setAdapter(yourEventsAdapter);
