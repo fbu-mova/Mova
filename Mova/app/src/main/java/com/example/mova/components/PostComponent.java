@@ -2,7 +2,9 @@ package com.example.mova.components;
 
 import android.content.res.Resources;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -111,8 +113,7 @@ public class PostComponent extends Component {
 
         displayUser();
         configureButtons();
-        configurePostClick();
-        configureCompose();
+        configureEvents();
         displayMedia();
         displayGroup();
         displaySubheader();
@@ -315,32 +316,51 @@ public class PostComponent extends Component {
         });
     }
 
-    private void configurePostClick() {
-        holder.card.setOnClickListener((view) -> {
-            if (config.allowDetailsClick) {
-                PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
-                FragmentManager manager = getActivity().getSupportFragmentManager();
-                FragmentTransaction ft = manager.beginTransaction();
-                ft.add(R.id.flSocialContainer, frag);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(null);
-                ft.commit();
-            }
-            config.onClick.call(post);
-        });
-    }
+    private void configureEvents() {
+//        holder.card.setOnClickListener((view) -> {
+//            if (config.allowDetailsClick) {
+//                PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
+//                FragmentManager manager = getActivity().getSupportFragmentManager();
+//                FragmentTransaction ft = manager.beginTransaction();
+//                ft.add(R.id.flSocialContainer, frag);
+//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                ft.addToBackStack(null);
+//                ft.commit();
+//            }
+//            config.onClick.call(post);
+//        });
 
-    private void configureCompose() {
-        if (config.allowCompose) {
-            new ComposePostDialog.Builder(getActivity())
-                    .setConfig(makePostConfig(post))
-                    .setAllowCompose(true)
-                    .setOnPost((toPost) -> {
-                        Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
-                        // TODO
-                    })
-                    .setGestureLayout(this.holder.glCompose);
-        }
+        GestureDetector detector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (config.allowDetailsClick) {
+                    PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
+                    FragmentManager manager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction ft = manager.beginTransaction();
+                    ft.add(R.id.flSocialContainer, frag);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+                config.onClick.call(post);
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if (config.allowCompose) {
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(makePostConfig(post))
+                            .setAllowCompose(true)
+                            .setOnPost((toPost) -> {
+                                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                                // TODO
+                            })
+                            .show(holder.glCompose);
+                }
+            }
+        });
+        holder.glCompose.setGestureDetector(detector);
     }
 
     private void toggleIcon(ImageView ivIcon, boolean active) {

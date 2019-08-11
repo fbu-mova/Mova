@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestureLayout extends FrameLayout {
-    private List<GestureDetector> detectors = new ArrayList<>();
+    private GestureDetector detector;
 
     public GestureLayout(@NonNull Context context) {
         super(context);
@@ -29,13 +29,8 @@ public class GestureLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (detectors.size() == 0) return super.onTouchEvent(event);
-
-        boolean result = true;
-        for (GestureDetector detector : detectors) {
-            if (detector != null) result = result && detector.onTouchEvent(event);
-        }
-        return result;
+        if (detector == null) return super.onTouchEvent(event);
+        else                  return detector.onTouchEvent(event);
     }
 
     @Override
@@ -44,11 +39,7 @@ public class GestureLayout extends FrameLayout {
         return false;
     }
 
-    public void addGestureDetector(GestureDetector gestureDetector) {
-        detectors.add(gestureDetector);
-    }
-
-    public void removeGestureDetector(GestureDetector gestureDetector) {
-        detectors.remove(gestureDetector);
+    public void setGestureDetector(GestureDetector gestureDetector) {
+        detector = gestureDetector;
     }
 }

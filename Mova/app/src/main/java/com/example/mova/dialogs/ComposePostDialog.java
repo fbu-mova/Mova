@@ -139,7 +139,7 @@ public abstract class ComposePostDialog {
                 @Override
                 public void onLongPress(MotionEvent e) {
                     Log.d("ComposableContainer", "Press");
-                    showDialog();
+                    show(layout);
                 }
             });
         }
@@ -174,17 +174,13 @@ public abstract class ComposePostDialog {
 
         public Builder setGestureLayout(GestureLayout layout) {
             this.layout = layout;
-            layout.addGestureDetector(detector);
+            layout.setGestureDetector(detector);
             return this;
         }
 
-        public void show() {
-            showDialog();
-        }
-
-        private void showDialog() {
+        public void show(View hapticView) {
             if (allowCompose) {
-                layout.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                hapticView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                 ComposePostDialog dialog = new ComposePostDialog(activity, config) {
                     @Override
                     protected void onCancel() {
