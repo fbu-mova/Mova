@@ -38,9 +38,15 @@ public class GroupThumbnailComponent extends Component {
     public static FragmentManager manager;
     private ComponentManager componentManager;
 
+    private boolean allowDetailsClick = true;
+
     public GroupThumbnailComponent(Group item){
         super();
         this.group = item;
+    }
+
+    public void setAllowDetailsClick(boolean allowDetailsClick) {
+        this.allowDetailsClick = allowDetailsClick;
     }
 
     @Override
@@ -112,17 +118,19 @@ public class GroupThumbnailComponent extends Component {
 //                if(getActivity().equals(SearchActivity.class)){
 //
 //                }
-                Fragment frag = GroupDetailsFragment.newInstance(group);
-                manager = ((AppCompatActivity)getActivity())
-                        .getSupportFragmentManager();
-                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
-                //fl.removeAllViews();
-                FragmentTransaction ft = manager
-                        .beginTransaction();
-                ft.add(R.id.flSocialContainer, frag);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(null);
-                ft.commit();
+                if (allowDetailsClick) {
+                    Fragment frag = GroupDetailsFragment.newInstance(group);
+                    manager = ((AppCompatActivity) getActivity())
+                            .getSupportFragmentManager();
+                    FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+                    //fl.removeAllViews();
+                    FragmentTransaction ft = manager
+                            .beginTransaction();
+                    ft.add(R.id.flSocialContainer, frag);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
             }
         });
     }

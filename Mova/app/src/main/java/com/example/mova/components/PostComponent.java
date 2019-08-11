@@ -199,6 +199,10 @@ public class PostComponent extends Component {
                         ((EventCardComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
                     }
 
+                    if (media.getType() == Media.ContentType.Group) {
+                        ((GroupThumbnailComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
+                    }
+
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
 
                     if (media.getType() == Media.ContentType.Post) {

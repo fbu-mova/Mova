@@ -270,6 +270,7 @@ public class Media extends HashableParseObject {
                     }
                     Group group = (Group) obj;
                     GroupThumbnailComponent component = new GroupThumbnailComponent(group);
+                    component.setAllowDetailsClick(false);
                     callback.call(component, null);
                 });
                 break;
