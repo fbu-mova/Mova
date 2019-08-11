@@ -95,190 +95,191 @@
         app:cardElevation="@dimen/deepCardElevation"
         app:cardUseCompatPadding="false">
 
-        <com.example.mova.containers.GestureLayout
-            android:id="@+id/glCompose"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:longClickable="true">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/innerMargin">
 
-            <LinearLayout
+            <com.example.mova.containers.GestureLayout
+                android:id="@+id/glCompose"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:longClickable="true"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/innerMargin"
-                    android:paddingTop="@dimen/innerMargin"
-                    android:paddingRight="@dimen/innerMargin">
-
-                    <LinearLayout
-                        android:id="@+id/llDetails"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/elementMargin"
-                        android:orientation="horizontal">
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cvProfileImage"
-                            android:layout_width="@dimen/profileImage"
-                            android:layout_height="@dimen/profileImage"
-                            android:layout_marginRight="@dimen/elementMargin"
-                            app:cardBackgroundColor="@color/blueUltraLight"
-                            app:cardCornerRadius="@dimen/borderRadiusCircle"
-                            app:cardElevation="0dp">
-
-                            <ImageView
-                                android:id="@+id/ivProfileImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_margin="@dimen/iconMargin"
-                                app:srcCompat="@android:color/transparent" />
-                        </androidx.cardview.widget.CardView>
-
-                        <TextView
-                            android:id="@+id/tvUsername"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_weight="1"
-                            android:text="Username"
-                            android:textColor="@color/textMain"
-                            android:textSize="@dimen/textSizeBody" />
-
-                        <TextView
-                            android:id="@+id/tvDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="@dimen/elementMargin"
-                            android:layout_weight="0"
-                            android:text="Date"
-                            android:textColor="@color/textLight"
-                            android:textSize="@dimen/textSizeBody" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvBody"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Message"
-                        android:textColor="@color/textMain"
-                        android:textSize="@dimen/textSizeFocus" />
-
-                </LinearLayout>
-
-                <com.example.mova.component.ComponentLayout
-                    android:id="@+id/clMedia"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipChildren="false"
-                    android:clipToPadding="false">
-
-                </com.example.mova.component.ComponentLayout>
+                android:longClickable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clickable="true"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:longClickable="true"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/innerMargin"
-                    android:paddingRight="@dimen/innerMargin"
-                    android:paddingBottom="@dimen/innerMargin">
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/llButtons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/elementMargin"
-                        android:orientation="horizontal">
+                        android:clickable="true"
+                        android:longClickable="true"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/innerMargin"
+                        android:paddingTop="@dimen/innerMargin"
+                        android:paddingRight="@dimen/innerMargin">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:id="@+id/llDetails"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="horizontal"></LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0"
-                            android:clickable="true"
+                            android:layout_marginBottom="@dimen/elementMargin"
                             android:orientation="horizontal">
 
-                            <com.example.mova.containers.GestureLayout
-                                android:id="@+id/glRepost"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0"
-                                android:clickable="true">
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cvProfileImage"
+                                android:layout_width="@dimen/profileImage"
+                                android:layout_height="@dimen/profileImage"
+                                android:layout_marginRight="@dimen/elementMargin"
+                                app:cardBackgroundColor="@color/blueUltraLight"
+                                app:cardCornerRadius="@dimen/borderRadiusCircle"
+                                app:cardElevation="0dp">
 
                                 <ImageView
-                                    android:id="@+id/ivRepost"
-                                    android:layout_width="@dimen/buttonIcon"
-                                    android:layout_height="@dimen/buttonIcon"
-                                    android:layout_marginLeft="@dimen/elementMargin"
-                                    android:layout_weight="0"
-                                    android:clickable="true"
-                                    android:tint="@color/buttonInactive"
-                                    app:srcCompat="@drawable/ic_round_repeat_24px" />
-                            </com.example.mova.containers.GestureLayout>
+                                    android:id="@+id/ivProfileImage"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_margin="@dimen/iconMargin"
+                                    app:srcCompat="@android:color/transparent" />
+                            </androidx.cardview.widget.CardView>
 
-                            <com.example.mova.containers.GestureLayout
-                                android:id="@+id/glReply"
+                            <TextView
+                                android:id="@+id/tvUsername"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="0"
-                                android:clickable="true">
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="1"
+                                android:text="Username"
+                                android:textColor="@color/textMain"
+                                android:textSize="@dimen/textSizeBody" />
 
-                                <ImageView
-                                    android:id="@+id/ivReply"
-                                    android:layout_width="@dimen/buttonIcon"
-                                    android:layout_height="@dimen/buttonIcon"
-                                    android:layout_marginLeft="@dimen/elementMargin"
-                                    android:layout_weight="0"
-                                    android:clickable="true"
-                                    android:tint="@color/buttonInactive"
-                                    app:srcCompat="@drawable/ic_round_reply_24px" />
-                            </com.example.mova.containers.GestureLayout>
-
-                            <com.example.mova.containers.GestureLayout
-                                android:id="@+id/glSave"
+                            <TextView
+                                android:id="@+id/tvDate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginLeft="@dimen/elementMargin"
                                 android:layout_weight="0"
-                                android:clickable="true">
-
-                                <ImageView
-                                    android:id="@+id/ivSave"
-                                    android:layout_width="@dimen/buttonIcon"
-                                    android:layout_height="@dimen/buttonIcon"
-                                    android:layout_marginLeft="@dimen/elementMargin"
-                                    android:layout_weight="0"
-                                    android:clickable="true"
-                                    android:tint="@color/buttonInactive"
-                                    app:srcCompat="@drawable/ic_round_bookmark_24px" />
-                            </com.example.mova.containers.GestureLayout>
+                                android:text="Date"
+                                android:textColor="@color/textLight"
+                                android:textSize="@dimen/textSizeBody" />
 
                         </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/tvBody"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Message"
+                            android:textColor="@color/textMain"
+                            android:textSize="@dimen/textSizeFocus" />
+
                     </LinearLayout>
+
+                    <com.example.mova.component.ComponentLayout
+                        android:id="@+id/clMedia"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+
+                    </com.example.mova.component.ComponentLayout>
+
+                </LinearLayout>
+
+            </com.example.mova.containers.GestureLayout>
+
+            <LinearLayout
+                android:id="@+id/llButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/innerMargin"
+                android:layout_marginTop="@dimen/elementMargin"
+                android:layout_marginRight="@dimen/innerMargin"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+
+                    <com.example.mova.containers.GestureLayout
+                        android:id="@+id/glRepost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:clickable="true">
+
+                        <ImageView
+                            android:id="@+id/ivRepost"
+                            android:layout_width="@dimen/buttonIcon"
+                            android:layout_height="@dimen/buttonIcon"
+                            android:layout_marginLeft="@dimen/elementMargin"
+                            android:layout_weight="0"
+                            android:clickable="true"
+                            android:tint="@color/buttonInactive"
+                            app:srcCompat="@drawable/ic_round_repeat_24px" />
+                    </com.example.mova.containers.GestureLayout>
+
+                    <com.example.mova.containers.GestureLayout
+                        android:id="@+id/glReply"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:clickable="true">
+
+                        <ImageView
+                            android:id="@+id/ivReply"
+                            android:layout_width="@dimen/buttonIcon"
+                            android:layout_height="@dimen/buttonIcon"
+                            android:layout_marginLeft="@dimen/elementMargin"
+                            android:layout_weight="0"
+                            android:clickable="true"
+                            android:tint="@color/buttonInactive"
+                            app:srcCompat="@drawable/ic_round_reply_24px" />
+                    </com.example.mova.containers.GestureLayout>
+
+                    <com.example.mova.containers.GestureLayout
+                        android:id="@+id/glSave"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:clickable="true">
+
+                        <ImageView
+                            android:id="@+id/ivSave"
+                            android:layout_width="@dimen/buttonIcon"
+                            android:layout_height="@dimen/buttonIcon"
+                            android:layout_marginLeft="@dimen/elementMargin"
+                            android:layout_weight="0"
+                            android:clickable="true"
+                            android:tint="@color/buttonInactive"
+                            app:srcCompat="@drawable/ic_round_bookmark_24px" />
+                    </com.example.mova.containers.GestureLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </com.example.mova.containers.GestureLayout>
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
