@@ -359,6 +359,6 @@ public class JournalFragment extends Fragment {
         });
 
         glRoot.setOnTouchListener((View v, MotionEvent event) -> !gestureDetector.onTouchEvent(event));
-        glRoot.setGestureDetector(gestureDetector);
+        glRoot.addGestureDetector(gestureDetector);
     }
 }

@@ -119,7 +119,7 @@ public class PersonalSocialToggle extends LinearLayout {
         });
 
         glRoot.setOnTouchListener((View v, MotionEvent event) -> !gestureDetector.onTouchEvent(event));
-        glRoot.setGestureDetector(gestureDetector);
+        glRoot.addGestureDetector(gestureDetector);
     }
 
     private void setState(boolean toPersonal) {

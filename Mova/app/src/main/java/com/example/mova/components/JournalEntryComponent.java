@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.model.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -28,7 +30,6 @@ import com.example.mova.utils.LocationUtils;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
-import com.example.mova.views.ComposableContainer;
 import com.parse.ParseQuery;
 
 import butterknife.BindView;
@@ -84,13 +85,14 @@ public class JournalEntryComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
-        this.holder.composable
+        new ComposePostDialog.Builder(getActivity())
                 .setConfig(makePostConfig(entry))
                 .setAllowCompose(true)
                 .setOnPost((toPost) -> {
                     Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
                     // TODO
-                });
+                })
+                .setGestureLayout(this.holder.glCompose);
 
         displayBasicInfo();
         displayMood();
@@ -247,7 +249,7 @@ public class JournalEntryComponent extends Component {
         @BindView(R.id.sComments)  public Switch sComments;
         @BindView(R.id.rvComments) public RecyclerView rvComments;
 
-        @BindView(R.id.composable) public ComposableContainer composable;
+        @BindView(R.id.glCompose) public GestureLayout glCompose;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

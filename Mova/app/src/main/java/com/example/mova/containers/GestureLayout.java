@@ -9,8 +9,11 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GestureLayout extends FrameLayout {
-    private GestureDetector gestureDetector;
+    private List<GestureDetector> detectors = new ArrayList<>();
 
     public GestureLayout(@NonNull Context context) {
         super(context);
@@ -26,8 +29,13 @@ public class GestureLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (gestureDetector != null) return gestureDetector.onTouchEvent(event);
-        else                         return super.onTouchEvent(event);
+        if (detectors.size() == 0) return super.onTouchEvent(event);
+
+        boolean result = true;
+        for (GestureDetector detector : detectors) {
+            if (detector != null) result = result && detector.onTouchEvent(event);
+        }
+        return result;
     }
 
     @Override
@@ -36,7 +44,11 @@ public class GestureLayout extends FrameLayout {
         return false;
     }
 
-    public void setGestureDetector(GestureDetector gestureDetector) {
-        this.gestureDetector = gestureDetector;
+    public void addGestureDetector(GestureDetector gestureDetector) {
+        detectors.add(gestureDetector);
+    }
+
+    public void removeGestureDetector(GestureDetector gestureDetector) {
+        detectors.remove(gestureDetector);
     }
 }

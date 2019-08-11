@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.mova.containers.GestureLayout;
 import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.icons.Icons;
 import com.example.mova.utils.PostConfig;
@@ -30,7 +31,6 @@ import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
-import com.example.mova.views.ComposableContainer;
 import com.parse.ParseQuery;
 
 import butterknife.BindView;
@@ -109,13 +109,14 @@ public class PostComponent extends Component {
         }
         this.holder.tvBody.setText(post.getBody());
 
-        this.holder.composable
+        new ComposePostDialog.Builder(getActivity())
                 .setConfig(makePostConfig(post))
                 .setAllowCompose(true)
                 .setOnPost((toPost) -> {
                     Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
                     // TODO
-                });
+                })
+                .setGestureLayout(this.holder.glCompose);
 
         displayUser();
         configureButtons();
@@ -373,7 +374,7 @@ public class PostComponent extends Component {
         @BindView(R.id.ivReply)        public ImageView ivReply;
         @BindView(R.id.ivSave)         public ImageView ivSave;
 
-        @BindView(R.id.composable)     public ComposableContainer composable;
+        @BindView(R.id.glCompose)      public GestureLayout glCompose;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
