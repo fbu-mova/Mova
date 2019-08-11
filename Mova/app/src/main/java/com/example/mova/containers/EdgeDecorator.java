@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mova.utils.AsyncUtils;
 
 /**
- * Created by anthonykiniyalocts on 12/8/16.
+ * Created in part by anthonykiniyalocts on 12/8/16.
  * Credit: https://gist.github.com/AKiniyalocts/5a00d66f03f1c3393c1302bea73749b2
  *
  * Quick way to add padding to first and last item in recyclerview via decorators
@@ -38,7 +38,7 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
-        int itemCount = state.getItemCount();
+        View useView = config.getViewToDecorate.call(view);
 
         final int itemPosition = parent.getChildAdapterPosition(view);
 
@@ -47,17 +47,17 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
             return;
         }
 
-        int left = view.getPaddingLeft() + config.leftMargin;
-        int top = view.getPaddingTop() + config.topMargin;
-        int right = view.getPaddingRight() + config.rightMargin;
-        int bottom = view.getPaddingBottom() + config.bottomMargin;
+        int left = useView.getPaddingLeft() + config.leftMargin;
+        int top = useView.getPaddingTop() + config.topMargin;
+        int right = useView.getPaddingRight() + config.rightMargin;
+        int bottom = useView.getPaddingBottom() + config.bottomMargin;
         outRect.set(left, top, right, bottom);
 
         // First item (keep start and end padding)
         if (itemPosition == 0) {
             if (config.useFirstMargin) {
-                addTo(view, outRect, getStart(), -1 * getMargin(getStart()));
-                addTo(view, outRect, getStart(), config.firstMargin);
+                addTo(useView, outRect, getStart(), -1 * getMargin(getStart()));
+                addTo(useView, outRect, getStart(), config.firstMargin);
             }
             return;
         }
@@ -65,14 +65,14 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
         // Last item
         if (itemPosition == state.getItemCount() - 1) {
             if (config.useLastMargin) {
-                addTo(view, outRect, getEnd(), -1 * getMargin(getEnd()));
-                addTo(view, outRect, getEnd(), config.lastMargin);
+                addTo(useView, outRect, getEnd(), -1 * getMargin(getEnd()));
+                addTo(useView, outRect, getEnd(), config.lastMargin);
             }
             return;
         }
 
         // For all other items, remove the correct start padding (only keep end padding)
-        addTo(view, outRect, getStart(), -1 * getMargin(getStart()));
+        addTo(useView, outRect, getStart(), -1 * getMargin(getStart()));
     }
 
     private Side getStart() {
