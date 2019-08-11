@@ -183,7 +183,11 @@ public class SocialFeedFragment extends Fragment {
             }
         });
 
-        esrlPosts.addItemDecoration(new EdgeDecorator(32));
+        int margin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        esrlPosts.addItemDecoration(new EdgeDecorator.Config(outerMargin, margin, outerMargin, margin)
+            .setLastMargin(outerMargin)
+            .build());
 
         loadPosts();
     }

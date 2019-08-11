@@ -25,8 +25,8 @@ import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
+import com.example.mova.utils.Wrapper;
 import com.example.mova.views.EdgeFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -66,6 +66,8 @@ public class GoalsFragment extends Fragment {
     @BindView(R.id.rvAllGoals) protected RecyclerView rvAllGoals;
     private ArrayList<Goal.GoalData> allGoals;
     private DataComponentAdapter<Goal.GoalData> allGoalsAdapter;
+
+    private Wrapper<Boolean> thumbnailShowGroup;
 
     public GoalsFragment() {
         // Required empty public constructor
@@ -109,13 +111,13 @@ public class GoalsFragment extends Fragment {
 
         // thumbnail
         thumbnailGoals = new ArrayList<>();
+        thumbnailShowGroup = new Wrapper<>(true);
 
         // assigns the adapter w/ anonymous class
         thumbnailGoalsAdapter = new DataComponentAdapter<Goal.GoalData>(activity, thumbnailGoals) {
             @Override
             public Component makeComponent(Goal.GoalData item, Component.ViewHolder holder) {
-                Component component = new GoalThumbnailComponent(item);
-                return component;
+                return new GoalThumbnailComponent(item, thumbnailShowGroup);
             }
 
             @Override
@@ -131,12 +133,21 @@ public class GoalsFragment extends Fragment {
         rvThumbnailGoals.setAdapter(thumbnailGoalsAdapter);
 
         // set edge decorator
-        rvThumbnailGoals.addItemDecoration(new EdgeDecorator(new EdgeDecorator.Config(getResources().getDimensionPixelOffset(R.dimen.innerMargin))
-                .setOrientation(EdgeDecorator.Orientation.Horizontal)));
+        int elementMargin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int innerMargin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        rvThumbnailGoals.addItemDecoration(new EdgeDecorator.Config(innerMargin)
+                .setGetViewToDecorate((v) -> {
+                    GoalThumbnailComponent.ViewHolder holder = new GoalThumbnailComponent.ViewHolder(v);
+                    return holder.llRoot;
+                })
+                .setOrientation(EdgeDecorator.Orientation.Horizontal)
+                .setSpecialMargins(outerMargin)
+                .build());
 
         // load thumbnail goals into recyclerview
         Log.d(TAG, "in onViewCreated");
-        loadThumbNailGoals();
+        loadThumbnailGoals();
 
         // allGoals
         allGoals = new ArrayList<>();
@@ -156,17 +167,20 @@ public class GoalsFragment extends Fragment {
 
         rvAllGoals.setLayoutManager(new LinearLayoutManager(activity));
         rvAllGoals.setAdapter(allGoalsAdapter);
-        rvAllGoals.addItemDecoration(new EdgeDecorator(getResources().getDimensionPixelOffset(R.dimen.innerMargin)));
+        rvAllGoals.addItemDecoration(new EdgeDecorator.Config(outerMargin, innerMargin)
+            .setMode(EdgeDecorator.Mode.Padding)
+            .setFirstMargin(0)
+            .build());
 
         Log.d(TAG, "about to call loadAllGoals");
         loadAllGoals();
     }
 
-    private void loadThumbNailGoals() {
+    private void loadThumbnailGoals() {
         // todo -- create an algorithm that decides which posts will be featured here
             // for now, just do normal loadAllGoals
 
-        ParseQuery<Goal> allGoalsQuery = (User.getCurrentUser())
+        ParseQuery<Goal> allGoalsQuery = User.getCurrentUser()
                 .relGoals
                 .getQuery()
                 //.setLimit(5)
@@ -198,6 +212,13 @@ public class GoalsFragment extends Fragment {
                     if (e == null) {
                         Log.d(TAG, "Goal query succeeded!");
                         Log.d(TAG, String.format("object size: %s", objects.size()));
+
+                        // Determine whether any goals have groups
+                        boolean hasGroup = true;
+                        for (Goal goal : objects) {
+                            hasGroup = hasGroup && (goal.getGroup() != null);
+                        }
+                        thumbnailShowGroup.item = hasGroup;
 
                         for (int i = objects.size() - 1; i >= 0; i--) {
                             // load into recyclerview

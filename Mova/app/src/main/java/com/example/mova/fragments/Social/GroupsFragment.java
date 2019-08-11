@@ -162,9 +162,12 @@ public class GroupsFragment extends Fragment {
                 return new GoalCardComponent.Inflater();
             }
         };
-        Resources resources = getResources();
-        EdgeDecorator decorator = new EdgeDecorator(new EdgeDecorator.Config(resources.getDimensionPixelOffset(R.dimen.innerMargin))
-                .setOrientation(EdgeDecorator.Orientation.Horizontal));
+
+        int margin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        EdgeDecorator decorator = new EdgeDecorator.Config(outerMargin, margin)
+                .setOrientation(EdgeDecorator.Orientation.Horizontal)
+                .build();
 
         rvGroups.setLayoutManager(new GridLayoutManager(getContext(), 1,  GridLayoutManager.HORIZONTAL,false));
         rvActiveGoals.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -179,8 +182,6 @@ public class GroupsFragment extends Fragment {
             userGroups.addAll(groups);
             groupAdapter.notifyDataSetChanged();
             rvGroups.scrollToPosition(0);
-
-
         });
 
         GoalUtils.queryGoals(user, (goals) -> {

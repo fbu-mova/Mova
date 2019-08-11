@@ -211,6 +211,7 @@ public class Media extends HashableParseObject {
                 config.showButtons = false;
                 config.showGroup = false;
                 config.allowCompose = false;
+                config.allowDetailsClick = false;
                 PostComponent postComponent = new PostComponent(getContentPost(), config);
                 callback.call(postComponent, null);
                 break;

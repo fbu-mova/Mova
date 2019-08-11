@@ -24,9 +24,9 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginLeft="@dimen/outerMargin"
+                android:layout_marginTop="@dimen/outerMargin"
+                android:fontFamily="@font/lato_medium"
                 android:text="Goals"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toStartOf="parent"
@@ -36,42 +36,34 @@
                 android:id="@+id/rvThumbnailGoals"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/elementMargin"
+                android:clipChildren="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
             <TextView
-                android:id="@+id/tvTags"
+                android:id="@+id/tvTitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Tags"
+                android:layout_marginLeft="@dimen/outerMargin"
+                android:layout_marginTop="@dimen/innerMargin"
+                android:fontFamily="@font/lato_medium"
+                android:text="Recent"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvThumbnailGoals" />
-
-            <ImageButton
-                android:id="@+id/btAddTag"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:src="@android:drawable/ic_menu_add"
-                app:layout_constraintBottom_toBottomOf="@+id/tvTags"
-                app:layout_constraintStart_toEndOf="@+id/tvTags"
-                app:layout_constraintTop_toTopOf="@+id/tvTags" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAllGoals"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="@dimen/elementMargin"
+                android:clipChildren="false"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvTags" />
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

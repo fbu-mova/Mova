@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.utils.Wrapper;
 import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -26,6 +27,7 @@ import com.example.mova.utils.GoalUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.view.View.VISIBLE;
 import static com.example.mova.views.GoalProgressBar.PROGRESS_MAX;
 
 public class GoalThumbnailComponent extends Component {
@@ -37,19 +39,25 @@ public class GoalThumbnailComponent extends Component {
 
     private Goal goal;
     private boolean userIsInvolved;
-    private GoalThumbnailViewHolder viewHolder;
+    private ViewHolder viewHolder;
+    private Wrapper<Boolean> showGroup;
 
     private ComponentManager componentManager;
 
     public GoalThumbnailComponent(Goal.GoalData bundle) {
+        this(bundle, new Wrapper<>(true));
+    }
+
+    public GoalThumbnailComponent(Goal.GoalData bundle, Wrapper<Boolean> showGroup) {
         super();
         this.goal = bundle.goal;
         this.userIsInvolved = bundle.userIsInvolved;
+        this.showGroup = showGroup;
     }
 
     @Override
-    public ViewHolder getViewHolder() {
-//        viewHolder = new GoalThumbnailViewHolder(view);
+    public Component.ViewHolder getViewHolder() {
+//        viewHolder = new ViewHolder(view);
         if (viewHolder != null) {
             return viewHolder;
         }
@@ -78,11 +86,11 @@ public class GoalThumbnailComponent extends Component {
     }
 
     @Override
-    protected void onRender(ViewHolder holder) {
-        checkViewHolderClass(holder, GoalThumbnailViewHolder.class);
-        viewHolder = (GoalThumbnailViewHolder) holder;
+    protected void onRender(Component.ViewHolder holder) {
+        checkViewHolderClass(holder, ViewHolder.class);
+        viewHolder = (ViewHolder) holder;
 
-        viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
+        viewHolder.llRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
@@ -98,13 +106,28 @@ public class GoalThumbnailComponent extends Component {
         viewHolder.tvName.setText(goal.getTitle());
 
         goal.getGroupName(() -> {
-            viewHolder.tvFromGroup.setVisibility(View.INVISIBLE);
-            viewHolder.cvFromGroupIcon.setVisibility(View.INVISIBLE);
+            if (showGroup.item) {
+                viewHolder.tvFromGroup.setVisibility(View.INVISIBLE);
+                viewHolder.cvFromGroupIcon.setVisibility(View.INVISIBLE);
+            } else {
+                viewHolder.tvFromGroup.setVisibility(View.GONE);
+                viewHolder.cvFromGroupIcon.setVisibility(View.GONE);
+            }
         }, (str) -> {
-            int groupIcon = (str == "") ? View.INVISIBLE : View.VISIBLE;
+            int visibility;
+            if (!showGroup.item) {
+                visibility = View.GONE;
+            } else {
+                visibility = (str.equals("")) ? View.INVISIBLE : View.VISIBLE;
+            }
+
             viewHolder.tvFromGroup.setText(str);
-            viewHolder.cvFromGroupIcon.setVisibility(groupIcon);
-            Icons.from(getActivity()).displayNounIcon(goal.getGroup(), viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
+            viewHolder.tvFromGroup.setVisibility(visibility);
+            viewHolder.cvFromGroupIcon.setVisibility(visibility);
+
+            if (visibility == VISIBLE) {
+                Icons.from(getActivity()).displayNounIcon(goal.getGroup(), viewHolder.cvFromGroupIcon, viewHolder.ivFromGroupIcon);
+            }
         });
 
         Icons.from(getActivity()).displayNounIcon(goal,viewHolder.cvGoalIcon, viewHolder.ivPhoto);
@@ -127,19 +150,19 @@ public class GoalThumbnailComponent extends Component {
 
     }
 
-    public static class GoalThumbnailViewHolder extends Component.ViewHolder {
+    public static class ViewHolder extends Component.ViewHolder {
 
+        @BindView(R.id.llRoot)              public LinearLayout llRoot;
         @BindView(R.id.tvFromGroup)         protected TextView tvFromGroup;
         @BindView(R.id.tvName)              protected TextView tvName;
-        @BindView(R.id.ivIcon)          protected ImageView ivPhoto;
+        @BindView(R.id.ivIcon)              protected ImageView ivPhoto;
         @BindView(R.id.goalProgressBar)     protected GoalProgressBar goalProgressBar;
-        @BindView(R.id.parentLayout)        protected LinearLayout parentLayout;
         @BindView(R.id.cvFromGroupIcon)     protected CardView cvFromGroupIcon;
         @BindView(R.id.ivFromGroupIcon)     protected ImageView ivFromGroupIcon;
-        @BindView(R.id.cvIcon)          protected CardView cvGoalIcon;
+        @BindView(R.id.cvIcon)              protected CardView cvGoalIcon;
 
 
-        public GoalThumbnailViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -148,10 +171,10 @@ public class GoalThumbnailComponent extends Component {
     public static class Inflater extends Component.Inflater {
 
         @Override
-        public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
             LayoutInflater inflater = activity.getLayoutInflater();
             View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
-            return new GoalThumbnailViewHolder(view);
+            return new ViewHolder(view);
         }
     }
 

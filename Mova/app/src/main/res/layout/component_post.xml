@@ -92,7 +92,7 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         app:cardCornerRadius="@dimen/borderRadius"
-        app:cardElevation="2dp"
+        app:cardElevation="@dimen/deepCardElevation"
         app:cardUseCompatPadding="false">
 
         <com.example.mova.containers.GestureLayout

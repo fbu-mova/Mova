@@ -63,12 +63,9 @@ public class EdgeDecorator extends RecyclerView.ItemDecoration {
         }
 
         // Last item
-        if (itemPosition == state.getItemCount() - 1) {
-            if (config.useLastMargin) {
-                addTo(useView, outRect, getEnd(), -1 * getMargin(getEnd()));
-                addTo(useView, outRect, getEnd(), config.lastMargin);
-            }
-            return;
+        if (itemPosition == state.getItemCount() - 1 && config.useLastMargin) {
+            addTo(useView, outRect, getEnd(), -1 * getMargin(getEnd()));
+            addTo(useView, outRect, getEnd(), config.lastMargin);
         }
 
         // For all other items, remove the correct start padding (only keep end padding)

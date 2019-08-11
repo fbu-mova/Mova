@@ -22,7 +22,8 @@
                 android:id="@+id/clPost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipChildren="false">
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
             </com.example.mova.component.ComponentLayout>
 
@@ -30,10 +31,10 @@
                 android:id="@+id/tvComments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="@dimen/outerMargin"
+                android:layout_marginTop="@dimen/innerMargin"
+                android:layout_marginRight="@dimen/outerMargin"
+                android:layout_marginBottom="@dimen/elementMargin"
                 android:text="Comments"
                 android:textColor="#222"
                 android:textSize="18dp" />

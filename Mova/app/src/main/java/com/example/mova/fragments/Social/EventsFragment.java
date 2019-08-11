@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,22 +55,19 @@ public class EventsFragment extends Fragment {
     User user;
     public static FragmentManager manager;
 
-    @BindView(R.id.ibSearch)
-    ImageButton ibSearch;
+    @BindView(R.id.ibSearch) ImageButton ibSearch;
 
-    @BindView(R.id.efabCompose)
-    EdgeFloatingActionButton fabAdd;
+    @BindView(R.id.efabCompose) EdgeFloatingActionButton fabAdd;
 
+    @BindView(R.id.tvYourEvents) protected TextView tvYourEvents;
     @BindView(R.id.rvYourEvents) RecyclerView rvYourEvents;
     protected List<Event> yourEvents;
     private DataComponentAdapter<Event> yourEventsAdapter;
 
-
+    @BindView(R.id.tvNearYou) protected TextView tvNearYou;
     @BindView(R.id.rvNearYou) RecyclerView rvNearYou;
     protected List<Event> nearYouEvents;
     private DataComponentAdapter<Event> nearYouAdapter;
-
-
 
     public EventsFragment() {
         // Required empty public constructor
@@ -187,18 +185,38 @@ public class EventsFragment extends Fragment {
         rvNearYou.setAdapter(nearYouAdapter);
 
         EventUtils.getYourEvents(user, (yourevents) -> {
+            if (yourevents.size() == 0) {
+                displayYourEvents(false);
+                return;
+            }
+            displayYourEvents(true);
+
             yourEvents.addAll(yourevents);
             yourEventsAdapter.notifyDataSetChanged();
             rvYourEvents.scrollToPosition(0);
         });
 
         EventUtils.getEventsNearYou(userLocation, (eventsNearYou) -> {
+            if (eventsNearYou.size() == 0) {
+                displayNearYou(false);
+                return;
+            }
+            displayNearYou(true);
+
             nearYouEvents.addAll(eventsNearYou);
             nearYouAdapter.notifyDataSetChanged();
             rvNearYou.scrollToPosition(0);
             Log.d("Events Fragment", LocationUtils.getCurrentUserLocation().toString());
         });
+    }
 
+    private void displayNearYou(boolean show) {
+        tvNearYou.setVisibility((show) ? View.VISIBLE : View.GONE);
+        rvNearYou.setVisibility((show) ? View.VISIBLE : View.GONE);
+    }
 
+    private void displayYourEvents(boolean show) {
+        tvYourEvents.setVisibility((show) ? View.VISIBLE : View.GONE);
+        rvYourEvents.setVisibility((show) ? View.VISIBLE : View.GONE);
     }
 }

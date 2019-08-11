@@ -8,6 +8,7 @@ import com.example.mova.icons.Icons;
 import com.example.mova.icons.NounProjectClient;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
+import com.example.mova.utils.Wrapper;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseClassName;

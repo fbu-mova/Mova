@@ -189,6 +189,8 @@ public class PostComponent extends Component {
 
                     if (media.getType() != Media.ContentType.Post) {
                         holder.clMedia.setMargin(innerMargin, elementMargin, innerMargin, elementMargin);
+                    } else {
+                        ((PostComponent) mediaComponent).config.allowDetailsClick = config.allowMediaDetailsClick;
                     }
 
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
@@ -422,6 +424,7 @@ public class PostComponent extends Component {
         public boolean showButtons = true;
         public boolean allowCompose = true;
         public boolean allowDetailsClick = true;
+        public boolean allowMediaDetailsClick = false;
 
         public AsyncUtils.ItemCallback<Post> onReply = (post) -> {};
         public AsyncUtils.ItemCallback<Post> onRepost = (post) -> {};

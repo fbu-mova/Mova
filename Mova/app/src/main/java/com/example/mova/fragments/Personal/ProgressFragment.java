@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -357,7 +358,12 @@ public class ProgressFragment extends Fragment {
     private int makeGraphColor(ColorUtils.Hue hue, List<ColorUtils.Lightness> used) {
         ColorUtils.Lightness nextLightness = getNextLightness(used);
         used.add(nextLightness);
-        int color = ColorUtils.getColor(getResources(), hue, nextLightness);
+        int color;
+        try {
+            color = ColorUtils.getColor(getResources(), hue, nextLightness);
+        } catch (IllegalArgumentException e) {
+            color = new Random().nextInt();
+        }
         if (verifyUniqueColor(color)) return color;
         return makeGraphColor(hue, used);
     }

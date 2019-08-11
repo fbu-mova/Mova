@@ -31,7 +31,8 @@ xmlns:tools="http://schemas.android.com/tools"
                     android:id="@+id/clPostToReply"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/innerMargin">
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                 </com.example.mova.component.ComponentLayout>
             </FrameLayout>
@@ -69,11 +70,26 @@ xmlns:tools="http://schemas.android.com/tools"
                         android:id="@+id/tvTypeIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0"
                         android:fontFamily="@font/lato_bold"
                         android:text="Verbing to What"
                         android:textColor="@color/textLight"
                         android:textSize="@dimen/textSizeBody" />
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/ivClose"
+                        android:layout_width="@dimen/buttonIcon"
+                        android:layout_height="@dimen/buttonIcon"
+                        android:tint="@color/buttonInactive"
+                        app:srcCompat="@drawable/ic_round_close_24px" />
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
@@ -137,17 +153,6 @@ xmlns:tools="http://schemas.android.com/tools"
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <ImageView
-        android:id="@+id/ivClose"
-        android:layout_width="@dimen/buttonIcon"
-        android:layout_height="@dimen/buttonIcon"
-        android:layout_marginTop="@dimen/innerMargin"
-        android:layout_marginEnd="@dimen/innerMargin"
-        android:tint="@color/buttonInactive"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_round_close_24px" />
 
     <com.example.mova.views.EdgeFloatingActionButton
         android:id="@+id/efabPost"

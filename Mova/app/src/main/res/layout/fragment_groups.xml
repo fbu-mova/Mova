@@ -22,8 +22,9 @@
         android:id="@+id/nsvGroups"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/elementMargin"
         android:background="?android:windowBackground"
+        android:backgroundTint="@color/bg"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,15 +34,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".fragments.Social.GroupsFragment"
-            android:background="@color/bg">
+            android:background="@color/bg"
+            tools:context=".fragments.Social.GroupsFragment">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/tvYourGroups"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="@dimen/outerMargin"
+                android:layout_marginTop="@dimen/elementMargin"
                 android:text="Your Groups"
                 android:textColor="#020000"
                 android:textSize="24sp"
@@ -53,17 +54,16 @@
                 android:id="@+id/rvGroups"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                app:layout_constraintTop_toBottomOf="@+id/tvYourGroups" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/tvActiveGoals"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginLeft="@dimen/outerMargin"
+                android:layout_marginTop="@dimen/innerMargin"
                 android:text="Active Goals"
                 android:textColor="#000000"
                 android:textSize="24sp"
@@ -74,10 +74,10 @@
                 android:id="@+id/rvActiveGoals"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/elementMargin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                app:layout_constraintTop_toBottomOf="@+id/tvActiveGoals" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
