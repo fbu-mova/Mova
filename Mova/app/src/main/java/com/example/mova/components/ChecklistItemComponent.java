@@ -108,7 +108,6 @@ public abstract class ChecklistItemComponent<T> extends Component {
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.avItem)     public ActionView avItem;
-        @BindView(R.id.llRoot)     public LinearLayout llRoot;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

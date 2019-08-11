@@ -5,10 +5,13 @@ import android.graphics.Bitmap;
 
 import com.example.mova.R;
 import com.example.mova.component.Component;
+import com.example.mova.components.ActionMediaComponent;
 import com.example.mova.components.GoalCardComponent;
+import com.example.mova.components.GoalThumbnailComponent;
 import com.example.mova.components.ImageComponent;
 import com.example.mova.components.MediaTextComponent;
 import com.example.mova.components.PostComponent;
+import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
@@ -222,8 +225,25 @@ public class Media extends HashableParseObject {
                         callback.call(null, e);
                         return;
                     }
-                    data.goal = (Goal) obj;;
-                    callback.call(new GoalCardComponent(data), null);
+                    data.goal = (Goal) obj;
+                    callback.call(new ProgressGoalComponent(data.goal), null);
+                });
+                break;
+            case Action:
+                getContentAction().fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    Action action = (Action) obj;
+                    action.getParentGoal().fetchIfNeededInBackground((obj1, e1) -> {
+                        if (e1 != null) {
+                            callback.call(null, e1);
+                            return;
+                        }
+                        Goal goal = (Goal) obj1;
+                        callback.call(new ActionMediaComponent(goal, action), null);
+                    });
                 });
                 break;
             default:
