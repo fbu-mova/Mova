@@ -9,6 +9,7 @@ import com.example.mova.components.ActionMediaComponent;
 import com.example.mova.components.EventCardComponent;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.GoalThumbnailComponent;
+import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.components.ImageComponent;
 import com.example.mova.components.MediaTextComponent;
 import com.example.mova.components.PostComponent;
@@ -258,6 +259,17 @@ public class Media extends HashableParseObject {
                     component.setAllowDetailsClick(false);
                     component.setAllowCompose(false);
                     component.setShowDescription(false);
+                    callback.call(component, null);
+                });
+                break;
+            case Group:
+                getContentGroup().fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    Group group = (Group) obj;
+                    GroupThumbnailComponent component = new GroupThumbnailComponent(group);
                     callback.call(component, null);
                 });
                 break;
