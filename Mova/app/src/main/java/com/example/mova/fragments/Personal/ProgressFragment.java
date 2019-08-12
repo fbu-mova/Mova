@@ -279,7 +279,7 @@ public class ProgressFragment extends Fragment {
                 List<Integer>[] dataList = new List[graphGoals.size()];
                 AsyncUtils.executeMany(graphGoals.size(), (i,cb) -> {
                     Goal goal = graphGoals.get(i);
-                    getDataForGraph(goal, user, length, (data) -> {
+                    getDataForGraph(goal, (data) -> {
                         dataList[i] = data;
                         cb.call(null);
                     });
@@ -289,7 +289,7 @@ public class ProgressFragment extends Fragment {
                         int color = getGoalGraphColor(graphGoals.get(z));
                         for(int j = 0; j < dataList[z].size(); j++){
                             graphManager.setValue(j, color, dataList[z].get(j));
-                            //graphManager.show(color);
+                            graphManager.show(color);
                         }
                     }
                     if(graphManager.tallestY() == 0){
