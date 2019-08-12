@@ -13,6 +13,8 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.SharedAction;
+import com.example.mova.utils.ColorUtils;
+import com.example.mova.views.ActionView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +23,7 @@ public class UninvolvedSharedActionComponent extends ChecklistItemComponent<Shar
 
     private static final String TAG = "UNinv. shared action comp";
 
-    protected SharedAction sharedAction;
+    protected SharedAction.Data data;
     protected boolean isUserDone;
     protected static int viewLayoutRes = R.layout.item_uninvolved_shared_action;
 
@@ -31,7 +33,7 @@ public class UninvolvedSharedActionComponent extends ChecklistItemComponent<Shar
 
     public UninvolvedSharedActionComponent(SharedAction.Data data) {
         super(data.sharedAction, (item) -> item.getTask(), (item) -> false);
-        this.sharedAction = data.sharedAction;
+        this.data = data;
         this.isUserDone = data.isUserDone;
     }
 
@@ -57,11 +59,12 @@ public class UninvolvedSharedActionComponent extends ChecklistItemComponent<Shar
 
     @Override
     protected void onLaunch() {
-
+        this.setColors(ActionView.ColorConfig.defaultFromHue(getActivity().getResources(), ColorUtils.Hue.Blue));
     }
 
     @Override
     protected void onRender(Component.ViewHolder holder) {
+
         super.onRender(holder);
 
         // todo -- have a better icon for ivIcon
@@ -70,8 +73,8 @@ public class UninvolvedSharedActionComponent extends ChecklistItemComponent<Shar
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
-        int complete = sharedAction.getUsersDone();
-        sharedAction.relChildActions.getSize((total) -> {
+        int complete = data.sharedAction.getUsersDone();
+        data.sharedAction.relChildActions.getSize((total) -> {
             this.holder.tvNumDone.setText(complete + "/" + total + " done!");
         });
     }
