@@ -9,6 +9,7 @@ import com.example.mova.components.JournalMemoryComponent;
 import com.example.mova.components.JournalPromptComponent;
 import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.model.Goal;
+import com.example.mova.model.Mood;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
@@ -17,6 +18,8 @@ import com.example.mova.utils.TimeUtils;
 import com.example.mova.utils.Wrapper;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +65,8 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         ParseQuery<Post> journalQuery = User.getCurrentUser().relJournal.getQuery();
         journalQuery.orderByDescending(Post.KEY_CREATED_AT);
         journalQuery.setLimit(20);
+        journalQuery.whereNotEqualTo(Post.KEY_MOOD, JSONObject.NULL);
+//        journalQuery.whereNotEqualTo(Post.KEY_MOOD, Mood.Status.Empty.toString());
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
             journalQuery.findInBackground((entries, e) -> {
                 if (e != null) {

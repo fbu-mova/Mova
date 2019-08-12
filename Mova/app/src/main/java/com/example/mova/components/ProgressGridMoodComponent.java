@@ -24,7 +24,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProgressGridMoodComponent extends Component {
+public abstract class ProgressGridMoodComponent extends Component {
 
     private static final String TAG = "ProgressMoodComponent";
     private static final int viewLayoutRes = R.layout.item_grid_mood;
@@ -64,6 +64,8 @@ public class ProgressGridMoodComponent extends Component {
         componentManager = manager;
     }
 
+    public abstract void onClick();
+
     @Override
     protected void onLaunch() {
 
@@ -75,6 +77,7 @@ public class ProgressGridMoodComponent extends Component {
         viewHolder = (ProgressGridViewHolder) holder;
 
         viewHolder.cvMood.setCardBackgroundColor(Mood.getColor(mood));
+        viewHolder.cvMood.setOnClickListener((v) -> onClick());
 
         if (date == null) {
             viewHolder.tvDate.setVisibility(View.GONE);

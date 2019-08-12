@@ -61,7 +61,7 @@ public class JournalFragment extends Fragment {
     private SortedDataComponentAdapter<Post> entryAdapter;
 
     private Journal journal;
-    private Date currDate;
+    private Date currDate = new Date();
 
     private GestureDetector gestureDetector;
     private DataEvent<Date> dateSelectEvent;
@@ -73,6 +73,8 @@ public class JournalFragment extends Fragment {
     @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
     @BindView(R.id.efabCompose)  protected EdgeFloatingActionButton efabCompose;
 
+    public static final String ARG_DATE = "date";
+
     public JournalFragment() {
         // Required empty public constructor
     }
@@ -83,8 +85,14 @@ public class JournalFragment extends Fragment {
      * @return A new instance of fragment JournalFragment.
      */
     public static JournalFragment newInstance() {
+        return newInstance(new Date());
+    }
+
+    public static JournalFragment newInstance(Date date) {
+        if (date == null) date = new Date();
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
+        args.putLong(ARG_DATE, TimeUtils.normalizeToDay(date).getTime());
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,6 +101,10 @@ public class JournalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            currDate = new Date();
+            currDate.setTime(getArguments().getLong(ARG_DATE));
+        } else {
+            currDate = new Date();
         }
     }
 
@@ -108,7 +120,6 @@ public class JournalFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        currDate = TimeUtils.getToday();
         dateSelectEvent = new DataEvent<>();
 
         configureGestureHandling();
@@ -252,7 +263,7 @@ public class JournalFragment extends Fragment {
         eslDates.addItemDecoration(new EdgeDecorator(new EdgeDecorator.Config(elementMargin, 0, 0, 0)
                 .setOrientation(EdgeDecorator.Orientation.Horizontal)
                 .setStart(EdgeDecorator.Start.Reverse)));
-        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, 64));
+        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, elementMargin));
 
         // On fab click, open compose activity
         efabCompose.setOnClickListener((clickedView) -> {

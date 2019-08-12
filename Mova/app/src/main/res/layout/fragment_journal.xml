@@ -19,13 +19,12 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/outerMargin"
             android:layout_marginTop="@dimen/outerMargin"
             android:layout_marginEnd="@dimen/outerMargin"
             android:clipChildren="false"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -55,22 +54,10 @@
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/innerMargin"
+                android:layout_marginBottom="@dimen/elementMargin"
                 android:text="Date"
                 android:textColor="@color/textLight"
                 android:textSize="@dimen/textSizeBody" />
-
-            <com.example.mova.containers.EndlessScrollRefreshLayout
-                android:id="@+id/esrlEntries"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="100"
-                android:clipChildren="true"
-                android:fadeScrollbars="true"
-                android:fadingEdgeLength="@dimen/outerMargin"
-                android:requiresFadingEdge="vertical">
-
-            </com.example.mova.containers.EndlessScrollRefreshLayout>
 
             <!--<androidx.recyclerview.widget.RecyclerView-->
             <!--android:id="@+id/rvEntries"-->
@@ -78,6 +65,22 @@
             <!--android:layout_height="0dp"-->
             <!--android:layout_weight="100" />-->
         </LinearLayout>
+
+        <com.example.mova.containers.EndlessScrollRefreshLayout
+            android:id="@+id/esrlEntries"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="100"
+            android:clipChildren="true"
+            android:fadeScrollbars="true"
+            android:fadingEdgeLength="@dimen/outerMargin"
+            android:requiresFadingEdge="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        </com.example.mova.containers.EndlessScrollRefreshLayout>
 
         <com.example.mova.views.EdgeFloatingActionButton
             android:id="@+id/efabCompose"

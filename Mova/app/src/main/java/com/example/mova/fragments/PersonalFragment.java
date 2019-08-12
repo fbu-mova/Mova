@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mova.R;
 import com.example.mova.components.EventThumbnailComponent;
@@ -26,6 +27,8 @@ import com.example.mova.fragments.Social.GroupsFragment;
 import com.example.mova.fragments.Social.SocialFeedFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -37,6 +40,8 @@ import butterknife.ButterKnife;
 public class PersonalFragment extends Fragment {
 
     @BindView(R.id.bottom_navigation_personal) BottomNavigationView bottomNavigationView;
+
+    public static Date journalDate = new Date();
 
     public PersonalFragment() {
         // Required empty public constructor
@@ -97,7 +102,8 @@ public class PersonalFragment extends Fragment {
                 break;
             case Journal:
                 //Toast.makeText(getContext(), "Switches to journal", Toast.LENGTH_SHORT).show();
-                fragment = JournalFragment.newInstance();
+                fragment = JournalFragment.newInstance(journalDate);
+                journalDate = new Date();
                 break;
             case Feed:
                 //Toast.makeText(getContext(), "Switches to feed", Toast.LENGTH_SHORT).show();
@@ -114,7 +120,10 @@ public class PersonalFragment extends Fragment {
             default:
                 return;
         }
-        fragmentManager.beginTransaction().replace(R.id.flPersonalContainer, fragment).commit();
+        fragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.flPersonalContainer, fragment)
+                .commit();
         if(ProfileFriendComponent.manager != null) {
             ProfileFriendComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }

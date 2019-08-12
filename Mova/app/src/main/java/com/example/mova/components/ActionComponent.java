@@ -97,7 +97,9 @@ public class ActionComponent extends Component {
                     ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
                             .setText(item.getTask());
                 } else {
-                    viewComponent.setOnTextClickListener(() -> componentManager.swap(editComponent.getName()));
+                    viewComponent.setOnTextClickListener(() -> {
+                        if (allowEdit) componentManager.swap(editComponent.getName());
+                    });
                 }
             }
         });
