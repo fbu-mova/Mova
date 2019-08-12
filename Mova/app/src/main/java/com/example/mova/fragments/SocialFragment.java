@@ -130,27 +130,29 @@ public class SocialFragment extends Fragment {
                         .replace(R.id.flSocialContainer, fragment)
                         .commit();
                 //Todo fix manager is already executing a transaction
-                if(ProfileFriendComponent.manager != null) {
-                    ProfileFriendComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-                if(ProfileGroupComponent.manager != null){
-                    ProfileGroupComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-                if(GroupThumbnailComponent.manager != null){
-                    GroupThumbnailComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-                if(EventThumbnailComponent.manager != null){
-                    EventThumbnailComponent.manager.popBackStack(0,FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-                if(SocialFeedFragment.manager != null) {
-                    SocialFeedFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-                if(GroupsFragment.manager != null){
-                    GroupsFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-                if(EventsFragment.manager != null){
-                    EventsFragment.manager.popBackStack(0,FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
+                try {
+                    if (ProfileFriendComponent.manager != null) {
+                        ProfileFriendComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    if (ProfileGroupComponent.manager != null) {
+                        ProfileGroupComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    if (GroupThumbnailComponent.manager != null) {
+                        GroupThumbnailComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    if (EventThumbnailComponent.manager != null) {
+                        EventThumbnailComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    if (SocialFeedFragment.manager != null) {
+                        SocialFeedFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    if (GroupsFragment.manager != null) {
+                        GroupsFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    if (EventsFragment.manager != null) {
+                        EventsFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                } catch (Exception e) {}
                 return true;
             }
         });

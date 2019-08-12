@@ -224,11 +224,11 @@ public class GoalsFragment extends Fragment {
                         Log.d(TAG, String.format("object size: %s", objects.size()));
 
                         // Determine whether any goals have groups
-                        boolean hasGroup = true;
+                        boolean hasGroup = false;
                         for (Goal goal : objects) {
-                            hasGroup = hasGroup && (goal.getGroup() != null);
+                            hasGroup = hasGroup || (goal.getGroup() != null);
                         }
-                        thumbnailShowGroup.item = hasGroup;
+                        thumbnailShowGroup.item = thumbnailShowGroup.item || hasGroup;
 
                         for (int i = objects.size() - 1; i >= 0; i--) {
                             // load into recyclerview

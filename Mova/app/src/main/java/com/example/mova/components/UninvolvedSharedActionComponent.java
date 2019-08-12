@@ -97,8 +97,12 @@ public class UninvolvedSharedActionComponent extends ChecklistItemComponent<Shar
 
     public static class Inflater extends ChecklistItemComponent.Inflater {
 
+        public Inflater() {
+            super(viewLayoutRes);
+        }
+
         @Override
-        public ChecklistItemComponent.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
+        public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
             Component.ViewHolder holder = super.inflate(activity, parent, attachToRoot);
             return new ViewHolder(holder.getView());
         }
