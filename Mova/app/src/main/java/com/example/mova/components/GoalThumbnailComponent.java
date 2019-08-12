@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
 import com.example.mova.containers.GestureLayout;
+import com.example.mova.containers.GestureListener;
 import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.model.Media;
 import com.example.mova.utils.ColorUtils;
@@ -32,6 +33,9 @@ import com.example.mova.icons.Icons;
 import com.example.mova.model.Goal;
 import com.example.mova.model.User;
 import com.example.mova.utils.GoalUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -128,6 +132,39 @@ public class GoalThumbnailComponent extends Component {
                         .show(viewHolder.glRoot);
             }
         }));
+
+//        viewHolder.glRoot.setGestureDetector(new GestureDetector(getActivity(), new GestureListener(viewHolder.glRoot, 100) {
+//            @Override
+//            public boolean onTouch() {
+//                Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
+//                intent.putExtra("goal", goal);
+//                intent.putExtra("isUserInvolved", userIsInvolved);
+//
+//                // fixme -- add ability to alter priority of goals as go back to goals fragment
+//
+//                getActivity().startActivity(intent);
+//
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onSwipe(List<Direction> directions) {
+//                if (directions.size() == 0) {
+//                    PostConfig config = new PostConfig();
+//                    config.isPersonal = true;
+//                    config.media = new Media(goal);
+//
+//                    new ComposePostDialog.Builder(getActivity())
+//                            .setConfig(config)
+//                            .setOnPost((post) -> {
+//                                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+//                                // TODO: Go to post
+//                            })
+//                            .show(viewHolder.glRoot);
+//                }
+//                return directions.size() != 0;
+//            }
+//        }));
 
         viewHolder.tvName.setText(goal.getTitle());
 

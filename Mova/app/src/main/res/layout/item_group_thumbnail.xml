@@ -13,12 +13,16 @@
     <com.example.mova.containers.GestureLayout
         android:id="@+id/glRoot"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:longClickable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:clipChildren="true"
+            android:longClickable="true"
             android:orientation="vertical">
 
             <ImageView

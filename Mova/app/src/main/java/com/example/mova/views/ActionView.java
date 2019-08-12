@@ -43,8 +43,8 @@ public class ActionView extends ConstraintLayout {
     private Drawable boxIncomplete;
     private Drawable boxDisabled;
 
-    private AsyncUtils.ItemCallback<Boolean> onCheckedChangeListener;
-    private AsyncUtils.EmptyCallback onTextClickedListener;
+    private AsyncUtils.ItemCallback<Boolean> onCheckedChangeListener = (checked) -> {};
+    private AsyncUtils.EmptyCallback onTextClickedListener = () -> {};
 
     public ActionView(Context context) {
         super(context);
