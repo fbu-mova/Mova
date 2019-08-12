@@ -221,8 +221,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvActions"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toTopOf="@+id/clAddAction"
+                    android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/clAddAction"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -231,9 +230,10 @@
                     android:id="@+id/clAddAction"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginTop="@dimen/elementMargin"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rvActions">
 
                 </com.example.mova.component.ComponentLayout>
 

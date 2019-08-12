@@ -1,88 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/llRoot"
+    android:id="@+id/cvRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/innerMargin"
-    android:orientation="vertical">
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    app:cardCornerRadius="@dimen/borderRadius"
+    app:cardElevation="@dimen/shallowCardElevation"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
+        android:id="@+id/llRoot"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|end"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/innerMargin"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/ivIcon2"
-            android:layout_width="@dimen/buttonIcon"
-            android:layout_height="@dimen/buttonIcon"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/elementMargin"
-            android:tint="@color/textLight"
-            app:layout_constraintBottom_toBottomOf="@id/ivSave"
-            app:layout_constraintStart_toEndOf="@+id/ivIcon1"
-            app:layout_constraintTop_toTopOf="@id/ivSave"
-            app:srcCompat="@drawable/ic_round_close" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/elementMargin"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/etAction"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Write task here"
-            android:inputType="textPersonName"
-            android:textColor="@color/purpleLight"
-            android:textSize="@dimen/textSizeFocus"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|end"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivIcon2"
+                android:layout_width="@dimen/buttonIcon"
+                android:layout_height="@dimen/buttonIcon"
+                android:layout_gravity="center_vertical"
+                android:tint="@color/textLight"
+                app:layout_constraintBottom_toBottomOf="@id/ivSave"
+                app:layout_constraintStart_toEndOf="@+id/ivIcon1"
+                app:layout_constraintTop_toTopOf="@id/ivSave"
+                app:srcCompat="@drawable/ic_round_close" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etAction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Write task here"
+                android:inputType="textPersonName"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeBody"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivIcon1"
+                android:layout_width="@dimen/buttonIcon"
+                android:layout_height="@dimen/buttonIcon"
+                android:layout_marginRight="@dimen/elementMargin"
+                android:tint="@color/buttonInactive"
+                app:layout_constraintStart_toEndOf="@+id/ivIcon3"
+                app:layout_constraintTop_toTopOf="@+id/ivIcon2"
+                app:srcCompat="@drawable/ic_round_recurring" />
+
+            <ImageView
+                android:id="@+id/ivIcon3"
+                android:layout_width="@dimen/buttonIcon"
+                android:layout_height="@dimen/buttonIcon"
+                android:layout_marginRight="@dimen/elementMargin"
+                android:tint="@color/buttonInactive"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ivIcon1"
+                app:srcCompat="@drawable/ic_round_priority" />
+
+            <ImageView
+                android:id="@+id/ivSave"
+                android:layout_width="@dimen/buttonIcon"
+                android:layout_height="@dimen/buttonIcon"
+                android:tint="@color/textLight"
+                app:srcCompat="@drawable/ic_round_check" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/ivIcon1"
-            android:layout_width="@dimen/buttonIcon"
-            android:layout_height="@dimen/buttonIcon"
-            android:layout_marginRight="@dimen/elementMargin"
-            android:tint="@color/buttonInactive"
-            app:layout_constraintStart_toEndOf="@+id/ivIcon3"
-            app:layout_constraintTop_toTopOf="@+id/ivIcon2"
-            app:srcCompat="@drawable/ic_round_recurring" />
-
-        <ImageView
-            android:id="@+id/ivIcon3"
-            android:layout_width="@dimen/buttonIcon"
-            android:layout_height="@dimen/buttonIcon"
-            android:layout_marginRight="@dimen/elementMargin"
-            android:tint="@color/buttonInactive"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ivIcon1"
-            app:srcCompat="@drawable/ic_round_priority" />
-
-        <ImageView
-            android:id="@+id/ivSave"
-            android:layout_width="@dimen/buttonIcon"
-            android:layout_height="@dimen/buttonIcon"
-            android:layout_marginLeft="@dimen/elementMargin"
-            android:layout_marginRight="@dimen/elementMargin"
-            android:tint="@color/textLight"
-            app:srcCompat="@drawable/ic_round_check" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

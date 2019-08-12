@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
@@ -11,9 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.activities.GoalDetailsActivity;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.views.ActionView;
 import com.example.mova.views.GoalProgressBar;
@@ -107,6 +110,13 @@ public class GoalCheckInComponent extends Component {
         this.holder.pbProgress.setUnfilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.UltraLight));
         this.holder.pbProgress.setFilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.Mid));
 
+        this.holder.card.setOnClickListener((v) -> {
+            Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
+            intent.putExtra("goal", goal);
+            intent.putExtra("isUserInvolved", true);
+            getActivity().startActivityForResult(intent, 521);
+        });
+
         // Set up actions checklist
         adapter = new DataComponentAdapter<Action>(getActivity(), goalActions) {
             @Override
@@ -153,6 +163,7 @@ public class GoalCheckInComponent extends Component {
 
     public static class ViewHolder extends Component.ViewHolder {
 
+        @BindView(R.id.card)        public CardView card;
         @BindView(R.id.pbProgress)  public GoalProgressBar pbProgress;
         @BindView(R.id.tvGoalTitle) public TextView tvGoalTitle;
         @BindView(R.id.tvSubheader) public TextView tvSubheader;
