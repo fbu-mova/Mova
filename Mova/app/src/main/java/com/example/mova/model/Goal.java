@@ -198,8 +198,10 @@ public class Goal extends HashableParseObject {
     // Hue
     public ColorUtils.Hue getHue() {
         String str = getString(KEY_HUE);
-        if (str == null) return null;
-        return ColorUtils.Hue.valueOf(str);
+        if (str != null) return ColorUtils.Hue.valueOf(str);
+        ColorUtils.Hue hue = ColorUtils.Hue.random();
+        setHue(hue);
+        return hue;
     }
 
     public Goal setHue(ColorUtils.Hue hue) {
