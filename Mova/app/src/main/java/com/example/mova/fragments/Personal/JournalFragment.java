@@ -252,7 +252,7 @@ public class JournalFragment extends Fragment {
         eslDates.addItemDecoration(new EdgeDecorator(new EdgeDecorator.Config(elementMargin, 0, 0, 0)
                 .setOrientation(EdgeDecorator.Orientation.Horizontal)
                 .setStart(EdgeDecorator.Start.Reverse)));
-        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, getResources().getDimensionPixelOffset(R.dimen.innerMargin)));
+        esrlEntries.addItemDecoration(new EdgeDecorator(0, 0, 0, elementMargin));
 
         // On fab click, open compose activity
         efabCompose.setOnClickListener((clickedView) -> {

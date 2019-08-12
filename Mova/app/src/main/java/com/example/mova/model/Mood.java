@@ -65,46 +65,46 @@ public class Mood {
 
         switch (status){
             case Happy:
-                return Color.RED;
+                return Color.parseColor("#FFC85F");
             case Sad:
-                return Color.RED;
+                return Color.parseColor("#75A1E3");
             case Excited:
-                return Color.RED;
+                return Color.parseColor("#F58749");
             case Angry:
-                return Color.RED;
+                return Color.parseColor("#EB6161");
             case Frustrated:
-                return Color.RED;
+                return Color.parseColor("#FE9191");
             case Disappointed:
-                return Color.RED;
+                return Color.parseColor("#5D62D8");
             case Confident:
-                return Color.RED;
+                return Color.parseColor("#F086EC");
             case Determined:
-                return Color.RED;
+                return Color.parseColor("#F14BCD");
             case Pensive:
-                return Color.RED;
+                return Color.parseColor("#A6AAFE");
             case Relaxed:
-                return Color.RED;
+                return Color.parseColor("#93D1FF");
             case Fulfilled:
-                return Color.RED;
+                return Color.parseColor("#C256DD");
             case Focused:
-                return Color.RED;
+                return Color.parseColor("#EEF974");
             case Bored:
-                return Color.RED;
+                return Color.parseColor("#B0C080");
             case Annoyed:
-                return Color.RED;
+                return Color.parseColor("#83B93F");
             case Tired:
-                return Color.RED;
+                return Color.parseColor("#3836B0");
             case Concerned:
-                return Color.RED;
+                return Color.parseColor("#D27272");
             case Inspired:
-                return Color.RED;
+                return Color.parseColor("#72F0D2");
             case Empowered:
-                return Color.RED;
+                return Color.parseColor("#AF7CF1");
             case Supported:
-                return Color.RED;
+                return Color.parseColor("#8934CB");
             case Empty:
             default:
-                return Color.WHITE;
+                return Color.parseColor("#D6D6D6");
         }
     }
 
