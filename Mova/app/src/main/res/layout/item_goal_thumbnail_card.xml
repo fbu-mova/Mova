@@ -77,7 +77,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="@dimen/elementMargin"
+                        android:maxWidth="120dp"
                         android:text="Goal"
+                        android:textAlignment="center"
                         android:textColor="@color/textMain"
                         android:textSize="@dimen/textSizeFocus" />
 
