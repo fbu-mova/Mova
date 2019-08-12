@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,8 @@ import com.example.mova.component.Component;
 import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.components.GoalCardComponent;
 import com.example.mova.components.PostComponent;
+import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.model.Event;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
@@ -35,6 +38,8 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
+import com.example.mova.utils.PostConfig;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -69,6 +74,8 @@ public class GroupDetailsFragment extends Fragment {
     TextView tvGroupName;
     @BindView(R.id.btnJoinGroup)
     Button btnJoinGroup;
+
+    @BindView(R.id.efabCompose) protected EdgeFloatingActionButton efabCompose;
 
     protected List<Post> groupPosts;
     protected List<Goal.GoalData> groupGoals;
@@ -174,6 +181,22 @@ public class GroupDetailsFragment extends Fragment {
                     .into(ivGroupDetailsPic);
         }
 
+        efabCompose.setOnClickListener((v) -> {
+            PostConfig config = new PostConfig();
+            config.post = new Post();
+            config.post.setGroup(group);
+            config.isPersonal = false;
+
+            new ComposePostDialog.Builder((DelegatedResultActivity) getActivity())
+                    .setConfig(config)
+                    .setOnPost((post) -> {
+                        Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                        groupPosts.add(0, post);
+                        groupPostAdapter.notifyItemInserted(0);
+                        rvGroupPosts.scrollToPosition(0);
+                    })
+                    .show(view);
+        });
 
         rvGroupGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvGroupPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -224,6 +247,15 @@ public class GroupDetailsFragment extends Fragment {
         rvGroupPosts.setAdapter(groupPostAdapter);
         rvGroupEvents.setAdapter(groupEventAdapter);
 
+        int margin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        rvGroupGoals.addItemDecoration(new EdgeDecorator.Config(outerMargin, margin)
+                .setMode(EdgeDecorator.Mode.Padding)
+                .build());
+        rvGroupPosts.addItemDecoration(new EdgeDecorator.Config(outerMargin, margin)
+                .setMode(EdgeDecorator.Mode.Padding)
+                .build());
+
         //Get group Goals
         GroupUtils.getGroupGoals(group, (goals) -> {
 
@@ -262,8 +294,6 @@ public class GroupDetailsFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.action_group_goals:
-
-
                         rvGroupGoals.setVisibility(View.VISIBLE);
                         rvGroupPosts.setVisibility(View.GONE);
                         rvGroupEvents.setVisibility(View.GONE);
@@ -271,7 +301,6 @@ public class GroupDetailsFragment extends Fragment {
 
 
                     case R.id.action_group_posts:
-
                         rvGroupGoals.setVisibility(View.GONE);
                         rvGroupPosts.setVisibility(View.VISIBLE);
                         rvGroupEvents.setVisibility(View.GONE);
@@ -279,16 +308,13 @@ public class GroupDetailsFragment extends Fragment {
 
 
                     case R.id.action_group_events:
-
                         rvGroupGoals.setVisibility(View.GONE);
                         rvGroupPosts.setVisibility(View.GONE);
                         rvGroupEvents.setVisibility(View.VISIBLE);
                         return true;
 
 
-                        default:return true;
-
-
+                    default: return true;
                 }
             }
         });

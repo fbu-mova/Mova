@@ -1,5 +1,7 @@
 package com.example.mova.utils;
 
+import com.example.mova.model.Event;
+import com.example.mova.model.Goal;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
@@ -10,8 +12,10 @@ import java.util.List;
 
 public class PostConfig {
     public Post post, postToReply;
+    public Event event;
     public List<Tag> tags;
     public Media media;
+    public Goal socialGoal;
     public boolean isPersonal;
     public boolean displayMoodSelector;
 

@@ -11,6 +11,9 @@ import com.parse.ParseQuery;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ParseClassName("Post")
 public class Post extends HashableParseObject {
 
@@ -167,20 +170,87 @@ public class Post extends HashableParseObject {
                         User.getCurrentUser().relJournal.add(config.post, (saved) -> {
                             cb.call(null);
                         });
+                    } else {
+                        cb.call(null);
                     }
                 };
+
+                AsyncUtils.ItemCallback<AsyncUtils.ItemCallback<Throwable>> saveToGroup = (cb) -> {
+                    if (config.post.getGroup() != null) {
+                        config.post.getGroup().fetchIfNeededInBackground((obj, e) -> {
+                            if (e != null) {
+                                cb.call(e);
+                                return;
+                            }
+                            Group group = (Group) obj;
+                            group.relPosts.add(this, (saved) -> {
+                                cb.call(null);
+                            });
+                        });
+                    } else {
+                        cb.call(null);
+                    }
+                };
+
+                AsyncUtils.ItemCallback<AsyncUtils.ItemCallback<Throwable>> saveToEvent = (cb) -> {
+                    if (config.event != null) {
+                        config.event.fetchIfNeededInBackground((obj, e) -> {
+                            if (e != null) {
+                                cb.call(e);
+                                return;
+                            }
+                            Event event = (Event) obj;
+                            event.relComments.add(this, (saved) -> {
+                                cb.call(null);
+                            });
+                        });
+                    } else {
+                        cb.call(null);
+                    }
+                };
+
+                // TODO: If we ever add commenting on social goals, we'd do it with this.
+//                AsyncUtils.ItemCallback<AsyncUtils.ItemCallback<Throwable>> saveToSocialGoal = (cb) -> {
+//                    if (config.socialGoal != null) {
+//                        config.socialGoal.fetchIfNeededInBackground((obj, e) -> {
+//                            if (e != null) {
+//                                cb.call(null);
+//                                return;
+//                            }
+//                            Goal socialGoal = (Goal) obj;
+//                            if (socialGoal.getIsPersonal()) {
+//                                cb.call(null);
+//                                return;
+//                            }
+//                        });
+//                    } else {
+//                        cb.call(null);
+//                    }
+//                };
 
                 AsyncUtils.EmptyCallback doSavePost = () -> this.saveInBackground((e) -> {
                     if (e != null) {
                         Log.e("User", "Failed to save entry", e);
                     } else {
-                        saveAsReply.call((e1) -> {
+                        List<AsyncUtils.ExecuteManyCallback> actions = new ArrayList<>();
+
+                        actions.add((i, cb) -> saveAsReply.call(cb));
+                        actions.add((i, cb) -> saveInJournal.call(cb));
+                        actions.add((i, cb) -> saveToGroup.call(cb));
+                        actions.add((i, cb) -> saveToEvent.call(cb));
+
+                        AsyncUtils.waterfall(actions, (e1) -> {
                             if (e1 != null) return;
-                            saveInJournal.call((e2) -> {
-                                if (e2 != null) return;
-                                callback.call(this);
-                            });
+                            callback.call(this);
                         });
+
+//                        saveAsReply.call((e1) -> {
+//                            if (e1 != null) return;
+//                            saveInJournal.call((e2) -> {
+//                                if (e2 != null) return;
+//                                callback.call(this);
+//                            });
+//                        });
                     }
                 });
 
