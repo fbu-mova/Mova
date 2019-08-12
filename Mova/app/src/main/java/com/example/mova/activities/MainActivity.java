@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mova.views.PersonalSocialToggle;
 import com.example.mova.R;
@@ -55,7 +56,10 @@ public class MainActivity extends DelegatedResultActivity {
         } else {
             fragment = new SocialFragment();
         }
-        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+        fragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.flContainer, fragment)
+                .commit();
     }
 
     @Override

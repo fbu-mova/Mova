@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mova.R;
 import com.example.mova.components.EventThumbnailComponent;
@@ -124,7 +125,10 @@ public class SocialFragment extends Fragment {
                      default:
                          return true;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flSocialContainer, fragment).commit();
+                fragmentManager.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.flSocialContainer, fragment)
+                        .commit();
                 //Todo fix manager is already executing a transaction
                 if(ProfileFriendComponent.manager != null) {
                     ProfileFriendComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);

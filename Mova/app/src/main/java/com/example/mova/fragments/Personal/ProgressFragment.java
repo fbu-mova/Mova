@@ -10,15 +10,21 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.fragments.PersonalFragment;
+import com.example.mova.fragments.Social.SocialProfileFragment;
 import com.example.mova.views.ProgressStack;
 import com.example.mova.containers.ProgressStackManager;
 import com.example.mova.R;
@@ -38,6 +44,8 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -176,7 +184,21 @@ public class ProgressFragment extends Fragment {
                 return new ProgressGridMoodComponent(item.mood, item.date) {
                     @Override
                     public void onClick() {
-                        // TODO: Launch correct fragment
+                        BottomNavigationView menu = getActivity().findViewById(R.id.bottom_navigation_personal);
+                        PersonalFragment.journalDate = item.date;
+                        menu.setSelectedItemId(R.id.action_journal);
+
+//                        Fragment frag = JournalFragment.newInstance(item.date);
+//                        FragmentManager manager = ((AppCompatActivity)getActivity())
+//                                .getSupportFragmentManager();
+//                        FrameLayout fl = getActivity().findViewById(R.id.flPersonalContainer);
+//                        //fl.removeAllViews();
+//                        FragmentTransaction ft = manager
+//                                .beginTransaction();
+//                        ft.add(R.id.flPersonalContainer, frag);
+//                        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                        ft.addToBackStack(null);
+//                        ft.commit();
                     }
                 };
             }
@@ -373,7 +395,7 @@ public class ProgressFragment extends Fragment {
         int color;
         try {
             color = ColorUtils.getColor(getResources(), hue, nextLightness);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException e) {
             color = new Random().nextInt();
         }
         if (verifyUniqueColor(color)) return color;

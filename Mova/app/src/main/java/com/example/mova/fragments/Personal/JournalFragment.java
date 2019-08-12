@@ -61,7 +61,7 @@ public class JournalFragment extends Fragment {
     private SortedDataComponentAdapter<Post> entryAdapter;
 
     private Journal journal;
-    private Date currDate;
+    private Date currDate = new Date();
 
     private GestureDetector gestureDetector;
     private DataEvent<Date> dateSelectEvent;
@@ -89,9 +89,10 @@ public class JournalFragment extends Fragment {
     }
 
     public static JournalFragment newInstance(Date date) {
+        if (date == null) date = new Date();
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_DATE, date.getTime());
+        args.putLong(ARG_DATE, TimeUtils.normalizeToDay(date).getTime());
         fragment.setArguments(args);
         return fragment;
     }
@@ -119,7 +120,6 @@ public class JournalFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        currDate = TimeUtils.getToday();
         dateSelectEvent = new DataEvent<>();
 
         configureGestureHandling();
