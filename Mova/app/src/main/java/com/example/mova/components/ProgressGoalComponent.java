@@ -45,6 +45,9 @@ public class ProgressGoalComponent extends Component {
 
     private ComponentManager componentManager;
 
+    private boolean allowCompose = true;
+    private boolean clickMode = false; // false = one tap, true = one tap + arrow
+
     public ProgressGoalComponent(Goal item){
         super();
         this.goal = item;
@@ -58,6 +61,14 @@ public class ProgressGoalComponent extends Component {
         }
         Log.e(TAG, "viewholder not inflated");
         return null;
+    }
+
+    public void setAllowCompose(boolean allowCompose) {
+        this.allowCompose = allowCompose;
+    }
+
+    public void setClickMode(boolean clickMode) {
+        this.clickMode = clickMode;
     }
 
     @Override
@@ -106,17 +117,19 @@ public class ProgressGoalComponent extends Component {
 
             @Override
             public void onLongPress(MotionEvent e) {
-                PostConfig config = new PostConfig();
-                config.isPersonal = true;
-                config.media = new Media(goal);
+                if (allowCompose) {
+                    PostConfig config = new PostConfig();
+                    config.isPersonal = true;
+                    config.media = new Media(goal);
 
-                new ComposePostDialog.Builder(getActivity())
-                        .setConfig(config)
-                        .setOnPost((post) -> {
-                            Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
-                            // TODO: Go to post
-                        })
-                        .show(viewHolder.glRoot);
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(config)
+                            .setOnPost((post) -> {
+                                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                                // TODO: Go to post
+                            })
+                            .show(viewHolder.glRoot);
+                }
             }
         }));
 

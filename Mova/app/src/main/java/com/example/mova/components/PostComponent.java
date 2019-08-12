@@ -191,16 +191,19 @@ public class PostComponent extends Component {
                         holder.clMedia.setMargin(innerMargin, elementMargin, innerMargin, elementMargin);
                     }
 
-                    if (media.getType() == Media.ContentType.Post) {
-                        ((PostComponent) mediaComponent).config.allowDetailsClick = config.allowMediaDetailsClick;
-                    }
-
-                    if (media.getType() == Media.ContentType.Event) {
-                        ((EventCardComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
-                    }
-
-                    if (media.getType() == Media.ContentType.Group) {
-                        ((GroupThumbnailComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
+                    switch (media.getType()) {
+                        case Post:
+                            ((PostComponent) mediaComponent).config.allowDetailsClick = config.allowMediaDetailsClick;
+                            break;
+                        case Event:
+                            ((EventCardComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
+                            break;
+                        case Group:
+                            ((GroupThumbnailComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
+                            break;
+                        case Goal:
+                            // TODO
+                            break;
                     }
 
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);

@@ -228,7 +228,9 @@ public class Media extends HashableParseObject {
                         return;
                     }
                     data.goal = (Goal) obj;
-                    callback.call(new ProgressGoalComponent(data.goal), null);
+                    ProgressGoalComponent component = new ProgressGoalComponent(data.goal);
+                    component.setAllowCompose(false);
+                    callback.call(component, null);
                 });
                 break;
             case Action:
@@ -271,6 +273,7 @@ public class Media extends HashableParseObject {
                     Group group = (Group) obj;
                     GroupThumbnailComponent component = new GroupThumbnailComponent(group);
                     component.setAllowDetailsClick(false);
+                    component.setAllowCompose(false);
                     callback.call(component, null);
                 });
                 break;

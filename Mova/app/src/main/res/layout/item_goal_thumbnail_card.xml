@@ -49,46 +49,52 @@
         app:cardCornerRadius="@dimen/borderRadius"
         app:cardElevation="@dimen/deepCardElevation">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.example.mova.containers.GestureLayout
+            android:id="@+id/glRoot"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/goalProgressBar"
-                app:layout_constraintTop_toTopOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/tvName"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/elementMargin"
-                    android:text="Goal"
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/textSizeFocus" />
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/goalProgressBar"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/ivIcon"
-                    android:layout_width="@dimen/thumbnailIcon"
-                    android:layout_height="@dimen/thumbnailIcon"
-                    android:layout_gravity="center_horizontal" />
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/elementMargin"
+                        android:text="Goal"
+                        android:textColor="@color/textMain"
+                        android:textSize="@dimen/textSizeFocus" />
 
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/ivIcon"
+                        android:layout_width="@dimen/thumbnailIcon"
+                        android:layout_height="@dimen/thumbnailIcon"
+                        android:layout_gravity="center_horizontal" />
 
-            <com.example.mova.views.GoalProgressBar
-                android:id="@+id/goalProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.example.mova.views.GoalProgressBar
+                    android:id="@+id/goalProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.example.mova.containers.GestureLayout>
 
     </androidx.cardview.widget.CardView>
 </LinearLayout>

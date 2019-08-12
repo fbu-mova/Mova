@@ -154,6 +154,9 @@ public class JournalEntryComponent extends Component {
                 case Group:
                     ((GroupThumbnailComponent) mediaComponent).setAllowDetailsClick(true);
                     break;
+                case Goal:
+//                    ((ProgressGoalComponent) mediaComponent).setAllowDetailsClick(true);
+                    break;
             }
 
             int margin = getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin);

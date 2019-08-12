@@ -1,12 +1,15 @@
 package com.example.mova.components;
 
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,9 +23,13 @@ import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.fragments.Social.GroupDetailsFragment;
 import com.example.mova.icons.Icons;
 import com.example.mova.model.Group;
+import com.example.mova.model.Media;
+import com.example.mova.utils.PostConfig;
 import com.parse.ParseFile;
 
 import butterknife.BindView;
@@ -39,6 +46,7 @@ public class GroupThumbnailComponent extends Component {
     private ComponentManager componentManager;
 
     private boolean allowDetailsClick = true;
+    private boolean allowCompose = true;
 
     public GroupThumbnailComponent(Group item){
         super();
@@ -47,6 +55,10 @@ public class GroupThumbnailComponent extends Component {
 
     public void setAllowDetailsClick(boolean allowDetailsClick) {
         this.allowDetailsClick = allowDetailsClick;
+    }
+
+    public void setAllowCompose(boolean allowCompose) {
+        this.allowCompose = allowCompose;
     }
 
     @Override
@@ -133,6 +145,43 @@ public class GroupThumbnailComponent extends Component {
                 }
             }
         });
+
+        viewHolder.glRoot.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (allowDetailsClick) {
+                    Fragment frag = GroupDetailsFragment.newInstance(group);
+                    manager = ((AppCompatActivity) getActivity())
+                            .getSupportFragmentManager();
+                    FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+                    //fl.removeAllViews();
+                    FragmentTransaction ft = manager
+                            .beginTransaction();
+                    ft.add(R.id.flSocialContainer, frag);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+                return !allowDetailsClick;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if (allowCompose) {
+                    PostConfig config = new PostConfig();
+                    config.isPersonal = true;
+                    config.media = new Media(group);
+
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(config)
+                            .setOnPost((post) -> {
+                                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                                // TODO: Go to post
+                            })
+                            .show(viewHolder.glRoot);
+                }
+            }
+        }));
     }
 
     @Override
@@ -142,6 +191,7 @@ public class GroupThumbnailComponent extends Component {
 
     public static class GroupThumbnailViewHolder extends Component.ViewHolder{
 
+        @BindView(R.id.glRoot) protected GestureLayout glRoot;
         @BindView(R.id.tvGroupName) protected TextView tvGroupName;
         @BindView(R.id.ivGroupPic) protected ImageView ivGroupPic;
         @BindView(R.id.ivGroupIcon) public ImageView ivGroupIcon;

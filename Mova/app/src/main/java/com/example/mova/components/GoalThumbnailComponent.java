@@ -3,17 +3,24 @@ package com.example.mova.components;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.model.Media;
 import com.example.mova.utils.ColorUtils;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.Wrapper;
 import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
@@ -92,9 +99,9 @@ public class GoalThumbnailComponent extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         viewHolder = (ViewHolder) holder;
 
-        viewHolder.llRoot.setOnClickListener(new View.OnClickListener() {
+        viewHolder.glRoot.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onSingleTapConfirmed(MotionEvent e) {
                 Intent intent = new Intent(getActivity(), GoalDetailsActivity.class);
                 intent.putExtra("goal", goal);
                 intent.putExtra("isUserInvolved", userIsInvolved);
@@ -102,8 +109,25 @@ public class GoalThumbnailComponent extends Component {
                 // fixme -- add ability to alter priority of goals as go back to goals fragment
 
                 getActivity().startActivity(intent);
+
+                return false;
             }
-        });
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                PostConfig config = new PostConfig();
+                config.isPersonal = true;
+                config.media = new Media(goal);
+
+                new ComposePostDialog.Builder(getActivity())
+                        .setConfig(config)
+                        .setOnPost((post) -> {
+                            Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                            // TODO: Go to post
+                        })
+                        .show(viewHolder.glRoot);
+            }
+        }));
 
         viewHolder.tvName.setText(goal.getTitle());
 
@@ -156,6 +180,7 @@ public class GoalThumbnailComponent extends Component {
 
     public static class ViewHolder extends Component.ViewHolder {
 
+        @BindView(R.id.glRoot)              protected GestureLayout glRoot;
         @BindView(R.id.llRoot)              public LinearLayout llRoot;
         @BindView(R.id.tvFromGroup)         protected TextView tvFromGroup;
         @BindView(R.id.tvName)              protected TextView tvName;
