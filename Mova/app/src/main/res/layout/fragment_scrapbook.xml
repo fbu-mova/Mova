@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:windowBackground"
     android:backgroundTint="@color/bg"
-    tools:context=".fragments.Social.ScrapbookFragment">
+    tools:context=".fragments.Social.ScrapbookFragment"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/outerMargin"
+        android:layout_marginTop="@dimen/outerMargin"
+        android:layout_marginRight="@dimen/outerMargin"
+        android:layout_weight="0"
+        android:fontFamily="@font/lato_medium"
+        android:text="Scrapbook"
+        android:textColor="@color/textMain"
+        android:textSize="@dimen/textSizeTitle" />
 
     <com.example.mova.containers.EndlessScrollRefreshLayout
         android:id="@+id/esrlScrapbook"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    </com.example.mova.containers.EndlessScrollRefreshLayout>
-</FrameLayout>
+</LinearLayout>

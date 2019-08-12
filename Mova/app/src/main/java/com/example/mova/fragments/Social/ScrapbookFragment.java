@@ -128,7 +128,9 @@ public class ScrapbookFragment extends Fragment {
             }
         });
 
-        esrlScrapbook.addItemDecoration(new EdgeDecorator(32));
+        int margin = getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int outerMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        esrlScrapbook.addItemDecoration(new EdgeDecorator.Config(outerMargin, margin).build());
 
         loadPosts();
     }
