@@ -10,23 +10,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
-import com.example.mova.fragments.PersonalFragment;
-import com.example.mova.fragments.Social.SocialProfileFragment;
-import com.example.mova.views.ProgressStack;
-import com.example.mova.containers.ProgressStackManager;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -35,6 +27,8 @@ import com.example.mova.component.Component;
 import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.components.ProgressGridMoodComponent;
 import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.containers.ProgressStackManager;
+import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Journal;
 import com.example.mova.model.Mood;
@@ -44,7 +38,7 @@ import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.TimeUtils;
-import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.example.mova.views.ProgressStack;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -391,7 +385,7 @@ public class ProgressFragment extends Fragment {
         if (color != null) return color;
         // Otherwise, choose new, unused color
         ColorUtils.Hue hue = goal.getHue();
-        if (hue == null) {
+        if(hue == null){
             if(hueBlue.size() == 0) hue = ColorUtils.Hue.Blue;
             if(hueOrange.size() == 0) hue = ColorUtils.Hue.Orange;
             if(huePurple.size() == 0) hue = ColorUtils.Hue.Purple;

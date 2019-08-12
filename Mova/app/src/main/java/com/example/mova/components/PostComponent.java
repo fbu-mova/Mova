@@ -17,21 +17,21 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.mova.containers.GestureLayout;
-import com.example.mova.dialogs.ComposePostDialog;
-import com.example.mova.icons.Icons;
-import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.component.ComponentManager;
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.fragments.Social.PostDetailsFragment;
+import com.example.mova.icons.Icons;
 import com.example.mova.model.Group;
 import com.example.mova.model.Media;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.TimeUtils;
 import com.parse.ParseQuery;
 
@@ -45,6 +45,8 @@ public class PostComponent extends Component {
 
     private ViewHolder holder;
     private ComponentManager componentManager;
+
+    public static FragmentManager manager;
 
     public PostComponent(Post post) {
         this(post, new Config());

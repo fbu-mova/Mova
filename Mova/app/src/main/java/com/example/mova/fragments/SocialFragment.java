@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.mova.R;
 import com.example.mova.components.EventThumbnailComponent;
 import com.example.mova.components.GroupThumbnailComponent;
+import com.example.mova.components.PostComponent;
 import com.example.mova.components.ProfileFriendComponent;
 import com.example.mova.components.ProfileGroupComponent;
 import com.example.mova.fragments.Social.EventsFragment;
@@ -142,6 +143,9 @@ public class SocialFragment extends Fragment {
                     }
                     if (EventThumbnailComponent.manager != null) {
                         EventThumbnailComponent.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    }
+                    if (PostComponent.manager != null){
+                        PostComponent.manager.popBackStack(0,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     }
                     if (SocialFeedFragment.manager != null) {
                         SocialFeedFragment.manager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE);
