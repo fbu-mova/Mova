@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.views;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.Nullable;
 
+import com.example.mova.R;
 import com.sdsmdg.harjot.vectormaster.VectorMasterDrawable;
 
 public class GoalProgressBar extends View {
@@ -314,25 +315,25 @@ public class GoalProgressBar extends View {
                 if (autoRoundedEnd == 0) {
                     rect = new Rect(0, 0, cWidth, cHeight);
                 } else {
-                    rect = new Rect(width - cWidth, 0, width, cHeight);
+                    rect = new Rect(width - cWidth + 1, 0, width, cHeight);
                 }
             } else {
                 if (autoRoundedEnd == 0) {
                     rect = new Rect(0, 0, cWidth, cHeight);
                 } else {
-                    rect = new Rect(0, height - cHeight, cWidth, height);
+                    rect = new Rect(0, height - cHeight + 1, cWidth, height);
                 }
             }
         } else {
             if (orientation == 0) {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(width - cWidth, 0, width, cHeight);
+                    rect = new Rect(width - cWidth + 1, 0, width, cHeight);
                 } else {
                     rect = new Rect(0, 0, cWidth, cHeight);
                 }
             } else {
                 if (autoRoundedEnd == 0) {
-                    rect = new Rect(0, height - cHeight, cWidth, height);
+                    rect = new Rect(0, height - cHeight + 1, cWidth, height);
                 } else {
                     rect = new Rect(0, 0, cWidth, cHeight);
                 }
@@ -403,6 +404,10 @@ public class GoalProgressBar extends View {
 
     public void setProgress(int progress) {
         setProgress(progress, true);
+    }
+
+    public int getProgress() {
+        return progress;
     }
 
     private void setProgress(int progress, boolean animate) {

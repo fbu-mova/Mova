@@ -3,6 +3,7 @@ package com.example.mova.fragments.Social;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.activities.EventComposeActivity;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.EventCardComponent;
 import com.example.mova.components.PostComponent;
 import com.example.mova.model.Event;
 import com.example.mova.model.Post;
@@ -54,16 +57,18 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
 
     @BindView(R.id.mvEventMap)
     MapView mvEventMap;
-    @BindView(R.id.tvEventName)
-    TextView tvEventName;
-    @BindView(R.id.ivEventPic)
-    ImageView ivEventPic;
-    @BindView(R.id.tvEventLocation)
-    TextView tvEventLocation;
-    @BindView(R.id.tvEventTime)
-    TextView tvEventTime;
-    @BindView(R.id.tvDescription)
-    TextView tvDescription;
+//    @BindView(R.id.tvEventName)
+//    TextView tvEventName;
+//    @BindView(R.id.ivEventPic)
+//    ImageView ivEventPic;
+//    @BindView(R.id.tvEventLocation)
+//    TextView tvEventLocation;
+//    @BindView(R.id.tvEventTime)
+//    TextView tvEventTime;
+//    @BindView(R.id.tvDescription)
+//    TextView tvDescription;
+    @BindView(R.id.clEventCard)
+    ComponentLayout clEventCard;
     @BindView(R.id.rvEventComments)
     RecyclerView rvEventComments;
     @BindView(R.id.btnEventAction)
@@ -128,22 +133,30 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
         user = (User) ParseUser.getCurrentUser();
         eventComments = new ArrayList<>();
 
-        String location = LocationUtils.makeLocationText(getContext(),event.getLocation(), false);
+//        String location = LocationUtils.makeLocationText(getContext(),event.getLocation(), false);
 
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        int margin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        clEventCard.setMargin(outerMargin, margin, outerMargin, margin);
 
+        EventCardComponent component = new EventCardComponent(event);
+        component.setAllowCompose(true);
+        component.setAllowDetailsClick(false);
+        component.setShowDescription(true);
+        clEventCard.inflateComponent((DelegatedResultActivity) getActivity(), component);
 
-        tvEventName.setText(event.getTitle());
-        tvEventLocation.setText("Where: " + location);
-        tvEventTime.setText("When: " + TimeUtils.toDateString( event.getDate()));
-        tvDescription.setText(event.getDescription());
+//        tvEventName.setText(event.getTitle());
+//        tvEventLocation.setText("Where: " + location);
+//        tvEventTime.setText("When: " + TimeUtils.toDateString( event.getDate()));
+//        tvDescription.setText(event.getDescription());
 
-        ParseFile file = event.getEventPic();
-        if(file != null){
-            String imageUrl = file.getUrl();
-            Glide.with(getContext())
-                    .load(imageUrl)
-                    .into(ivEventPic);
-        }
+//        ParseFile file = event.getEventPic();
+//        if(file != null){
+//            String imageUrl = file.getUrl();
+//            Glide.with(getContext())
+//                    .load(imageUrl)
+//                    .into(ivEventPic);
+//        }
 
         eventCommentsAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), eventComments) {
             @Override

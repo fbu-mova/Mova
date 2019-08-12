@@ -65,6 +65,10 @@ public class Journal {
         return entriesFromDate;
     }
 
+    public void addEmptyDate(Date date) {
+        getEntriesByDate(date);
+    }
+
     /**
      * Gets the date after the given date.
      * If the date does not exist or there is no date after the given date, returns the given date.
@@ -207,22 +211,22 @@ public class Journal {
         });
     }
 
-    public void postEntry(Post journalEntry, AsyncUtils.ItemCallback<Throwable> callback) {
-        postEntry(new PostConfig(journalEntry), callback);
-    }
-
-    public void postEntry(PostConfig config, AsyncUtils.ItemCallback<Throwable> callback) {
-        AsyncUtils.ItemCallback<Post> cb = (entry) -> {
-            Date today = TimeUtils.getToday();
-            SortedList<Post> todayEntries = getEntriesByDate(today);
-            todayEntries.add(config.post);
-            callback.call(null);
-        };
-
-        ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
-        if (location != null) config.post.setLocation(location);
-        user.postJournalEntry(config, cb);
-    }
+//    public void postEntry(Post journalEntry, AsyncUtils.ItemCallback<Throwable> callback) {
+//        postEntry(new PostConfig(journalEntry), callback);
+//    }
+//
+//    public void postEntry(PostConfig config, AsyncUtils.ItemCallback<Throwable> callback) {
+//        AsyncUtils.ItemCallback<Post> cb = (entry) -> {
+//            Date today = TimeUtils.getToday();
+//            SortedList<Post> todayEntries = getEntriesByDate(today);
+//            todayEntries.add(config.post);
+//            callback.call(null);
+//        };
+//
+//        ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
+//        if (location != null) config.post.setLocation(location);
+//        user.postJournalEntry(config, cb);
+//    }
 
     public Date getOldestDate() {
         Post oldestPost = getOldestLoadedEntry();

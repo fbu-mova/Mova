@@ -1,7 +1,5 @@
 package com.example.mova.components;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -18,8 +15,6 @@ import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.model.Action;
-import com.example.mova.model.Goal;
-import com.example.mova.model.SharedAction;
 import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
@@ -160,7 +155,7 @@ public class ActionEditComponent extends Component {
         @BindView(R.id.ivIcon2)         protected ImageView cancel;
         @BindView(R.id.ivIcon3)         protected ImageView priority;
         @BindView(R.id.ivSave)          protected ImageView ivSave;
-        @BindView(R.id.parentLayout)    protected LinearLayout parentLayout;
+        @BindView(R.id.llRoot)    protected LinearLayout parentLayout;
 
         public ActionEditViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -121,10 +121,11 @@ public class JournalComposeActivity extends DelegatedResultActivity {
 
         // If embedded media exists, load it into its container
         media = getIntent().getParcelableExtra(KEY_MEDIA);
-        Component mediaComponent = (media == null) ? null : media.makeComponent(getResources());
-        if (mediaComponent != null) {
+        if (media == null) return;
+        media.makeComponent(getResources(), (mediaComponent, e) -> {
+            if (e != null || mediaComponent == null) return;
             clMedia.inflateComponent(this, mediaComponent);
-        }
+        });
     }
 
     private void updateTags(String tag, boolean shouldKeep) {

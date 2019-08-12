@@ -10,64 +10,66 @@
     app:cardCornerRadius="@dimen/borderRadius"
     app:cardElevation="@dimen/shallowCardElevation">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.example.mova.containers.GestureLayout
+        android:id="@+id/glRoot"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipChildren="true"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:longClickable="true">
 
-        <com.example.mova.GoalProgressBar
-            android:id="@+id/goalProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <FrameLayout
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/goalProgressBar"
-            app:layout_constraintTop_toTopOf="parent">
+            android:clickable="true"
+            android:clipChildren="true"
+            android:longClickable="true"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.example.mova.views.GoalProgressBar
+                android:id="@+id/goalProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/innerMargin"
-                android:orientation="horizontal">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/goalProgressBar"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvGoal"
-                    android:layout_width="@dimen/profileImage"
-                    android:layout_height="@dimen/profileImage"
-                    android:layout_marginRight="@dimen/elementMargin"
-                    app:cardCornerRadius="@dimen/borderRadius"
-                    app:cardElevation="0dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/innerMargin"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/ivGoal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="@dimen/iconMargin"
-                        app:srcCompat="@color/blueMid" />
-                </androidx.cardview.widget.CardView>
+                        android:layout_width="@dimen/buttonIcon"
+                        android:layout_height="@dimen/buttonIcon"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/elementMargin"
+                        app:srcCompat="@android:color/transparent" />
 
-                <TextView
-                    android:id="@+id/tvGoalTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/lato_bold"
-                    android:text="Goal"
-                    android:textColor="@color/blueMid"
-                    android:textSize="@dimen/textSizeFocus" />
+                    <TextView
+                        android:id="@+id/tvGoalTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/lato"
+                        android:text="Goal"
+                        android:textColor="@color/textMain"
+                        android:textSize="@dimen/textSizeBody" />
 
-            </LinearLayout>
-        </FrameLayout>
+                </LinearLayout>
+            </FrameLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.example.mova.containers.GestureLayout>
 
 </androidx.cardview.widget.CardView>

@@ -18,16 +18,22 @@ public class TimeUtils {
     }
 
     public static String toDateString(Date date, boolean includeYear) {
-        String fmtStr = "MMMM dd";
+        String fmtStr = "MMMM d";
         if (includeYear) fmtStr += ", yyyy";
         SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
         return dateFmt.format(date);
     }
 
     public static String toShortDateString(Date date) {
-        String fmtStr = "MMM dd";
+        String fmtStr = "MMM d";
         SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
         return dateFmt.format(date);
+    }
+
+    public static String toShortWeekdayString(Date date) {
+        String fmtStr = "E";
+        SimpleDateFormat dateFmt = new SimpleDateFormat(fmtStr, Locale.US);
+        return Character.toString(dateFmt.format(date).charAt(0));
     }
 
     // -- DATE NORMALIZATION, COMPARISON, AND KEYING -- //
@@ -121,5 +127,10 @@ public class TimeUtils {
 
     public static long getManyDaysInMillis(int numDays) {
         return getDayInMillis() * numDays;
+    }
+
+    public static Date getDaysAgo(Date fromDate, int numDaysAgo) {
+        long days = TimeUtils.getManyDaysInMillis(numDaysAgo);
+        return new Date(fromDate.getTime() - days);
     }
 }

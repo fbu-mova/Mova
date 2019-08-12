@@ -1,16 +1,24 @@
 package com.example.mova.components;
 
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
-import com.example.mova.GoalProgressBar;
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.model.Media;
+import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.PostConfig;
+import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
@@ -24,7 +32,7 @@ import com.example.mova.utils.GoalUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
+import static com.example.mova.views.GoalProgressBar.PROGRESS_MAX;
 
 public class ProgressGoalComponent extends Component {
 
@@ -33,8 +41,12 @@ public class ProgressGoalComponent extends Component {
 
     private Goal goal;
     private ProgressGoalViewHolder viewHolder;
+    private AsyncUtils.ItemCallback<Goal> onClick = goal -> {};
 
     private ComponentManager componentManager;
+
+    private boolean allowCompose = true;
+    private boolean clickMode = false; // false = one tap, true = one tap + arrow
 
     public ProgressGoalComponent(Goal item){
         super();
@@ -49,6 +61,14 @@ public class ProgressGoalComponent extends Component {
         }
         Log.e(TAG, "viewholder not inflated");
         return null;
+    }
+
+    public void setAllowCompose(boolean allowCompose) {
+        this.allowCompose = allowCompose;
+    }
+
+    public void setClickMode(boolean clickMode) {
+        this.clickMode = clickMode;
     }
 
     @Override
@@ -81,15 +101,41 @@ public class ProgressGoalComponent extends Component {
         int ultraLight = ColorUtils.getColor(getActivity().getResources(), hue, ColorUtils.Lightness.UltraLight);
         int mid = ColorUtils.getColor(getActivity().getResources(), hue, ColorUtils.Lightness.Mid);
 
-        viewHolder.tvGoalTitle.setTextColor(mid);
+//        viewHolder.tvGoalTitle.setTextColor(mid);
         viewHolder.goalProgressBar.setUnfilledColor(ultraLight);
         viewHolder.goalProgressBar.setFilledColor(mid);
-        Icons.from(getActivity()).displayNounIcon(goal, null, viewHolder.ivGoal);
+        Icons.from(getActivity()).displayNounIcon(goal, new CardView(getActivity()), viewHolder.ivGoal);
 
         viewHolder.tvGoalTitle.setText(goal.getTitle());
 
-        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
-            int progress = (int) (portionDone * PROGRESS_MAX);
+        viewHolder.glRoot.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                onClick.call(goal);
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if (allowCompose) {
+                    PostConfig config = new PostConfig();
+                    config.isPersonal = true;
+                    config.media = new Media(goal);
+
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(config)
+                            .setOnPost((post) -> {
+                                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                                // TODO: Go to post
+                            })
+                            .show(viewHolder.glRoot);
+                }
+            }
+        }));
+
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (numDone, numTotal) -> {
+            float percent = (float) numDone / (float) numTotal;
+            int progress = (int) (percent * PROGRESS_MAX);
             viewHolder.goalProgressBar.setProgress(progress);
         });
     }
@@ -99,11 +145,15 @@ public class ProgressGoalComponent extends Component {
 
     }
 
+    public void setOnClickListener(AsyncUtils.ItemCallback<Goal> listener) {
+        onClick = listener;
+    }
+
     public static class ProgressGoalViewHolder extends Component.ViewHolder{
 
-        @BindView(R.id.tvGoalTitle) protected TextView tvGoalTitle;
-        @BindView(R.id.ivGoal) protected ImageView ivGoal;
-        @BindView(R.id.cvGoal) protected CardView cvGoal;
+        @BindView(R.id.glRoot)          protected GestureLayout glRoot;
+        @BindView(R.id.tvGoalTitle)     protected TextView tvGoalTitle;
+        @BindView(R.id.ivGoal)          protected ImageView ivGoal;
         @BindView(R.id.goalProgressBar) protected GoalProgressBar goalProgressBar;
 
         public ProgressGoalViewHolder(@NonNull View itemView) {
@@ -113,6 +163,8 @@ public class ProgressGoalComponent extends Component {
     }
 
     public static class Inflater extends Component.Inflater {
+
+        // TODO: Allow for different widths
 
         @Override
         public ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {

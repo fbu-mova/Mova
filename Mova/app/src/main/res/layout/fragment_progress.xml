@@ -28,7 +28,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_bold"
-            android:text="Y1"
             android:textAlignment="center"
             android:textColor="@color/textProgressGraph"
             android:textSize="@dimen/textSizeInfo"
@@ -44,6 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/outerMargin"
             android:layout_marginTop="@dimen/outerMargin"
+            android:fontFamily="@font/lato_medium"
             android:text="Progress"
             android:textColor="@color/textMain"
             android:textSize="@dimen/textSizeTitle"
@@ -55,7 +55,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_bold"
-            android:text="Y2"
             android:textAlignment="center"
             android:textColor="@color/textProgressGraph"
             android:textSize="@dimen/textSizeInfo"
@@ -63,7 +62,7 @@
             app:layout_constraintStart_toStartOf="@+id/ivGraphBG"
             app:layout_constraintTop_toTopOf="@+id/progressStack1" />
 
-        <com.example.mova.ProgressStack
+        <com.example.mova.views.ProgressStack
             android:id="@+id/progressStack7"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             android:layout_width="wrap_content"
@@ -74,7 +73,7 @@
             app:layout_constraintStart_toEndOf="@+id/progressStack6"
             app:layout_constraintTop_toTopOf="@+id/progressStack6" />
 
-        <com.example.mova.ProgressStack
+        <com.example.mova.views.ProgressStack
             android:id="@+id/progressStack6"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/progressStackLength"
@@ -84,7 +83,7 @@
             app:layout_constraintStart_toEndOf="@+id/progressStack5"
             app:layout_constraintTop_toTopOf="@+id/progressStack5" />
 
-        <com.example.mova.ProgressStack
+        <com.example.mova.views.ProgressStack
             android:id="@+id/progressStack5"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/progressStackLength"
@@ -94,7 +93,7 @@
             app:layout_constraintStart_toEndOf="@+id/progressStack4"
             app:layout_constraintTop_toTopOf="@+id/progressStack4" />
 
-        <com.example.mova.ProgressStack
+        <com.example.mova.views.ProgressStack
             android:id="@+id/progressStack4"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/progressStackLength"
@@ -104,7 +103,7 @@
             app:layout_constraintStart_toEndOf="@+id/progressStack3"
             app:layout_constraintTop_toTopOf="@+id/progressStack3" />
 
-        <com.example.mova.ProgressStack
+        <com.example.mova.views.ProgressStack
             android:id="@+id/progressStack3"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/progressStackLength"
@@ -114,7 +113,7 @@
             app:layout_constraintStart_toEndOf="@+id/progressStack2"
             app:layout_constraintTop_toTopOf="@+id/progressStack2" />
 
-        <com.example.mova.ProgressStack
+        <com.example.mova.views.ProgressStack
             android:id="@+id/progressStack2"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/progressStackLength"
@@ -126,7 +125,7 @@
             app:layout_constraintStart_toEndOf="@+id/progressStack1"
             app:layout_constraintTop_toTopOf="@+id/progressStack1" />
 
-        <com.example.mova.ProgressStack
+        <com.example.mova.views.ProgressStack
             android:id="@+id/progressStack1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -141,7 +140,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
-        </com.example.mova.ProgressStack>
+        </com.example.mova.views.ProgressStack>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -158,7 +157,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMood"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/outerMargin"
+                android:layout_marginRight="@dimen/outerMargin" />
 
             <TextView
                 android:id="@+id/tvNeedsWork"
@@ -169,7 +170,7 @@
                 android:layout_marginRight="@dimen/outerMargin"
                 android:text="Needs Work"
                 android:textColor="@color/textMain"
-                android:textSize="@dimen/textSizeTitle" />
+                android:textSize="@dimen/textSizeFocus" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvWork"
@@ -188,7 +189,7 @@
                 android:layout_marginRight="@dimen/outerMargin"
                 android:text="Going Well"
                 android:textColor="@color/textMain"
-                android:textSize="@dimen/textSizeTitle" />
+                android:textSize="@dimen/textSizeFocus" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvWell"

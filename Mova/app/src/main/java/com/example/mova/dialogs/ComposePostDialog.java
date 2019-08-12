@@ -1,9 +1,16 @@
 package com.example.mova.dialogs;
 
 import android.app.AlertDialog;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.model.Post;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -109,4 +116,84 @@ public abstract class ComposePostDialog {
 
     protected abstract void onCancel();
     protected abstract void onPost(PostConfig config);
+
+    public static class Builder {
+        protected DelegatedResultActivity activity;
+        protected GestureDetector detector;
+        protected GestureLayout layout;
+
+        protected PostConfig config;
+        protected boolean allowCompose;
+        protected AsyncUtils.ItemCallback<Post> onPost;
+        protected AsyncUtils.EmptyCallback onCancel;
+
+        public Builder(DelegatedResultActivity activity) {
+            this.activity = activity;
+
+            config = new PostConfig();
+            allowCompose = true;
+            onPost = (post) -> {};
+            onCancel = () -> {};
+
+            detector = new GestureDetector(activity, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    Log.d("ComposableContainer", "Press");
+                    show(layout);
+                }
+            });
+        }
+
+        public Builder setConfig(PostConfig config) {
+            this.config = config;
+            return this;
+        }
+
+        public PostConfig getConfig() {
+            return config;
+        }
+
+        public Builder setAllowCompose(boolean allowCompose) {
+            this.allowCompose = allowCompose;
+            return this;
+        }
+
+        public boolean getAllowCompose() {
+            return allowCompose;
+        }
+
+        public Builder setOnPost(AsyncUtils.ItemCallback<Post> onPost) {
+            this.onPost = onPost;
+            return this;
+        }
+
+        public Builder setOnCancel(AsyncUtils.EmptyCallback onCancel) {
+            this.onCancel = onCancel;
+            return this;
+        }
+
+        public Builder setGestureLayout(GestureLayout layout) {
+            this.layout = layout;
+            layout.setGestureDetector(detector);
+            return this;
+        }
+
+        public void show(View hapticView) {
+            if (allowCompose) {
+                hapticView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                ComposePostDialog dialog = new ComposePostDialog(activity, config) {
+                    @Override
+                    protected void onCancel() {
+                        onCancel.call();
+                    }
+
+                    @Override
+                    protected void onPost(PostConfig config) {
+                        config.savePost((post) -> onPost.call(post));
+                    }
+                };
+                dialog.show();
+            }
+        }
+    }
 }

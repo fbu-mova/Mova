@@ -2,7 +2,9 @@ package com.example.mova.components;
 
 import android.content.res.Resources;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,6 +17,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.mova.containers.GestureLayout;
 import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.icons.Icons;
 import com.example.mova.utils.PostConfig;
@@ -35,7 +38,7 @@ import com.parse.ParseQuery;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PostComponent extends ComposableComponent {
+public class PostComponent extends Component {
 
     private Post post;
     private Config config;
@@ -48,11 +51,6 @@ public class PostComponent extends ComposableComponent {
     }
 
     public PostComponent(Post post, Config config) {
-        this(post, makePostConfig(post), config);
-    }
-
-    protected PostComponent(Post post, PostConfig postConfig, Config config) {
-        super(postConfig);
         this.post = post;
         this.config = config;
     }
@@ -115,8 +113,7 @@ public class PostComponent extends ComposableComponent {
 
         displayUser();
         configureButtons();
-        configurePostClick();
-        setComposeEventView(this.holder.card);
+        configureEvents();
         displayMedia();
         displayGroup();
         displaySubheader();
@@ -146,9 +143,16 @@ public class PostComponent extends ComposableComponent {
     }
 
     private void displayMedia() {
+        Runnable hide = () -> holder.clMedia.setVisibility(View.GONE);
+
+        if (!config.showMedia) {
+            hide.run();
+            return;
+        }
+
         Media media = post.getMedia();
         if (media == null) {
-            holder.clMedia.setVisibility(View.GONE);
+            hide.run();
             return;
         }
 
@@ -161,19 +165,56 @@ public class PostComponent extends ComposableComponent {
 
             Media item = (Media) fetchedMedia;
             media.fetchContentIfNeededInBackground((fetchedContent, e1) -> {
+                if (e1 != null) {
+                    hide.run();
+                    return;
+                }
+
                 // Update content with loaded instance
                 item.setContent(fetchedContent);
 
-                Component mediaComponent = item.makeComponent(getActivity().getResources());
-                if (mediaComponent == null) {
-                    holder.clMedia.setVisibility(View.GONE);
-                } else {
+                media.makeComponent(getActivity().getResources(), (mediaComponent, e2) -> {
+                    if (e2 != null) {
+                        Toast.makeText(getActivity(), "Failed to load media", Toast.LENGTH_LONG).show();
+                        hide.run();
+                        return;
+                    }
+                    if (mediaComponent == null) {
+                        hide.run();
+                        return;
+                    }
+
                     int elementMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.elementMargin);
-                    holder.clMedia.setMarginTop(elementMargin);
-                    holder.clMedia.setMarginBottom(elementMargin);
+                    int innerMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+
+                    if (media.getType() != Media.ContentType.Post) {
+                        holder.clMedia.setMargin(innerMargin, elementMargin, innerMargin, elementMargin);
+                    }
+
+                    switch (media.getType()) {
+                        case Post:
+                            ((PostComponent) mediaComponent).config.allowDetailsClick = config.allowMediaDetailsClick;
+                            break;
+                        case Event:
+                            ((EventCardComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
+                            break;
+                        case Group:
+                            ((GroupThumbnailComponent) mediaComponent).setAllowDetailsClick(config.allowMediaDetailsClick);
+                            break;
+                        case Goal:
+                            // TODO
+                            break;
+                    }
+
                     holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+
+                    if (media.getType() == Media.ContentType.Post) {
+                        ViewHolder mediaHolder = (ViewHolder) mediaComponent.getViewHolder();
+                        mediaHolder.llRoot.setPadding(innerMargin, elementMargin, innerMargin, elementMargin);
+                    }
+
                     holder.clMedia.setVisibility(View.VISIBLE);
-                }
+                });
             });
         });
     }
@@ -224,63 +265,55 @@ public class PostComponent extends ComposableComponent {
         if (config.showButtons) {
             showButtons();
 
-            holder.ivRepost.setOnClickListener((view) -> {
-                PostConfig config = new PostConfig();
-                config.media = new Media(post);
+            holder.glRepost.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    PostConfig config = new PostConfig();
+                    config.media = new Media(post);
 
-                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
-                    @Override
-                    protected void onCancel() {
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(config)
+                            .setOnPost(PostComponent.this.config.onRepost)
+                            .show(holder.glRepost);
 
-                    }
+                    return false;
+                }
+            }));
 
-                    @Override
-                    protected void onPost(PostConfig config) {
-                        config.savePost((savedPost) -> {
-                            PostComponent.this.config.onRepost.call(savedPost);
-                        });
-                    }
-                };
+            holder.glReply.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    PostConfig config = new PostConfig();
+                    config.postToReply = post;
 
-                dialog.show();
-            });
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(config)
+                            .setOnPost(PostComponent.this.config.onReply)
+                            .show(holder.glReply);
 
-            holder.ivReply.setOnClickListener((view) -> {
-                PostConfig config = new PostConfig();
-                config.postToReply = post;
+                    return false;
+                }
+            }));
 
-                ComposePostDialog dialog = new ComposePostDialog(getActivity(), config) {
-                    @Override
-                    protected void onCancel() {
-
-                    }
-
-                    @Override
-                    protected void onPost(PostConfig config) {
-                        config.savePost((savedPost) -> {
-                            PostComponent.this.config.onReply.call(savedPost);
-                        });
-                    }
-                };
-
-                dialog.show();
-            });
-
-            holder.ivSave.setOnClickListener((view) -> {
-                isSavedToScrapbook((saved) -> {
-                    if (!saved) {
-                        User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
-                            Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
-                            toggleIcon(holder.ivSave, true);
-                        });
-                    } else {
-                        User.getCurrentUser().relScrapbook.remove(post, () -> {
-                            Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
-                            toggleIcon(holder.ivSave, false);
-                        });
-                    }
-                });
-            });
+            holder.glSave.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    isSavedToScrapbook((saved) -> {
+                        if (!saved) {
+                            User.getCurrentUser().relScrapbook.add(post, (savedPost) -> {
+                                Toast.makeText(getActivity(), "Saved to scrapbook!", Toast.LENGTH_SHORT).show();
+                                toggleIcon(holder.ivSave, true);
+                            });
+                        } else {
+                            User.getCurrentUser().relScrapbook.remove(post, () -> {
+                                Toast.makeText(getActivity(), "Removed from scrapbook.", Toast.LENGTH_SHORT).show();
+                                toggleIcon(holder.ivSave, false);
+                            });
+                        }
+                    });
+                    return false;
+                }
+            }));
 
             isSavedToScrapbook((saved) -> toggleIcon(holder.ivSave, saved));
         } else {
@@ -300,19 +333,38 @@ public class PostComponent extends ComposableComponent {
         });
     }
 
-    private void configurePostClick() {
-        holder.card.setOnClickListener((view) -> {
-            if (config.allowDetailsClick) {
-                PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
-                FragmentManager manager = getActivity().getSupportFragmentManager();
-                FragmentTransaction ft = manager.beginTransaction();
-                ft.add(R.id.flSocialContainer, frag);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(null);
-                ft.commit();
+    private void configureEvents() {
+        GestureDetector detector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (config.allowDetailsClick) {
+                    PostDetailsFragment frag = PostDetailsFragment.newInstance(post);
+                    FragmentManager manager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction ft = manager.beginTransaction();
+                    ft.add(R.id.flSocialContainer, frag);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+                config.onClick.call(post);
+                return false;
             }
-            config.onClick.call(post);
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if (config.allowCompose) {
+                    new ComposePostDialog.Builder(getActivity())
+                            .setConfig(makePostConfig(post))
+                            .setAllowCompose(true)
+                            .setOnPost((toPost) -> {
+                                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                                // TODO
+                            })
+                            .show(holder.glCompose);
+                }
+            }
         });
+        holder.glCompose.setGestureDetector(detector);
     }
 
     private void toggleIcon(ImageView ivIcon, boolean active) {
@@ -322,17 +374,6 @@ public class PostComponent extends ComposableComponent {
         int id = (active) ? R.color.buttonActive : R.color.buttonInactive;
         int tintColor = res.getColor(id);
         ivIcon.setColorFilter(tintColor);
-    }
-
-    @Override
-    protected void onSavePost(Post post) {
-        Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
-        // TODO
-    }
-
-    @Override
-    protected void onCancelCompose() {
-        // TODO
     }
 
     public static class ViewHolder extends Component.ViewHolder {
@@ -359,8 +400,14 @@ public class PostComponent extends ComposableComponent {
 
         @BindView(R.id.llButtons)      public LinearLayout llButtons;
         @BindView(R.id.ivRepost)       public ImageView ivRepost;
+        @BindView(R.id.glRepost)       public GestureLayout glRepost;
         @BindView(R.id.ivReply)        public ImageView ivReply;
+        @BindView(R.id.glReply)        public GestureLayout glReply;
         @BindView(R.id.ivSave)         public ImageView ivSave;
+        @BindView(R.id.glSave)         public GestureLayout glSave;
+
+        @BindView(R.id.glCompose)      public GestureLayout glCompose;
+        @BindView(R.id.llRoot)         public LinearLayout llRoot;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -381,8 +428,11 @@ public class PostComponent extends ComposableComponent {
     public static class Config {
         public String subheader = null;
         public boolean showGroup = true;
+        public boolean showMedia = true;
         public boolean showButtons = true;
+        public boolean allowCompose = true;
         public boolean allowDetailsClick = true;
+        public boolean allowMediaDetailsClick = false;
 
         public AsyncUtils.ItemCallback<Post> onReply = (post) -> {};
         public AsyncUtils.ItemCallback<Post> onRepost = (post) -> {};
@@ -393,6 +443,7 @@ public class PostComponent extends ComposableComponent {
         public Config(String subheader, boolean showGroup, boolean showButtons, boolean allowDetailsClick) {
             this.subheader = subheader;
             this.showButtons = showButtons;
+            this.showMedia = true;
             this.allowDetailsClick = allowDetailsClick;
             this.showGroup = showGroup;
         }

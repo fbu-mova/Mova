@@ -1,7 +1,9 @@
-package com.example.mova;
+package com.example.mova.containers;
 
 import android.app.Activity;
 import android.widget.FrameLayout;
+
+import com.example.mova.views.ProgressStack;
 
 import java.util.List;
 
@@ -56,6 +58,7 @@ public class ProgressStackManager {
     }
 
     public void setValue(int index, int color, int value) {
+        if (!contains(color)) add(color);
         stacks.get(index).setValue(color, value);
         updateDisplayMax();
     }
@@ -86,6 +89,22 @@ public class ProgressStackManager {
 
     public boolean isShown(int color) {
         return stacks.get(0).isShown(color);
+    }
+
+    public boolean isOnlyShown(int color) {
+        return stacks.get(0).isOnlyShown(color);
+    }
+
+    public List<Integer> getShown() {
+        return stacks.get(0).getShown();
+    }
+
+    public int numShown() {
+        return stacks.get(0).numShown();
+    }
+
+    public boolean inShowOnlyMode() {
+        return stacks.get(0).inShowOnlyMode();
     }
 
     public void select(int index, int color) {

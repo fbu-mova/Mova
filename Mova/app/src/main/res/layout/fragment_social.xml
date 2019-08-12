@@ -22,8 +22,12 @@
         android:id="@+id/bottom_navigation_social"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:itemIconSize="@dimen/buttonIcon"
+        app:itemIconTint="@drawable/selector_nav_color_social"
+        app:itemTextColor="@drawable/selector_nav_color_social"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/social_menu_bottom_navigation"/>
+        app:menu="@menu/social_menu_bottom_navigation" />
 </androidx.constraintlayout.widget.ConstraintLayout>

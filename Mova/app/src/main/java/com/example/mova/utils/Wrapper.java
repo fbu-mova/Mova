@@ -6,4 +6,10 @@ package com.example.mova.utils;
  */
 public class Wrapper<T> {
     public T item;
+
+    public Wrapper() {}
+
+    public Wrapper(T item) {
+        this.item = item;
+    }
 }

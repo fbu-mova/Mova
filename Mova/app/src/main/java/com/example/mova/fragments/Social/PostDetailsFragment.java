@@ -100,8 +100,10 @@ public class PostDetailsFragment extends Fragment {
     }
 
     private void displayPost() {
-        PostComponent component = new PostComponent(post, new PostComponent.Config(null, true, true, false));
-        clPost.setMargin(32);
+        PostComponent.Config config = new PostComponent.Config(null, true, true, false);
+        config.allowMediaDetailsClick = true;
+        PostComponent component = new PostComponent(post, config);
+        clPost.setMargin(getResources().getDimensionPixelOffset(R.dimen.outerMargin));
         clPost.inflateComponent((DelegatedResultActivity) getActivity(), component);
     }
 
@@ -122,6 +124,7 @@ public class PostDetailsFragment extends Fragment {
             @Override
             protected Component makeComponent(Post item, Component.ViewHolder holder) {
                 PostComponent.Config config = new PostComponent.Config();
+                config.allowMediaDetailsClick = true;
                 config.onReply = (savedPost) -> {
                     comments.add(savedPost);
                     adapter.notifyItemInserted(comments.size() - 1);
@@ -163,7 +166,11 @@ public class PostDetailsFragment extends Fragment {
             }
         });
 
-        eslComments.addItemDecoration(new EdgeDecorator(32));
+        int margin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        eslComments.addItemDecoration(new EdgeDecorator.Config(outerMargin, margin)
+            .setMode(EdgeDecorator.Mode.Padding)
+            .build());
 
         loadComments();
     }

@@ -4,60 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/thumbnailWidth"
     android:layout_height="wrap_content"
+    android:clickable="true"
     android:clipChildren="true"
+    android:longClickable="true"
     android:orientation="vertical"
     android:padding="@dimen/padding"
     app:cardCornerRadius="@dimen/borderRadius"
     app:cardElevation="@dimen/deepCardElevation">
 
-    <LinearLayout
+    <com.example.mova.containers.GestureLayout
+        android:id="@+id/glRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="true"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/ivGroupPic"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        android:clickable="true"
+        android:longClickable="true">
 
         <LinearLayout
+            android:id="@+id/llRoot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/innerMargin"
+            android:clickable="true"
             android:clipChildren="true"
-            android:orientation="horizontal">
+            android:longClickable="true"
+            android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvGroupIcon"
-                android:layout_width="@dimen/profileImage"
-                android:layout_height="@dimen/profileImage"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="@dimen/elementMargin"
-                app:cardCornerRadius="@dimen/borderRadiusCircle"
-                app:cardElevation="0dp">
+            <ImageView
+                android:id="@+id/ivGroupPic"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:clickable="false"
+                android:longClickable="false"
+                android:scaleType="centerCrop"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-                <ImageView
-                    android:id="@+id/ivGroupIcon"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/iconMargin"
-                    app:srcCompat="@color/blueLight" />
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/tvGroupName"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="TextView"
-                android:textColor="@color/textMain"
-                android:textSize="@dimen/textSizeBody" />
-        </LinearLayout>
+                android:layout_margin="@dimen/innerMargin"
+                android:clickable="false"
+                android:clipChildren="true"
+                android:longClickable="false"
+                android:orientation="horizontal">
 
-    </LinearLayout>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvGroupIcon"
+                    android:layout_width="@dimen/profileImage"
+                    android:layout_height="@dimen/profileImage"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/elementMargin"
+                    app:cardCornerRadius="@dimen/borderRadiusCircle"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivGroupIcon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/iconMargin" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvGroupName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="Group"
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeBody" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.example.mova.containers.GestureLayout>
 
 </androidx.cardview.widget.CardView>

@@ -5,10 +5,15 @@ import android.graphics.Bitmap;
 
 import com.example.mova.R;
 import com.example.mova.component.Component;
+import com.example.mova.components.ActionMediaComponent;
+import com.example.mova.components.EventCardComponent;
 import com.example.mova.components.GoalCardComponent;
+import com.example.mova.components.GoalThumbnailComponent;
+import com.example.mova.components.GroupThumbnailComponent;
 import com.example.mova.components.ImageComponent;
 import com.example.mova.components.MediaTextComponent;
 import com.example.mova.components.PostComponent;
+import com.example.mova.components.ProgressGoalComponent;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.ImageUtils;
 import com.parse.ParseClassName;
@@ -196,25 +201,85 @@ public class Media extends HashableParseObject {
     }
 
     // TODO: Possibly pipe configs as dynamically typed objects through makeComponent
-    public Component makeComponent(Resources res) {
+    public void makeComponent(Resources res, AsyncUtils.TwoItemCallback<Component, Throwable> callback) {
         switch (getType()) {
             case Text:
-                return new MediaTextComponent(this);
+                callback.call(new MediaTextComponent(this), null);
+                break;
             case Image:
                 int borderRadius = res.getDimensionPixelOffset(R.dimen.borderRadius);
-                return new ImageComponent(getContentImage(), borderRadius);
+                callback.call(new ImageComponent(getContentImage(), borderRadius), null);
+                break;
             case Post:
                 PostComponent.Config config = new PostComponent.Config();
                 config.subheader = null;
                 config.showButtons = false;
                 config.showGroup = false;
-                return new PostComponent(getContentPost(), config);
+                config.allowCompose = false;
+                config.allowDetailsClick = false;
+                PostComponent postComponent = new PostComponent(getContentPost(), config);
+                callback.call(postComponent, null);
+                break;
             case Goal:
-                // FIXME: Find a better way to handle async data on GoalData
                 Goal.GoalData data = new Goal.GoalData(getContentGoal(), false);
-                return new GoalCardComponent(data);
+                data.goal.fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    data.goal = (Goal) obj;
+                    ProgressGoalComponent component = new ProgressGoalComponent(data.goal);
+                    component.setAllowCompose(false);
+                    callback.call(component, null);
+                });
+                break;
+            case Action:
+                getContentAction().fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    Action action = (Action) obj;
+                    action.getParentGoal().fetchIfNeededInBackground((obj1, e1) -> {
+                        if (e1 != null) {
+                            callback.call(null, e1);
+                            return;
+                        }
+                        Goal goal = (Goal) obj1;
+                        callback.call(new ActionMediaComponent(goal, action), null);
+                    });
+                });
+                break;
+            case Event:
+                getContentEvent().fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    Event event = (Event) obj;
+                    EventCardComponent component = new EventCardComponent(event);
+                    component.setAllowDetailsClick(false);
+                    component.setAllowCompose(false);
+                    component.setShowDescription(false);
+                    callback.call(component, null);
+                });
+                break;
+            case Group:
+                getContentGroup().fetchIfNeededInBackground((obj, e) -> {
+                    if (e != null) {
+                        callback.call(null, e);
+                        return;
+                    }
+                    Group group = (Group) obj;
+                    GroupThumbnailComponent component = new GroupThumbnailComponent(group);
+                    component.setAllowDetailsClick(false);
+                    component.setAllowCompose(false);
+                    callback.call(component, null);
+                });
+                break;
             default:
-                return null;
+                callback.call(null, null);
+                break;
         }
     }
 

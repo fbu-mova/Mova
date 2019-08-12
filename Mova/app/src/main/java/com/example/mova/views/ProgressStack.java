@@ -1,4 +1,4 @@
-package com.example.mova;
+package com.example.mova.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.R;
 import com.example.mova.utils.AsyncUtils;
 
 import java.util.ArrayList;
@@ -54,10 +55,11 @@ public class ProgressStack extends FrameLayout {
     private SparseArray<AsyncUtils.TwoItemCallback<Integer, FrameLayout>> clickListeners;
     private SparseArray<FrameLayout> sectionViews;
 
-    private List<Integer> showSections;
+    private List<Integer> shownSections;
     private Integer selectedSection;
     private boolean sectionIsSelected;
     private Queue<Change> changeQueue;
+    private boolean inShowOnlyMode;
 
     public ProgressStack(@NonNull Context context) {
         super(context);
@@ -88,10 +90,11 @@ public class ProgressStack extends FrameLayout {
         clickListeners = new SparseArray<>();
         sectionViews = new SparseArray<>();
 
-        showSections = new ArrayList<>();
+        shownSections = new ArrayList<>();
         selectedSection = null;
         sectionIsSelected = false;
         changeQueue = new LinkedList<>();
+        inShowOnlyMode = false;
 
         // Extract xml attributes
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.GoalProgressBar, 0, 0);
@@ -134,13 +137,13 @@ public class ProgressStack extends FrameLayout {
         if (!contains(color)) return;
 
         int value = valueOf(color);
-        boolean wasShown = showSections.contains(color);
+        boolean wasShown = shownSections.contains(color);
 
         sections.removeAt(color);
         colors.remove(colors.indexOf(color));
         clickListeners.remove(color);
         sectionViews.remove(color);
-        showSections.remove(color);
+        shownSections.remove(color);
 
         totalValue -= value;
         if (wasShown) totalValueShown -= value;
@@ -169,58 +172,84 @@ public class ProgressStack extends FrameLayout {
     }
 
     public void show(int color) {
-        if (!showSections.contains(color)) {
-            showSections.add(color);
+        if (contains(color) && !shownSections.contains(color)) {
+            shownSections.add(color);
             totalValueShown += valueOf(color);
             changeQueue.add(new SectionChange(color, ChangeType.Show));
+            inShowOnlyMode = false;
             invalidate();
         }
     }
 
     public void showOnly(int color) {
-        hideAll();
-        show(color);
+        if (contains(color)) {
+            hideAll();
+            show(color);
+            inShowOnlyMode = true;
+        }
     }
 
     public void hide(int color) {
-        int index = showSections.indexOf(color);
-        if (index >= 0) {
-            showSections.remove(index);
-            totalValueShown -= valueOf(color);
-            changeQueue.add(new SectionChange(color, ChangeType.Hide));
-            invalidate();
+        if (contains(color)) {
+            int index = shownSections.indexOf(color);
+            if (index >= 0) {
+                shownSections.remove(index);
+                totalValueShown -= valueOf(color);
+                changeQueue.add(new SectionChange(color, ChangeType.Hide));
+                inShowOnlyMode = false;
+                invalidate();
+            }
         }
     }
 
     public void hideAll() {
-        if (showSections.size() > 0) {
-            for (int color : showSections) {
-                showSections.remove(showSections.indexOf(color));
+        if (shownSections.size() > 0) {
+            for (int color : shownSections) {
                 changeQueue.add(new SectionChange(color, ChangeType.Hide));
             }
+            shownSections.clear();
+            inShowOnlyMode = false;
             invalidate();
         }
     }
 
     public boolean isShown(int color) {
-        return showSections.contains(color);
+        return shownSections.contains(color);
+    }
+
+    public boolean isOnlyShown(int color) {
+        return shownSections.size() == 1 && isShown(color);
+    }
+
+    public List<Integer> getShown() {
+        return new ArrayList<>(shownSections);
+    }
+
+    public int numShown() {
+        return shownSections.size();
+    }
+
+    public boolean inShowOnlyMode() {
+        return inShowOnlyMode;
     }
 
     public void select(int color) {
-        selectedSection = color;
-        sectionIsSelected = true;
-        changeQueue.add(new SectionChange(selectedSection, ChangeType.Select));
-        for (int deselected : showSections) {
-            if (deselected == selectedSection) continue;
-            changeQueue.add(new SectionChange(deselected, ChangeType.Deselect));
+        if (contains(color)) {
+            selectedSection = color;
+            sectionIsSelected = true;
+            changeQueue.add(new SectionChange(selectedSection, ChangeType.Select));
+            for (int deselected : shownSections) {
+                if (deselected == selectedSection) continue;
+                changeQueue.add(new SectionChange(deselected, ChangeType.Deselect));
+            }
+            invalidate();
         }
-        invalidate();
     }
 
     public void selectNone() {
         selectedSection = null;
         sectionIsSelected = true;
-        for (int color : showSections) {
+        for (int color : shownSections) {
             changeQueue.add(new SectionChange(color, ChangeType.Deselect));
         }
         invalidate();
@@ -229,7 +258,7 @@ public class ProgressStack extends FrameLayout {
     public void deselect() {
         selectedSection = null;
         sectionIsSelected = false;
-        for (int color : showSections) {
+        for (int color : shownSections) {
             changeQueue.add(new SectionChange(color, ChangeType.NeutralSelect));
         }
         invalidate();
@@ -328,7 +357,7 @@ public class ProgressStack extends FrameLayout {
             Change change = changeQueue.remove();
 
             if (change.type == ChangeType.SetMaxValue) {
-                for (int color : showSections) {
+                for (int color : shownSections) {
                     drawValueChange(color, valueOf(color), null);
                 }
                 continue;
@@ -338,6 +367,8 @@ public class ProgressStack extends FrameLayout {
             switch (change.type) {
                 case Add:
                     addSection(color);
+                    break;
+
                 case Show:
                     drawValueChange(color, valueOf(color), null);
                     break;
@@ -369,7 +400,7 @@ public class ProgressStack extends FrameLayout {
                     break;
 
                 case SetValue:
-                    if (showSections.contains(color)) {
+                    if (isShown(color)) {
                         int from = ((SectionValueChange) change).prevValue;
                         int to = ((SectionValueChange) change).newValue;
                         drawValueChange(color, to, null);

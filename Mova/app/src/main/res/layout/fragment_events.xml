@@ -37,11 +37,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/tvYourEvents"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/outerMargin"
+                android:layout_marginTop="@dimen/elementMargin"
+                android:fontFamily="@font/lato_medium"
                 android:text="Your Events"
                 android:textColor="@color/textMain"
                 android:textSize="@dimen/textSizeTitle"
@@ -55,7 +56,7 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9">
+                app:layout_constraintTop_toBottomOf="@+id/tvYourEvents">
 
             </androidx.recyclerview.widget.RecyclerView>
 
@@ -66,14 +67,15 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                app:layout_constraintTop_toBottomOf="@+id/tvNearYou" />
 
             <TextView
-                android:id="@+id/textView8"
+                android:id="@+id/tvNearYou"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginStart="@dimen/outerMargin"
+                android:layout_marginTop="@dimen/innerMargin"
+                android:fontFamily="@font/lato_medium"
                 android:text="Events Near You"
                 android:textColor="@color/textMain"
                 android:textSize="@dimen/textSizeTitle"
@@ -83,14 +85,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:src="@color/colorAccent"
+    <com.example.mova.views.EdgeFloatingActionButton
+        android:id="@+id/efabCompose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/elementMargin"
+        app:backgroundTint="@color/purpleMid"
+        app:image="@drawable/ic_round_add"
+        app:imageTint="@color/purpleUltraLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

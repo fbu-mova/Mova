@@ -1,22 +1,30 @@
 package com.example.mova.icons;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.mova.R;
+import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.adapters.DataComponentAdapter;
+import com.example.mova.component.Component;
+import com.example.mova.components.ImageComponent;
 import com.example.mova.model.Goal;
 import com.example.mova.model.Group;
 import com.example.mova.model.User;
@@ -31,15 +39,15 @@ import java.util.List;
 public class Icons {
     private static Identicon.HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("MD5");
 
-    private Activity activity;
+    private DelegatedResultActivity activity;
     private NounProjectClient client;
 
-    public Icons(Activity activity) {
+    public Icons(DelegatedResultActivity activity) {
         this.activity = activity;
         client = new NounProjectClient(activity);
     }
 
-    public static Icons from(Activity activity) {
+    public static Icons from(DelegatedResultActivity activity) {
         return new Icons(activity);
     }
 
@@ -137,7 +145,7 @@ public class Icons {
     }
 
     public void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv) {
-        displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+        displayNounIcon(icon, cv != null, new CustomTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                 activity.runOnUiThread(() -> {
@@ -183,7 +191,7 @@ public class Icons {
                     Log.e("Icons", "Failed to get icon for goal " + goal.getTitle());
                     displayPlaceholder(cv, iv);
                 } else {
-                    displayNounIcon(icon, cv, iv, new CustomTarget<Bitmap>() {
+                    displayNounIcon(icon, cv != null, new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             activity.runOnUiThread(() -> {
@@ -213,10 +221,10 @@ public class Icons {
         if (cv != null) cv.setCardBackgroundColor(placeholderColor);
     }
 
-    private void displayNounIcon(NounProjectClient.Icon icon, CardView cv, ImageView iv, CustomTarget<Bitmap> target) {
+    private void displayNounIcon(NounProjectClient.Icon icon, boolean useLowRes, CustomTarget<Bitmap> target) {
         Glide.with(activity)
              .asBitmap()
-             .load(Icons.lowestResImage(icon))
+             .load((useLowRes) ? Icons.lowestResImage(icon) : Icons.highestResImage(icon))
              .into(target);
     }
 
@@ -229,6 +237,70 @@ public class Icons {
         });
         iv.setImageDrawable(finalDrawable);
         finalDrawable.startTransition(200);
+    }
+
+    public interface NounIconDialogHandler {
+        void onSelect(NounProjectClient.Icon icon);
+        void onCancel();
+//        void onError(Throwable e);
+    }
+
+    public void showNounIconDialog(String term, String emptyText, NounIconDialogHandler handler) {
+        term = term.toLowerCase();
+        final String xTerm = term;
+
+        if (xTerm.equals("")) {
+            Toast.makeText(activity, emptyText, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        View view = activity.getLayoutInflater().inflate(R.layout.layout_recycler_view, null);
+        RecyclerView rv = view.findViewById(R.id.rv);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(activity)
+                .setTitle("Choose an icon")
+                .setView(view)
+                .setNegativeButton("Cancel", (dialog, which) -> handler.onCancel())
+                .create();
+
+        List<NounProjectClient.Icon> icons = new ArrayList<>();
+        DataComponentAdapter<NounProjectClient.Icon> adapter = new DataComponentAdapter<NounProjectClient.Icon>(activity, icons) {
+            @Override
+            protected Component makeComponent(NounProjectClient.Icon item, Component.ViewHolder holder) {
+                ImageComponent component = new ImageComponent(Icons.highestResImage(item));
+                component.setOnClick(() -> {
+                    alertDialog.dismiss();
+                    handler.onSelect(item);
+                });
+                return component;
+            }
+
+            @Override
+            protected Component.Inflater makeInflater(NounProjectClient.Icon item) {
+                return new ImageComponent.Inflater();
+            }
+        };
+
+        rv.setLayoutManager(new GridLayoutManager(activity, 4));
+        rv.setAdapter(adapter);
+        // TODO: Add padding
+
+        nounIcons(term, 20, (suggestedIcons, e) -> {
+            activity.runOnUiThread(() -> {
+                if (e != null) {
+                    Log.e("Icons", "Failed to load suggested icons", e);
+                    Toast.makeText(activity, "Couldn't find any icons for \"" + xTerm + "\"", Toast.LENGTH_LONG).show();
+                    // TODO: Create friendlier UI for this
+                    // TODO: Differentiate between network errors and no icons found
+                    return;
+                }
+
+                Collections.addAll(icons, suggestedIcons);
+                adapter.notifyDataSetChanged();
+            });
+        });
+
+        alertDialog.show();
     }
 
     public static String lowestResImage(@NonNull NounProjectClient.Icon icon) {

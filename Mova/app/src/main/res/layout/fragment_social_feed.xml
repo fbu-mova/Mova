@@ -6,18 +6,8 @@
     android:layout_height="match_parent"
     android:background="?android:windowBackground"
     android:backgroundTint="@color/bg"
-    tools:context=".fragments.Social.SocialFeedFragment">
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCompose"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:src="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    tools:context=".fragments.Social.SocialFeedFragment"
+    android:id="@+id/clRoot">
 
     <ImageButton
         android:id="@+id/ibSearch"
@@ -43,4 +33,19 @@
         app:layout_constraintTop_toBottomOf="@+id/ibSearch">
 
     </com.example.mova.containers.EndlessScrollRefreshLayout>
+
+    <com.example.mova.views.EdgeFloatingActionButton
+        android:id="@+id/efabCompose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/elementMargin"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:edge="right"
+        app:image="@drawable/ic_round_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@color/purpleMid"
+        app:imageTint="@color/purpleUltraLight"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

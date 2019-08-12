@@ -4,18 +4,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
 import com.example.mova.component.ComponentManager;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.views.ActionView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,28 +25,28 @@ public abstract class ChecklistItemComponent<T> extends Component {
     protected final String TAG = "checklistItemComp";
 
     protected T item;
-    protected int checkedColor, uncheckedColor;
-    protected boolean applyColorToggleToText;
+    protected ActionView.ColorConfig config;
     protected AsyncUtils.ItemReturnCallback<T, String> getTitle;
     protected AsyncUtils.ItemReturnCallback<T, Boolean> getDone;
 
-    protected static int viewLayoutRes = R.layout.item_checklist;
+//    protected static int viewLayoutRes = R.layout.item_checklist;
     protected ViewHolder holder;
 
     protected ComponentManager componentManager;
 
     protected boolean allowCheckedEvent;
 
-    public ChecklistItemComponent(T item, int checkedColor, int uncheckedColor, boolean applyColorToggleToText,
+    public ChecklistItemComponent(T item,
                                   AsyncUtils.ItemReturnCallback<T, String> getTitle,
                                   AsyncUtils.ItemReturnCallback<T, Boolean> getDone) {
         this.item = item;
-        this.checkedColor = checkedColor;
-        this.uncheckedColor = uncheckedColor;
-        this.applyColorToggleToText = applyColorToggleToText;
         this.getTitle = getTitle;
         this.getDone = getDone;
         this.allowCheckedEvent = true;
+    }
+
+    public void setColors(ActionView.ColorConfig config) {
+        this.config = config;
     }
 
     @Override
@@ -73,22 +73,19 @@ public abstract class ChecklistItemComponent<T> extends Component {
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
-        this.holder.cbItem.setText(getTitle.call(item));
-        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        this.holder.avItem.setText(getTitle.call(item));
+        this.holder.avItem.setColors(config);
+        this.holder.avItem.setOnCheckedChangeListener((isChecked) -> {
             if (allowCheckedEvent) {
-                onCheckedChanged(buttonView, isChecked);
+                onCheckedChanged(isChecked);
             }
         });
-        this.holder.cbItem.setTextColor(uncheckedColor);
         
         this.allowCheckedEvent = false;
-        this.holder.cbItem.setChecked(getDone.call(item));
+        this.holder.avItem.setComplete(getDone.call(item));
         this.allowCheckedEvent = true;
 
-        this.holder.ivPriority.setVisibility(View.GONE);
-
         // TODO: Handle color changes properly
-        // TODO: Use custom layout for checkbox
     }
 
     @Override
@@ -96,7 +93,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     }
 
-    public abstract void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
+    public abstract void onCheckedChanged(boolean isChecked);
 
     @Override
     public String getName() {
@@ -110,9 +107,7 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     public static class ViewHolder extends Component.ViewHolder {
 
-        @BindView(R.id.cbItem)      public CheckBox cbItem;
-        @BindView(R.id.ivPriority)  public ImageView ivPriority;
-        @BindView(R.id.clLayout)    public ConstraintLayout clLayout;
+        @BindView(R.id.avItem)     public ActionView avItem;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -122,10 +117,20 @@ public abstract class ChecklistItemComponent<T> extends Component {
 
     public static class Inflater extends Component.Inflater {
 
+        protected int layoutId;
+
+        public Inflater() {
+            this.layoutId = R.layout.item_checklist;
+        }
+
+        public Inflater(int layoutId) {
+            this.layoutId = layoutId;
+        }
+
         @Override
         public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
             LayoutInflater inflater = activity.getLayoutInflater();
-            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
+            View view = inflater.inflate(layoutId, parent, attachToRoot);
             return new ViewHolder(view);
         }
     }

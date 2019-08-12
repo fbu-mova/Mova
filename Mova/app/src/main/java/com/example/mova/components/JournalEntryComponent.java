@@ -1,5 +1,6 @@
 package com.example.mova.components;
 
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +9,14 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.model.Mood;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -32,7 +36,7 @@ import com.parse.ParseQuery;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class JournalEntryComponent extends ComposableComponent {
+public class JournalEntryComponent extends Component {
 
     private Post entry;
     private DataComponentAdapter<Post> commentAdapter;
@@ -41,7 +45,6 @@ public class JournalEntryComponent extends ComposableComponent {
     private ComponentManager manager;
 
     public JournalEntryComponent(Post entry) {
-        super(makePostConfig(entry));
         this.entry = entry;
     }
 
@@ -83,12 +86,20 @@ public class JournalEntryComponent extends ComposableComponent {
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
+        new ComposePostDialog.Builder(getActivity())
+                .setConfig(makePostConfig(entry))
+                .setAllowCompose(true)
+                .setOnPost((toPost) -> {
+                    Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                    // TODO
+                })
+                .setGestureLayout(this.holder.glCompose);
+
         displayBasicInfo();
         displayMood();
         displayMedia();
         displayTags();
         displayComments();
-        setComposeEventView(holder.getView());
     }
 
     @Override
@@ -127,12 +138,31 @@ public class JournalEntryComponent extends ComposableComponent {
 
     private void displayMedia() {
         Media media = entry.getMedia();
-        Component mediaComponent = (media == null) ? null : media.makeComponent(getActivity().getResources());
-        holder.clMedia.clear();
-        if (mediaComponent != null) {
-            holder.clMedia.setMarginTop(16).setMarginBottom(16);
+        if (media == null) return;
+        media.makeComponent(getActivity().getResources(), (mediaComponent, e) -> {
+            if (e != null || mediaComponent == null) return;
+
+            switch (media.getType()) {
+                case Post:
+                    PostComponent.Config config = ((PostComponent) mediaComponent).getConfig();
+                    config.allowDetailsClick = true;
+                    ((PostComponent) mediaComponent).setConfig(config);
+                    break;
+                case Event:
+                    ((EventCardComponent) mediaComponent).setAllowDetailsClick(true);
+                    break;
+                case Group:
+                    ((GroupThumbnailComponent) mediaComponent).setAllowDetailsClick(true);
+                    break;
+                case Goal:
+//                    ((ProgressGoalComponent) mediaComponent).setAllowDetailsClick(true);
+                    break;
+            }
+
+            int margin = getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+            holder.clMedia.setMarginTop(margin).setMarginBottom(margin);
             holder.clMedia.inflateComponent(getActivity(), mediaComponent);
-        }
+        });
     }
 
     private void displayTags() {
@@ -220,16 +250,6 @@ public class JournalEntryComponent extends ComposableComponent {
         });
     }
 
-    @Override
-    protected void onSavePost(Post post) {
-        // TODO
-    }
-
-    @Override
-    protected void onCancelCompose() {
-        // TODO
-    }
-
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.tvTime)     public TextView tvTime;
@@ -248,6 +268,8 @@ public class JournalEntryComponent extends ComposableComponent {
 
         @BindView(R.id.sComments)  public Switch sComments;
         @BindView(R.id.rvComments) public RecyclerView rvComments;
+
+        @BindView(R.id.glCompose) public GestureLayout glCompose;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

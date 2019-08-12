@@ -1,9 +1,13 @@
-package com.example.mova;
+package com.example.mova.views;
 
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -13,7 +17,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.mova.R;
+import com.example.mova.containers.GestureLayout;
+import com.example.mova.containers.GestureListener;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.DataEvent;
+import com.example.mova.utils.ViewUtils;
+
+import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,16 +33,18 @@ import butterknife.ButterKnife;
 public class PersonalSocialToggle extends LinearLayout {
 
     @BindView(R.id.flPersonal) protected FrameLayout flPersonal;
-    @BindView(R.id.tvPP) protected TextView tvPP;
-    @BindView(R.id.tvPS) protected TextView tvPS;
+    @BindView(R.id.tvPP)       protected TextView tvPP;
+    @BindView(R.id.tvPS)       protected TextView tvPS;
     @BindView(R.id.ivGradPP)   protected ImageView ivGradPP;
     @BindView(R.id.ivGradPS)   protected ImageView ivGradPS;
 
     @BindView(R.id.flSocial)   protected FrameLayout flSocial;
-    @BindView(R.id.tvSP) protected TextView tvSP;
-    @BindView(R.id.tvSS) protected TextView tvSS;
+    @BindView(R.id.tvSP)       protected TextView tvSP;
+    @BindView(R.id.tvSS)       protected TextView tvSS;
     @BindView(R.id.ivGradSS)   protected ImageView ivGradSS;
     @BindView(R.id.ivGradSP)   protected ImageView ivGradSP;
+
+    @BindView(R.id.glRoot)     protected GestureLayout glRoot;
 
     private static int DURATION = 300;
     private static int SELECTED_WEIGHT = 2;
@@ -38,6 +52,7 @@ public class PersonalSocialToggle extends LinearLayout {
 
     private boolean isPersonal = true;
     private AsyncUtils.ItemCallback<Boolean> onToggle = (toPersonal) -> {};
+    private GestureDetector gestureDetector;
 
     public PersonalSocialToggle(@NonNull Context context) {
         super(context);
@@ -69,16 +84,12 @@ public class PersonalSocialToggle extends LinearLayout {
         tvSS.setAlpha(0f);
 
         configureClicks();
+        configureGestureHandling();
         setState(true);
     }
 
     public void setOnToggle(AsyncUtils.ItemCallback<Boolean> onToggle) {
         this.onToggle = onToggle;
-    }
-
-    private void configureClicks() {
-        flPersonal.setOnClickListener((v) -> setState(true));
-        flSocial.setOnClickListener((v) -> setState(false));
     }
 
     public boolean isPersonal() {
@@ -87,6 +98,33 @@ public class PersonalSocialToggle extends LinearLayout {
 
     public void setPersonal(boolean isPersonal) {
         setState(isPersonal);
+    }
+
+    private void configureClicks() {
+        flPersonal.setOnClickListener((v) -> setState(true));
+        flSocial.setOnClickListener((v) -> setState(false));
+    }
+
+    private void configureGestureHandling() {
+        gestureDetector = new GestureDetector(getContext(), new GestureListener(glRoot) {
+            @Override
+            public boolean onTouch() {
+                return false;
+            }
+
+            @Override
+            public boolean onSwipe(List<Direction> directions) {
+                if (directions.contains(Direction.Left)) setState(true);
+                else if (directions.contains(Direction.Right)) setState(false);
+                return false;
+            }
+        });
+
+        int area = getResources().getDimensionPixelOffset(R.dimen.profileImage);
+        ViewUtils.expandTouchArea(glRoot, new Rect(0, area, 0, area));
+
+        glRoot.setOnTouchListener((View v, MotionEvent event) -> !gestureDetector.onTouchEvent(event));
+        glRoot.setGestureDetector(gestureDetector);
     }
 
     private void setState(boolean toPersonal) {
@@ -98,40 +136,74 @@ public class PersonalSocialToggle extends LinearLayout {
             TransitionDrawable socialTransition = (TransitionDrawable) flSocial.getBackground();
 
             if (toPersonal) {
-                weightAnimate(flPersonal, SELECTED_WEIGHT);
-                weightAnimate(flSocial, UNSELECTED_WEIGHT);
-
-                alphaAnimate(ivGradPP, 1f);
-                alphaAnimate(ivGradPS, 0f);
-                alphaAnimate(ivGradSP, 1f);
-                alphaAnimate(ivGradSS, 0f);
-
-                alphaAnimate(tvPP, 1f);
-                alphaAnimate(tvPS, 0f);
-                alphaAnimate(tvSP, 1f);
-                alphaAnimate(tvSS, 0f);
-
+                animateToPersonal();
                 personalTransition.reverseTransition(DURATION);
                 socialTransition.reverseTransition(DURATION);
             } else {
-                weightAnimate(flPersonal, UNSELECTED_WEIGHT);
-                weightAnimate(flSocial, SELECTED_WEIGHT);
-
-                alphaAnimate(ivGradPP, 0f);
-                alphaAnimate(ivGradPS, 1f);
-                alphaAnimate(ivGradSP, 0f);
-                alphaAnimate(ivGradSS, 1f);
-
-                alphaAnimate(tvPP, 0f);
-                alphaAnimate(tvPS, 1f);
-                alphaAnimate(tvSP, 0f);
-                alphaAnimate(tvSS, 1f);
-
+                animateToSocial();
                 personalTransition.startTransition(DURATION);
                 socialTransition.startTransition(DURATION);
             }
         }
     }
+
+    private void animateToPersonal() {
+        float origPersonalWeight = getWeight(flPersonal);
+        float origSocialWeight = getWeight(flSocial);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addUpdateListener(animation -> {
+            float val = (Float) animation.getAnimatedValue();
+            setCrossfadeAlpha(ivGradPS, ivGradPP, val);
+            setCrossfadeAlpha(ivGradSS, ivGradSP, val);
+            setCrossfadeAlpha(tvPS, tvPP, val);
+            setCrossfadeAlpha(tvSS, tvSP, val);
+            setAnimatedWeight(flPersonal, origPersonalWeight, SELECTED_WEIGHT, val);
+            setAnimatedWeight(flSocial, origSocialWeight, UNSELECTED_WEIGHT, val);
+        });
+        animator.setDuration(DURATION);
+        animator.start();
+    }
+
+    private void animateToSocial() {
+        float origPersonalWeight = getWeight(flPersonal);
+        float origSocialWeight = getWeight(flSocial);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addUpdateListener(animation -> {
+            float val = (Float) animation.getAnimatedValue();
+            setCrossfadeAlpha(ivGradPP, ivGradPS, val);
+            setCrossfadeAlpha(ivGradSP, ivGradSS, val);
+            setCrossfadeAlpha(tvPP, tvPS, val);
+            setCrossfadeAlpha(tvSP, tvSS, val);
+            setAnimatedWeight(flPersonal, origPersonalWeight, UNSELECTED_WEIGHT, val);
+            setAnimatedWeight(flSocial, origSocialWeight, SELECTED_WEIGHT, val);
+        });
+        animator.setDuration(DURATION);
+        animator.start();
+    }
+
+    private static void setCrossfadeAlpha(View out, View in, float inValue) {
+        out.setAlpha(1f - inValue);
+        in.setAlpha(inValue);
+    }
+
+    private static void setAnimatedWeight(View view, float from, float to, float val) {
+        float diff = to - from;
+        setWeight(view, from + (diff * val));
+    }
+
+    private static void setWeight(View view, float weight) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        params.weight = weight;
+        view.getParent().requestLayout();
+    }
+
+    private static float getWeight(View view) {
+        return ((LinearLayout.LayoutParams) view.getLayoutParams()).weight;
+    }
+
+    // ------ //
 
     private void alphaAnimate(View view, float alpha) {
         view.animate()

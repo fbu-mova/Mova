@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="outerMargin">24dp</dimen>
+    <dimen name="outerMargin">20dp</dimen>
     <dimen name="innerMargin">16dp</dimen>
     <dimen name="elementMargin">8dp</dimen>
     <dimen name="padding">16dp</dimen>
 
     <dimen name="shallowCardElevation">2dp</dimen>
-    <dimen name="deepCardElevation">6dp</dimen>
+    <dimen name="deepCardElevation">4dp</dimen>
 
     <dimen name="borderRadius">8dp</dimen>
     <dimen name="borderRadiusCircle">1000dp</dimen>
@@ -24,10 +24,17 @@
     <dimen name="iconPadding">4dp</dimen>
     <dimen name="iconMargin">4dp</dimen>
 
+    <dimen name="checkboxSize">12dp</dimen>
+    <dimen name="checkboxStrokeSize">1dp</dimen>
+    <dimen name="checkboxDashWidth">2dp</dimen>
+    <dimen name="checkboxDashGap">2dp</dimen>
+
     <dimen name="thumbnailWidth">160dp</dimen>
     <dimen name="thumbnailImageHeight">100dp</dimen>
 
     <dimen name="progressBarMaxLength">120dp</dimen>
     <dimen name="progressStackThickness">38dp</dimen>
     <dimen name="progressStackLength">200dp</dimen>
+
+    <dimen name="fabSize">40dp</dimen>
 </resources>

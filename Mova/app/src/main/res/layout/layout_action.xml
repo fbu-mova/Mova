@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="@dimen/buttonIcon"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.mova.containers.GestureLayout
+        android:id="@+id/glToggle"
+        android:layout_width="@dimen/profileImage"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <FrameLayout
+            android:id="@+id/flToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/profileImage"
+            android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="auto">
+
+            <ImageView
+                android:id="@+id/ivToggle"
+                android:layout_width="@dimen/checkboxSize"
+                android:layout_height="@dimen/checkboxSize"
+                android:layout_gravity="center"
+                android:layerType="software"
+                app:srcCompat="@drawable/action_incomplete" />
+        </FrameLayout>
+    </com.example.mova.containers.GestureLayout>
+
+    <com.example.mova.containers.GestureLayout
+        android:id="@+id/glText"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/profileImage"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/glToggle"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:text="Action text"
+            android:textColor="@color/textMain"
+            android:textSize="@dimen/textSizeBody" />
+    </com.example.mova.containers.GestureLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

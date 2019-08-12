@@ -35,6 +35,7 @@ import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.example.mova.utils.GroupUtils;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -63,8 +64,8 @@ public class GroupsFragment extends Fragment {
     @BindView(R.id.nsvGroups)
     NestedScrollView nsvGroups;
 
-    @BindView(R.id.fabCreateGroup)
-    FloatingActionButton fabCreateGroup;
+    @BindView(R.id.efabCompose)
+    EdgeFloatingActionButton fabCreateGroup;
 
     @BindView(R.id.rvGroups) RecyclerView rvGroups;
     protected List<Group> userGroups;
@@ -161,8 +162,12 @@ public class GroupsFragment extends Fragment {
                 return new GoalCardComponent.Inflater();
             }
         };
-        Resources resources = getResources();
-        EdgeDecorator decorator = new EdgeDecorator((int) resources.getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal);
+
+        int margin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        EdgeDecorator decorator = new EdgeDecorator.Config(outerMargin, margin)
+                .setOrientation(EdgeDecorator.Orientation.Horizontal)
+                .build();
 
         rvGroups.setLayoutManager(new GridLayoutManager(getContext(), 1,  GridLayoutManager.HORIZONTAL,false));
         rvActiveGoals.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -177,8 +182,6 @@ public class GroupsFragment extends Fragment {
             userGroups.addAll(groups);
             groupAdapter.notifyDataSetChanged();
             rvGroups.scrollToPosition(0);
-
-
         });
 
         GoalUtils.queryGoals(user, (goals) -> {

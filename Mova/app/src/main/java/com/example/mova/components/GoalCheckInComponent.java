@@ -1,12 +1,12 @@
 package com.example.mova.components;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mova.GoalProgressBar;
+import com.example.mova.utils.ColorUtils;
+import com.example.mova.views.ActionView;
+import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.adapters.DataComponentAdapter;
@@ -26,7 +28,6 @@ import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,16 +103,19 @@ public class GoalCheckInComponent extends Component {
         this.holder.tvGoalTitle.setText(goal.getTitle());
         this.holder.tvSubheader.setText(message);
 
+        Resources res = getActivity().getResources();
+        this.holder.pbProgress.setUnfilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.UltraLight));
+        this.holder.pbProgress.setFilledColor(ColorUtils.getColor(res, goal.getHue(), ColorUtils.Lightness.Mid));
+
         // Set up actions checklist
         adapter = new DataComponentAdapter<Action>(getActivity(), goalActions) {
 
             @Override
             protected Component makeComponent(Action item, Component.ViewHolder holder) {
-                return new ChecklistItemComponent<Action>(item,
-                    Color.parseColor("#999999"), Color.parseColor("#222222"), false,
+                ChecklistItemComponent<Action> component = new ChecklistItemComponent<Action>(item,
                     (action) -> action.getTask(), (action) -> action.getIsDone()) {
                         @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        public void onCheckedChanged(boolean isChecked) {
                             GoalUtils.toggleDone(item, (e) -> {
                                 if (e != null) {
                                     Log.e("GoalCheckInComponent", "Failed to toggle action done", e);
@@ -122,6 +126,8 @@ public class GoalCheckInComponent extends Component {
                             });
                         }
                 };
+                component.setColors(ActionView.ColorConfig.defaultFromHue(getActivity().getResources(), goal.getHue()));
+                return component;
             }
 
             @Override

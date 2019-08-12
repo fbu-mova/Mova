@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -71,13 +72,25 @@ public class JournalResponseComponent extends Component {
     }
 
     private void displayMedia() {
+        Runnable hide = () -> holder.clMedia.setVisibility(View.GONE);
+
         Media media = post.getMedia();
-        Component mediaComponent = (media == null) ? null : media.makeComponent(getActivity().getResources());
-        if (mediaComponent == null) {
-            holder.clMedia.setVisibility(View.GONE);
+        if (media == null) {
+            hide.run();
         } else {
-            holder.clMedia.setVisibility(View.VISIBLE);
-            holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+            media.makeComponent(getActivity().getResources(), (mediaComponent, e) -> {
+                if (e != null) {
+                    Toast.makeText(getActivity(), "Failed to load media", Toast.LENGTH_LONG).show();
+                    hide.run();
+                    return;
+                }
+                if (mediaComponent == null) {
+                    hide.run();
+                    return;
+                }
+                holder.clMedia.setVisibility(View.VISIBLE);
+                holder.clMedia.inflateComponent(getActivity(), mediaComponent);
+            });
         }
     }
 

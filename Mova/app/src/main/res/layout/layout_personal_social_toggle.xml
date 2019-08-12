@@ -1,152 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.mova.containers.GestureLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="28dp"
-    android:orientation="horizontal"
-    tools:context="">
+    android:id="@+id/glRoot">
 
-    <FrameLayout
-        android:id="@+id/flPersonal"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:background="@drawable/animation_toggle_personal">
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/llGradPS"
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:id="@+id/flPersonal"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_weight="2"
+            android:background="@drawable/animation_toggle_personal">
 
-            <FrameLayout
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/llGradPS"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:orientation="horizontal">
 
-            </FrameLayout>
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
 
-            <ImageView
-                android:id="@+id/ivGradPS"
-                android:layout_width="0dp"
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/ivGradPS"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/gradient_toggle_ps" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llGradPP"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/gradient_toggle_ps" />
-        </LinearLayout>
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/llGradPP"
-            android:layout_width="match_parent"
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
+
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/ivGradPP"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/gradient_toggle_pp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lato_black"
+                android:text="Personal"
+                android:textColor="@color/blueMid"
+                android:textSize="@dimen/textSizeBody" />
+
+            <TextView
+                android:id="@+id/tvPP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lato_black"
+                android:text="Personal"
+                android:textColor="@color/blueUltraLight"
+                android:textSize="@dimen/textSizeBody" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flSocial"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:background="@drawable/animation_toggle_social">
 
-            <FrameLayout
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/llGradSS"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:orientation="horizontal">
 
-            </FrameLayout>
+                <ImageView
+                    android:id="@+id/ivGradSS"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/gradient_toggle_ss" />
 
-            <ImageView
-                android:id="@+id/ivGradPP"
-                android:layout_width="0dp"
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llGradSP"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/gradient_toggle_pp" />
-        </LinearLayout>
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvPS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/lato_black"
-            android:text="Personal"
-            android:textColor="@color/blueMid"
-            android:textSize="@dimen/textSizeBody" />
+                <ImageView
+                    android:id="@+id/ivGradSP"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/gradient_toggle_sp" />
 
-        <TextView
-            android:id="@+id/tvPP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/lato_black"
-            android:text="Personal"
-            android:textColor="@color/blueUltraLight"
-            android:textSize="@dimen/textSizeBody" />
-    </FrameLayout>
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
 
-    <FrameLayout
-        android:id="@+id/flSocial"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/animation_toggle_social">
+                </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/llGradSS"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/ivGradSS"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/gradient_toggle_ss" />
+            <TextView
+                android:id="@+id/tvSS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lato_black"
+                android:text="Social"
+                android:textColor="@color/purpleUltraLight"
+                android:textSize="@dimen/textSizeBody" />
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
+            <TextView
+                android:id="@+id/tvSP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lato_black"
+                android:text="Social"
+                android:textColor="@color/purpleMid"
+                android:textSize="@dimen/textSizeBody" />
 
-            </FrameLayout>
+        </FrameLayout>
+    </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llGradSP"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/ivGradSP"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/gradient_toggle_sp" />
-
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
-
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvSS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/lato_black"
-            android:text="Social"
-            android:textColor="@color/purpleUltraLight"
-            android:textSize="@dimen/textSizeBody" />
-
-        <TextView
-            android:id="@+id/tvSP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/lato_black"
-            android:text="Social"
-            android:textColor="@color/purpleMid"
-            android:textSize="@dimen/textSizeBody" />
-
-    </FrameLayout>
-</LinearLayout>
+</com.example.mova.containers.GestureLayout>

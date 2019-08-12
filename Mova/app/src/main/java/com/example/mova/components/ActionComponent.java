@@ -21,6 +21,7 @@ import com.example.mova.model.Action;
 import com.example.mova.model.Goal;
 import com.example.mova.model.SharedAction;
 import com.example.mova.model.User;
+import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.GoalUtils;
 
 import butterknife.BindView;
@@ -39,14 +40,24 @@ public class ActionComponent extends Component {
     private ComponentManager componentManager;
 
     private boolean isPersonal;
+    private boolean allowEdit;
 
     private Goal goal;
     private SharedAction sharedAction;
 
-    public ActionComponent(Action item, boolean isPersonal) {
+    private AsyncUtils.ItemCallback<Boolean> onSuccessfullyToggled = completed -> {};
+    private AsyncUtils.EmptyCallback onTextClicked = () -> {};
+
+    public ActionComponent(Goal goal, Action item, boolean isPersonal) {
         super();
+        this.goal = goal;
         this.item = item;
         this.isPersonal = isPersonal;
+        this.allowEdit = true;
+    }
+
+    public void setAllowEdit(boolean allowEdit) {
+        this.allowEdit = allowEdit;
     }
 
     // overrides bc type of viewHolder is different from type of holder in checklistItemComp
@@ -85,11 +96,18 @@ public class ActionComponent extends Component {
                 if (toKey.equals(editComponent.getName())) {
                     ((ActionEditComponent.ActionEditViewHolder) editComponent.getViewHolder()).etAction
                             .setText(item.getTask());
+                } else {
+                    viewComponent.setOnTextClickListener(() -> componentManager.swap(editComponent.getName()));
                 }
             }
         });
 
-        viewComponent = new ActionViewComponent(item, componentManager);
+        viewComponent = new ActionViewComponent(item, goal.getHue(), componentManager);
+        viewComponent.setOnSuccessfullyToggled(onSuccessfullyToggled);
+        viewComponent.setOnTextClickListener(() -> {
+            if (allowEdit) componentManager.swap(editComponent.getName());
+        });
+
         editComponent = new ActionEditComponent(false, item, componentManager, new GoalUtils.onActionEditSaveListener() {
             @Override
             public void call(Action action, Action.Wrapper wrapper, ComponentManager manager) {
@@ -112,7 +130,7 @@ public class ActionComponent extends Component {
                     });
 //                }
 
-                manager.swap("ActionViewComponent");
+                manager.swap(viewComponent.getName());
             }
         });
 
@@ -132,12 +150,7 @@ public class ActionComponent extends Component {
 //            goal = item.getParentGoal();
 //        }
 
-        viewHolder.component.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                componentManager.swap("ActionEditComponent");
-            }
-        });
+        componentManager.swap(viewComponent.getName());
 
 //        viewHolder.component.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -169,7 +182,6 @@ public class ActionComponent extends Component {
 //        });
 
         // todo -- set icons later
-
     }
 
     @Override
@@ -182,6 +194,10 @@ public class ActionComponent extends Component {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         ConfirmEditSocialActionDialog confirmEditSocialActionDialog = ConfirmEditSocialActionDialog.newInstance(item, isAuthor, new_task);
         confirmEditSocialActionDialog.show(fm, "showingConfirmEditSocialActionDialog");
+    }
+
+    public void setOnSuccessfullyToggled(AsyncUtils.ItemCallback<Boolean> listener) {
+        onSuccessfullyToggled = listener;
     }
 
     public static class ViewHolder extends Component.ViewHolder {

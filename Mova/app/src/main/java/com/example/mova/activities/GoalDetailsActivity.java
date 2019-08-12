@@ -1,5 +1,6 @@
 package com.example.mova.activities;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +14,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mova.GoalProgressBar;
+import com.example.mova.utils.ColorUtils;
+import com.example.mova.views.GoalProgressBar;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
@@ -41,7 +43,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.mova.GoalProgressBar.PROGRESS_MAX;
+import static com.example.mova.views.GoalProgressBar.PROGRESS_MAX;
 import static com.example.mova.model.Action.KEY_CREATED_AT;
 import static com.example.mova.model.Action.KEY_PARENT_USER;
 
@@ -49,6 +51,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
     private static final String TAG = "goal details activity";
     private Goal goal;
+    private int numDone = 0, numTotal = 0;
 
     User user;
     private boolean isPersonal;
@@ -66,7 +69,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
     @BindView(R.id.tvSaveText)      protected TextView tvSaveText;
     @BindView(R.id.clAddAction)     protected ComponentLayout clAddAction;
     @BindView(R.id.cvIcon)          protected CardView cvIcon;
-
 
     @BindView(R.id.llGroupDetails)  protected LinearLayout llGroupDetails;
     @BindView(R.id.llShareGoal)     protected LinearLayout llShareGoal;
@@ -94,6 +96,9 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         tvGoalName.setText(goal.getTitle());
 
         Icons.from(GoalDetailsActivity.this).displayNounIcon(goal, cvIcon, ivPhoto);
+
+        goalpb.setUnfilledColor(ColorUtils.getColor(getResources(), goal.getHue(), ColorUtils.Lightness.UltraLight));
+        goalpb.setFilledColor(ColorUtils.getColor(getResources(), goal.getHue(), ColorUtils.Lightness.Mid));
 
         goal.getGroupName(() -> {
             tvGroupName.setVisibility(View.GONE);
@@ -134,16 +139,12 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             onSaveClick();
         });
 
-//        String url = (goal.getImage() != null) ? goal.getImage().getUrl() : "";
-//        Glide.with(this)  // fixme -- always take forever to load
-//                .load(url)
-//                .error(R.color.colorPrimaryDark)
-//                .placeholder(R.color.orangeMid)
-//                .into(ivPhoto);
-
         // update GoalProgressBar
-        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (portionDone) -> {
-            int progress = (int) (portionDone * PROGRESS_MAX);
+        GoalUtils.getNumActionsComplete(goal, User.getCurrentUser(), (numDone, numTotal) -> {
+            this.numDone = numDone;
+            this.numTotal = numTotal;
+            float percent = (float) numDone / (float) numTotal;
+            int progress = (int) (percent * PROGRESS_MAX);
             goalpb.setProgress(progress);
         });
 
@@ -152,7 +153,6 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
         }
 
         setUpRecyclerView();
-
     }
 
     private void onSaveClick() {
@@ -285,7 +285,13 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             actionsAdapter = new DataComponentAdapter<Action>(this, actions) {
                 @Override
                 public Component makeComponent(Action item, Component.ViewHolder holder) {
-                    Component component = new ActionComponent(item, isPersonal);
+                    ActionComponent component = new ActionComponent(goal, item, isPersonal);
+                    component.setOnSuccessfullyToggled(completed -> {
+                        numDone += (completed) ? 1 : -1;
+                        float percent = (float) numDone / (float) numTotal;
+                        int progress = (int) (percent * PROGRESS_MAX);
+                        goalpb.setProgress(progress);
+                    });
                     return component;
                 }
 
@@ -300,7 +306,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
 
             loadAllActions(); // fixme : mentioned in method declaration, but needs to address casework
         }
-        else if (!isPersonal && isUserInvolved) {
+        else if (isUserInvolved) {
             // user sees official social goal
 
             // a social goal that the user is involved in BUT user is not author
@@ -314,8 +320,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(this, sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new InvolvedSharedActionComponent(item);
-                    return component;
+                    return new InvolvedSharedActionComponent(item, goal.getHue());
                 }
 
                 @Override
@@ -331,7 +336,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
                 GoalCardComponent.updateInvolvedSharedAdapter(this, objects, sharedActions, sharedActionsAdapter, rvActions);
             });
         }
-        else if (!isPersonal && !isUserInvolved) {
+        else {
             // user doesn't have checkbox functionality
 
             // a social goal the user is not involved in
@@ -341,8 +346,7 @@ public class GoalDetailsActivity extends DelegatedResultActivity {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(this, sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new UninvolvedSharedActionComponent(item);
-                    return component;
+                    return new UninvolvedSharedActionComponent(item);
                 }
 
                 @Override

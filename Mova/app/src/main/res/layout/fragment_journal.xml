@@ -23,7 +23,6 @@
             android:layout_marginStart="@dimen/outerMargin"
             android:layout_marginTop="@dimen/outerMargin"
             android:layout_marginEnd="@dimen/outerMargin"
-            android:layout_marginBottom="@dimen/outerMargin"
             android:clipChildren="false"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/innerMargin"
-                android:fontFamily="@font/lato_bold"
+                android:fontFamily="@font/lato_medium"
                 android:text="Journal"
                 android:textColor="@color/textMain"
                 android:textSize="@dimen/textSizeTitle" />
@@ -80,16 +79,14 @@
             <!--android:layout_weight="100" />-->
         </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabCompose"
+        <com.example.mova.views.EdgeFloatingActionButton
+            android:id="@+id/efabCompose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/outerMargin"
-            android:layout_marginBottom="@dimen/outerMargin"
-            android:clickable="true"
-            android:src="@android:color/white"
-            app:backgroundTint="@android:color/white"
-            app:elevation="6dp"
+            android:layout_marginBottom="@dimen/elementMargin"
+            app:backgroundTint="@color/blueMid"
+            app:image="@drawable/ic_round_add"
+            app:imageTint="@color/blueUltraLight"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

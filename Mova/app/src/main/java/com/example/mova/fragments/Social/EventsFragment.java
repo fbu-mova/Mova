@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,7 @@ import com.example.mova.model.Event;
 import com.example.mova.model.User;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
@@ -54,22 +55,19 @@ public class EventsFragment extends Fragment {
     User user;
     public static FragmentManager manager;
 
-    @BindView(R.id.ibSearch)
-    ImageButton ibSearch;
+    @BindView(R.id.ibSearch) ImageButton ibSearch;
 
-    @BindView(R.id.fabAdd)
-    FloatingActionButton fabAdd;
+    @BindView(R.id.efabCompose) EdgeFloatingActionButton fabAdd;
 
+    @BindView(R.id.tvYourEvents) protected TextView tvYourEvents;
     @BindView(R.id.rvYourEvents) RecyclerView rvYourEvents;
     protected List<Event> yourEvents;
     private DataComponentAdapter<Event> yourEventsAdapter;
 
-
+    @BindView(R.id.tvNearYou) protected TextView tvNearYou;
     @BindView(R.id.rvNearYou) RecyclerView rvNearYou;
     protected List<Event> nearYouEvents;
     private DataComponentAdapter<Event> nearYouAdapter;
-
-
 
     public EventsFragment() {
         // Required empty public constructor
@@ -167,13 +165,19 @@ public class EventsFragment extends Fragment {
         //Toast.makeText(getContext(), userLocation.toString() , Toast.LENGTH_SHORT).show();
 
         Resources resources = getResources();
-        EdgeDecorator decorator = new EdgeDecorator((int) resources.getDimension(R.dimen.innerMargin), EdgeDecorator.Orientation.Horizontal);
+        EdgeDecorator decorator = new EdgeDecorator.Config(0)
+                .setOrientation(EdgeDecorator.Orientation.Horizontal)
+//                .setGetViewToDecorate((v) -> {
+//                    EventThumbnailComponent.ViewHolder holder = new EventThumbnailComponent.ViewHolder(v);
+//                    return holder.llRoot;
+//                })
+                .setSpecialMargins(resources.getDimensionPixelOffset(R.dimen.elementMargin))
+                .build();
 
         rvYourEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvNearYou.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         rvYourEvents.addItemDecoration(decorator);
-
         rvNearYou.addItemDecoration(decorator);
 
         rvYourEvents.setAdapter(yourEventsAdapter);
@@ -181,18 +185,38 @@ public class EventsFragment extends Fragment {
         rvNearYou.setAdapter(nearYouAdapter);
 
         EventUtils.getYourEvents(user, (yourevents) -> {
+            if (yourevents.size() == 0) {
+                displayYourEvents(false);
+                return;
+            }
+            displayYourEvents(true);
+
             yourEvents.addAll(yourevents);
             yourEventsAdapter.notifyDataSetChanged();
             rvYourEvents.scrollToPosition(0);
         });
 
         EventUtils.getEventsNearYou(userLocation, (eventsNearYou) -> {
+            if (eventsNearYou.size() == 0) {
+                displayNearYou(false);
+                return;
+            }
+            displayNearYou(true);
+
             nearYouEvents.addAll(eventsNearYou);
             nearYouAdapter.notifyDataSetChanged();
             rvNearYou.scrollToPosition(0);
             Log.d("Events Fragment", LocationUtils.getCurrentUserLocation().toString());
         });
+    }
 
+    private void displayNearYou(boolean show) {
+        tvNearYou.setVisibility((show) ? View.VISIBLE : View.GONE);
+        rvNearYou.setVisibility((show) ? View.VISIBLE : View.GONE);
+    }
 
+    private void displayYourEvents(boolean show) {
+        tvYourEvents.setVisibility((show) ? View.VISIBLE : View.GONE);
+        rvYourEvents.setVisibility((show) ? View.VISIBLE : View.GONE);
     }
 }

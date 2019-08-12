@@ -1,12 +1,8 @@
 package com.example.mova.components;
 
-import android.graphics.Color;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,51 +11,51 @@ import androidx.annotation.NonNull;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.component.Component;
-import com.example.mova.model.Action;
 import com.example.mova.model.SharedAction;
-import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GoalUtils;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-
-import java.util.List;
+import com.example.mova.views.ActionView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.example.mova.model.Action.KEY_PARENT_USER;
 
 public class InvolvedSharedActionComponent extends ChecklistItemComponent<SharedAction.Data> {
 
     private static final String TAG = "inv. shared action comp";
 
     protected SharedAction sharedAction;
+    protected ColorUtils.Hue hue;
     protected static int viewLayoutRes = R.layout.item_involved_shared_action;
-    protected InvolvedViewHolder holder;
+    protected ViewHolder holder;
+    private AsyncUtils.ItemCallback<Boolean> onSuccessfullyToggled;
 
     private int complete;
     private int total;
 
-    public InvolvedSharedActionComponent(SharedAction.Data data) {
-        super(data, Color.parseColor("#999999"), Color.parseColor("#222222"),
-                false, (thing) -> thing.sharedAction.getTask(),
-                (thing) -> {
-                    return data.isUserDone;
-                });
+    public InvolvedSharedActionComponent(SharedAction.Data data, ColorUtils.Hue hue) {
+        super(data,
+            (thing) -> thing.sharedAction.getTask(),
+            (thing) -> {
+                return data.isUserDone;
+            });
 
+        onSuccessfullyToggled = completed -> {};
         this.sharedAction = data.sharedAction;
+        this.hue = hue;
+    }
 
+    @Override
+    protected void onLaunch() {
+        super.onLaunch();
+        setColors(ActionView.ColorConfig.defaultFromHue(getActivity().getResources(), hue));
     }
 
     @Override
     protected void onRender(Component.ViewHolder holder) {
 
-        checkViewHolderClass(holder, InvolvedViewHolder.class);
-        this.holder = (InvolvedViewHolder) holder;
-
-        this.holder.cbItem.setText(sharedAction.getTask());
+        checkViewHolderClass(holder, ViewHolder.class);
+        this.holder = (ViewHolder) holder;
 
         complete = sharedAction.getUsersDone();
 
@@ -68,14 +64,15 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
             updateNumDone(complete, this.total);
         });
 
-        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (allowCheckedEvent) {
-                onCheckedChanged(buttonView, isChecked);
-            }
-        });
-        this.holder.cbItem.setTextColor(uncheckedColor);
+//        this.holder.cbItem.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//            if (allowCheckedEvent) {
+//                onCheckedChanged(isChecked);
+//            }
+//        });
+//        this.holder.cbItem.setTextColor(uncheckedColor);
+
         this.allowCheckedEvent = false;
-        this.holder.cbItem.setChecked(getDone.call(item));
+        this.holder.avItem.setComplete(getDone.call(item));
         this.allowCheckedEvent = true;
     }
 
@@ -85,13 +82,16 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onCheckedChanged(boolean isChecked) {
         // finds the action of the sharedAction corresponding to the user, updates isDone boolean
 
         GoalUtils.findUsersAction(sharedAction, (action) -> {
             GoalUtils.toggleDone(action, (e) -> {
                 if (e == null) {
                     Log.d(TAG, "toggled action done");
+                    complete += (isChecked) ? 1 : -1;
+                    updateNumDone(complete, total);
+                    onSuccessfullyToggled.call(isChecked);
                 }
                 else {
                     Log.e(TAG, "toggled action failed", e);
@@ -100,33 +100,44 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
             });
         });
 
-        if (isChecked) {
-            complete++;
-        }
-        else {
-            complete--;
-        }
-        updateNumDone(complete, total); // updates UI without calling database
+//        if (isChecked) {
+//            complete++;
+//        }
+//        else {
+//            complete--;
+//        }
+//        updateNumDone(complete, total); // updates UI without calling database
     }
 
-    public static class InvolvedViewHolder extends Component.ViewHolder {
+    public void setOnSuccessfullyToggled(AsyncUtils.ItemCallback<Boolean> listener) {
+        onSuccessfullyToggled = listener;
+    }
 
-        @BindView(R.id.cbItem)      protected CheckBox cbItem;
+    @Override
+    public Component.Inflater makeInflater() {
+        return new Inflater();
+    }
+
+    public static class ViewHolder extends ChecklistItemComponent.ViewHolder {
+
         @BindView(R.id.tvNumDone)   protected TextView tvNumDone;
 
-        public InvolvedViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
 
-    public static class Inflater extends Component.Inflater {
+    public static class Inflater extends ChecklistItemComponent.Inflater {
+
+        public Inflater() {
+            super(viewLayoutRes);
+        }
 
         @Override
         public Component.ViewHolder inflate(DelegatedResultActivity activity, ViewGroup parent, boolean attachToRoot) {
-            LayoutInflater inflater = activity.getLayoutInflater();
-            View view = inflater.inflate(viewLayoutRes, parent, attachToRoot);
-            return new InvolvedViewHolder(view);
+            Component.ViewHolder holder = super.inflate(activity, parent, attachToRoot);
+            return new ViewHolder(holder.getView());
         }
     }
 }

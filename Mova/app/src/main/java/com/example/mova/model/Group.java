@@ -2,6 +2,7 @@ package com.example.mova.model;
 
 import android.app.Activity;
 
+import com.example.mova.activities.DelegatedResultActivity;
 import com.example.mova.icons.Icons;
 import com.example.mova.icons.NounProjectClient;
 import com.example.mova.utils.AsyncUtils;
@@ -88,7 +89,7 @@ public class Group extends HashableParseObject {
     }
 
     // Icon
-    public void getNounIcon(Activity activity, AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> callback) {
+    public void getNounIcon(DelegatedResultActivity activity, AsyncUtils.TwoItemCallback<NounProjectClient.Icon, Throwable> callback) {
         int id = getInt(KEY_ICON_ID);
         Icons.from(activity).nounIcon(id, callback);
     }

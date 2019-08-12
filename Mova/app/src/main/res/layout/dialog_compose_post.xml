@@ -31,67 +31,86 @@ xmlns:tools="http://schemas.android.com/tools"
                     android:id="@+id/clPostToReply"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/innerMargin">
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                 </com.example.mova.component.ComponentLayout>
             </FrameLayout>
 
-            <com.example.mova.PersonalSocialToggle
+            <com.example.mova.views.PersonalSocialToggle
                 android:id="@+id/psToggle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <LinearLayout
+                android:id="@+id/llTypeIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:orientation="vertical">
+                android:layout_marginLeft="@dimen/innerMargin"
+                android:layout_marginTop="@dimen/innerMargin"
+                android:layout_marginRight="@dimen/innerMargin"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/llTypeIndicator"
+                <ImageView
+                    android:id="@+id/ivTypeIndicator"
+                    android:layout_width="@dimen/inlineIcon"
+                    android:layout_height="@dimen/inlineIcon"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/elementMargin"
+                    android:layout_weight="0"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/textLight"
+                    app:srcCompat="@drawable/ic_round_reply_24px" />
+
+                <TextView
+                    android:id="@+id/tvTypeIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/lato_bold"
+                    android:text="Verbing to What"
+                    android:textColor="@color/textLight"
+                    android:textSize="@dimen/textSizeBody" />
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/ivClose"
+                    android:layout_width="@dimen/buttonIcon"
+                    android:layout_height="@dimen/buttonIcon"
+                    android:tint="@color/buttonInactive"
+                    app:srcCompat="@drawable/ic_round_close_24px" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/flMedia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.example.mova.component.ComponentLayout
+                    android:id="@+id/clMedia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="horizontal">
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:minHeight="44dp">
 
-                    <ImageView
-                        android:id="@+id/ivTypeIndicator"
-                        android:layout_width="@dimen/inlineIcon"
-                        android:layout_height="@dimen/inlineIcon"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="@dimen/elementMargin"
-                        android:layout_weight="0"
-                        android:scaleType="fitCenter"
-                        android:tint="@color/textLight"
-                        app:srcCompat="@drawable/ic_round_reply_24px" />
-
-                    <TextView
-                        android:id="@+id/tvTypeIndicator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        android:fontFamily="@font/lato_bold"
-                        android:text="Verbing to What"
-                        android:textColor="@color/textLight"
-                        android:textSize="@dimen/textSizeBody" />
-                </LinearLayout>
+                </com.example.mova.component.ComponentLayout>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvAddMedia"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/innerMargin"
+                    android:layout_height="44dp"
+                    android:layout_margin="@dimen/innerMargin"
+                    app:cardBackgroundColor="@color/dialogItem"
                     app:cardCornerRadius="@dimen/borderRadius"
                     app:cardElevation="0dp">
-
-                    <com.example.mova.component.ComponentLayout
-                        android:id="@+id/clMedia"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/dialogItem"
-                        android:minHeight="44dp">
-
-                    </com.example.mova.component.ComponentLayout>
 
                     <LinearLayout
                         android:id="@+id/llAddMedia"
@@ -121,43 +140,34 @@ xmlns:tools="http://schemas.android.com/tools"
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
-                <EditText
-                    android:id="@+id/etBody"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:hint="What's on your mind?"
-                    android:inputType="textMultiLine"
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/textSizeBody" />
-
-            </LinearLayout>
+            <EditText
+                android:id="@+id/etBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/innerMargin"
+                android:layout_marginRight="@dimen/innerMargin"
+                android:layout_marginBottom="@dimen/innerMargin"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="What's on your mind?"
+                android:inputType="textMultiLine"
+                android:textColor="@color/textMain"
+                android:textSize="@dimen/textSizeBody" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <ImageView
-        android:id="@+id/ivClose"
-        android:layout_width="@dimen/buttonIcon"
-        android:layout_height="@dimen/buttonIcon"
-        android:layout_marginTop="@dimen/innerMargin"
-        android:layout_marginEnd="@dimen/innerMargin"
-        android:tint="@color/buttonInactive"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_round_close_24px" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabPost"
+    <com.example.mova.views.EdgeFloatingActionButton
+        android:id="@+id/efabPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
-        android:layout_marginEnd="@dimen/innerMargin"
-        android:layout_marginBottom="@dimen/innerMargin"
-        android:clickable="true"
-        app:backgroundTint="@color/blueLight"
+        android:layout_marginTop="140dp"
+        android:layout_marginBottom="@dimen/elementMargin"
+        app:backgroundTint="@color/blueMid"
+        app:image="@drawable/ic_round_email_whoosh_24px"
+        app:imageMargin="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
