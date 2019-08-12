@@ -37,7 +37,7 @@ public class ComposeActionsAdapter extends RecyclerView.Adapter<ComposeActionsAd
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View actionView = inflater.inflate(R.layout.item_checklist, parent, false);
+        View actionView = inflater.inflate(R.layout.item_checklist_action_view, parent, false);
         return new ViewHolder(actionView);
     }
 
