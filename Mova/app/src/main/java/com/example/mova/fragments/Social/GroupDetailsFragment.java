@@ -200,7 +200,7 @@ public class GroupDetailsFragment extends Fragment {
 
         rvGroupGoals.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvGroupPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvGroupEvents.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        rvGroupEvents.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         groupGoalAdapter = new DataComponentAdapter<Goal.GoalData>((DelegatedResultActivity) getActivity(), groupGoals) {
             @Override
