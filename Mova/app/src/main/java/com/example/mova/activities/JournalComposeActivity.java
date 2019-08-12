@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.example.mova.model.Mood;
 import com.example.mova.R;
-import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.model.Media;
 import com.example.mova.model.Tag;
@@ -17,6 +16,7 @@ import com.example.mova.utils.TextUtils;
 import com.example.mova.utils.TimeUtils;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
+import com.example.mova.views.MoodSelectorLayout;
 import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class JournalComposeActivity extends DelegatedResultActivity {
     @BindView(R.id.tvTags)       protected TextView tvTags;
     @BindView(R.id.bAddTag)      protected Button bAddTag;
 
-    @BindView(R.id.moodSelector) protected Mood.SelectorLayout moodSelector;
+    @BindView(R.id.moodSelector) protected MoodSelectorLayout moodSelector;
     @BindView(R.id.clMedia)      protected ComponentLayout clMedia;
 
     @Override

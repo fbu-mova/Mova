@@ -6,12 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +18,7 @@ import androidx.cardview.widget.CardView;
 
 import com.example.mova.model.Mood;
 import com.example.mova.views.EdgeFloatingActionButton;
+import com.example.mova.views.MoodSelectorLayout;
 import com.example.mova.views.PersonalSocialToggle;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
@@ -127,7 +126,7 @@ public abstract class ComposePostComponent extends Component {
             config.allowCompose = false;
             PostComponent postComponent = new PostComponent(postConfig.postToReply, config);
             holder.flReplyContent.setVisibility(View.VISIBLE);
-            holder.clPostToReply.setMargin(32);
+            holder.clPostToReply.setMargin(getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin));
             holder.clPostToReply.inflateComponent(getActivity(), postComponent);
         }
     }
@@ -135,6 +134,10 @@ public abstract class ComposePostComponent extends Component {
     private void displayMood() {
         if (postConfig.displayMoodSelector) {
             holder.llMood.setVisibility(View.VISIBLE);
+            Mood.Status mood = (postConfig.post == null) ? null : postConfig.post.getMood();
+            if (mood != null && mood != Mood.Status.Empty) {
+                holder.moodSelector.setItem(mood);
+            }
         } else {
             holder.llMood.setVisibility(View.GONE);
         }
@@ -324,7 +327,7 @@ public abstract class ComposePostComponent extends Component {
         @BindView(R.id.psToggle)        public PersonalSocialToggle psToggle;
 
         @BindView(R.id.llMood)          public LinearLayout llMood;
-        @BindView(R.id.moodSelector)    public Mood.SelectorLayout moodSelector;
+        @BindView(R.id.moodSelector)    public MoodSelectorLayout moodSelector;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

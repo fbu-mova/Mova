@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.recyclerview.widget.SortedList;
 
+import com.example.mova.activities.MainActivity;
 import com.example.mova.components.GoalCheckInComponent;
 import com.example.mova.components.JournalMemoryComponent;
 import com.example.mova.components.JournalPromptComponent;
@@ -66,7 +67,6 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
         journalQuery.orderByDescending(Post.KEY_CREATED_AT);
         journalQuery.setLimit(20);
         journalQuery.whereNotEqualTo(Post.KEY_MOOD, JSONObject.NULL);
-//        journalQuery.whereNotEqualTo(Post.KEY_MOOD, Mood.Status.Empty.toString());
         asyncActions.add((Integer position, AsyncUtils.ItemCallback<Throwable> cb) ->
             journalQuery.findInBackground((entries, e) -> {
                 if (e != null) {
@@ -128,22 +128,27 @@ public class PersonalFeedPrioritizer extends Prioritizer<ParseObject> {
                 }
         }));
 
-        if (now.compareTo(eveningStart) >= 0) {
-            asyncActions.add((i, cb) -> {
+        asyncActions.add((i, cb) -> {
+            if (now.compareTo(eveningStart) >= 0 || MainActivity.showTomorrowPrioritiesPrompt) {
                 TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent(0, 5) {
                     @Override
-                    public void onLoadGoals(Throwable e) {
+                    public void onLoadGoals(List<Goal> goals, Throwable e) {
                         if (e != null) {
                             Log.e("PersonalFeedPrioritizer", "Failed to build TomorrowFocusPromptComponent", e);
                             cb.call(e);
+                        } else if (goals.size() == 0) {
+                            // Skip because no items
+                            cb.call(null);
                         } else {
-                            addTo.add(new PrioritizedComponent(this, 100));
+                            addTo.add(new PrioritizedComponent(this, 99));
                             cb.call(null);
                         }
                     }
                 };
-            });
-        }
+            } else {
+                cb.call(null);
+            }
+        });
 
         AsyncUtils.executeMany(asyncActions, callback);
     }

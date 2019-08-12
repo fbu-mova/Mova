@@ -10,41 +10,88 @@
     app:cardElevation="2dp">
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_reflect_prompt_bg" />
 
-            <TextView
-                android:id="@+id/tvGreeting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Hey, how's it going?" />
+        <TextView
+            android:id="@+id/tvGreeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/innerMargin"
+            android:layout_marginTop="@dimen/innerMargin"
+            android:fontFamily="@font/lato_medium"
+            android:text="Hey, how's it going?"
+            android:textColor="@color/blueDark"
+            android:textSize="@dimen/textSizeFocus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <view
-                android:id="@+id/moodSelector"
-                class="com.example.mova.model.Mood$SelectorLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_weight="0">
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/innerMargin"
+            android:text="I'm feeling"
+            android:textColor="@color/blueDark"
+            android:textSize="@dimen/textSizeBody"
+            app:layout_constraintBottom_toBottomOf="@+id/moodSelector"
+            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/moodSelector" />
 
-            </view>
-        </LinearLayout>
+        <com.example.mova.views.MoodSelectorLayout
+            android:id="@+id/moodSelector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="@dimen/elementMargin"
+            android:layout_marginBottom="@dimen/elementMargin"
+            app:layout_constraintBottom_toTopOf="@+id/bCompose"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:useAlt="true">
+
+        </com.example.mova.views.MoodSelectorLayout>
 
         <Button
             android:id="@+id/bCompose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Write a quick reflection" />
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="55dp"
+            android:background="@drawable/reflect_button_bg"
+            android:text="Write a quick reflection"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/blueUltraLight"
+            android:textColorHighlight="@color/blueUltraLight"
+            android:textColorHint="@color/blueUltraLight"
+            android:textColorLink="@color/blueUltraLight"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/space2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/textView2" />
 
-    </LinearLayout>
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="@dimen/elementMargin"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/moodSelector"
+            app:layout_constraintStart_toEndOf="@+id/moodSelector"
+            app:layout_constraintTop_toTopOf="@+id/moodSelector" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

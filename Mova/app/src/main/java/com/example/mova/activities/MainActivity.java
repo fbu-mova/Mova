@@ -26,7 +26,9 @@ public class MainActivity extends DelegatedResultActivity {
     private static final int REQUEST_PERMISSIONS_CODE = 10;
     private static final String[] REQUIRED_PERMISSIONS = new String[] { Manifest.permission.CAMERA };
 
-//    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
+    public static boolean showTomorrowPrioritiesPrompt = false;
+
+    //    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
     @BindView(R.id.bottom_navigation) protected PersonalSocialToggle bottomNavigationView;
 
     @Override

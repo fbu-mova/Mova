@@ -1,6 +1,7 @@
 package com.example.mova.model;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.mova.R;
+import com.example.mova.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,8 +51,7 @@ public class Mood {
             this.value = value;
         }
 
-        // Kept package private because the emotion itself, not the index in the list, should be a unique identifier
-        int getValue() {
+        public int getValue() {
             return value;
         }
     }
@@ -108,76 +109,4 @@ public class Mood {
         }
     }
 
-    public static class SelectorLayout extends FrameLayout implements AdapterView.OnItemSelectedListener {
-
-        private OnSelectedHandler handler;
-
-        @BindView(R.id.spStatus) protected Spinner spStatus;
-
-        public SelectorLayout(@NonNull Context context) {
-            super(context);
-            init();
-        }
-
-        public SelectorLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
-            super(context, attrs);
-            init();
-        }
-
-        public SelectorLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-            init();
-        }
-
-        private void init() {
-            inflate(getContext(), R.layout.layout_mood_selector, this);
-            ButterKnife.bind(this, this);
-
-            ArrayAdapter<Status> statusAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, Mood.getStatuses());
-            statusAdapter.setDropDownViewResource(R.layout.spinner_item);
-            spStatus.setAdapter(statusAdapter);
-            spStatus.setOnItemSelectedListener(this);
-
-            // Set handler to do nothing temporarily; serves as sentinel to avoid null pointer exceptions
-            handler = new OnSelectedHandler() {
-                @Override
-                public void onSelected(View view, Status status) {
-
-                }
-
-                @Override
-                public void onNothingSelected() {
-
-                }
-            };
-        }
-
-        public void setHandler(OnSelectedHandler handler) {
-            this.handler = handler;
-        }
-
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            Status status = (Status) parent.getItemAtPosition(position);
-            handler.onSelected(view, status);
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-            handler.onNothingSelected();
-        }
-
-        public Status getSelectedItem() {
-            return (Status) spStatus.getSelectedItem();
-        }
-
-        public void setItem(Status status) {
-            spStatus.setSelection(status.getValue());
-        }
-
-        public static abstract class OnSelectedHandler {
-            public abstract void onSelected(View view, Status status);
-            public abstract void onNothingSelected();
-        }
-    }
 }

@@ -56,17 +56,21 @@
     </declare-styleable>
 
     <declare-styleable name="ActionView">
-        <attr name="text" value="string"/>
-        <attr name="enabled" value="boolean"/>
-        <attr name="completed" value="boolean"/>
+        <attr name="text" format="string"/>
+        <attr name="enabled" format="boolean"/>
+        <attr name="completed" format="boolean"/>
 
-        <attr name="colorBoxComplete" value="color"/>
-        <attr name="colorBoxIncomplete" value="color"/>
-        <attr name="colorBoxDisabled" value="color"/>
+        <attr name="colorBoxComplete" format="color"/>
+        <attr name="colorBoxIncomplete" format="color"/>
+        <attr name="colorBoxDisabled" format="color"/>
 
-        <attr name="colorTextComplete" value="color"/>
-        <attr name="colorTextIncomplete" value="color"/>
-        <attr name="colorTextDisabled" value="color"/>
+        <attr name="colorTextComplete" format="color"/>
+        <attr name="colorTextIncomplete" format="color"/>
+        <attr name="colorTextDisabled" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="MoodSelectorLayout">
+        <attr name="useAlt" format="boolean"/>
     </declare-styleable>
 
 </resources>

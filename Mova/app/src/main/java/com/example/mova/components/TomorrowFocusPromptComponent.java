@@ -67,18 +67,18 @@ public abstract class TomorrowFocusPromptComponent extends Component {
         query.findInBackground((goals, e) -> {
             if (e != null) {
                 Log.e("TomorrowFocusComponent", "Failed to load goals", e);
-                onLoadGoals(e);
+                onLoadGoals(goals, e);
             } else if (goals.size() < minGoals) {
                 BelowMinimumGoalsError belowMinErr = new BelowMinimumGoalsError("The number of goals loaded is below the minimum number allowed.");
-                onLoadGoals(belowMinErr);
+                onLoadGoals(goals, belowMinErr);
             } else {
                 this.goals = goals;
-                onLoadGoals(null);
+                onLoadGoals(goals,null);
             }
         });
     }
 
-    public abstract void onLoadGoals(Throwable e);
+    public abstract void onLoadGoals(List<Goal> goals, Throwable e);
 
     @Override
     public String getName() {

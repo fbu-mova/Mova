@@ -69,7 +69,7 @@
 
                 <view
                     android:id="@+id/moodSelector"
-                    class="com.example.mova.model.Mood$SelectorLayout"
+                    class="com.example.mova.views.MoodSelectorLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">

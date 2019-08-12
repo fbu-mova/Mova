@@ -128,7 +128,7 @@ public abstract class ComposeMediaComponent extends Component {
                     Uri photoUri = data.getData();
                     try {
                         Bitmap fromGallery = ImageUtils.uriToBitmapFromGallery(getActivity(), photoUri);
-                        fromGallery = ImageUtils.resizeImage(fromGallery, 300);
+                        fromGallery = ImageUtils.resizeImage(fromGallery, 600);
                         Media.fromImage(fromGallery, (media, e) -> returnMedia(media));
                     } catch (IOException e) {
                         Log.e("ComposeMediaComponent", "Failed to retrieve image from library", e);

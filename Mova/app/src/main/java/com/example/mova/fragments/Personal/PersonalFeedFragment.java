@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.SortedList;
 
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
+import com.example.mova.activities.MainActivity;
 import com.example.mova.adapters.PrioritizedComponentAdapter;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.JournalPromptComponent;
@@ -24,6 +25,9 @@ import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.feed.PersonalFeedPrioritizer;
 import com.example.mova.feed.PrioritizedComponent;
 import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.model.Goal;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -119,7 +123,10 @@ public class PersonalFeedFragment extends Fragment {
         adapter = new PrioritizedComponentAdapter((DelegatedResultActivity) getActivity(), cards);
         rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvCards.setAdapter(adapter);
-        rvCards.addItemDecoration(new EdgeDecorator(32));
+
+        int outerMargin = getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+        int margin = getResources().getDimensionPixelOffset(R.dimen.innerMargin);
+        rvCards.addItemDecoration(new EdgeDecorator.Config(outerMargin, margin).build());
 
         prioritizer = new PersonalFeedPrioritizer();
         prioritizer.makeCards(cards, (e) -> {
@@ -130,6 +137,10 @@ public class PersonalFeedFragment extends Fragment {
                 Log.i("PersonalFeedFragment", "Loaded cards successfully!");
             }
         });
+
+        // FIXME: Remove after presentation
+        // Rigs the app to display the prompt after one use of this screen.
+        MainActivity.showTomorrowPrioritiesPrompt = true;
     }
 
     private void insertSoloComponent(boolean toggleJournalVsTomorrow) {
@@ -138,9 +149,8 @@ public class PersonalFeedFragment extends Fragment {
             container.inflateComponent((DelegatedResultActivity) getActivity(), card);
         } else {
             TomorrowFocusPromptComponent card = new TomorrowFocusPromptComponent(0, 5) {
-
                 @Override
-                public void onLoadGoals(Throwable e) {
+                public void onLoadGoals(List<Goal> goals, Throwable e) {
                     if (e == null) {
                         container.inflateComponent((DelegatedResultActivity) getActivity(), this);
                     }

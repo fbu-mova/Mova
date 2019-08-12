@@ -3,6 +3,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/elementMargin"
-    android:layout_marginRight="@dimen/elementMargin"
-    android:textColor="@color/textMain"
+    android:textColor="@color/blueDark"
     android:textSize="@dimen/textSizeBody"/>

@@ -65,16 +65,17 @@
                 android:layout_height="wrap_content"
                 android:text="Tomorrow's a new day."
                 android:textColor="#ffC9DBFF"
-                android:textSize="14dp" />
+                android:textSize="@dimen/textSizeBody" />
 
             <TextView
                 android:id="@+id/tvHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:fontFamily="@font/lato_medium"
                 android:text="What do you want to focus on?"
-                android:textColor="#fff"
-                android:textSize="18dp" />
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/textSizeFocus" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvGoals"

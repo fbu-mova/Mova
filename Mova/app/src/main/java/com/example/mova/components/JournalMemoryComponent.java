@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
 import com.example.mova.activities.DelegatedResultActivity;
@@ -22,6 +23,7 @@ import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
 import com.example.mova.utils.AsyncUtils;
 import com.example.mova.utils.TimeUtils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
@@ -103,28 +105,41 @@ public class JournalMemoryComponent extends Component {
             media.setContent(holder.tvPrompt.getText().toString());
             Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
             intent.putExtra(JournalComposeActivity.KEY_MEDIA, media);
-            getActivity().startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE, (int requestCode, int resultCode, Intent data) -> {
-                if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                    Post reflection = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
-                    ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
-                    Media outMedia = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST_MEDIA);
 
-                    // TODO: Switch to different activity rather than coercing JournalComposeActivity's results to a normal post
-                    reflection.removeMood();
-                    reflection.setParent(entry);
+//            getActivity().startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE, (int requestCode, int resultCode, Intent data) -> {
+//                if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+//                    Post reflection = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
+//                    ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
+//                    Media outMedia = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST_MEDIA);
+//
+//                    // TODO: Switch to different activity rather than coercing JournalComposeActivity's results to a normal post
+//                    reflection.removeMood();
+//                    reflection.setParent(entry);
+//
+//                    AsyncUtils.ItemCallback<Post> saveOnParent = (postFromCb) ->
+//                            entry.relComments.add(reflection, (postFromCb2) -> {
+//                                onPost.call(reflection);
+//                            });
+//
+//                    PostConfig config = new PostConfig(reflection);
+//                    config.tags = tags;
+//                    config.media = outMedia;
+//
+//                    config.post.savePost(saveOnParent);
+//                }
+//            });
 
-                    AsyncUtils.ItemCallback<Post> saveOnParent = (postFromCb) ->
-                            entry.relComments.add(reflection, (postFromCb2) -> {
-                                onPost.call(reflection);
-                            });
+            PostConfig config = new PostConfig();
+            config.media = new Media(holder.tvPrompt.getText().toString());
+            config.isPersonal = true;
 
-                    PostConfig config = new PostConfig(reflection);
-                    config.tags = tags;
-                    config.media = outMedia;
-
-                    config.post.savePost(saveOnParent);
-                }
-            });
+            new ComposePostDialog.Builder(getActivity())
+                    .setConfig(config)
+                    .setOnPost((post) -> {
+                        BottomNavigationView menu = getActivity().findViewById(R.id.bottom_navigation_personal);
+                        menu.setSelectedItemId(R.id.action_journal);
+                    })
+                    .show(holder.getView());
         });
     }
 

@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.dialogs.ComposePostDialog;
+import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.model.Mood;
 import com.example.mova.utils.PostConfig;
 import com.example.mova.R;
@@ -22,6 +24,8 @@ import com.example.mova.model.Post;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.AsyncUtils;
+import com.example.mova.views.MoodSelectorLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
@@ -80,18 +84,32 @@ public class JournalPromptComponent extends Component {
             Intent intent = new Intent(getActivity(), JournalComposeActivity.class);
             intent.putExtra(JournalComposeActivity.KEY_MOOD, mood.toString());
 
-            getActivity().startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE,
-                (int requestCode, int resultCode, Intent data) -> {
-                    if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                        Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
-                        ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
+//            getActivity().startActivityForDelegatedResult(intent, COMPOSE_REQUEST_CODE,
+//                (int requestCode, int resultCode, Intent data) -> {
+//                    if (requestCode == COMPOSE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+//                        Post journalEntry = data.getParcelableExtra(JournalComposeActivity.KEY_COMPOSED_POST);
+//                        ArrayList<Tag> tags = (ArrayList<Tag>) data.getSerializableExtra(JournalComposeActivity.KEY_COMPOSED_POST_TAGS);
+//
+//                        PostConfig config = new PostConfig(journalEntry);
+//                        config.tags = tags;
+//
+//                        User.getCurrentUser().postJournalEntry(config, onPostJournalEntry);
+//                    }
+//            });
 
-                        PostConfig config = new PostConfig(journalEntry);
-                        config.tags = tags;
+            PostConfig config = new PostConfig();
+            config.post = new Post();
+            config.post.setMood(mood);
+            config.isPersonal = true;
+            config.displayMoodSelector = true;
 
-                        User.getCurrentUser().postJournalEntry(config, onPostJournalEntry);
-                    }
-            });
+            new ComposePostDialog.Builder(getActivity())
+                    .setConfig(config)
+                    .setOnPost((post) -> {
+                        BottomNavigationView menu = getActivity().findViewById(R.id.bottom_navigation_personal);
+                        menu.setSelectedItemId(R.id.action_journal);
+                    })
+                    .show(holder.getView());
         });
     }
 
@@ -103,7 +121,7 @@ public class JournalPromptComponent extends Component {
     public static class ViewHolder extends Component.ViewHolder {
 
         @BindView(R.id.tvGreeting)   public TextView tvGreeting;
-        @BindView(R.id.moodSelector) public Mood.SelectorLayout moodSelector;
+        @BindView(R.id.moodSelector) public MoodSelectorLayout moodSelector;
         @BindView(R.id.bCompose)     public Button bCompose;
         @BindView(R.id.card)         public CardView card;
 
