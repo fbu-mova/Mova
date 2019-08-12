@@ -290,7 +290,7 @@ public class GoalCardComponent extends Component {
                         @Override
                         public void done(List<Action> objectsList, ParseException e) {
                             activity.runOnUiThread(() -> {
-                                if (e == null && objects.size() == 1) {
+                                if (e == null && objectsList.size() == 1) {
                                     Log.d(TAG, "found child action");
 
                                 Action action = objectsList.get(0);
