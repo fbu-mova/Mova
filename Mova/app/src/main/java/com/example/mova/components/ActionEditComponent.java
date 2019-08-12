@@ -32,6 +32,7 @@ public class ActionEditComponent extends Component {
     private boolean prioritySelected;
     private boolean isCreate;
     private String key;
+    private int id;
 
     private ComponentManager componentManager;
     private GoalUtils.onActionEditSaveListener onActionEditSaveListener;
@@ -87,7 +88,9 @@ public class ActionEditComponent extends Component {
         key = (isCreate) ? "CreateActionViewComponent" : "ActionViewComponent";
 
 
-        if (prioritySelected)   viewHolder.priority.setColorFilter(R.color.buttonActive);
+        id = (prioritySelected) ? R.color.buttonActive : R.color.buttonInactive;
+        viewHolder.priority.setColorFilter(getActivity().getResources().getColor(id));
+
 
         viewHolder.ivSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +99,7 @@ public class ActionEditComponent extends Component {
                 wrapper.setMessage(viewHolder.etAction.getText().toString());
                 onActionEditSaveListener.call(action, wrapper, componentManager);
                 wrapper = new Action.Wrapper();
+                id = R.color.buttonInactive;
             }
         });
 
@@ -103,6 +107,7 @@ public class ActionEditComponent extends Component {
             @Override
             public void onClick(View v) {
                 componentManager.swap(key);
+                id = R.color.buttonInactive;
             }
         });
 
@@ -136,7 +141,7 @@ public class ActionEditComponent extends Component {
                     wrapper.setIsPriority(prioritySelected);
                 }
 
-                int id = (prioritySelected) ? R.color.buttonActive : R.color.buttonInactive;
+                id = (prioritySelected) ? R.color.buttonActive : R.color.buttonInactive;
                 viewHolder.priority.setColorFilter(getActivity().getResources().getColor(id));
 
             }
