@@ -173,7 +173,12 @@ public class ProgressFragment extends Fragment {
         gridMoodAdapter = new DataComponentAdapter<MoodWrapper>((DelegatedResultActivity) getActivity(), userMoods) {
             @Override
             public Component makeComponent(MoodWrapper item, Component.ViewHolder holder) {
-                return new ProgressGridMoodComponent(item.mood, item.date);
+                return new ProgressGridMoodComponent(item.mood, item.date) {
+                    @Override
+                    public void onClick() {
+                        // TODO: Launch correct fragment
+                    }
+                };
             }
 
             @Override
@@ -300,7 +305,6 @@ public class ProgressFragment extends Fragment {
                         tvY1.setText(Integer.toString(graphManager.tallestY() / 2));
                     }
                 });
-
             });
         });
 
@@ -431,7 +435,14 @@ public class ProgressFragment extends Fragment {
                 for (int i = 0; i < length; i++) {
                     Date date = getDate(i);
                     SortedList<Post> onDate = journal.getEntriesByDate(date);
-                    Post post = (onDate.size() == 0) ? null : onDate.get(0);
+                    int j = 0;
+                    Post post = null;
+                    Mood.Status lastMood = Mood.Status.Empty;
+                    while (j < onDate.size() && lastMood == Mood.Status.Empty) {
+                        post = onDate.get(j);
+                        lastMood = post.getMood();
+                        j++;
+                    }
                     posts.put(date, post);
                 }
 

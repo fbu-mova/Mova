@@ -73,6 +73,8 @@ public class JournalFragment extends Fragment {
     @BindView(R.id.esrlEntries) protected EndlessScrollRefreshLayout<Component.ViewHolder> esrlEntries;
     @BindView(R.id.efabCompose)  protected EdgeFloatingActionButton efabCompose;
 
+    public static final String ARG_DATE = "date";
+
     public JournalFragment() {
         // Required empty public constructor
     }
@@ -83,8 +85,13 @@ public class JournalFragment extends Fragment {
      * @return A new instance of fragment JournalFragment.
      */
     public static JournalFragment newInstance() {
+        return newInstance(new Date());
+    }
+
+    public static JournalFragment newInstance(Date date) {
         JournalFragment fragment = new JournalFragment();
         Bundle args = new Bundle();
+        args.putLong(ARG_DATE, date.getTime());
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,6 +100,10 @@ public class JournalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            currDate = new Date();
+            currDate.setTime(getArguments().getLong(ARG_DATE));
+        } else {
+            currDate = new Date();
         }
     }
 
