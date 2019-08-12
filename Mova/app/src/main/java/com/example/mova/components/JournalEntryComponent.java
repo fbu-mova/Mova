@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mova.containers.EdgeDecorator;
 import com.example.mova.containers.GestureLayout;
 import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.model.Mood;
@@ -154,13 +155,11 @@ public class JournalEntryComponent extends Component {
                 case Group:
                     ((GroupThumbnailComponent) mediaComponent).setAllowDetailsClick(true);
                     break;
-                case Goal:
-//                    ((ProgressGoalComponent) mediaComponent).setAllowDetailsClick(true);
-                    break;
             }
 
-            int margin = getActivity().getResources().getDimensionPixelOffset(R.dimen.innerMargin);
-            holder.clMedia.setMarginTop(margin).setMarginBottom(margin);
+            int margin = getActivity().getResources().getDimensionPixelOffset(R.dimen.elementMargin);
+            int outerMargin = getActivity().getResources().getDimensionPixelOffset(R.dimen.outerMargin);
+            holder.clMedia.setMarginLeft(outerMargin).setMarginRight(outerMargin).setMarginTop(margin).setMarginBottom(margin);
             holder.clMedia.inflateComponent(getActivity(), mediaComponent);
         });
     }
@@ -172,7 +171,7 @@ public class JournalEntryComponent extends Component {
             if (e != null) {
                 Log.e("JournalEntryComponent", "Failed to load tags on journal entry", e);
             } else {
-                TextUtils.writeCommaSeparated(tags, "No tags", holder.tvTags, (tag) -> tag.getName());
+                TextUtils.writeCommaSeparated(tags, "", holder.tvTags, (tag) -> tag.getName());
                 if (tags.size() > 0) showTags();
             }
         });
@@ -189,12 +188,12 @@ public class JournalEntryComponent extends Component {
     }
 
     private void hideTags() {
-        holder.tvTags.setVisibility(View.GONE);
+//        holder.tvTags.setVisibility(View.GONE);
         holder.ivTags.setVisibility(View.GONE);
     }
 
     private void showTags() {
-        holder.tvTags.setVisibility(View.VISIBLE);
+//        holder.tvTags.setVisibility(View.VISIBLE);
         holder.ivTags.setVisibility(View.VISIBLE);
     }
 
@@ -246,6 +245,9 @@ public class JournalEntryComponent extends Component {
                         else hideComments();
                     });
                 }
+
+                int margin = getActivity().getResources().getDimensionPixelOffset(R.dimen.elementMargin);
+                holder.rvComments.addItemDecoration(new EdgeDecorator(0, 0, 0, margin));
             }
         });
     }
