@@ -37,4 +37,5 @@
     <dimen name="progressStackLength">200dp</dimen>
 
     <dimen name="fabSize">40dp</dimen>
+    <dimen name="buttonHeight">38dp</dimen>
 </resources>

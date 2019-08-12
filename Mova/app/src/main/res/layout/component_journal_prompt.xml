@@ -69,7 +69,7 @@
         <Button
             android:id="@+id/bCompose"
             android:layout_width="0dp"
-            android:layout_height="38dp"
+            android:layout_height="@dimen/buttonHeight"
             android:layout_marginBottom="55dp"
             android:background="@drawable/reflect_button_bg"
             android:text="Write a quick reflection"

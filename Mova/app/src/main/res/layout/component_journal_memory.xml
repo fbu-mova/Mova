@@ -14,30 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:id="@+id/flAccentColor"
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:background="#FFA883"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </FrameLayout>
-
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginStart="@dimen/innerMargin"
+            android:layout_marginTop="@dimen/innerMargin"
+            android:layout_marginEnd="@dimen/innerMargin"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/flAccentColor">
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,8 +37,8 @@
                     android:layout_marginRight="5dp"
                     android:layout_weight="0"
                     android:text="On"
-                    android:textColor="#222"
-                    android:textSize="18dp" />
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeFocus" />
 
                 <TextView
                     android:id="@+id/tvDate"
@@ -59,8 +46,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:text="Day"
-                    android:textColor="#222"
-                    android:textSize="18dp" />
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeFocus" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -68,18 +55,28 @@
                     android:layout_marginRight="5dp"
                     android:layout_weight="0"
                     android:text=", you felt"
-                    android:textColor="#222"
-                    android:textSize="18dp" />
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeFocus" />
 
                 <TextView
                     android:id="@+id/tvMood"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="Mood"
-                    android:textColor="#222"
-                    android:textSize="18dp"
+                    android:text="mood"
+                    android:textColor="@color/blueLight"
+                    android:textSize="@dimen/textSizeFocus"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="0"
+                    android:text="."
+                    android:textColor="@color/textMain"
+                    android:textSize="@dimen/textSizeFocus" />
 
             </LinearLayout>
 
@@ -89,12 +86,13 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tvQuotes"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="0"
                     android:text='"'
-                    android:textColor="#FFA883"
+                    android:textColor="@color/blueLight"
                     android:textSize="32dp"
                     android:textStyle="bold" />
 
@@ -111,8 +109,8 @@
                         android:layout_gravity="start"
                         android:layout_weight="1"
                         android:text="Excerpt"
-                        android:textColor="#777"
-                        android:textSize="14dp" />
+                        android:textColor="@color/textLight"
+                        android:textSize="@dimen/textSizeBody" />
                 </FrameLayout>
 
             </LinearLayout>
@@ -121,26 +119,32 @@
 
         <TextView
             android:id="@+id/tvPrompt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginStart="@dimen/innerMargin"
+            android:layout_marginEnd="@dimen/elementMargin"
             android:text="Prompt?"
-            android:textColor="#222"
+            android:textAlignment="textEnd"
+            android:textColor="@color/textLight"
             app:layout_constraintBottom_toBottomOf="@+id/bReflect"
             app:layout_constraintEnd_toStartOf="@+id/bReflect"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/bReflect" />
 
         <Button
             android:id="@+id/bReflect"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="reflect"
-            android:textSize="14dp"
+            android:layout_height="@dimen/buttonHeight"
+            android:layout_marginTop="@dimen/elementMargin"
+            android:layout_marginEnd="@dimen/innerMargin"
+            android:layout_marginBottom="@dimen/innerMargin"
+            android:background="@drawable/reflect_button_bg"
+            android:backgroundTint="@color/blueLight"
+            android:text="Reflect"
+            android:textAllCaps="false"
+            android:textColor="@color/textMain"
+            android:textSize="@dimen/textSizeBody"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
