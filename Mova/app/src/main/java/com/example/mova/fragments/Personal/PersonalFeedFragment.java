@@ -25,9 +25,13 @@ import com.example.mova.components.TomorrowFocusPromptComponent;
 import com.example.mova.feed.PersonalFeedPrioritizer;
 import com.example.mova.feed.PrioritizedComponent;
 import com.example.mova.containers.EdgeDecorator;
+import com.example.mova.fragments.PersonalFragment;
 import com.example.mova.model.Goal;
+import com.example.mova.utils.TimeUtils;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,12 +43,15 @@ import butterknife.ButterKnife;
  */
 public class PersonalFeedFragment extends Fragment {
 
-    @BindView(R.id.component) protected ComponentLayout container;
-    @BindView(R.id.rvCards)   protected RecyclerView rvCards;
+    @BindView(R.id.component)  protected ComponentLayout container;
+    @BindView(R.id.rvCards)    protected RecyclerView rvCards;
+    @BindView(R.id.tvGreeting) protected TextView tvGreeting;
 
     private PrioritizedComponentAdapter adapter;
     private SortedList<PrioritizedComponent> cards;
     private PersonalFeedPrioritizer prioritizer;
+
+    private static int numOpens = 0;
 
     public PersonalFeedFragment() {
         // Required empty public constructor
@@ -82,6 +89,7 @@ public class PersonalFeedFragment extends Fragment {
         ButterKnife.bind(this, view);
 
 //        insertSoloComponent(false);
+        tvGreeting.setText(getGreeting());
 
         cards = new SortedList<>(PrioritizedComponent.class, new SortedList.Callback<PrioritizedComponent>() {
             @Override
@@ -141,6 +149,7 @@ public class PersonalFeedFragment extends Fragment {
         // FIXME: Remove after presentation
         // Rigs the app to display the prompt after one use of this screen.
         MainActivity.showTomorrowPrioritiesPrompt = true;
+        numOpens += 1;
     }
 
     private void insertSoloComponent(boolean toggleJournalVsTomorrow) {
@@ -156,6 +165,42 @@ public class PersonalFeedFragment extends Fragment {
                     }
                 }
             };
+        }
+    }
+
+    private String getGreeting() {
+        if (numOpens > 0) {
+            switch (new Random().nextInt(4)) {
+                case 0:  return "Welcome back.";
+                case 1:  return "Keep at it!";
+                case 2:  return "You've got this!";
+                default: return "Doing great.";
+            }
+        }
+
+        Date morningUntil = TimeUtils.setTime(new Date(), "12:00");
+        Date nightAt = TimeUtils.setTime(new Date(), "5:00");
+        Date now = new Date();
+
+        if (now.compareTo(morningUntil) < 0) {
+            switch (new Random().nextInt(2)) {
+                case 0:  return "Good morning.";
+                default: return "Rise and shine.";
+            }
+        }
+
+        if (now.compareTo(nightAt) >= 0 || MainActivity.showTomorrowPrioritiesPrompt) {
+            switch (new Random().nextInt(4)) {
+                case 0:  return "Good evening.";
+                case 1:  return "Hope your day's been awesome.";
+                case 2:  return "Enjoy the slowdown.";
+                default: return "Thanks for pausing.";
+            }
+        }
+
+        switch (new Random().nextInt(3)) {
+            case 0:  return "Good afternoon.";
+            default: return "Hope your day's going well!";
         }
     }
 }
