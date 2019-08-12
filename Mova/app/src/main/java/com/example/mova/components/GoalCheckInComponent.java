@@ -109,7 +109,6 @@ public class GoalCheckInComponent extends Component {
 
         // Set up actions checklist
         adapter = new DataComponentAdapter<Action>(getActivity(), goalActions) {
-
             @Override
             protected Component makeComponent(Action item, Component.ViewHolder holder) {
                 ChecklistItemComponent<Action> component = new ChecklistItemComponent<Action>(item,
@@ -122,6 +121,8 @@ public class GoalCheckInComponent extends Component {
                                     Toast.makeText(getActivity(), "Failed to toggle action done", Toast.LENGTH_LONG).show();
                                 } else {
                                     Log.i("GoalCheckInComponent", "Toggled action done");
+                                    item.setIsDone(isChecked);
+                                    GoalCheckInComponent.this.holder.pbProgress.setProgress(GoalUtils.getProgressPercent(goalActions));
                                 }
                             });
                         }
@@ -135,6 +136,7 @@ public class GoalCheckInComponent extends Component {
                 return new ChecklistItemComponent.Inflater();
             }
         };
+
         this.holder.rvChecklist.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.holder.rvChecklist.setAdapter(adapter);
 

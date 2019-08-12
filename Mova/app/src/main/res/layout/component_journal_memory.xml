@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="@dimen/borderRadius"
+    app:cardElevation="@dimen/deepCardElevation">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -68,16 +68,6 @@
                     android:textSize="@dimen/textSizeFocus"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="0"
-                    android:text="."
-                    android:textColor="@color/textMain"
-                    android:textSize="@dimen/textSizeFocus" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -125,7 +115,7 @@
             android:layout_marginEnd="@dimen/elementMargin"
             android:text="Prompt?"
             android:textAlignment="textEnd"
-            android:textColor="@color/textLight"
+            android:textColor="@color/textMain"
             app:layout_constraintBottom_toBottomOf="@+id/bReflect"
             app:layout_constraintEnd_toStartOf="@+id/bReflect"
             app:layout_constraintHorizontal_bias="1.0"

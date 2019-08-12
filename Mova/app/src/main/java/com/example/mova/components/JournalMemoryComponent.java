@@ -153,6 +153,7 @@ public class JournalMemoryComponent extends Component {
             PostConfig config = new PostConfig();
             config.media = new Media(holder.tvPrompt.getText().toString());
             config.isPersonal = true;
+            config.postToReply = entry;
 
             new ComposePostDialog.Builder(getActivity())
                     .setConfig(config)
