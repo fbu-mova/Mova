@@ -87,6 +87,11 @@ public class ProgressFragment extends Fragment {
     private List<Goal> badGoals;
     private List<MoodWrapper> userMoods;
 
+    //Hue Used Lists
+    private List<ColorUtils.Lightness> hueBlue;
+    private List<ColorUtils.Lightness> huePurple;
+    private List<ColorUtils.Lightness> hueOrange;
+
     private ProgressStackManager graphManager;
     private HashMap<Goal, Integer> hueMap;
     private HashMap<Integer, Goal> colorGoals;
@@ -152,6 +157,10 @@ public class ProgressFragment extends Fragment {
 
         user = User.getCurrentUser();
         length = 7;
+
+        hueBlue = new ArrayList<>();
+        hueOrange = new ArrayList<>();
+        huePurple = new ArrayList<>();
 
         hueMap = new HashMap<>();
         usedColors = new ArrayList<>();
@@ -356,8 +365,15 @@ public class ProgressFragment extends Fragment {
         if (color != null) return color;
         // Otherwise, choose new, unused color
         ColorUtils.Hue hue = goal.getHue();
-        if (hue == null) hue = ColorUtils.Hue.random();
-        color = makeGraphColor(hue, new ArrayList<>());
+        if (hue == null) {
+            if(hueBlue.size() == 0) hue = ColorUtils.Hue.Blue;
+            if(hueOrange.size() == 0) hue = ColorUtils.Hue.Orange;
+            if(huePurple.size() == 0) hue = ColorUtils.Hue.Purple;
+            else hue = ColorUtils.Hue.random();
+        }
+        if(hue.equals(ColorUtils.Hue.Blue)) color = makeGraphColor(hue, hueBlue);
+        if(hue.equals(ColorUtils.Hue.Orange)) color = makeGraphColor(hue, hueOrange);
+        if(hue.equals(ColorUtils.Hue.Purple)) color = makeGraphColor(hue,huePurple);
         hueMap.put(goal, color);
         colorGoals.put(color, goal);
         return color;
@@ -379,8 +395,8 @@ public class ProgressFragment extends Fragment {
     private ColorUtils.Lightness getNextLightness(List<ColorUtils.Lightness> used) {
         if (!used.contains(ColorUtils.Lightness.Light))      return ColorUtils.Lightness.Light;
         if (!used.contains(ColorUtils.Lightness.Mid))        return ColorUtils.Lightness.Mid;
-        if (!used.contains(ColorUtils.Lightness.Dark))       return ColorUtils.Lightness.Dark;
         if (!used.contains(ColorUtils.Lightness.UltraLight)) return ColorUtils.Lightness.UltraLight;
+        if (!used.contains(ColorUtils.Lightness.Dark))       return ColorUtils.Lightness.Dark;
         throw new IllegalArgumentException("Ran out of lightnesses.");
     }
 
