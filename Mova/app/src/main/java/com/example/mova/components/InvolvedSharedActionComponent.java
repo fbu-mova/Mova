@@ -24,7 +24,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
 
     private static final String TAG = "inv. shared action comp";
 
-    protected SharedAction sharedAction;
+    protected SharedAction.Data data;
     protected ColorUtils.Hue hue;
     protected static int viewLayoutRes = R.layout.item_involved_shared_action;
     protected ViewHolder holder;
@@ -36,12 +36,10 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     public InvolvedSharedActionComponent(SharedAction.Data data, ColorUtils.Hue hue) {
         super(data,
             (thing) -> thing.sharedAction.getTask(),
-            (thing) -> {
-                return data.isUserDone;
-            });
+            (thing) -> thing.isUserDone);
 
-        onSuccessfullyToggled = completed -> {};
-        this.sharedAction = data.sharedAction;
+        onSuccessfullyToggled = completed -> data.isUserDone = completed;
+        this.data = data;
         this.hue = hue;
     }
 
@@ -53,13 +51,14 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
 
     @Override
     protected void onRender(Component.ViewHolder holder) {
+        super.onRender(holder);
 
         checkViewHolderClass(holder, ViewHolder.class);
         this.holder = (ViewHolder) holder;
 
-        complete = sharedAction.getUsersDone();
+        complete = data.sharedAction.getUsersDone();
 
-        sharedAction.relChildActions.getSize((total) -> {
+        data.sharedAction.relChildActions.getSize((total) -> {
             this.total = total;
             updateNumDone(complete, this.total);
         });
@@ -85,7 +84,7 @@ public class InvolvedSharedActionComponent extends ChecklistItemComponent<Shared
     public void onCheckedChanged(boolean isChecked) {
         // finds the action of the sharedAction corresponding to the user, updates isDone boolean
 
-        GoalUtils.findUsersAction(sharedAction, (action) -> {
+        GoalUtils.findUsersAction(data.sharedAction, (action) -> {
             GoalUtils.toggleDone(action, (e) -> {
                 if (e == null) {
                     Log.d(TAG, "toggled action done");

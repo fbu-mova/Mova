@@ -62,6 +62,7 @@ public class UninvolvedSharedActionComponent extends ChecklistItemComponent<Shar
 
     @Override
     protected void onRender(Component.ViewHolder holder) {
+        super.onRender(holder);
 
         // todo -- have a better icon for ivIcon
         // todo -- should GoalCardComp add "saveSocialGoal" button if in this case?

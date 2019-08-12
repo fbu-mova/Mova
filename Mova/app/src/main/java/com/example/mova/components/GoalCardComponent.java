@@ -214,8 +214,7 @@ public class GoalCardComponent extends Component {
             sharedActionsAdapter = new DataComponentAdapter<SharedAction.Data>(getActivity(), sharedActions) {
                 @Override
                 public Component makeComponent(SharedAction.Data item, Component.ViewHolder holder) {
-                    Component component = new InvolvedSharedActionComponent(item, goal.getHue());
-                    return component;
+                    return new InvolvedSharedActionComponent(item, goal.getHue());
                 }
 
                 @Override
@@ -290,18 +289,18 @@ public class GoalCardComponent extends Component {
                         @Override
                         public void done(List<Action> objectsList, ParseException e) {
                             activity.runOnUiThread(() -> {
-                                if (e == null && objects.size() == 1) {
+                                if (e == null && objectsList.size() == 1) {
                                     Log.d(TAG, "found child action");
 
-                                Action action = objectsList.get(0);
-                                boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
-                                SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
-                                sharedActions.add(0, data);
-                            }
-                            else {
-                                Log.e(TAG, "either size(actions) wrong or error", e);
-                            }
-                            callback.call(e);
+                                    Action action = objectsList.get(0);
+                                    boolean isUserDone = (action.getIsDone() && action.getIsConnectedToParent());
+                                    SharedAction.Data data = new SharedAction.Data(sharedAction, isUserDone);
+                                    sharedActions.add(0, data);
+                                }
+                                else {
+                                    Log.e(TAG, "either size(actions) wrong or error", e);
+                                }
+                                callback.call(e);
                             });
                         }
                     });
