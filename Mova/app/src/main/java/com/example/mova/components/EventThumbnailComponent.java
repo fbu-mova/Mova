@@ -143,7 +143,7 @@ public class EventThumbnailComponent extends Component {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 Fragment frag = EventDetailsFragment.newInstance(event);
-                manager = ((AppCompatActivity)getActivity())
+                manager = (getActivity())
                         .getSupportFragmentManager();
                 FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
                 //fl.removeAllViews();

@@ -39,15 +39,19 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.mova.R;
 import com.example.mova.adapters.DataComponentAdapter;
 import com.example.mova.component.Component;
+import com.example.mova.component.ComponentLayout;
+import com.example.mova.components.ComposeMediaComponent;
 import com.example.mova.components.ImageComponent;
 import com.example.mova.fragments.SocialFragment;
 import com.example.mova.icons.Icons;
 import com.example.mova.icons.NounProjectClient;
 import com.example.mova.model.Group;
+import com.example.mova.model.Media;
 import com.example.mova.model.Tag;
 import com.example.mova.model.User;
 import com.example.mova.utils.ColorUtils;
 import com.example.mova.utils.GroupUtils;
+import com.example.mova.utils.ImageUtils;
 import com.example.mova.utils.TextUtils;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -67,6 +71,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
     private Group group;
     private List<String> tags;
     private List<Tag> listtags;
+    private ParseFile groupPic;
 
     @BindView(R.id.ibGroupImage)       protected ImageButton ibGroupImage;
     @BindView(R.id.cvIcon)             protected CardView cvIcon;
@@ -161,6 +166,7 @@ public class GroupComposeActivity extends DelegatedResultActivity {
                 group.setDescription(etGroupDescription.getText().toString());
 
                 //Change profile pic
+                group.setGroupPic(groupPic);
 
                 //Set admin
                 group.relAdmins.add(user);
@@ -195,7 +201,40 @@ public class GroupComposeActivity extends DelegatedResultActivity {
         ibGroupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Todo - allow user to add image
+                View view = getLayoutInflater().inflate(R.layout.layout_component_layout, null);
+                ComponentLayout container = view.findViewById(R.id.componentLayout);
+
+                AlertDialog dialog = new AlertDialog.Builder(GroupComposeActivity.this)
+                        .setView(container)
+                        .show();
+
+                ComposeMediaComponent component = new ComposeMediaComponent(true) {
+                    @Override
+                    public void onSelectMedia(Media media) {
+                        groupPic = media.getContentImage();
+                        try {
+                            Bitmap bmp = ImageUtils.fileToBitmap(groupPic.getFile());
+                            ibGroupImage.setImageBitmap(bmp);
+                        } catch (ParseException e) {
+                            Toast.makeText(GroupComposeActivity.this, "Failed to save image", Toast.LENGTH_LONG).show();
+                        } finally {
+                            dialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onBack() {
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        dialog.dismiss();
+                    }
+                };
+
+                container.inflateComponent(GroupComposeActivity.this, component);
+                component.hideBack();
             }
         });
 

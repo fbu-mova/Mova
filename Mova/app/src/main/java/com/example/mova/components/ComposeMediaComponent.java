@@ -199,9 +199,9 @@ public abstract class ComposeMediaComponent extends Component {
             });
 
             holder.esrlScrapbook.addItemDecoration(new EdgeDecorator(32, 0, 32, 32));
-        }
 
-        loadScrapbookPosts();
+            loadScrapbookPosts();
+        }
     }
 
     private void loadScrapbookPosts() {
@@ -268,26 +268,30 @@ public abstract class ComposeMediaComponent extends Component {
 
         // Correct preview output to account for display rotation
         float rotationDegree;
-        switch (holder.txvCamera.getDisplay().getRotation()) {
-            case Surface.ROTATION_0:
-                rotationDegree = 0;
-                break;
-            case Surface.ROTATION_90:
-                rotationDegree = 90;
-                break;
-            case Surface.ROTATION_180:
-                rotationDegree = 180;
-                break;
-            case Surface.ROTATION_270:
-                rotationDegree = 270;
-                break;
-            default:
-                return;
-        }
-        matrix.postRotate(-rotationDegree, centerX, centerY);
+        try {
+            switch (holder.txvCamera.getDisplay().getRotation()) {
+                case Surface.ROTATION_0:
+                    rotationDegree = 0;
+                    break;
+                case Surface.ROTATION_90:
+                    rotationDegree = 90;
+                    break;
+                case Surface.ROTATION_180:
+                    rotationDegree = 180;
+                    break;
+                case Surface.ROTATION_270:
+                    rotationDegree = 270;
+                    break;
+                default:
+                    return;
+            }
+            matrix.postRotate(-rotationDegree, centerX, centerY);
 
-        // Finally, apply transformations to our TextureView
-        holder.txvCamera.setTransform(matrix);
+            // Finally, apply transformations to our TextureView
+            holder.txvCamera.setTransform(matrix);
+        } catch (Exception e) {
+
+        }
     }
 
     private void returnMedia(Media media) {
@@ -303,6 +307,10 @@ public abstract class ComposeMediaComponent extends Component {
     public abstract void onSelectMedia(Media media);
     public abstract void onBack();
     public abstract void onCancel();
+
+    public void hideBack() {
+        holder.ivClose.setVisibility(View.GONE);
+    }
 
     public static class ViewHolder extends Component.ViewHolder {
 
