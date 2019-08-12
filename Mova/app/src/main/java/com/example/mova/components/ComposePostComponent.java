@@ -6,16 +6,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
+import com.example.mova.model.Mood;
 import com.example.mova.views.EdgeFloatingActionButton;
 import com.example.mova.views.PersonalSocialToggle;
 import com.example.mova.utils.PostConfig;
@@ -99,6 +102,7 @@ public abstract class ComposePostComponent extends Component {
 
         displayToReplyTo();
         displayPostType();
+        displayMood();
         displayMedia();
         configureClickEvents();
     }
@@ -125,6 +129,14 @@ public abstract class ComposePostComponent extends Component {
             holder.flReplyContent.setVisibility(View.VISIBLE);
             holder.clPostToReply.setMargin(32);
             holder.clPostToReply.inflateComponent(getActivity(), postComponent);
+        }
+    }
+
+    private void displayMood() {
+        if (postConfig.displayMoodSelector) {
+            holder.llMood.setVisibility(View.VISIBLE);
+        } else {
+            holder.llMood.setVisibility(View.GONE);
         }
     }
 
@@ -277,6 +289,13 @@ public abstract class ComposePostComponent extends Component {
         post.setAuthor(User.getCurrentUser());
         post.setIsPersonal(holder.psToggle.isPersonal());
 
+        if (postConfig.displayMoodSelector) {
+            Mood.Status mood = holder.moodSelector.getSelectedItem();
+            if (mood != Mood.Status.Empty) {
+                post.setMood(mood);
+            }
+        }
+
         ParseGeoPoint location = LocationUtils.getCurrentUserLocation();
         if (location != null) post.setLocation(location);
 
@@ -303,6 +322,9 @@ public abstract class ComposePostComponent extends Component {
         @BindView(R.id.ivClose)         public ImageView ivClose;
         @BindView(R.id.efabPost)        public EdgeFloatingActionButton efabPost;
         @BindView(R.id.psToggle)        public PersonalSocialToggle psToggle;
+
+        @BindView(R.id.llMood)          public LinearLayout llMood;
+        @BindView(R.id.moodSelector)    public Mood.SelectorLayout moodSelector;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

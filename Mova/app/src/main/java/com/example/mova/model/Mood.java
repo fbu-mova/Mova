@@ -133,8 +133,8 @@ public class Mood {
             inflate(getContext(), R.layout.layout_mood_selector, this);
             ButterKnife.bind(this, this);
 
-            ArrayAdapter<Status> statusAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Mood.getStatuses());
-            statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            ArrayAdapter<Status> statusAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, Mood.getStatuses());
+            statusAdapter.setDropDownViewResource(R.layout.spinner_item);
             spStatus.setAdapter(statusAdapter);
             spStatus.setOnItemSelectedListener(this);
 
