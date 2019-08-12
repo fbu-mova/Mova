@@ -124,27 +124,27 @@ public class GroupThumbnailComponent extends Component {
             Icons.from(getActivity()).displayNounIcon(group, viewHolder.cvGroupIcon, viewHolder.ivGroupIcon);
         });
 
-        viewHolder.ivGroupPic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                if(getActivity().equals(SearchActivity.class)){
-//
+//        viewHolder.ivGroupPic.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                if(getActivity().equals(SearchActivity.class)){
+////
+////                }
+//                if (allowDetailsClick) {
+//                    Fragment frag = GroupDetailsFragment.newInstance(group);
+//                    manager = ((AppCompatActivity) getActivity())
+//                            .getSupportFragmentManager();
+//                    FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+//                    //fl.removeAllViews();
+//                    FragmentTransaction ft = manager
+//                            .beginTransaction();
+//                    ft.add(R.id.flSocialContainer, frag);
+//                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                    ft.addToBackStack(null);
+//                    ft.commit();
 //                }
-                if (allowDetailsClick) {
-                    Fragment frag = GroupDetailsFragment.newInstance(group);
-                    manager = ((AppCompatActivity) getActivity())
-                            .getSupportFragmentManager();
-                    FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
-                    //fl.removeAllViews();
-                    FragmentTransaction ft = manager
-                            .beginTransaction();
-                    ft.add(R.id.flSocialContainer, frag);
-                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                    ft.addToBackStack(null);
-                    ft.commit();
-                }
-            }
-        });
+//            }
+//        });
 
         viewHolder.glRoot.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
             @Override

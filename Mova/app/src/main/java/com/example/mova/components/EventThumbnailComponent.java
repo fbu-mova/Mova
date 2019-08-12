@@ -1,6 +1,5 @@
 package com.example.mova.components;
 
-import android.gesture.Gesture;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -123,22 +122,22 @@ public class EventThumbnailComponent extends Component {
                     .into(viewHolder.ivEventPic);
         }
 
-        viewHolder.ivEventPic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment frag = EventDetailsFragment.newInstance(event);
-                manager = ((AppCompatActivity)getActivity())
-                        .getSupportFragmentManager();
-                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
-                //fl.removeAllViews();
-                FragmentTransaction ft = manager
-                        .beginTransaction();
-                ft.add(R.id.flSocialContainer, frag);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(null);
-                ft.commit();
-            }
-        });
+//        viewHolder.ivEventPic.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Fragment frag = EventDetailsFragment.newInstance(event);
+//                manager = ((AppCompatActivity)getActivity())
+//                        .getSupportFragmentManager();
+//                FrameLayout fl = getActivity().findViewById(R.id.flSocialContainer);
+//                //fl.removeAllViews();
+//                FragmentTransaction ft = manager
+//                        .beginTransaction();
+//                ft.add(R.id.flSocialContainer, frag);
+//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                ft.addToBackStack(null);
+//                ft.commit();
+//            }
+//        });
 
         viewHolder.glRoot.setGestureDetector(new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
             @Override
