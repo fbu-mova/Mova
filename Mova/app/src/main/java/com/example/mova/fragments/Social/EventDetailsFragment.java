@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,12 +29,16 @@ import com.example.mova.component.Component;
 import com.example.mova.component.ComponentLayout;
 import com.example.mova.components.EventCardComponent;
 import com.example.mova.components.PostComponent;
+import com.example.mova.dialogs.ComposePostDialog;
 import com.example.mova.model.Event;
+import com.example.mova.model.Group;
 import com.example.mova.model.Post;
 import com.example.mova.model.User;
 import com.example.mova.utils.EventUtils;
 import com.example.mova.utils.LocationUtils;
+import com.example.mova.utils.PostConfig;
 import com.example.mova.utils.TimeUtils;
+import com.example.mova.views.EdgeFloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -54,6 +59,7 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
 
     Event event;
     User user;
+    Group group;
 
     @BindView(R.id.mvEventMap)
     MapView mvEventMap;
@@ -73,6 +79,8 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
     RecyclerView rvEventComments;
     @BindView(R.id.btnEventAction)
     Button btnEventAction;
+    @BindView(R.id.efabCompose)
+    protected EdgeFloatingActionButton efabComposeComment;
 
     protected List<Post> eventComments;
     private DataComponentAdapter<Post> eventCommentsAdapter;
@@ -157,6 +165,27 @@ public class EventDetailsFragment extends Fragment implements OnMapReadyCallback
 //                    .load(imageUrl)
 //                    .into(ivEventPic);
 //        }
+
+        efabComposeComment.setOnClickListener((v) -> {
+            PostConfig config = new PostConfig();
+            config.post = new Post();
+//            config.post.setGroup(); // fixme -- need to get group
+            config.isPersonal = false;
+
+            new ComposePostDialog.Builder((DelegatedResultActivity) getActivity())
+                    .setConfig(config)
+                    .setOnPost((post) -> {
+
+                        event.relComments.add(post, (comment) -> {
+                            Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT).show();
+                            eventComments.add(0, comment);
+                            eventCommentsAdapter.notifyItemInserted(0);
+                            rvEventComments.scrollToPosition(0);
+                        });
+
+                    })
+                    .show(view);
+        });
 
         eventCommentsAdapter = new DataComponentAdapter<Post>((DelegatedResultActivity) getActivity(), eventComments) {
             @Override
